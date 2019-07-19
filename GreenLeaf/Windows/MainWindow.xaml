@@ -1,0 +1,523 @@
+﻿<Window x:Class="GreenLeaf.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:conv="clr-namespace:GreenLeaf.Converters"
+        xmlns:win="clr-namespace:GreenLeaf.Windows"
+        mc:Ignorable="d"
+        Icon="..\Images\greenleaf.png"
+        Title="Green Leaf" Height="1000" MinWidth="600" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+
+    <Window.CommandBindings>
+
+        <!-- Обновить данные -->
+        <CommandBinding Command="win:MainWindow.RefreshData" Executed="RefreshData_Execute" />
+
+        <!-- Создать приходную накладную -->
+        <CommandBinding Command="win:MainWindow.CreatePurchaseInvoice" Executed="CreatePurchaseInvoice_Execute" />
+
+        <!-- Поиск -->
+        <CommandBinding Command="win:MainWindow.Search" Executed="Search_Execute" CanExecute="Search_CanExecute" />
+
+        <!-- Сбросить фильтры поиска -->
+        <CommandBinding Command="win:MainWindow.ResetSearch" Executed="ResetSearch_Execute" CanExecute="Search_CanExecute" />
+
+        <!-- Управление складом -->
+        <CommandBinding Command="win:MainWindow.WarehouseManagement" Executed="WarehouseManagement_Execute" />
+
+        <!-- Добавление единицы товара -->
+        <CommandBinding Command="win:MainWindow.WarehouseAddProduct" Executed="WarehouseAddProduct_Execute" />
+
+        <!-- Редактирование единицы товара -->
+        <CommandBinding Command="win:MainWindow.WarehouseEditProduct" Executed="WarehouseEditProduct_Execute" />
+
+        <!-- Аннулирование единицы товара -->
+        <CommandBinding Command="win:MainWindow.WarehouseAnnulateProduct" Executed="WarehouseAnnulateProduct_Execute" />
+
+        <!-- Отмена аннулирования -->
+        <CommandBinding Command="win:MainWindow.WarehouseUnAnnulateProduct" Executed="WarehouseUnAnnulateProduct_Execute" />
+
+        <!-- Редактирование количества товара -->
+        <CommandBinding Command="win:MainWindow.WarehouseEditCount" Executed="WarehouseEditCount_Execute" />
+    </Window.CommandBindings>
+    
+    <Window.Resources>
+
+        <!-- Стиль управляющих кнопок на боковой панели -->
+        <Style x:Key="PanelButtonStyle" >
+            <Setter Property="Button.Background" Value="GhostWhite" />
+            <Setter Property="Border.CornerRadius" Value="5" />
+            <Setter Property="Button.VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="Button.HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Button.Margin" Value="0,0,5,0" />
+            <Setter Property="Button.Width" Value="80" />
+            <Setter Property="Button.Height" Value="80" />
+            <Setter Property="Button.FontSize" Value="10" />
+            <Setter Property="Button.FontFamily" Value="Yu Gothic UI Semibold" />
+            <Setter Property="Button.Foreground" Value="DarkGreen" />
+        </Style>
+
+        <!-- Преобразование "TRUE" в "Да", "FALSE" в "Нет" -->
+        <conv:Bool_to_YesNo_Converter x:Key="BoolToYesNo" />
+        
+    </Window.Resources>
+    
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />   <!-- Управляющие кнопки -->
+            <RowDefinition Height="Auto" /> <!-- Разделитель -->
+            <RowDefinition Height="Auto" /> <!-- Поиск -->
+            <RowDefinition Height="*" />    <!-- Таблица -->
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" /> <!-- Таблица -->
+            <ColumnDefinition Width="Auto" /> <!-- Управление складом -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Управляющие кнопки -->
+        <StackPanel Orientation="Horizontal" Grid.ColumnSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+            <!-- Кнопка "Обновить данные" -->
+            <Button x:Name="btnRefresh" Style="{DynamicResource MainMenuButtonStyle}" Command="win:MainWindow.RefreshData" >
+                <Button.Content>
+                    <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Image Source="..\Images\refresh.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                        <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                            <Run>Обновить</Run><LineBreak/>
+                            <Run>данные</Run>
+                        </TextBlock>
+                    </DockPanel>
+                </Button.Content>
+            </Button>
+            
+            <!-- Кнопка "Приходная накладная" -->
+            <Button x:Name="btnPurchaseInvoice" Style="{DynamicResource MainMenuButtonStyle}" 
+                    Command="win:MainWindow.CreatePurchaseInvoice">
+                <Button.Content>
+                    <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Image Source="..\Images\invoice.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                        <Image Source="..\Images\plus.png" DockPanel.Dock="Top" Height="20" Margin="20,-15,0,0" HorizontalAlignment="Center" />
+                        <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                            <Run>Приходная</Run><LineBreak/>
+                            <Run>накладная</Run>
+                        </TextBlock>
+                    </DockPanel>
+                </Button.Content>
+            </Button>
+            
+            <!-- Кнопка "Расходная накладная" -->
+            <Button x:Name="btnSalesInvoice" Style="{StaticResource MainMenuButtonStyle}" >
+                <Button.Content>
+                    <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Image Source="..\Images\invoice.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                        <Image Source="..\Images\minus.png" DockPanel.Dock="Top" Height="20" Margin="20,-15,0,0" HorizontalAlignment="Center" />
+                        <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                            <Run>Расходная</Run><LineBreak/>
+                            <Run>накладная</Run>
+                        </TextBlock>
+                    </DockPanel>
+                </Button.Content>
+            </Button>
+
+            <!-- Кнопка "Отчеты" -->
+            <Button x:Name="btnReports" Style="{StaticResource MainMenuButtonStyle}" >
+                <Button.Content>
+                    <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Image Source="..\Images\report.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                        <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                            <Run>Отчеты</Run>
+                        </TextBlock>
+                    </DockPanel>
+                </Button.Content>
+            </Button>
+
+            <!-- Кнопка "Контрагенты" -->
+            <Button x:Name="btnCounterparty" Style="{StaticResource MainMenuButtonStyle}" >
+                <Button.Content>
+                    <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Image Source="..\Images\counterparty.png" DockPanel.Dock="Top"  Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                        <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                            <Run>Контрагенты</Run>
+                        </TextBlock>
+                    </DockPanel>
+                </Button.Content>
+            </Button>
+
+            <!-- Кнопка "Управление складом" -->
+            <Button x:Name="btnWarehouseManagement" Style="{StaticResource MainMenuButtonStyle}"
+                    Command="win:MainWindow.WarehouseManagement">
+                <Button.Content>
+                    <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Image Source="..\Images\warehouse.png" DockPanel.Dock="Top"  Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                        <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                            <Run>Управление</Run><LineBreak/>
+                            <Run>складом</Run>
+                        </TextBlock>
+                    </DockPanel>
+                </Button.Content>
+            </Button>
+
+            <!-- Кнопка "Панель управления" -->
+            <Button x:Name="btnAdminPanel" Style="{StaticResource MainMenuButtonStyle}" >
+                <Button.Content>
+                    <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Image Source="..\Images\settings.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                        <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                            <Run>Панель</Run><LineBreak/>
+                            <Run>управления</Run>
+                        </TextBlock>
+                    </DockPanel>
+                </Button.Content>
+            </Button>
+        </StackPanel>
+        
+        <!-- Разделитель -->
+        <Separator Grid.Row="1" Grid.ColumnSpan="2" Style="{DynamicResource HorizontalSeparatorStyle}" />
+
+        <!-- Поиск -->
+        <DockPanel Grid.Row="2" Grid.ColumnSpan="2" LastChildFill="False" >
+            <TextBlock Text="Поиск" DockPanel.Dock="Left" Style="{DynamicResource TextBlockStyle}" FontSize="16" VerticalAlignment="Center" />
+            
+            <!-- Код товара -->
+            <TextBlock Text="Код товара" DockPanel.Dock="Left" Style="{DynamicResource TextBlockGridStyle}" Margin="30,2,5,2" />
+            <TextBox x:Name="tbSearchProductCode" Style="{DynamicResource TextBoxStyle}" DockPanel.Dock="Left" Width="150" />
+            
+            <!-- Наименование товара -->
+            <TextBlock Text="Наименование товара" DockPanel.Dock="Left" Style="{DynamicResource TextBlockGridStyle}" Margin="30,2,5,2" />
+            <TextBox x:Name="tbSearchNomination" Style="{DynamicResource TextBoxStyle}" DockPanel.Dock="Left" Width="300" />
+
+            <!-- Кнопка поиск по фильтрам -->
+            <Button DockPanel.Dock="Left" ToolTip="Поиск"  Style="{DynamicResource SearchButtonStyle}" 
+                    Command="win:MainWindow.Search" />
+
+            <!-- Кнопка сбросить фильтры -->
+            <Button DockPanel.Dock="Left" ToolTip="Сбросить фильтры поиска" Style="{DynamicResource ResetSearchButtonStyle}" 
+                    Command="win:MainWindow.ResetSearch" />
+            
+            <!-- -->
+            <CheckBox x:Name="cbHideEmpty" DockPanel.Dock="Right" Margin="0,0,5,0" VerticalAlignment="Center" Height="Auto" IsChecked="True" >
+                <CheckBox.Content>
+                    <TextBlock Style="{DynamicResource TextBlockStyle}" Text="Скрыть отсутствующие" VerticalAlignment="Center" Height="Auto" />
+                </CheckBox.Content>
+            </CheckBox>
+
+        </DockPanel>
+
+        <!-- Таблица склада -->
+        <DataGrid x:Name="dataGrid" Grid.Row="3" Style="{DynamicResource DataGridStyle}" SelectionMode="Single">
+            <!-- Стиль для закрашивания аннулированных позиций -->
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsAnnuled}" Value="True">
+                            <Setter Property="Background" Value="LightGray" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>    
+            </DataGrid.RowStyle>
+            
+            <DataGrid.Columns>
+
+                <!-- Код товара -->
+                <DataGridTextColumn Width="150" Binding="{Binding Path=ProductCode}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Код товара" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Наименование товара -->
+                <DataGridTextColumn Width="*" Binding="{Binding Path=Nomination}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Наименование" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Стоимость -->
+                <DataGridTextColumn Width="150" Binding="{Binding Path=Cost}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Стоимость" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Купон -->
+                <DataGridTextColumn Width="150" Binding="{Binding Path=Coupon}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Купон" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Штук в упаковке -->
+                <DataGridTextColumn Width="150" Binding="{Binding Path=CountInPackage}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Шт. в упаковке" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Количество -->
+                <DataGridTextColumn Width="150" Binding="{Binding Path=Count}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Количество" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Единица измерения -->
+                <DataGridTextColumn Width="100" Binding="{Binding Path=UnitNomination}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Единица" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Аннулирован -->
+                <DataGridTextColumn x:Name="AnnuledColumn" Width="150" Binding="{Binding Path=IsAnnuled, Converter={StaticResource BoolToYesNo}}" Visibility="Collapsed" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Аннулирован" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+                
+        </DataGrid>
+        
+        <!-- Панель управления складом -->
+        <StackPanel x:Name="stackWarehouseManagement" Orientation="Vertical" Grid.Row="3" Grid.Column="1" Visibility="Collapsed" ScrollViewer.VerticalScrollBarVisibility="Auto" >
+            <TextBlock Style="{DynamicResource TextBlockStyle}" FontSize="14" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,5,0,0" >
+                <Run>Управление</Run><LineBreak/>
+                <Run>складом</Run>
+            </TextBlock>
+            
+            <!-- Кнопка "Добавить товар" -->
+            <Button x:Name="btnAddProduct" Margin="5,5,5,0" 
+                    Command="win:MainWindow.WarehouseAddProduct" >
+                <Button.Style >
+                    <Style BasedOn="{StaticResource PanelButtonStyle}">
+                        <Style.Triggers>
+                            <Trigger Property="Button.IsEnabled" Value="True">
+                                <Trigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                                <Image Source="..\Images\product.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\Images\plus.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Margin="0,0,0,5" Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                                    <Run>Добавить</Run><LineBreak/>
+                                                    <Run>товар</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger.Setters>
+                            </Trigger>
+
+                            <Trigger Property="Button.IsEnabled" Value="False">
+                                <Trigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="GhostWhite">
+                                                <Image Source="..\Images\product_gray.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\Images\plus_gray.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Margin="0,0,0,5" Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray" >
+                                                    <Run>Добавить</Run><LineBreak/>
+                                                    <Run>товар</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Button.Background" Value="GhostWhite" />
+                                </Trigger.Setters>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <!-- Кнопка "Редактировать товар" -->
+            <Button x:Name="btnEditProduct" Margin="5,5,5,0" 
+                    Command="win:MainWindow.WarehouseEditProduct" >
+                <Button.Style>
+                    <Style BasedOn="{StaticResource PanelButtonStyle}" >
+                        <Style.Triggers>
+                            <Trigger Property="Button.IsEnabled" Value="True">
+                                <Trigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                                <Image Source="..\Images\product.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\Images\edit.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Margin="0,0,0,5" Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                                    <Run>Редактировать</Run><LineBreak/>
+                                                    <Run>товар</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger.Setters>
+                            </Trigger>
+
+                            <Trigger Property="Button.IsEnabled" Value="False">
+                                <Trigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="GhostWhite">
+                                                <Image Source="..\Images\product_gray.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\Images\edit_gray.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Margin="0,0,0,5" Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray" >
+                                                    <Run>Редактировать</Run><LineBreak/>
+                                                    <Run>товар</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Button.Background" Value="GhostWhite" />
+                                </Trigger.Setters>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <!-- Кнопка "Аннулировать товар" -->
+            <Button x:Name="btnAnnulateProduct" Margin="5,5,5,0" 
+                    Command="win:MainWindow.WarehouseAnnulateProduct">
+                <Button.Style>
+                    <Style BasedOn="{StaticResource PanelButtonStyle}" >
+                        <Style.Triggers>
+                            <Trigger Property="Button.IsEnabled" Value="True">
+                                <Trigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                                <Image Source="..\Images\product.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\Images\minus.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Margin="0,0,0,5" Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                                    <Run>Аннулировать</Run><LineBreak/>
+                                                    <Run>товар</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger.Setters>
+                            </Trigger>
+
+                            <Trigger Property="Button.IsEnabled" Value="False">
+                                <Trigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="GhostWhite">
+                                                <Image Source="..\Images\product_gray.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\Images\minus_gray.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Margin="0,0,0,5" Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray" >
+                                                    <Run>Аннулировать</Run><LineBreak/>
+                                                    <Run>товар</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Button.Background" Value="GhostWhite" />
+                                </Trigger.Setters>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <!-- Кнопка "Отменить аннулирование" -->
+            <Button x:Name="btnUnAnnulateProduct" Margin="5,5,5,0" 
+                    Command="win:MainWindow.WarehouseUnAnnulateProduct" >
+                <Button.Style>
+                    <Style BasedOn="{StaticResource PanelButtonStyle}" >
+                        <Style.Triggers>
+                            <Trigger Property="Button.IsEnabled" Value="True">
+                                <Trigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                                <Image Source="..\Images\product.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\Images\return.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Margin="0,0,0,5" Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                                    <Run>Отменить</Run><LineBreak/>
+                                                    <Run>аннулирование</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger.Setters>
+                            </Trigger>
+
+                            <Trigger Property="Button.IsEnabled" Value="False">
+                                <Trigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="GhostWhite">
+                                                <Image Source="..\Images\product_gray.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\Images\return_gray.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Margin="0,0,0,5" Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray" >
+                                                    <Run>Отменить</Run><LineBreak/>
+                                                    <Run>аннулирование</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Button.Background" Value="GhostWhite" />
+                                </Trigger.Setters>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <!-- Кнопка "Редактировать количество" -->
+            <Button x:Name="btnEditProductCount" Margin="5,5,5,0" 
+                    Command="win:MainWindow.WarehouseEditCount">
+                <Button.Style>
+                    <Style BasedOn="{StaticResource PanelButtonStyle}" >
+                        <Style.Triggers>
+                            <Trigger Property="Button.IsEnabled" Value="True">
+                                <Trigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                                <Image Source="..\Images\warehouse.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\Images\count.png" DockPanel.Dock="Top" Height="20" Margin="25,-15,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Margin="0,0,0,5" Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                                    <Run>Редактировать</Run><LineBreak/>
+                                                    <Run>количество</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger.Setters>
+                            </Trigger>
+
+                            <Trigger Property="Button.IsEnabled" Value="False">
+                                <Trigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="GhostWhite">
+                                                <Image Source="..\Images\product_gray.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\Images\count_gray.png" DockPanel.Dock="Top" Height="20" Margin="25,-15,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Margin="0,0,0,5" Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray" >
+                                                    <Run>Редактировать</Run><LineBreak/>
+                                                    <Run>количество</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Button.Background" Value="GhostWhite" />
+                                </Trigger.Setters>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <CheckBox x:Name="cbHideAnnuled" Margin="5" IsChecked="True" VerticalAlignment="Center" VerticalContentAlignment="Center" >
+                <CheckBox.Content>
+                    <TextBlock Style="{DynamicResource TextBlockStyle}" FontSize="12" VerticalAlignment="Center" Margin="0,5,0,0" >
+                        <Run>Скрыть</Run><LineBreak/>
+                        <Run>аннулир.</Run>
+                    </TextBlock>
+                </CheckBox.Content>
+            </CheckBox>
+        </StackPanel>
+    </Grid>
+</Window>

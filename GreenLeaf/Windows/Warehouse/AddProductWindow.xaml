@@ -1,0 +1,81 @@
+﻿<Window x:Class="GreenLeaf.Windows.Warehouse.AddProductWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Добавление товара" Style="{DynamicResource ModalWindow}" WindowStartupLocation="CenterOwner" >
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="300" />
+        </Grid.ColumnDefinitions>
+ 
+        <TextBlock x:Name="tbCaption" Text="Добавление товара" Grid.ColumnSpan="2" Style="{DynamicResource TextBlockStyle}" HorizontalAlignment="Center" Margin="0,10,0,10" />
+
+        <!-- Код товара -->
+        <TextBlock Text="Код товара" Grid.Row="1" Style="{DynamicResource TextBlockGridStyle}" />
+        <TextBox Grid.Row="1" Grid.Column="1" Style="{DynamicResource TextBoxStyle}" Margin="5"
+                 Text="{Binding ProductCode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+        <!-- Наименование -->
+        <TextBlock Text="Наименование" Grid.Row="2" Style="{DynamicResource TextBlockGridStyle}" VerticalAlignment="Top" Margin="5,10,5,5" />
+        <TextBox Grid.Row="2" Grid.Column="1" Style="{DynamicResource TextBoxStyle}" Margin="5" TextWrapping="Wrap" AcceptsReturn="False" Height="50" 
+                 Text="{Binding Nomination, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" VerticalContentAlignment="Top"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+
+        <!-- Количество в упаковке -->
+        <TextBlock Text="Кол-во в упаковке" Grid.Row="3" Style="{DynamicResource TextBlockGridStyle}" />
+        <TextBox x:Name="tbCountInPackage" Grid.Row="3" Grid.Column="1" Style="{DynamicResource TextBoxStyle}" Margin="5"
+                 PreviewKeyDown="TextBox_KeyDown" KeyDown="TextBox_KeyDown" TextChanged="TextBox_TextChanged" />
+
+        <!-- Стоимость -->
+        <TextBlock Text="Стоимость" Grid.Row="4" Style="{DynamicResource TextBlockGridStyle}" />
+        <TextBox x:Name="tbCost" Grid.Row="4" Grid.Column="1" Style="{DynamicResource TextBoxStyle}"  Margin="5"
+                 PreviewKeyDown="TextBox_KeyDown" KeyDown="TextBox_KeyDown" TextChanged="TextBox_TextChanged" />
+
+        <!-- Купон -->
+        <TextBlock Text="Купон" Grid.Row="5" Style="{DynamicResource TextBlockGridStyle}" />
+        <TextBox x:Name="tbCoupon" Grid.Row="5" Grid.Column="1" Style="{DynamicResource TextBoxStyle}" Margin="5"
+                 PreviewKeyDown="TextBox_KeyDown" KeyDown="TextBox_KeyDown" TextChanged="TextBox_TextChanged" />
+
+        <!-- Единица измерения -->
+        <TextBlock Text="Единица" Grid.Row="6" Style="{DynamicResource TextBlockGridStyle}" />
+        <ComboBox x:Name="cbUnit" Grid.Row="6" Grid.Column="1" Style="{DynamicResource ComboBoxStyle}" />
+
+        <DockPanel Grid.Row="7" Grid.ColumnSpan="2" Style="{DynamicResource DockPanelOKContainerStyle}" >
+            <!-- Кнопка Отмена -->
+            <Button IsCancel="True" Style="{DynamicResource ButtonOKStyle}" >
+                <Button.Content>
+                    <DockPanel Style="{DynamicResource DockPanelOKStyle}" >
+                        <Image Source="..\..\Images\cancel.png" Style="{DynamicResource ImageOKStyle}" />
+                        <TextBlock Text="ОТМЕНА" Style="{DynamicResource TextBlockOKStyle}" />
+                    </DockPanel>
+                </Button.Content>
+            </Button>
+
+            <!-- Кнопка Соединение -->
+            <Button x:Name="btnConnect" IsDefault="True" Style="{DynamicResource ButtonOKStyle}"
+                   Click="Button_Click" >
+                <Button.Content>
+                    <DockPanel Style="{DynamicResource DockPanelOKStyle}" >
+                        <Image Source="..\..\Images\ok.png" Style="{DynamicResource ImageOKStyle}" />
+                        <TextBlock x:Name="btnOkText" Text="ДОБАВИТЬ" Style="{DynamicResource TextBlockOKStyle}" />
+                    </DockPanel>
+                </Button.Content>
+            </Button>
+        </DockPanel>
+    </Grid>
+</Window>

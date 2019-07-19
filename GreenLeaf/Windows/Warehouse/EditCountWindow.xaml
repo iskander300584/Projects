@@ -1,0 +1,47 @@
+﻿<Window x:Class="GreenLeaf.Windows.Warehouse.EditCountWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Редактирование количества" Style="{DynamicResource ModalWindow}" WindowStartupLocation="CenterOwner" >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="100" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="Количество" Style="{DynamicResource TextBlockStyle}" Margin="5" />
+        <TextBox x:Name="tbCount" Grid.Column="1" Style="{DynamicResource TextBoxStyle}" Margin="5" PreviewKeyDown="tbCount_PreviewKeyDown" KeyDown="tbCount_PreviewKeyDown" TextChanged="tbCount_TextChanged" />
+        <ComboBox x:Name="cbUnit" Grid.Column="2" Style="{DynamicResource ComboBoxStyle}" />
+
+        <DockPanel Grid.Row="1" Grid.ColumnSpan="3" Style="{DynamicResource DockPanelOKContainerStyle}" >
+            <!-- Кнопка Отмена -->
+            <Button IsCancel="True" Style="{DynamicResource ButtonOKStyle}" >
+                <Button.Content>
+                    <DockPanel Style="{DynamicResource DockPanelOKStyle}" >
+                        <Image Source="..\..\Images\cancel.png" Style="{DynamicResource ImageOKStyle}" />
+                        <TextBlock Text="ОТМЕНА" Style="{DynamicResource TextBlockOKStyle}" />
+                    </DockPanel>
+                </Button.Content>
+            </Button>
+
+            <!-- Кнопка Соединение -->
+            <Button x:Name="btnConnect" IsDefault="True" Style="{DynamicResource ButtonOKStyle}"
+                   Click="Button_Click" >
+                <Button.Content>
+                    <DockPanel Style="{DynamicResource DockPanelOKStyle}" >
+                        <Image Source="..\..\Images\ok.png" Style="{DynamicResource ImageOKStyle}" />
+                        <TextBlock Text="СОХРАНИТЬ" Style="{DynamicResource TextBlockOKStyle}" />
+                    </DockPanel>
+                </Button.Content>
+            </Button>
+        </DockPanel>
+    </Grid>
+</Window>
