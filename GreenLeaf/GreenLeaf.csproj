@@ -102,7 +102,6 @@
     <Compile Include="ViewModel\Invoice.cs" />
     <Compile Include="ViewModel\InvoiceItem.cs" />
     <Compile Include="ViewModel\Product.cs" />
-    <Compile Include="ViewModel\WarehouseItem.cs" />
     <Compile Include="Windows\Invoice\CreateInvoiceWindow.xaml.cs">
       <DependentUpon>CreateInvoiceWindow.xaml</DependentUpon>
     </Compile>
@@ -111,9 +110,6 @@
     </Compile>
     <Compile Include="Windows\Warehouse\EditCountWindow.xaml.cs">
       <DependentUpon>EditCountWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\Warehouse\SelectProductWindow.xaml.cs">
-      <DependentUpon>SelectProductWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -205,10 +201,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\Warehouse\EditCountWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Windows\Warehouse\SelectProductWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
