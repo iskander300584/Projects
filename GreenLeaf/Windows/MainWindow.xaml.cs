@@ -17,6 +17,8 @@ using GreenLeaf.ViewModel;
 using MySql.Data.MySqlClient;
 
 //ConnectSetting.Server = "remotemysql.com";
+//ServerAccount = aldr046@mail.ru
+//ServerPassword = Password_1
 //ConnectSetting.DB = "wLhC3u9El4";
 //ConnectSetting.AdminLogin = "wLhC3u9El4";
 //ConnectSetting.AdminPassword = "briyOnlYc8";

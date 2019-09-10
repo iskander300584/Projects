@@ -98,6 +98,7 @@
     <Compile Include="Converters\Bool_to_UnVisibility_Converter.cs" />
     <Compile Include="Converters\Bool_to_Visibility_Converter.cs" />
     <Compile Include="Converters\Bool_to_YesNo_Converter.cs" />
+    <Compile Include="ViewModel\Account.cs" />
     <Compile Include="ViewModel\Counterparty.cs" />
     <Compile Include="ViewModel\Invoice.cs" />
     <Compile Include="ViewModel\InvoiceItem.cs" />
