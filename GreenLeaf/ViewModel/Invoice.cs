@@ -130,7 +130,7 @@ namespace GreenLeaf.ViewModel
 
         private bool _is_issued = false;
         /// <summary>
-        /// Оформлена
+        /// Проведена
         /// </summary>
         public bool IsIssued
         {
@@ -140,6 +140,23 @@ namespace GreenLeaf.ViewModel
                 if(_is_issued != value)
                 {
                     _is_issued = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _is_locked = false;
+        /// <summary>
+        /// Заблокирована
+        /// </summary>
+        public bool IsLocked
+        {
+            get { return _is_locked; }
+            set
+            {
+                if(_is_locked != value)
+                {
+                    _is_locked = value;
                     OnPropertyChanged();
                 }
             }
@@ -187,11 +204,13 @@ namespace GreenLeaf.ViewModel
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
+        #region Получение данных
+
         /// <summary>
         /// Получить данные по ID
         /// <para>возвращает TRUE, если данные успешно получены</para>
         /// </summary
-        /// <param name="isPurchase">TRUE если элемент приходной накладной, FALSE если расходной</param>
+        /// <param name="isPurchase">TRUE если приходная накладная, FALSE если расходная</param>
         /// <returns>возвращает TRUE, если данные успешно получены</returns>
         public bool GetDataByID(bool isPurchase)
         {
@@ -265,7 +284,14 @@ namespace GreenLeaf.ViewModel
                                 if (bool.TryParse(tempS, out tempB))
                                     IsIssued = tempB;
                                 else
-                                    IsIssued = false;  
+                                    IsIssued = false;
+
+                                tempS = reader["IS_LOCKED"].ToString();
+                                tempB = false;
+                                if (bool.TryParse(tempS, out tempB))
+                                    IsLocked = tempB;
+                                else
+                                    IsLocked = false;
                             }
                         }
 
@@ -292,7 +318,7 @@ namespace GreenLeaf.ViewModel
         /// <para>возвращает TRUE, если данные успешно получены</para>
         /// </summary>
         /// <param name="id">ID</param>
-        /// <param name="isPurchase">TRUE если элемент приходной накладной, FALSE если расходной</param>
+        /// <param name="isPurchase">TRUE если приходная накладная, FALSE если расходная</param>
         /// <returns>возвращает TRUE, если данные успешно получены</returns>
         public bool GetDateByID(int id, bool isPurchase)
         {
@@ -309,5 +335,231 @@ namespace GreenLeaf.ViewModel
             if (_id != 0)
                 Items = InvoiceItem.GetInvoiceItemList(_id, _is_purchase);
         }
+
+        #endregion
+
+        #region Статические методы
+
+        /// <summary>
+        /// Получить список накладных без элементов
+        /// </summary>
+        /// <param name="isPurchase">TRUE если приходные накладные, FALSE если расходные</param>
+        /// <returns></returns>
+        private static List<Invoice> GetInvoices(bool isPurchase, DateTime? from, DateTime? to, int? idAccount, int? idCounterparty)
+        {
+            List<Invoice> result = new List<Invoice>();
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                {
+                    connection.Open();
+
+                    string table = (isPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
+
+                    string sql = "SELECT * FROM " + table;
+
+                    if (from != null && to != null)
+                    {
+                        string fromDate = String.Format(@"'{0}-{1}-{2}T00:00:00.000'", ((DateTime)from).Year, ((DateTime)from).Month, ((DateTime)from).Day);
+                        string toDate = String.Format(@"'{0}-{1}-{2}T23:59:59.000'", ((DateTime)to).Year, ((DateTime)to).Month, ((DateTime)to).Day);
+
+                        sql += " WHERE DATE >= " + fromDate + " AND DATE <= " + toDate;
+
+                        if (idAccount != null)
+                            sql += " AND ID_ACCOUNT = " + (int)idAccount;
+
+                        if (idCounterparty != null)
+                            sql += " AND ID_COUNTERPARTY = " + (int)idCounterparty;
+                    }
+                    else if(idAccount != null)
+                    {
+                        sql += " WHERE ID_ACCOUNT = " + (int)idAccount;
+
+                        if (idCounterparty != null)
+                            sql += " AND ID_COUNTERPARTY = " + (int)idCounterparty;
+                    }
+                    else if (idCounterparty != null)
+                        sql += " WHERE ID_COUNTERPARTY = " + (int)idCounterparty;
+
+                    MySqlCommand command = new MySqlCommand(sql, connection);
+
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Invoice invoice = new Invoice();
+
+                            string tempS = reader["ID"].ToString();
+                            int tempI = 0;
+                            if (int.TryParse(tempS, out tempI))
+                                invoice.ID = tempI;
+                            else
+                                invoice.ID = 0;
+
+                            tempS = reader["NUMBER"].ToString();
+                            tempI = 0;
+                            if (int.TryParse(tempS, out tempI))
+                                invoice.Number = tempI;
+                            else
+                                invoice.Number = 0;
+
+                            tempS = reader["ID_ACCOUNT"].ToString();
+                            tempI = 0;
+                            if (int.TryParse(tempS, out tempI))
+                                invoice.ID_Account = tempI;
+                            else
+                                invoice.ID_Account = 0;
+
+                            tempS = reader["ID_COUNTERPARTY"].ToString();
+                            tempI = 0;
+                            if (int.TryParse(tempS, out tempI))
+                                invoice.ID_Counterparty = tempI;
+                            else
+                                invoice.ID_Counterparty = 0;
+
+                            tempS = reader["DATE"].ToString();
+                            DateTime tempDT = DateTime.MinValue;
+                            if (DateTime.TryParse(tempS, out tempDT))
+                                invoice.Date = tempDT;
+                            else
+                                invoice.Date = DateTime.MinValue;
+
+                            tempS = reader["COST"].ToString();
+                            double tempD = 0;
+                            if (double.TryParse(tempS, out tempD))
+                                invoice.Cost = tempD;
+                            else
+                                invoice.Cost = 0;
+
+                            tempS = reader["COUPON"].ToString();
+                            tempD = 0;
+                            if (double.TryParse(tempS, out tempD))
+                                invoice.Coupon = tempD;
+                            else
+                                invoice.Coupon = 0;
+
+                            tempS = reader["IS_ISSUED"].ToString();
+                            bool tempB = false;
+                            if (bool.TryParse(tempS, out tempB))
+                                invoice.IsIssued = tempB;
+                            else
+                                invoice.IsIssued = false;
+
+                            tempS = reader["IS_LOCKED"].ToString();
+                            tempB = false;
+                            if (bool.TryParse(tempS, out tempB))
+                                invoice.IsLocked = tempB;
+                            else
+                                invoice.IsLocked = false;
+
+                            invoice.IsPurchase = isPurchase;
+
+                            result.Add(invoice);
+                        }
+                    }
+
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка получения данных", ex.Message);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Получить список приходных накладных БЕЗ элементов накладных
+        /// </summary>
+        /// <returns></returns>
+        public static List<Invoice> GetPurchaseInvoices()
+        {
+            return GetInvoices(true, null, null, null, null);
+        }
+
+        /// <summary>
+        /// Получить список приходных накладных БЕЗ элементов накладных
+        /// </summary>
+        /// <param name="from">начало периода</param>
+        /// <param name="to">конец периода</param>
+        /// <returns></returns>
+        public static List<Invoice> GetPurchaseInvoices(DateTime from, DateTime to)
+        {
+            return GetInvoices(true, from, to, null, null);
+        }
+
+        /// <summary>
+        /// Получить список приходных накладных БЕЗ элементов накладных
+        /// </summary>
+        /// <param name="from">начало периода</param>
+        /// <param name="to">конец периода</param>
+        /// <param name="idAccount">ID пользователя</param>
+        /// <returns></returns>
+        public static List<Invoice> GetPurchaseInvoices(DateTime from, DateTime to, int idAccount)
+        {
+            return GetInvoices(true, from, to, idAccount, null);
+        }
+
+        /// <summary>
+        /// Получить список приходных накладных БЕЗ элементов накладных
+        /// </summary>
+        /// <param name="from">начало периода</param>
+        /// <param name="to">конец периода</param>
+        /// <param name="idAccount">ID пользователя</param>
+        /// <param name="idCounterparty">ID контрагента</param>
+        /// <returns></returns>
+        public static List<Invoice> GetPurchaseInvoices(DateTime from, DateTime to, int? idAccount, int idCounterparty)
+        {
+            return GetInvoices(true, from, to, idAccount, idCounterparty);
+        }
+
+        /// <summary>
+        /// Получить список расходных накладных БЕЗ элементов накладных
+        /// </summary>
+        /// <returns></returns>
+        public static List<Invoice> GetSalesInvoices()
+        {
+            return GetInvoices(false, null, null, null, null);
+        }
+
+        /// <summary>
+        /// Получить список расходных накладных БЕЗ элементов накладных
+        /// </summary>
+        /// <param name="from">начало периода</param>
+        /// <param name="to">конец периода</param>
+        /// <returns></returns>
+        public static List<Invoice> GetSalesInvoices(DateTime from, DateTime to)
+        {
+            return GetInvoices(false, from, to, null, null);
+        }
+
+        /// <summary>
+        /// Получить список расходных накладных БЕЗ элементов накладных
+        /// </summary>
+        /// <param name="from">начало периода</param>
+        /// <param name="to">конец периода</param>
+        /// <param name="idAccount">ID пользователя</param>
+        /// <returns></returns>
+        public static List<Invoice> GetSalesInvoices(DateTime from, DateTime to, int idAccount)
+        {
+            return GetInvoices(false, from, to, idAccount, null);
+        }
+
+        /// <summary>
+        /// Получить список расходных накладных БЕЗ элементов накладных
+        /// </summary>
+        /// <param name="from">начало периода</param>
+        /// <param name="to">конец периода</param>
+        /// <param name="idAccount">ID пользователя</param>
+        /// <param name="idCounterparty">ID контрагента</param>
+        /// <returns></returns>
+        public static List<Invoice> GetSalesInvoices(DateTime from, DateTime to, int? idAccount, int idCounterparty)
+        {
+            return GetInvoices(false, from, to, idAccount, idCounterparty);
+        }
+
+        #endregion
     }
 }

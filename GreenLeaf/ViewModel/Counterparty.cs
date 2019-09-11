@@ -156,6 +156,23 @@ namespace GreenLeaf.ViewModel
             }
         }
 
+        private bool _isAnnulated = false;
+        /// <summary>
+        /// Контрагент аннулирован
+        /// </summary>
+        public bool IsAnnulated
+        {
+            get { return _isAnnulated; }
+            set
+            {
+                if(_isAnnulated != value)
+                {
+                    _isAnnulated = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private string _visibleName = string.Empty;
         /// <summary>
         /// Отображаемое имя
@@ -203,12 +220,14 @@ namespace GreenLeaf.ViewModel
             OnPropertyChanged("VisibleName");
         }
 
+        #region Получение данных
+
         /// <summary>
-        /// Получить данные по ID
+        /// Получить все данные по ID
         /// <para>возвращает TRUE, если данные успешно получены</para>
         /// </summary>
         /// <returns>возвращает TRUE, если данные успешно получены</returns>
-        public bool GetDataByID()
+        public bool GetFullDataByID()
         {
             bool result = false;
 
@@ -249,6 +268,13 @@ namespace GreenLeaf.ViewModel
                                 else
                                     IsProvider = false;
 
+                                tempS = reader["IS_ANNULATED"].ToString();
+                                tempB = false;
+                                if (bool.TryParse(tempS, out tempB))
+                                    IsAnnulated = tempB;
+                                else
+                                    IsAnnulated = false;
+
                                 getData = true;
                             }
                         }
@@ -268,17 +294,229 @@ namespace GreenLeaf.ViewModel
         }
 
         /// <summary>
-        /// Получить данные по ID
+        /// Получить все данные по ID
         /// <para>возвращает TRUE, если данные успешно получены</para>
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns>возвращает TRUE, если данные успешно получены</returns>
-        public bool GetDateByID(int id)
+        public bool GetFullDataByID(int id)
         {
             _id = id;
 
-            return GetDataByID();
+            return GetFullDataByID();
         }
+
+        /// <summary>
+        /// Получить не защищенные данные по ID
+        /// <para>возвращает TRUE, если данные успешно получены</para>
+        /// </summary>
+        /// <returns>возвращает TRUE, если данные успешно получены</returns>
+        public bool GetPublicDataByID()
+        {
+            bool result = false;
+
+            if (_id != 0)
+            {
+                try
+                {
+                    bool getData = false;
+
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    {
+                        connection.Open();
+
+                        string sql = "SELECT * FROM PRODUCT WHERE ID=" + ID.ToString();
+                        MySqlCommand command = new MySqlCommand(sql, connection);
+
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Surname = reader["SURNAME"].ToString();
+                                Name = reader["SURNAME"].ToString();
+                                Patronymic = reader["PATRONYMIC"].ToString();
+                                Nomination = reader["NOMINATION"].ToString();
+
+                                Adress = string.Empty;
+                                Phone = string.Empty;
+                                
+                                string tempS = reader["IS_PROVIDER"].ToString();
+                                bool tempB = false;
+                                if (bool.TryParse(tempS, out tempB))
+                                    IsProvider = tempB;
+                                else
+                                    IsProvider = false;
+
+                                tempS = reader["IS_ANNULATED"].ToString();
+                                tempB = false;
+                                if (bool.TryParse(tempS, out tempB))
+                                    IsAnnulated = tempB;
+                                else
+                                    IsAnnulated = false;
+
+                                getData = true;
+                            }
+                        }
+
+                        connection.Close();
+                    }
+
+                    result = getData;
+                }
+                catch (Exception ex)
+                {
+                    Dialog.ErrorMessage(null, "Ошибка получения данных", ex.Message);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Получить все данные по ID
+        /// <para>возвращает TRUE, если данные успешно получены</para>
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <returns>возвращает TRUE, если данные успешно получены</returns>
+        public bool GetPublicDataByID(int id)
+        {
+            _id = id;
+
+            return GetPublicDataByID();
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Создать контрагента
+        /// </summary>
+        /// <returns>возвращает TRUE, если контрагент успешно создан</returns>
+        public bool CreateCounterparty()
+        {
+            bool result = false;
+
+            if (_id != 0)
+            {
+                try
+                {
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    {
+                        connection.Open();
+
+                        string newPass = Criptex.Cript("12345");
+
+                        string sql = String.Format(@"INSERT INTO COUNTERPARTY (`SURNAME`, `NAME`, `PATRONYMIC`, `ADRESS`, `PHONE`, `NOMINATION`, `IS_PROVIDER`, `IS_ANNULATED`)  VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')", Surname, Name, Patronymic, Adress, Phone, Nomination, ToInt(IsProvider), 0);
+                        MySqlCommand command = new MySqlCommand(sql, connection);
+
+                        ID = command.ExecuteNonQuery();
+
+                        connection.Close();
+                    }
+
+                    result = true;
+                }
+                catch (Exception ex)
+                {
+                    Dialog.ErrorMessage(null, "Ошибка обработки данных", ex.Message);
+                }
+            }
+
+            return result;
+        }
+
+        #region Редактирование данных
+
+        /// <summary>
+        /// Аннулировать контрагента
+        /// </summary>
+        /// <returns>возвращает TRUE, если контрагент успешно аннулирован</returns>
+        public bool AnnuateCounterparty()
+        {
+            bool result = false;
+
+            if (_id != 0)
+            {
+                try
+                {
+                    bool getData = false;
+
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    {
+                        connection.Open();
+
+                        string sql = @"UPDATE COUNTERPARTY SET `IS_ANNULATED` = '1' WHERE ID = " + ID.ToString();
+                        MySqlCommand command = new MySqlCommand(sql, connection);
+
+                        command.ExecuteNonQuery();
+
+                        IsAnnulated = true;
+
+                        getData = true;
+
+                        connection.Close();
+                    }
+
+                    result = getData;
+                }
+                catch (Exception ex)
+                {
+                    Dialog.ErrorMessage(null, "Ошибка обработки данных", ex.Message);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Редактировать данные контрагента
+        /// </summary>
+        /// <returns>возвращает TRUE, если контрагент успешно отредактирован</returns>
+        public bool EditCounterparty()
+        {
+            bool result = false;
+
+            if (_id != 0)
+            {
+                try
+                {
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    {
+                        connection.Open();
+
+                        string newPass = Criptex.Cript("12345");
+
+                        string sql = String.Format(@"UPDATE COUNTERPARTY SET `SURNAME` = '{0}', `NAME` = '{1}', `PATRONYMIC` = '{2}', `ADRESS` = '{3}', `PHONE` = '{4}', `NOMINATION` = '{5}', `IS_PROVIDER` = '{6}' WHERE ID = {7}", Surname, Name, Patronymic, Adress, Phone, Nomination, ToInt(IsProvider), ID);
+                        MySqlCommand command = new MySqlCommand(sql, connection);
+
+                        command.ExecuteNonQuery();
+
+                        connection.Close();
+                    }
+
+                    result = true;
+                }
+                catch (Exception ex)
+                {
+                    Dialog.ErrorMessage(null, "Ошибка обработки данных", ex.Message);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Преобразовать логическое значение в TinyInt
+        /// </summary>
+        /// <param name="value">значение</param>
+        /// <returns>возвращает 1, если TRUE и 0, если FALSE</returns>
+        private int ToInt(bool value)
+        {
+            return (value) ? 1 : 0;
+        }
+
+        #endregion
+
+        #region Статические методы
 
         /// <summary>
         /// Получить список контрагентов
@@ -295,7 +533,7 @@ namespace GreenLeaf.ViewModel
                 {
                     connection.Open();
 
-                    string sql = "SELECT * FROM COUNTERPARTY WHERE IS_PROVIDER=\'" + provider_value + "\'";
+                    string sql = "SELECT * FROM COUNTERPARTY WHERE IS_PROVIDER=\'" + provider_value + "\' AND IS_ANNULATED = \'0\'";
                     MySqlCommand command = new MySqlCommand(sql, connection);
 
                     using (MySqlDataReader reader = command.ExecuteReader())
@@ -359,10 +597,25 @@ namespace GreenLeaf.ViewModel
         /// <summary>
         /// Получить список клиентов
         /// </summary>
-        /// <returns></returns>
         public static List<Counterparty> GetCustomerList()
         {
             return GetContragentList(0);
         }
+
+        /// <summary>
+        /// Получить контрагента с незащищенными данными по ID
+        /// </summary>
+        /// <param name="id">ID</param>
+        public static Counterparty GetCounterpartyByID(int id)
+        {
+            Counterparty counterparty = new Counterparty();
+
+            if (counterparty.GetPublicDataByID(id))
+                return counterparty;
+            else
+                return null;
+        }
+
+        #endregion
     }
 }
