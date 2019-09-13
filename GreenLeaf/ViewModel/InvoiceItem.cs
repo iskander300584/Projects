@@ -110,6 +110,14 @@ namespace GreenLeaf.ViewModel
         public double Cost
         {
             get { return _cost; }
+            set
+            {
+                if(_cost != value)
+                {
+                    _cost = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         private double _coupon = 0;
@@ -119,6 +127,14 @@ namespace GreenLeaf.ViewModel
         public double Coupon
         {
             get { return _coupon; }
+            set
+            {
+                if(_coupon != value)
+                {
+                    _coupon = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         // Изменение свойств объекта
@@ -185,30 +201,30 @@ namespace GreenLeaf.ViewModel
                                 tempS = reader["ID_PRODUCT"].ToString();
                                 tempI = 0;
                                 if (int.TryParse(tempS, out tempI))
-                                    ID_Product = tempI;
+                                    _id_product = tempI;
                                 else
-                                    ID_Product = 0;
+                                    _id_product = 0;
 
                                 tempS = reader["COUNT"].ToString();
                                 double tempD = 0;
                                 if (double.TryParse(tempS, out tempD))
-                                    Сount = tempD;
+                                    Count = tempD;
                                 else
                                     Count = 0;
 
                                 tempS = reader["COST"].ToString();
                                 tempD = 0;
                                 if (double.TryParse(tempS, out tempD))
-                                    _сost = tempD;
+                                    _cost = tempD;
                                 else
-                                    _сost = 0;
+                                    _cost = 0;
 
                                 tempS = reader["COUPON"].ToString();
                                 tempD = 0;
                                 if (double.TryParse(tempS, out tempD))
-                                    _сoupon= tempD;
+                                    _coupon = tempD;
                                 else
-                                    _сoupon = 0;
+                                    _coupon = 0;
 
                                 getData = true;
                             }
@@ -244,10 +260,16 @@ namespace GreenLeaf.ViewModel
 
         #endregion
 
-        
-        public bool CreateItem(bool isPurchase)
+        /// <summary>
+        /// Создание элемента накладной
+        /// </summary>
+        /// <param name="isPurchase">приходная накладная</param>
+        /// <returns>возвращает TRUE, если элемент накладной создан успешно</returns>
+        public bool CreateItem(bool isPurchase, int id_product)
         {
             bool result = false;
+
+            _id_product = id_product;
 
             if(_id_invoice != 0)
             {
@@ -284,6 +306,11 @@ namespace GreenLeaf.ViewModel
             return result;
         }
 
+        /// <summary>
+        /// Удаление элемента накладной
+        /// </summary>
+        /// <param name="isPurchase">приходная накладная</param>
+        /// <returns>возвращает TRUE, если элемент накладной удален успешно</returns>
         public bool DeleteItem(bool isPurchase)
         {
             bool result = false;
@@ -298,7 +325,7 @@ namespace GreenLeaf.ViewModel
 
                         string table = (isPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
-                        string sql = String.Format(@"DELETE FROM {} WHERE ID = {}", table, _id);
+                        string sql = String.Format(@"DELETE FROM {0} WHERE ID = {1}", table, _id);
 
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
@@ -323,7 +350,49 @@ namespace GreenLeaf.ViewModel
             return result;
         }
 
+        /// <summary>
+        /// Редактирование элемента накладной
+        /// </summary>
+        /// <param name="isPurchase">приходная накладная</param>
+        /// <returns>возвращает TRUE, если элемент накладной отредактирован успешно</returns>
+        public bool EditItem(bool isPurchase)
+        {
+            bool result = false;
 
+            if (_id_invoice != 0)
+            {
+                try
+                {
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    {
+                        connection.Open();
+
+                        string table = (isPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
+
+                        string sql = String.Format(@"UPDATE {} SET `", table, _id_invoice, _id_product, _count, _cost, _product);
+
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            ID = command.ExecuteNonQuery();
+                        }
+
+                        connection.Close();
+
+                        result = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Dialog.ErrorMessage(null, "Ошибка создания позиции накладной", ex.Message);
+                }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID накладной");
+            }
+
+            return result;
+        }
 
         #region Статические методы
 
