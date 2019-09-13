@@ -69,6 +69,8 @@ namespace GreenLeaf.ViewModel
                         _product = null;
 
                     OnPropertyChanged("Product");
+
+                    Calc();
                 }
             }
         }
@@ -95,6 +97,8 @@ namespace GreenLeaf.ViewModel
                 {
                     _count = value;
                     OnPropertyChanged();
+
+                    Calc();
                 }
             }
         }
@@ -106,14 +110,6 @@ namespace GreenLeaf.ViewModel
         public double Cost
         {
             get { return _cost; }
-            set
-            {
-                if (_cost != value)
-                {
-                    _cost = value;
-                    OnPropertyChanged();
-                }
-            }
         }
 
         private double _coupon = 0;
@@ -123,14 +119,6 @@ namespace GreenLeaf.ViewModel
         public double Coupon
         {
             get { return _coupon; }
-            set
-            {
-                if (_coupon != value)
-                {
-                    _coupon = value;
-                    OnPropertyChanged();
-                }
-            }
         }
 
         // Изменение свойств объекта
@@ -140,6 +128,23 @@ namespace GreenLeaf.ViewModel
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
+
+        /// <summary>
+        /// Вычисление стоимости и купона
+        /// </summary>
+        private void Calc()
+        {
+            if(Product != null)
+            {
+                _cost = Product.Cost * Count;
+                OnPropertyChanged("Cost");
+
+                _coupon = Product.Coupon * Count;
+                OnPropertyChanged("Coupon");
+            }
+        }
+
+        #region Получение данных
 
         /// <summary>
         /// Получить данные по ID
@@ -187,23 +192,23 @@ namespace GreenLeaf.ViewModel
                                 tempS = reader["COUNT"].ToString();
                                 double tempD = 0;
                                 if (double.TryParse(tempS, out tempD))
-                                    Count = tempD;
+                                    Сount = tempD;
                                 else
                                     Count = 0;
 
                                 tempS = reader["COST"].ToString();
                                 tempD = 0;
                                 if (double.TryParse(tempS, out tempD))
-                                    Cost = tempD;
+                                    _сost = tempD;
                                 else
-                                    Cost = 0;
+                                    _сost = 0;
 
                                 tempS = reader["COUPON"].ToString();
                                 tempD = 0;
                                 if (double.TryParse(tempS, out tempD))
-                                    Coupon= tempD;
+                                    _сoupon= tempD;
                                 else
-                                    Coupon = 0;
+                                    _сoupon = 0;
 
                                 getData = true;
                             }
@@ -236,6 +241,91 @@ namespace GreenLeaf.ViewModel
 
             return GetDataByID(isPurchase);
         }
+
+        #endregion
+
+        
+        public bool CreateItem(bool isPurchase)
+        {
+            bool result = false;
+
+            if(_id_invoice != 0)
+            {
+                try
+                {
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    {
+                        connection.Open();
+
+                        string table = (isPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
+
+                        string sql = String.Format(@"INSERT INTO {0} (`ID_INVOICE`, `ID_PRODUCT`, `COUNT`, `COST`, `COUPON`) VALUES ('{1}', '{2}', '{3}', '{4}', '{5}')", table, _id_invoice, _id_product, _count, _cost, _product);
+
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            ID = command.ExecuteNonQuery();
+                        }
+
+                        connection.Close();
+
+                        result = true;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Dialog.ErrorMessage(null, "Ошибка создания позиции накладной", ex.Message);
+                }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID накладной");
+            }
+
+            return result;
+        }
+
+        public bool DeleteItem(bool isPurchase)
+        {
+            bool result = false;
+
+            if(_id != 0)
+            {
+                try
+                {
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    {
+                        connection.Open();
+
+                        string table = (isPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
+
+                        string sql = String.Format(@"DELETE FROM {} WHERE ID = {}", table, _id);
+
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+
+                        connection.Close();
+
+                        result = true;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Dialog.ErrorMessage(null, "Ошибка удаления позиции накладной", ex.Message);
+                }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID позиции");
+            }
+
+            return result;
+        }
+
+
+
+        #region Статические методы
 
         /// <summary>
         /// Возвращает список элементов накладной
@@ -314,5 +404,7 @@ namespace GreenLeaf.ViewModel
 
             return Items;
         }
+
+        #endregion
     }
 }

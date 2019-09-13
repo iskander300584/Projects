@@ -338,6 +338,8 @@ namespace GreenLeaf.ViewModel
 
         #endregion
 
+
+
         #region Статические методы
 
         /// <summary>
