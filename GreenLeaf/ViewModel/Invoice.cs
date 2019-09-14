@@ -7,6 +7,9 @@ using GreenLeaf.Classes;
 
 namespace GreenLeaf.ViewModel
 {
+    /// <summary>
+    /// Накладная
+    /// </summary>
     public class Invoice : INotifyPropertyChanged
     {
         private int _id = 0;
@@ -192,6 +195,8 @@ namespace GreenLeaf.ViewModel
                 {
                     _items = value;
                     OnPropertyChanged();
+
+                    Calc();
                 }
             }
         }
@@ -202,6 +207,24 @@ namespace GreenLeaf.ViewModel
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+        /// <summary>
+        /// Вычисление стоимости и купона
+        /// </summary>
+        public void Calc()
+        {
+            double cost = 0;
+            double coupon = 0;
+
+            foreach(InvoiceItem item in Items)
+            {
+                cost += item.Cost;
+                coupon += item.Coupon;
+            }
+
+            Cost = cost;
+            Coupon = coupon;
         }
 
         #region Получение данных
@@ -329,8 +352,9 @@ namespace GreenLeaf.ViewModel
 
         /// <summary>
         /// Получение списка элементов
+        /// <paramref name="calc">вычислять стоимость и купон</paramref>
         /// </summary>
-        public void GetItems()
+        public void GetItems(bool calc = true)
         {
             if (_id != 0)
                 Items = InvoiceItem.GetInvoiceItemList(_id, _is_purchase);
