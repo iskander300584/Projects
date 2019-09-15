@@ -254,67 +254,68 @@ namespace GreenLeaf.ViewModel
                         string table = (isPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
                         string sql = "SELECT * FROM " + table + " WHERE ID=" + ID.ToString();
-                        MySqlCommand command = new MySqlCommand(sql, connection);
-
-                        using (MySqlDataReader reader = command.ExecuteReader())
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
-                            while (reader.Read())
+                            using (MySqlDataReader reader = command.ExecuteReader())
                             {
-                                string tempS = reader["NUMBER"].ToString();
-                                int tempI = 0;
-                                if (int.TryParse(tempS, out tempI))
-                                    Number = tempI;
-                                else
-                                    Number = 0;
+                                while (reader.Read())
+                                {
+                                    string tempS = reader["NUMBER"].ToString();
+                                    int tempI = 0;
+                                    if (int.TryParse(tempS, out tempI))
+                                        Number = tempI;
+                                    else
+                                        Number = 0;
 
-                                tempS = reader["ID_ACCOUNT"].ToString();
-                                tempI = 0;
-                                if (int.TryParse(tempS, out tempI))
-                                    ID_Account = tempI;
-                                else
-                                    ID_Account = 0;
+                                    tempS = reader["ID_ACCOUNT"].ToString();
+                                    tempI = 0;
+                                    if (int.TryParse(tempS, out tempI))
+                                        ID_Account = tempI;
+                                    else
+                                        ID_Account = 0;
 
-                                tempS = reader["ID_COUNTERPARTY"].ToString();
-                                tempI = 0;
-                                if (int.TryParse(tempS, out tempI))
-                                    ID_Counterparty = tempI;
-                                else
-                                    ID_Counterparty = 0;
+                                    tempS = reader["ID_COUNTERPARTY"].ToString();
+                                    tempI = 0;
+                                    if (int.TryParse(tempS, out tempI))
+                                        ID_Counterparty = tempI;
+                                    else
+                                        ID_Counterparty = 0;
 
-                                tempS = reader["DATE"].ToString();
-                                DateTime tempDT = DateTime.MinValue;
-                                if (DateTime.TryParse(tempS, out tempDT))
-                                    Date = tempDT;
-                                else
-                                    Date = DateTime.MinValue;
+                                    tempS = reader["DATE"].ToString();
+                                    DateTime tempDT = DateTime.MinValue;
+                                    if (DateTime.TryParse(tempS, out tempDT))
+                                        Date = tempDT;
+                                    else
+                                        Date = DateTime.MinValue;
 
-                                tempS = reader["COST"].ToString();
-                                double tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    Cost = tempD;
-                                else
-                                    Cost = 0;
+                                    tempS = reader["COST"].ToString();
+                                    double tempD = 0;
+                                    if (double.TryParse(tempS, out tempD))
+                                        Cost = tempD;
+                                    else
+                                        Cost = 0;
 
-                                tempS = reader["COUPON"].ToString();
-                                tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    Coupon = tempD;
-                                else
-                                    Coupon = 0;
+                                    tempS = reader["COUPON"].ToString();
+                                    tempD = 0;
+                                    if (double.TryParse(tempS, out tempD))
+                                        Coupon = tempD;
+                                    else
+                                        Coupon = 0;
 
-                                tempS = reader["IS_ISSUED"].ToString();
-                                bool tempB = false;
-                                if (bool.TryParse(tempS, out tempB))
-                                    IsIssued = tempB;
-                                else
-                                    IsIssued = false;
+                                    tempS = reader["IS_ISSUED"].ToString();
+                                    bool tempB = false;
+                                    if (bool.TryParse(tempS, out tempB))
+                                        IsIssued = tempB;
+                                    else
+                                        IsIssued = false;
 
-                                tempS = reader["IS_LOCKED"].ToString();
-                                tempB = false;
-                                if (bool.TryParse(tempS, out tempB))
-                                    IsLocked = tempB;
-                                else
-                                    IsLocked = false;
+                                    tempS = reader["IS_LOCKED"].ToString();
+                                    tempB = false;
+                                    if (bool.TryParse(tempS, out tempB))
+                                        IsLocked = tempB;
+                                    else
+                                        IsLocked = false;
+                                }
                             }
                         }
 
@@ -331,6 +332,10 @@ namespace GreenLeaf.ViewModel
                 {
                     Dialog.ErrorMessage(null, "Ошибка получения данных", ex.Message);
                 }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID накладной");
             }
 
             return result;
@@ -362,7 +367,254 @@ namespace GreenLeaf.ViewModel
 
         #endregion
 
+        /// <summary>
+        /// Создание накладной
+        /// </summary>
+        /// <returns>возвращает TRUE, если накладная создана успешно</returns>
+        public bool CreateInvoice()
+        {
+            bool result = false;
 
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                {
+                    connection.Open();
+
+                    string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
+
+                    string sql = String.Format("INSERT INTO {0} (`ID_ACCOUNT`, `ID_COUNTERPARTY`, `COST`, `COUPON`) VALUES ('{1}', '{2}', '{3}', '{4}')", table, _id_account, _id_counterparty, _cost, _coupon);
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        ID = command.ExecuteNonQuery();
+                    }
+
+                    connection.Close();
+                }
+
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка создания накладной", ex.Message);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Редактировать накладную
+        /// </summary>
+        /// <returns>возвращает TRUE, если накладная отредактирована успешно</returns>
+        public bool EditInvoice()
+        {
+            bool result = false;
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                {
+                    connection.Open();
+
+                    string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
+
+                    string sql = String.Format("UPDATE {0} SET `ID_ACCOUNT` = '{1}', `ID_COUNTERPARTY` = '{2}', `COST` = '{3}', `COUPON` = '{4}' WHERE ID = {5}", table, _id_account, _id_counterparty, _cost, _coupon, _id);
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    connection.Close();
+                }
+
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка редактирования накладной", ex.Message);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Удалить накладную
+        /// </summary>
+        /// <returns>возвращает TRUE, если накладная удалена успешно</returns>
+        public bool DeleteInvoice()
+        {
+            bool result = false;
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                {
+                    connection.Open();
+
+                    string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
+
+                    string sql = String.Format("DELETE FROM {0} WHERE ID = {1}", table, _id);
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    connection.Close();
+                }
+
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка удаления накладной", ex.Message);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Заблокировать накладную
+        /// </summary>
+        /// <returns>возвращает TRUE, если накладная заблокирована успешно</returns>
+        public bool LockInvoice()
+        {
+            bool result = false;
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                {
+                    connection.Open();
+
+                    IsLocked = true;
+
+                    string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
+
+                    // Блокировка накладной
+                    string sql = String.Format("UPDATE {0} SET `IS_LOCKED` = '{1}'  WHERE ID = {2}", table, (IsLocked) ? 1 : 0, _id);
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    
+                    // Блокировка товаров
+                    foreach(InvoiceItem item in Items)
+                    {
+                        sql = String.Format("SELECT `LOCKED_COUNT` FROM PRODUCT WHERE ID = {0}", item.ID_Product);
+
+                        double lockCount = 0;
+
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            using (MySqlDataReader reader = command.ExecuteReader())
+                            {
+                                while(reader.Read())
+                                {
+                                    string tempS = reader["LOCKED_COUNT"].ToString();
+                                    double tempD = 0;
+                                    if (double.TryParse(tempS, out tempD))
+                                        lockCount = tempD;
+                                    else
+                                        lockCount = 0;
+                                }
+                            }
+                        }
+
+                        lockCount += item.Count;
+
+                        sql = String.Format("UPDATE PRODUCT SET `LOCKED_COUNT` = '{0}' WHERE ID = {1}", lockCount, item.ID_Product);
+
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                    }
+
+                    connection.Close();
+                }
+
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка блокировки накладной", ex.Message);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Разблокировать накладную
+        /// </summary>
+        /// <returns>возвращает TRUE, если накладная разблокирована успешно</returns>
+        public bool UnLockInvoice()
+        {
+            bool result = false;
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                {
+                    connection.Open();
+
+                    IsLocked = false;
+
+                    string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
+
+                    // Разблокировка накладной
+                    string sql = String.Format("UPDATE {0} SET `IS_LOCKED` = '{1}'  WHERE ID = {2}", table, (IsLocked) ? 1 : 0, _id);
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    // Разблокировка товаров
+                    foreach (InvoiceItem item in Items)
+                    {
+                        sql = String.Format("SELECT `LOCKED_COUNT` FROM PRODUCT WHERE ID = {0}", item.ID_Product);
+
+                        double lockCount = 0;
+
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            using (MySqlDataReader reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    string tempS = reader["LOCKED_COUNT"].ToString();
+                                    double tempD = 0;
+                                    if (double.TryParse(tempS, out tempD))
+                                        lockCount = tempD;
+                                    else
+                                        lockCount = 0;
+                                }
+                            }
+                        }
+
+                        lockCount -= item.Count;
+                        if (lockCount < 0)
+                            lockCount = 0;
+
+                        sql = String.Format("UPDATE PRODUCT SET `LOCKED_COUNT` = '{0}' WHERE ID = {1}", lockCount, item.ID_Product);
+
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                    }
+
+                    connection.Close();
+                }
+
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка разблокировки накладной", ex.Message);
+            }
+
+            return result;
+        }
 
         #region Статические методы
 
@@ -584,6 +836,21 @@ namespace GreenLeaf.ViewModel
         public static List<Invoice> GetSalesInvoices(DateTime from, DateTime to, int? idAccount, int idCounterparty)
         {
             return GetInvoices(false, from, to, idAccount, idCounterparty);
+        }
+
+        /// <summary>
+        /// Создание накладной
+        /// </summary>
+        /// <param name="isPurchase">приходная накладная</param>
+        public static Invoice CreateInvoice(bool isPurchase)
+        {
+            Invoice invoice = new Invoice();
+            invoice.IsPurchase = isPurchase;
+
+            if (invoice.CreateInvoice())
+                return invoice;
+            else
+                return null;
         }
 
         #endregion
