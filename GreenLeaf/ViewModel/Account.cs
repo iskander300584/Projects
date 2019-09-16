@@ -164,7 +164,7 @@ namespace GreenLeaf.ViewModel
                     {
                         connection.Open();
 
-                        string sql = "SELECT * FROM ACCOUNT WHERE ID=" + ID.ToString();
+                        string sql = "SELECT * FROM ACCOUNT WHERE ID = " + ID.ToString();
                         MySqlCommand command = new MySqlCommand(sql, connection);
 
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -365,8 +365,12 @@ namespace GreenLeaf.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Dialog.ErrorMessage(null, "Ошибка получения данных", ex.Message);
+                    Dialog.ErrorMessage(null, "Ошибка получения данных о пользователе", ex.Message);
                 }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID пользователя");
             }
 
             return result;
@@ -404,7 +408,7 @@ namespace GreenLeaf.ViewModel
                     {
                         connection.Open();
 
-                        string sql = "SELECT * FROM ACCOUNT WHERE ID=" + ID.ToString();
+                        string sql = "SELECT * FROM ACCOUNT WHERE ID = " + ID.ToString();
                         MySqlCommand command = new MySqlCommand(sql, connection);
 
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -600,8 +604,12 @@ namespace GreenLeaf.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Dialog.ErrorMessage(null, "Ошибка получения данных", ex.Message);
+                    Dialog.ErrorMessage(null, "Ошибка получения данных о пользователе", ex.Message);
                 }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID пользователя");
             }
 
             return result;
@@ -638,7 +646,7 @@ namespace GreenLeaf.ViewModel
                     {
                         connection.Open();
 
-                        string sql = "SELECT `ADRESS`, `PHONE` FROM ACCOUNT WHERE ID=" + ID.ToString();
+                        string sql = "SELECT `ADRESS`, `PHONE` FROM ACCOUNT WHERE ID = " + ID.ToString();
                         MySqlCommand command = new MySqlCommand(sql, connection);
 
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -664,8 +672,12 @@ namespace GreenLeaf.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Dialog.ErrorMessage(null, "Ошибка получения данных", ex.Message);
+                    Dialog.ErrorMessage(null, "Ошибка получения защищаемых данных о пользователе", ex.Message);
                 }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID пользователя");
             }
 
             return result;
@@ -679,52 +691,49 @@ namespace GreenLeaf.ViewModel
         {
             bool result = false;
 
-            if (_id != 0)
+            try
             {
-                try
+                bool getData = false;
+
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                 {
-                    bool getData = false;
+                    connection.Open();
 
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    string sql = "SELECT `ID`, `PASSWORD`, `IS_ANNULATED` FROM ACCOUNT WHERE LOGIN = \'" + Login.ToString() + "\'";
+                    MySqlCommand command = new MySqlCommand(sql, connection);
+
+                    using (MySqlDataReader reader = command.ExecuteReader())
                     {
-                        connection.Open();
-
-                        string sql = "SELECT `ID`, `PASSWORD`, `IS_ANNULATED` FROM ACCOUNT WHERE LOGIN=`" + Login.ToString() + "`";
-                        MySqlCommand command = new MySqlCommand(sql, connection);
-
-                        using (MySqlDataReader reader = command.ExecuteReader())
+                        while (reader.Read())
                         {
-                            while (reader.Read())
-                            {
-                                string tempS = reader["ID"].ToString();
-                                int tempI = 0;
-                                if (int.TryParse(tempS, out tempI))
-                                    ID = tempI;
-                                else
-                                    ID = 0;
+                            string tempS = reader["ID"].ToString();
+                            int tempI = 0;
+                            if (int.TryParse(tempS, out tempI))
+                                ID = tempI;
+                            else
+                                ID = 0;
 
-                                Password = reader["PASSWORD"].ToString();                                
+                            Password = reader["PASSWORD"].ToString();
 
-                                tempS = reader["IS_ANNULATED"].ToString();
-                                bool tempB = false;
-                                if (bool.TryParse(tempS, out tempB))
-                                    IsAnnulated = tempB;
-                                else
-                                    IsAnnulated = false;
+                            tempS = reader["IS_ANNULATED"].ToString();
+                            bool tempB = false;
+                            if (bool.TryParse(tempS, out tempB))
+                                IsAnnulated = tempB;
+                            else
+                                IsAnnulated = false;
 
-                                getData = true;
-                            }
+                            getData = true;
                         }
-
-                        connection.Close();
                     }
 
-                    result = getData;
+                    connection.Close();
                 }
-                catch (Exception ex)
-                {
-                    Dialog.ErrorMessage(null, "Ошибка получения данных", ex.Message);
-                }
+
+                result = getData;
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка получения данных по логину пользователя", ex.Message);
             }
 
             return result;
@@ -752,34 +761,31 @@ namespace GreenLeaf.ViewModel
         {
             bool result = false;
 
-            if (_id != 0)
+            try
             {
-                try
+                bool getData = false;
+
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                 {
-                    bool getData = false;
+                    connection.Open();
 
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
-                    {
-                        connection.Open();
+                    string newPass = Criptex.Cript("12345");
 
-                        string newPass = Criptex.Cript("12345");
+                    string sql = String.Format(@"INSERT INTO ACCOUNT (`LOGIN`, `PASSWORD`, `SURNAME`, `NAME`, `PATRONYMIC`, `ADRESS`, `PHONE`, `SEX`, `PURCHASE_INVOICE`, `SALES_INVOICE`, `REPORTS`, `REPORT_PURCHASE_INVOICE`, `REPORT_SALES_INVOICE`, `REPORT_INCOME_EXPENSE`, `COUNTERPARTY`, `COUNTERPARTY_PROVIDER`, `COUNTERPARTY_PROVIDER_ADD`, `COUNTERPARTY_PROVIDER_EDIT`, `COUNTERPARTY_PROVIDER_DELETE`, `COUNTERPARTY_CUSTOMER`, `COUNTERPARTY_CUSTOMER_ADD`, `COUNTERPARTY_CUSTOMER_EDIT`, `COUNTERPARTY_CUSTOMER_DELETE`, `WAREHOUSE`, `WAREHOUSE_ADD_PRODUCT`, `WAREHOUSE_EDIT_PRODUCT`, `WAREHOUSE_ANNULATE_PRODUCT`, `WAREHOUSE_EDIT_COUNT`, `ADMIN_PANEL`, `ADMIN_PANEL_ADD_ACCOUNT`, `ADMIN_PANEL_EDIT_ACCOUNT`, `ADMIN_PANEL_DELETE_ACCOUNT`, `ADMIN_PANEL_SET_NUMERATOR`, `ADMIN_PANEL_JOURNAL`, `IS_ANNULATED`)  VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}', '{22}', '{23}', '{24}', '{25}', '{26}', '{27}', '{28}', '{29}', '{30}', '{31}', '{32}', '{33}', '{34}')", Login, newPass, PersonalData.Surname, PersonalData.Name, PersonalData.Patronymic, PersonalData.Adress, PersonalData.Phone, ToInt(PersonalData.Sex), ToInt(InvoiceData.PurchaseInvoice), ToInt(InvoiceData.SalesInvoice), ToInt(ReportsData.Reports), ToInt(ReportsData.ReportPurchaseInvoice), ToInt(ReportsData.ReportSalesInvoice), ToInt(ReportsData.ReportIncomeExpense), ToInt(CounterpartyData.Counterparty), ToInt(CounterpartyData.CounterpartyProvider), ToInt(CounterpartyData.CounterpartyProviderAdd), ToInt(CounterpartyData.CounterpartyProviderEdit), ToInt(CounterpartyData.CounterpartyProviderDelete), ToInt(CounterpartyData.CounterpartyCustomer), ToInt(CounterpartyData.CounterpartyCustomerAdd), ToInt(CounterpartyData.CounterpartyCustomerEdit), ToInt(CounterpartyData.CounterpartyCustomerDelete), ToInt(WarehouseData.Warehouse), ToInt(WarehouseData.WarehouseAddProduct), ToInt(WarehouseData.WarehouseEditProduct), ToInt(WarehouseData.WarehouseAnnulateProduct), ToInt(WarehouseData.WarehouseEditCount), ToInt(AdminPanelData.AdminPanel), ToInt(AdminPanelData.AdminPanelAddAccount), ToInt(AdminPanelData.AdminPanelEditAccount), ToInt(AdminPanelData.AdminPanelDeleteAccount), ToInt(AdminPanelData.AdminPanelSetNumerator), ToInt(AdminPanelData.AdminPanelJournal), 0);
+                    MySqlCommand command = new MySqlCommand(sql, connection);
 
-                        string sql = String.Format(@"INSERT INTO ACCOUNT (`LOGIN`, `PASSWORD`, `SURNAME`, `NAME`, `PATRONYMIC`, `ADRESS`, `PHONE`, `SEX`, `PURCHASE_INVOICE`, `SALES_INVOICE`, `REPORTS`, `REPORT_PURCHASE_INVOICE`, `REPORT_SALES_INVOICE`, `REPORT_INCOME_EXPENSE`, `COUNTERPARTY`, `COUNTERPARTY_PROVIDER`, `COUNTERPARTY_PROVIDER_ADD`, `COUNTERPARTY_PROVIDER_EDIT`, `COUNTERPARTY_PROVIDER_DELETE`, `COUNTERPARTY_CUSTOMER`, `COUNTERPARTY_CUSTOMER_ADD`, `COUNTERPARTY_CUSTOMER_EDIT`, `COUNTERPARTY_CUSTOMER_DELETE`, `WAREHOUSE`, `WAREHOUSE_ADD_PRODUCT`, `WAREHOUSE_EDIT_PRODUCT`, `WAREHOUSE_ANNULATE_PRODUCT`, `WAREHOUSE_EDIT_COUNT`, `ADMIN_PANEL`, `ADMIN_PANEL_ADD_ACCOUNT`, `ADMIN_PANEL_EDIT_ACCOUNT`, `ADMIN_PANEL_DELETE_ACCOUNT`, `ADMIN_PANEL_SET_NUMERATOR`, `ADMIN_PANEL_JOURNAL`, `IS_ANNULATED`)  VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}', '{22}', '{23}', '{24}', '{25}', '{26}', '{27}', '{28}', '{29}', '{30}', '{31}', '{32}', '{33}', '{34}')", Login, newPass, PersonalData.Surname, PersonalData.Name, PersonalData.Patronymic, PersonalData.Adress, PersonalData.Phone, ToInt(PersonalData.Sex), ToInt(InvoiceData.PurchaseInvoice), ToInt(InvoiceData.SalesInvoice), ToInt(ReportsData.Reports), ToInt(ReportsData.ReportPurchaseInvoice), ToInt(ReportsData.ReportSalesInvoice), ToInt(ReportsData.ReportIncomeExpense), ToInt(CounterpartyData.Counterparty), ToInt(CounterpartyData.CounterpartyProvider), ToInt(CounterpartyData.CounterpartyProviderAdd), ToInt(CounterpartyData.CounterpartyProviderEdit), ToInt(CounterpartyData.CounterpartyProviderDelete), ToInt(CounterpartyData.CounterpartyCustomer), ToInt(CounterpartyData.CounterpartyCustomerAdd), ToInt(CounterpartyData.CounterpartyCustomerEdit), ToInt(CounterpartyData.CounterpartyCustomerDelete), ToInt(WarehouseData.Warehouse), ToInt(WarehouseData.WarehouseAddProduct), ToInt(WarehouseData.WarehouseEditProduct), ToInt(WarehouseData.WarehouseAnnulateProduct), ToInt(WarehouseData.WarehouseEditCount), ToInt(AdminPanelData.AdminPanel), ToInt(AdminPanelData.AdminPanelAddAccount), ToInt(AdminPanelData.AdminPanelEditAccount), ToInt(AdminPanelData.AdminPanelDeleteAccount), ToInt(AdminPanelData.AdminPanelSetNumerator), ToInt(AdminPanelData.AdminPanelJournal), 0);
-                        MySqlCommand command = new MySqlCommand(sql, connection);
+                    ID = command.ExecuteNonQuery();
 
-                        command.ExecuteNonQuery();
-
-                        connection.Close();
-                    }
-
-                    getData = GetBaseDataByLogin();
-
-                    result = getData;
+                    connection.Close();
                 }
-                catch (Exception ex)
-                {
-                    Dialog.ErrorMessage(null, "Ошибка обработки данных", ex.Message);
-                }
+
+                getData = GetBaseDataByLogin();
+
+                result = getData;
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка обработки данных", ex.Message);
             }
 
             return result;
@@ -819,8 +825,12 @@ namespace GreenLeaf.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Dialog.ErrorMessage(null, "Ошибка обработки данных", ex.Message);
+                    Dialog.ErrorMessage(null, "Ошибка редактирования данных пользователя", ex.Message);
                 }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID пользователя");
             }
 
             return result;
@@ -863,8 +873,12 @@ namespace GreenLeaf.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Dialog.ErrorMessage(null, "Ошибка обработки данных", ex.Message);
+                    Dialog.ErrorMessage(null, "Ошибка редактирования пароля пользователя", ex.Message);
                 }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID пользователя");
             }
 
             return result;
@@ -904,8 +918,12 @@ namespace GreenLeaf.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Dialog.ErrorMessage(null, "Ошибка обработки данных", ex.Message);
+                    Dialog.ErrorMessage(null, "Ошибка аннулирования пользователя", ex.Message);
                 }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID пользователя");
             }
 
             return result;
@@ -938,7 +956,7 @@ namespace GreenLeaf.ViewModel
                 {
                     connection.Open();
 
-                    string sql = "SELECT `ID`, `LOGIN`, `SURNAME`, `NAME`, `PATRONYMIC` FROM ACCOUNT WHERE IS_ANNULATED = 0";
+                    string sql = @"SELECT `ID`, `LOGIN`, `SURNAME`, `NAME`, `PATRONYMIC` FROM ACCOUNT WHERE IS_ANNULATED = '0'";
                     MySqlCommand command = new MySqlCommand(sql, connection);
 
                     using (MySqlDataReader reader = command.ExecuteReader())
@@ -968,7 +986,7 @@ namespace GreenLeaf.ViewModel
             }
             catch (Exception ex)
             {
-                Dialog.ErrorMessage(null, "Ошибка получения данных", ex.Message);
+                Dialog.ErrorMessage(null, "Ошибка получения данных о пользователе", ex.Message);
             }
 
             return result;

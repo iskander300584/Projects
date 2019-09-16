@@ -260,9 +260,9 @@ namespace GreenLeaf.Windows
                             tempS = reader["IS_ANNULED"].ToString();
                             bool tempB = false;
                             if (bool.TryParse(tempS, out tempB))
-                                item.IsAnnuled = tempB;
+                                item.IsAnnulated = tempB;
                             else
-                                item.IsAnnuled = false;
+                                item.IsAnnulated = false;
 
                             Warehouse.Add(item);
                         }
@@ -408,7 +408,7 @@ namespace GreenLeaf.Windows
             {
                 Product product = (Product)dataGrid.SelectedItem;
 
-                if (!product.IsAnnuled && Dialog.QuestionMessage(this, product.ProductCode + " будет аннулирован. Продолжить?") == MessageBoxResult.Yes)
+                if (!product.IsAnnulated && Dialog.QuestionMessage(this, product.ProductCode + " будет аннулирован. Продолжить?") == MessageBoxResult.Yes)
                 {
                     using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
@@ -462,7 +462,7 @@ namespace GreenLeaf.Windows
             {
                 Product product = (Product)dataGrid.SelectedItem;
 
-                if (product.IsAnnuled && Dialog.QuestionMessage(this, "Для " + product.ProductCode + " будет отменено аннулирование. Продолжить?") == MessageBoxResult.Yes)
+                if (product.IsAnnulated && Dialog.QuestionMessage(this, "Для " + product.ProductCode + " будет отменено аннулирование. Продолжить?") == MessageBoxResult.Yes)
                 {
                     using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {

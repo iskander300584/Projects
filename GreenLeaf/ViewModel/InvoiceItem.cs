@@ -184,7 +184,7 @@ namespace GreenLeaf.ViewModel
 
                         string table = (isPurchase) ? "PURCHASE_INVOICE_UNIT" : "SALES_INVOICE_UNIT";
 
-                        string sql = "SELECT * FROM " + table + " WHERE ID=" + ID.ToString();
+                        string sql = "SELECT * FROM " + table + " WHERE ID = " + ID.ToString();
                         MySqlCommand command = new MySqlCommand(sql, connection);
 
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -237,8 +237,12 @@ namespace GreenLeaf.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Dialog.ErrorMessage(null, "Ошибка получения данных", ex.Message);
+                    Dialog.ErrorMessage(null, "Ошибка получения данных элемента накладной", ex.Message);
                 }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID элемента накладной");
             }
 
             return result;
@@ -259,6 +263,8 @@ namespace GreenLeaf.ViewModel
         }
 
         #endregion
+
+        #region Редактирование данных
 
         /// <summary>
         /// Создание элемента накладной
@@ -337,12 +343,12 @@ namespace GreenLeaf.ViewModel
                 }
                 catch(Exception ex)
                 {
-                    Dialog.ErrorMessage(null, "Ошибка удаления позиции накладной", ex.Message);
+                    Dialog.ErrorMessage(null, "Ошибка удаления элемента накладной", ex.Message);
                 }
             }
             else
             {
-                Dialog.ErrorMessage(null, "Не указан ID позиции");
+                Dialog.ErrorMessage(null, "Не указан ID элемента накладной");
             }
 
             return result;
@@ -357,7 +363,7 @@ namespace GreenLeaf.ViewModel
         {
             bool result = false;
 
-            if (_id_invoice != 0)
+            if (_id != 0)
             {
                 try
                 {
@@ -381,12 +387,12 @@ namespace GreenLeaf.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Dialog.ErrorMessage(null, "Ошибка редактирования позиции накладной", ex.Message);
+                    Dialog.ErrorMessage(null, "Ошибка редактирования элемента накладной", ex.Message);
                 }
             }
             else
             {
-                Dialog.ErrorMessage(null, "Не указан ID накладной");
+                Dialog.ErrorMessage(null, "Не указан ID элемента накладной");
             }
 
             return result;
@@ -406,6 +412,8 @@ namespace GreenLeaf.ViewModel
 
             return EditItem(isPurchase);
         }
+
+        #endregion
 
         #region Статические методы
 
@@ -434,7 +442,7 @@ namespace GreenLeaf.ViewModel
             catch (Exception ex)
             {
                 item = null;
-                Dialog.ErrorMessage(null, "Ошибка создания позиции накладной", ex.Message);
+                Dialog.ErrorMessage(null, "Ошибка создания элемента накладной", ex.Message);
             }
 
             return item;
@@ -457,7 +465,7 @@ namespace GreenLeaf.ViewModel
 
                     string table = (isPurchase) ? "PURCHASE_INVOICE_UNIT" : "SALES_INVOICE_UNIT";
 
-                    string sql = "SELECT * FROM " + table + " WHERE ID_INVOICE=" + id_invoice.ToString();
+                    string sql = "SELECT * FROM " + table + " WHERE ID_INVOICE = " + id_invoice.ToString();
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -512,7 +520,7 @@ namespace GreenLeaf.ViewModel
             }
             catch(Exception ex)
             {
-                Dialog.ErrorMessage(null, "Ошибка получения данных", ex.Message);
+                Dialog.ErrorMessage(null, "Ошибка получения списка элементов накладной", ex.Message);
             }
 
             return Items;

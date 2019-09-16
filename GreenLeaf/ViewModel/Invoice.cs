@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using MySql.Data.MySqlClient;
 using GreenLeaf.Classes;
+using System.Linq;
 
 namespace GreenLeaf.ViewModel
 {
@@ -227,6 +228,59 @@ namespace GreenLeaf.ViewModel
             Coupon = coupon;
         }
 
+        /// <summary>
+        /// Получить список товаров, доступных для добавления
+        /// </summary>
+        public List<Product> GetPossibleProducts()
+        {
+            List<Product> products = Product.GetActualProductList();
+
+            for (int i = 0; i < products.Count;)
+            {
+                if (Items.Any(item => item.ID == products[i].ID))
+                    products.Remove(products[i]);
+                else
+                    i++;
+            }
+
+            return products;
+        }
+
+        /// <summary>
+        /// Создание накладной
+        /// </summary>
+        /// <returns>возвращает TRUE, если накладная создана успешно</returns>
+        public bool CreateInvoice()
+        {
+            bool result = false;
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                {
+                    connection.Open();
+
+                    string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
+
+                    string sql = String.Format(@"INSERT INTO {0} (`ID_ACCOUNT`, `ID_COUNTERPARTY`, `COST`, `COUPON`) VALUES ('{1}', '{2}', '{3}', '{4}')", table, _id_account, _id_counterparty, _cost, _coupon);
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        ID = command.ExecuteNonQuery();
+                    }
+
+                    connection.Close();
+                }
+
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка создания накладной", ex.Message);
+            }
+
+            return result;
+        }
+
         #region Получение данных
 
         /// <summary>
@@ -253,7 +307,7 @@ namespace GreenLeaf.ViewModel
 
                         string table = (isPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
-                        string sql = "SELECT * FROM " + table + " WHERE ID=" + ID.ToString();
+                        string sql = "SELECT * FROM " + table + " WHERE ID = " + ID.ToString();
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
                             using (MySqlDataReader reader = command.ExecuteReader())
@@ -330,7 +384,7 @@ namespace GreenLeaf.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Dialog.ErrorMessage(null, "Ошибка получения данных", ex.Message);
+                    Dialog.ErrorMessage(null, "Ошибка получения данных накладной", ex.Message);
                 }
             }
             else
@@ -367,40 +421,7 @@ namespace GreenLeaf.ViewModel
 
         #endregion
 
-        /// <summary>
-        /// Создание накладной
-        /// </summary>
-        /// <returns>возвращает TRUE, если накладная создана успешно</returns>
-        public bool CreateInvoice()
-        {
-            bool result = false;
-
-            try
-            {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
-                {
-                    connection.Open();
-
-                    string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
-
-                    string sql = String.Format("INSERT INTO {0} (`ID_ACCOUNT`, `ID_COUNTERPARTY`, `COST`, `COUPON`) VALUES ('{1}', '{2}', '{3}', '{4}')", table, _id_account, _id_counterparty, _cost, _coupon);
-                    using (MySqlCommand command = new MySqlCommand(sql, connection))
-                    {
-                        ID = command.ExecuteNonQuery();
-                    }
-
-                    connection.Close();
-                }
-
-                result = true;
-            }
-            catch (Exception ex)
-            {
-                Dialog.ErrorMessage(null, "Ошибка создания накладной", ex.Message);
-            }
-
-            return result;
-        }
+        #region Редактирование данных 
 
         /// <summary>
         /// Редактировать накладную
@@ -410,28 +431,35 @@ namespace GreenLeaf.ViewModel
         {
             bool result = false;
 
-            try
+            if (_id != 0)
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                try
                 {
-                    connection.Open();
-
-                    string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
-
-                    string sql = String.Format("UPDATE {0} SET `ID_ACCOUNT` = '{1}', `ID_COUNTERPARTY` = '{2}', `COST` = '{3}', `COUPON` = '{4}' WHERE ID = {5}", table, _id_account, _id_counterparty, _cost, _coupon, _id);
-                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
-                        command.ExecuteNonQuery();
+                        connection.Open();
+
+                        string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
+
+                        string sql = String.Format(@"UPDATE {0} SET `ID_ACCOUNT` = '{1}', `ID_COUNTERPARTY` = '{2}', `COST` = '{3}', `COUPON` = '{4}' WHERE ID = {5}", table, _id_account, _id_counterparty, _cost, _coupon, _id);
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+
+                        connection.Close();
                     }
 
-                    connection.Close();
+                    result = true;
                 }
-
-                result = true;
+                catch (Exception ex)
+                {
+                    Dialog.ErrorMessage(null, "Ошибка редактирования накладной", ex.Message);
+                }
             }
-            catch (Exception ex)
+            else
             {
-                Dialog.ErrorMessage(null, "Ошибка редактирования накладной", ex.Message);
+                Dialog.ErrorMessage(null, "Не указан ID накладной");
             }
 
             return result;
@@ -445,28 +473,35 @@ namespace GreenLeaf.ViewModel
         {
             bool result = false;
 
-            try
+            if (_id != 0)
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                try
                 {
-                    connection.Open();
-
-                    string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
-
-                    string sql = String.Format("DELETE FROM {0} WHERE ID = {1}", table, _id);
-                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
-                        command.ExecuteNonQuery();
+                        connection.Open();
+
+                        string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
+
+                        string sql = String.Format(@"DELETE FROM {0} WHERE ID = {1}", table, _id);
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+
+                        connection.Close();
                     }
 
-                    connection.Close();
+                    result = true;
                 }
-
-                result = true;
+                catch (Exception ex)
+                {
+                    Dialog.ErrorMessage(null, "Ошибка удаления накладной", ex.Message);
+                }
             }
-            catch (Exception ex)
+            else
             {
-                Dialog.ErrorMessage(null, "Ошибка удаления накладной", ex.Message);
+                Dialog.ErrorMessage(null, "Не указан ID накладной");
             }
 
             return result;
@@ -480,64 +515,71 @@ namespace GreenLeaf.ViewModel
         {
             bool result = false;
 
-            try
+            if (_id != 0)
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                try
                 {
-                    connection.Open();
-
-                    IsLocked = true;
-
-                    string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
-
-                    // Блокировка накладной
-                    string sql = String.Format("UPDATE {0} SET `IS_LOCKED` = '{1}'  WHERE ID = {2}", table, (IsLocked) ? 1 : 0, _id);
-                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
-                        command.ExecuteNonQuery();
-                    }
-                    
-                    // Блокировка товаров
-                    foreach(InvoiceItem item in Items)
-                    {
-                        sql = String.Format("SELECT `LOCKED_COUNT` FROM PRODUCT WHERE ID = {0}", item.ID_Product);
+                        connection.Open();
 
-                        double lockCount = 0;
+                        IsLocked = true;
 
-                        using (MySqlCommand command = new MySqlCommand(sql, connection))
-                        {
-                            using (MySqlDataReader reader = command.ExecuteReader())
-                            {
-                                while(reader.Read())
-                                {
-                                    string tempS = reader["LOCKED_COUNT"].ToString();
-                                    double tempD = 0;
-                                    if (double.TryParse(tempS, out tempD))
-                                        lockCount = tempD;
-                                    else
-                                        lockCount = 0;
-                                }
-                            }
-                        }
+                        string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
-                        lockCount += item.Count;
-
-                        sql = String.Format("UPDATE PRODUCT SET `LOCKED_COUNT` = '{0}' WHERE ID = {1}", lockCount, item.ID_Product);
-
+                        // Блокировка накладной
+                        string sql = String.Format(@"UPDATE {0} SET `IS_LOCKED` = '{1}' WHERE ID = {2}", table, (IsLocked) ? 1 : 0, _id);
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
                             command.ExecuteNonQuery();
                         }
+
+                        // Блокировка товаров
+                        foreach (InvoiceItem item in Items)
+                        {
+                            sql = String.Format(@"SELECT `LOCKED_COUNT` FROM PRODUCT WHERE ID = {0}", item.ID_Product);
+
+                            double lockCount = 0;
+
+                            using (MySqlCommand command = new MySqlCommand(sql, connection))
+                            {
+                                using (MySqlDataReader reader = command.ExecuteReader())
+                                {
+                                    while (reader.Read())
+                                    {
+                                        string tempS = reader["LOCKED_COUNT"].ToString();
+                                        double tempD = 0;
+                                        if (double.TryParse(tempS, out tempD))
+                                            lockCount = tempD;
+                                        else
+                                            lockCount = 0;
+                                    }
+                                }
+                            }
+
+                            lockCount += item.Count;
+
+                            sql = String.Format(@"UPDATE PRODUCT SET `LOCKED_COUNT` = '{0}' WHERE ID = {1}", lockCount, item.ID_Product);
+
+                            using (MySqlCommand command = new MySqlCommand(sql, connection))
+                            {
+                                command.ExecuteNonQuery();
+                            }
+                        }
+
+                        connection.Close();
                     }
 
-                    connection.Close();
+                    result = true;
                 }
-
-                result = true;
+                catch (Exception ex)
+                {
+                    Dialog.ErrorMessage(null, "Ошибка блокировки накладной", ex.Message);
+                }
             }
-            catch (Exception ex)
+            else
             {
-                Dialog.ErrorMessage(null, "Ошибка блокировки накладной", ex.Message);
+                Dialog.ErrorMessage(null, "Не указан ID накладной");
             }
 
             return result;
@@ -551,70 +593,204 @@ namespace GreenLeaf.ViewModel
         {
             bool result = false;
 
-            try
+            if (_id != 0)
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                try
                 {
-                    connection.Open();
-
-                    IsLocked = false;
-
-                    string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
-
-                    // Разблокировка накладной
-                    string sql = String.Format("UPDATE {0} SET `IS_LOCKED` = '{1}'  WHERE ID = {2}", table, (IsLocked) ? 1 : 0, _id);
-                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
-                        command.ExecuteNonQuery();
-                    }
+                        connection.Open();
 
-                    // Разблокировка товаров
-                    foreach (InvoiceItem item in Items)
-                    {
-                        sql = String.Format("SELECT `LOCKED_COUNT` FROM PRODUCT WHERE ID = {0}", item.ID_Product);
+                        IsLocked = false;
 
-                        double lockCount = 0;
+                        string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
-                        using (MySqlCommand command = new MySqlCommand(sql, connection))
-                        {
-                            using (MySqlDataReader reader = command.ExecuteReader())
-                            {
-                                while (reader.Read())
-                                {
-                                    string tempS = reader["LOCKED_COUNT"].ToString();
-                                    double tempD = 0;
-                                    if (double.TryParse(tempS, out tempD))
-                                        lockCount = tempD;
-                                    else
-                                        lockCount = 0;
-                                }
-                            }
-                        }
-
-                        lockCount -= item.Count;
-                        if (lockCount < 0)
-                            lockCount = 0;
-
-                        sql = String.Format("UPDATE PRODUCT SET `LOCKED_COUNT` = '{0}' WHERE ID = {1}", lockCount, item.ID_Product);
-
+                        // Разблокировка накладной
+                        string sql = String.Format(@"UPDATE {0} SET `IS_LOCKED` = '{1}' WHERE ID = {2}", table, (IsLocked) ? 1 : 0, _id);
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
                             command.ExecuteNonQuery();
                         }
+
+                        // Разблокировка товаров
+                        foreach (InvoiceItem item in Items)
+                        {
+                            sql = String.Format(@"SELECT `LOCKED_COUNT` FROM PRODUCT WHERE ID = {0}", item.ID_Product);
+
+                            double lockCount = 0;
+
+                            using (MySqlCommand command = new MySqlCommand(sql, connection))
+                            {
+                                using (MySqlDataReader reader = command.ExecuteReader())
+                                {
+                                    while (reader.Read())
+                                    {
+                                        string tempS = reader["LOCKED_COUNT"].ToString();
+                                        double tempD = 0;
+                                        if (double.TryParse(tempS, out tempD))
+                                            lockCount = tempD;
+                                        else
+                                            lockCount = 0;
+                                    }
+                                }
+                            }
+
+                            lockCount -= item.Count;
+                            if (lockCount < 0)
+                                lockCount = 0;
+
+                            sql = String.Format(@"UPDATE PRODUCT SET `LOCKED_COUNT` = '{0}' WHERE ID = {1}", lockCount, item.ID_Product);
+
+                            using (MySqlCommand command = new MySqlCommand(sql, connection))
+                            {
+                                command.ExecuteNonQuery();
+                            }
+                        }
+
+                        connection.Close();
                     }
 
-                    connection.Close();
+                    result = true;
                 }
-
-                result = true;
+                catch (Exception ex)
+                {
+                    Dialog.ErrorMessage(null, "Ошибка разблокировки накладной", ex.Message);
+                }
             }
-            catch (Exception ex)
+            else
             {
-                Dialog.ErrorMessage(null, "Ошибка разблокировки накладной", ex.Message);
+                Dialog.ErrorMessage(null, "Не указан ID накладной");
             }
 
             return result;
         }
+
+        /// <summary>
+        /// Провести накладную
+        /// </summary>
+        /// <returns>возвращает TRUE, если накладная разблокирована успешно</returns>
+        public bool IssueInvoice()
+        {
+            bool result = false;
+
+            if (_id != 0)
+            {
+                result = EditInvoice();
+
+                if (result)
+                {
+                    try
+                    {
+                        using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                        {
+                            connection.Open();
+
+                            // Получение даты
+                            DateTime dt = DateTime.Today;
+                            string date = String.Format("{0}-{1}-{2}", dt.Year, dt.Month, dt.Day);
+                            Date = dt;
+
+                            // Получение номера
+                            string sql = string.Empty;
+                            string nomination = string.Empty;
+                            if (IsPurchase)
+                                nomination = "Приходная накладная";
+                            else
+                                nomination = "Расходная накладная";
+
+                            sql = String.Format(@"SELECT `VALUE` FROM NUMERATOR WHERE NOMINATION = '{0}'", nomination);
+
+                            // Получение значения нумератора
+                            using (MySqlCommand command = new MySqlCommand(sql, connection))
+                            {
+                                using (MySqlDataReader reader = command.ExecuteReader())
+                                {
+                                    while (reader.Read())
+                                    {
+                                        string tempS = reader["VALUE"].ToString();
+                                        int tempI = 0;
+                                        if (int.TryParse(tempS, out tempI))
+                                            Number = tempI + 1;
+                                        else
+                                            Number = 0;
+                                    }
+                                }
+                            }
+
+                            // Обновление значения нумератора
+                            sql = String.Format(@"UPDATE NUMERATOR SET `VALUE` = '{0}' WHERE NOMINATION = '{1}'", Number, nomination);
+                            using (MySqlCommand command = new MySqlCommand(sql, connection))
+                            {
+                                command.ExecuteNonQuery();
+                            }
+
+                            IsIssued = true;
+
+                            string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
+
+                            // Проведение накладной
+                            sql = String.Format(@"UPDATE {0} SET `IS_ISSUED` = '{1}' WHERE ID = {2}", table, (IsIssued) ? 1 : 0, _id);
+                            using (MySqlCommand command = new MySqlCommand(sql, connection))
+                            {
+                                command.ExecuteNonQuery();
+                            }
+
+                            // Добавление/уменьшение товаров
+                            foreach (InvoiceItem item in Items)
+                            {
+                                sql = String.Format(@"SELECT `COUNT` FROM PRODUCT WHERE ID = {0}", item.ID_Product);
+
+                                double count = 0;
+
+                                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                                {
+                                    using (MySqlDataReader reader = command.ExecuteReader())
+                                    {
+                                        while (reader.Read())
+                                        {
+                                            string tempS = reader["COUNT"].ToString();
+                                            double tempD = 0;
+                                            if (double.TryParse(tempS, out tempD))
+                                                count = tempD;
+                                            else
+                                                count = 0;
+                                        }
+                                    }
+                                }
+
+                                // Изменение количества товара
+                                if (IsPurchase)
+                                    count += item.Count;
+                                else
+                                    count -= item.Count;
+
+                                sql = String.Format(@"UPDATE PRODUCT SET `COUNT` = '{0}' WHERE ID = {1}", count, item.ID_Product);
+
+                                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                                {
+                                    command.ExecuteNonQuery();
+                                }
+                            }
+
+                            connection.Close();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        result = false;
+                        Dialog.ErrorMessage(null, "Ошибка проведения накладной", ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID накладной");
+            }
+
+            return result;
+        }
+
+        #endregion
 
         #region Статические методы
 
@@ -742,7 +918,7 @@ namespace GreenLeaf.ViewModel
             }
             catch (Exception ex)
             {
-                Dialog.ErrorMessage(null, "Ошибка получения данных", ex.Message);
+                Dialog.ErrorMessage(null, "Ошибка получения списка накладных", ex.Message);
             }
 
             return result;

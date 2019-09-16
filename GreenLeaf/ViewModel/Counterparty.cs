@@ -241,7 +241,7 @@ namespace GreenLeaf.ViewModel
                     {
                         connection.Open();
 
-                        string sql = "SELECT * FROM PRODUCT WHERE ID=" + ID.ToString();
+                        string sql = "SELECT * FROM PRODUCT WHERE ID = " + ID.ToString();
                         MySqlCommand command = new MySqlCommand(sql, connection);
 
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -286,8 +286,12 @@ namespace GreenLeaf.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Dialog.ErrorMessage(null, "Ошибка получения данных", ex.Message);
+                    Dialog.ErrorMessage(null, "Ошибка получения данных о контрагенте", ex.Message);
                 }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID контрагента");
             }
 
             return result;
@@ -325,7 +329,7 @@ namespace GreenLeaf.ViewModel
                     {
                         connection.Open();
 
-                        string sql = "SELECT * FROM PRODUCT WHERE ID=" + ID.ToString();
+                        string sql = "SELECT * FROM PRODUCT WHERE ID = " + ID.ToString();
                         MySqlCommand command = new MySqlCommand(sql, connection);
 
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -365,8 +369,12 @@ namespace GreenLeaf.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Dialog.ErrorMessage(null, "Ошибка получения данных", ex.Message);
+                    Dialog.ErrorMessage(null, "Ошибка получения данных о контрагенте", ex.Message);
                 }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID контрагента");
             }
 
             return result;
@@ -395,30 +403,27 @@ namespace GreenLeaf.ViewModel
         {
             bool result = false;
 
-            if (_id != 0)
+            try
             {
-                try
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
-                    {
-                        connection.Open();
+                    connection.Open();
 
-                        string newPass = Criptex.Cript("12345");
+                    string newPass = Criptex.Cript("12345");
 
-                        string sql = String.Format(@"INSERT INTO COUNTERPARTY (`SURNAME`, `NAME`, `PATRONYMIC`, `ADRESS`, `PHONE`, `NOMINATION`, `IS_PROVIDER`, `IS_ANNULATED`)  VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')", Surname, Name, Patronymic, Adress, Phone, Nomination, ToInt(IsProvider), 0);
-                        MySqlCommand command = new MySqlCommand(sql, connection);
+                    string sql = String.Format(@"INSERT INTO COUNTERPARTY (`SURNAME`, `NAME`, `PATRONYMIC`, `ADRESS`, `PHONE`, `NOMINATION`, `IS_PROVIDER`, `IS_ANNULATED`)  VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')", Surname, Name, Patronymic, Adress, Phone, Nomination, ToInt(IsProvider), 0);
+                    MySqlCommand command = new MySqlCommand(sql, connection);
 
-                        ID = command.ExecuteNonQuery();
+                    ID = command.ExecuteNonQuery();
 
-                        connection.Close();
-                    }
-
-                    result = true;
+                    connection.Close();
                 }
-                catch (Exception ex)
-                {
-                    Dialog.ErrorMessage(null, "Ошибка обработки данных", ex.Message);
-                }
+
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка создания контрагента", ex.Message);
             }
 
             return result;
@@ -460,8 +465,12 @@ namespace GreenLeaf.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Dialog.ErrorMessage(null, "Ошибка обработки данных", ex.Message);
+                    Dialog.ErrorMessage(null, "Ошибка аннулирования контрагента", ex.Message);
                 }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID контрагента");
             }
 
             return result;
@@ -497,8 +506,12 @@ namespace GreenLeaf.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    Dialog.ErrorMessage(null, "Ошибка обработки данных", ex.Message);
+                    Dialog.ErrorMessage(null, "Ошибка редактирования контрагента", ex.Message);
                 }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID контрагента");
             }
 
             return result;
@@ -579,7 +592,7 @@ namespace GreenLeaf.ViewModel
             }
             catch (Exception ex)
             {
-                Dialog.ErrorMessage(null, "Ошибка получения данных", ex.Message);
+                Dialog.ErrorMessage(null, "Ошибка получения данных о контрагенте", ex.Message);
             }
 
             return Counterparties;
