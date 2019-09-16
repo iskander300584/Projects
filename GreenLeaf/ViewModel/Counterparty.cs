@@ -191,33 +191,37 @@ namespace GreenLeaf.ViewModel
         }
 
         /// <summary>
-        /// Получение отображаемого имени
+        /// Создать контрагента
         /// </summary>
-        private void GetVisibleName()
+        /// <returns>возвращает TRUE, если контрагент успешно создан</returns>
+        public bool CreateCounterparty()
         {
-            if (_nomination.Trim() != "")
-                _visibleName = _nomination;
-            else if(_surname.Trim() != string.Empty)
-            {
-                _visibleName = _surname;
+            bool result = false;
 
-                if(_name.Trim() != "")
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                 {
-                    _visibleName += _name[0] + ".";
+                    connection.Open();
 
-                    if (_patronymic.Trim() != "")
-                        _visibleName += " " + _patronymic[0] + ".";
+                    string sql = String.Format(@"INSERT INTO `COUNTERPARTY` (`SURNAME`, `NAME`, `PATRONYMIC`, `ADRESS`, `PHONE`, `NOMINATION`, `IS_PROVIDER`, `IS_ANNULATED`)  VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')", Surname, Name, Patronymic, Adress, Phone, Nomination, Conversion.ToString(IsProvider), 0);
+
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        ID = command.ExecuteNonQuery();
+                    }
+
+                    connection.Close();
                 }
+
+                result = true;
             }
-            else if(_name.Trim() != string.Empty)
+            catch (Exception ex)
             {
-                _visibleName = _name;
-
-                if (_patronymic.Trim() != string.Empty)
-                    _visibleName += " " + _patronymic;
+                Dialog.ErrorMessage(null, "Ошибка создания контрагента", ex.Message);
             }
 
-            OnPropertyChanged("VisibleName");
+            return result;
         }
 
         #region Получение данных
@@ -235,54 +239,36 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    bool getData = false;
-
                     using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
                         connection.Open();
 
-                        string sql = "SELECT * FROM PRODUCT WHERE ID = " + ID.ToString();
-                        MySqlCommand command = new MySqlCommand(sql, connection);
+                        string sql = "SELECT * FROM `COUNTERPARTY` WHERE `COUNTERPARTY`.`ID` = " + ID.ToString();
 
-                        using (MySqlDataReader reader = command.ExecuteReader())
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
-                            while (reader.Read())
+                            using (MySqlDataReader reader = command.ExecuteReader())
                             {
-                                Surname = reader["SURNAME"].ToString();
-                                Name = reader["SURNAME"].ToString();
-                                Patronymic = reader["PATRONYMIC"].ToString();
-                                Nomination = reader["NOMINATION"].ToString();
+                                while (reader.Read())
+                                {
+                                    Surname = reader["SURNAME"].ToString();
+                                    Name = reader["SURNAME"].ToString();
+                                    Patronymic = reader["PATRONYMIC"].ToString();
+                                    Nomination = reader["NOMINATION"].ToString();
 
-                                string tempS = reader["ADRESS"].ToString();
-                                if (tempS != "")
-                                    Adress = Criptex.UnCript(tempS);
+                                    Adress = Conversion.ToUncriptString(reader["ADRESS"].ToString());
+                                    Phone = Conversion.ToUncriptString(reader["PHONE"].ToString());
 
-                                tempS = reader["PHONE"].ToString();
-                                if (tempS != "")
-                                    Phone = Criptex.UnCript(tempS);
-
-                                tempS = reader["IS_PROVIDER"].ToString();
-                                bool tempB = false;
-                                if (bool.TryParse(tempS, out tempB))
-                                    IsProvider = tempB;
-                                else
-                                    IsProvider = false;
-
-                                tempS = reader["IS_ANNULATED"].ToString();
-                                tempB = false;
-                                if (bool.TryParse(tempS, out tempB))
-                                    IsAnnulated = tempB;
-                                else
-                                    IsAnnulated = false;
-
-                                getData = true;
+                                    IsProvider = Conversion.ToBool(reader["IS_PROVIDER"].ToString());
+                                    IsAnnulated = Conversion.ToBool(reader["IS_ANNULATED"].ToString());
+                                }
                             }
                         }
 
                         connection.Close();
                     }
 
-                    result = getData;
+                    result = true;
                 }
                 catch (Exception ex)
                 {
@@ -323,49 +309,36 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    bool getData = false;
-
                     using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
                         connection.Open();
 
-                        string sql = "SELECT * FROM PRODUCT WHERE ID = " + ID.ToString();
-                        MySqlCommand command = new MySqlCommand(sql, connection);
+                        string sql = "SELECT * FROM `COUNTERPARTY` WHERE `COUNTERPARTY`.`ID` = " + ID.ToString();
 
-                        using (MySqlDataReader reader = command.ExecuteReader())
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
-                            while (reader.Read())
+                            using (MySqlDataReader reader = command.ExecuteReader())
                             {
-                                Surname = reader["SURNAME"].ToString();
-                                Name = reader["SURNAME"].ToString();
-                                Patronymic = reader["PATRONYMIC"].ToString();
-                                Nomination = reader["NOMINATION"].ToString();
+                                while (reader.Read())
+                                {
+                                    Surname = reader["SURNAME"].ToString();
+                                    Name = reader["SURNAME"].ToString();
+                                    Patronymic = reader["PATRONYMIC"].ToString();
+                                    Nomination = reader["NOMINATION"].ToString();
 
-                                Adress = string.Empty;
-                                Phone = string.Empty;
-                                
-                                string tempS = reader["IS_PROVIDER"].ToString();
-                                bool tempB = false;
-                                if (bool.TryParse(tempS, out tempB))
-                                    IsProvider = tempB;
-                                else
-                                    IsProvider = false;
+                                    Adress = string.Empty;
+                                    Phone = string.Empty;
 
-                                tempS = reader["IS_ANNULATED"].ToString();
-                                tempB = false;
-                                if (bool.TryParse(tempS, out tempB))
-                                    IsAnnulated = tempB;
-                                else
-                                    IsAnnulated = false;
-
-                                getData = true;
+                                    IsProvider = Conversion.ToBool(reader["IS_PROVIDER"].ToString());
+                                    IsAnnulated = Conversion.ToBool(reader["IS_ANNULATED"].ToString());
+                                }
                             }
                         }
 
                         connection.Close();
                     }
 
-                    result = getData;
+                    result = true;
                 }
                 catch (Exception ex)
                 {
@@ -381,7 +354,7 @@ namespace GreenLeaf.ViewModel
         }
 
         /// <summary>
-        /// Получить все данные по ID
+        /// Получить не защищенные данные по ID
         /// <para>возвращает TRUE, если данные успешно получены</para>
         /// </summary>
         /// <param name="id">ID</param>
@@ -393,41 +366,37 @@ namespace GreenLeaf.ViewModel
             return GetPublicDataByID();
         }
 
-        #endregion
-
         /// <summary>
-        /// Создать контрагента
+        /// Получение отображаемого имени
         /// </summary>
-        /// <returns>возвращает TRUE, если контрагент успешно создан</returns>
-        public bool CreateCounterparty()
+        private void GetVisibleName()
         {
-            bool result = false;
-
-            try
+            if (_nomination.Trim() != "")
+                _visibleName = _nomination;
+            else if (_surname.Trim() != string.Empty)
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                _visibleName = _surname;
+
+                if (_name.Trim() != "")
                 {
-                    connection.Open();
+                    _visibleName += _name[0] + ".";
 
-                    string newPass = Criptex.Cript("12345");
-
-                    string sql = String.Format(@"INSERT INTO COUNTERPARTY (`SURNAME`, `NAME`, `PATRONYMIC`, `ADRESS`, `PHONE`, `NOMINATION`, `IS_PROVIDER`, `IS_ANNULATED`)  VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')", Surname, Name, Patronymic, Adress, Phone, Nomination, ToInt(IsProvider), 0);
-                    MySqlCommand command = new MySqlCommand(sql, connection);
-
-                    ID = command.ExecuteNonQuery();
-
-                    connection.Close();
+                    if (_patronymic.Trim() != "")
+                        _visibleName += " " + _patronymic[0] + ".";
                 }
-
-                result = true;
             }
-            catch (Exception ex)
+            else if (_name.Trim() != string.Empty)
             {
-                Dialog.ErrorMessage(null, "Ошибка создания контрагента", ex.Message);
+                _visibleName = _name;
+
+                if (_patronymic.Trim() != string.Empty)
+                    _visibleName += " " + _patronymic;
             }
 
-            return result;
+            OnPropertyChanged("VisibleName");
         }
+
+        #endregion
 
         #region Редактирование данных
 
@@ -443,25 +412,23 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    bool getData = false;
-
                     using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
                         connection.Open();
 
-                        string sql = @"UPDATE COUNTERPARTY SET `IS_ANNULATED` = '1' WHERE ID = " + ID.ToString();
-                        MySqlCommand command = new MySqlCommand(sql, connection);
+                        string sql = @"UPDATE `COUNTERPARTY` SET `IS_ANNULATED` = '1' WHERE `COUNTERPARTY`.`ID` = " + ID.ToString();
 
-                        command.ExecuteNonQuery();
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
 
                         IsAnnulated = true;
-
-                        getData = true;
 
                         connection.Close();
                     }
 
-                    result = getData;
+                    result = true;
                 }
                 catch (Exception ex)
                 {
@@ -492,12 +459,12 @@ namespace GreenLeaf.ViewModel
                     {
                         connection.Open();
 
-                        string newPass = Criptex.Cript("12345");
+                        string sql = String.Format(@"UPDATE `COUNTERPARTY` SET `SURNAME` = '{0}', `NAME` = '{1}', `PATRONYMIC` = '{2}', `ADRESS` = '{3}', `PHONE` = '{4}', `NOMINATION` = '{5}', `IS_PROVIDER` = '{6}' WHERE `COUNTERPARTY`.`ID` = {7}", Surname, Name, Patronymic, Adress, Phone, Nomination, Conversion.ToString(IsProvider), ID);
 
-                        string sql = String.Format(@"UPDATE COUNTERPARTY SET `SURNAME` = '{0}', `NAME` = '{1}', `PATRONYMIC` = '{2}', `ADRESS` = '{3}', `PHONE` = '{4}', `NOMINATION` = '{5}', `IS_PROVIDER` = '{6}' WHERE ID = {7}", Surname, Name, Patronymic, Adress, Phone, Nomination, ToInt(IsProvider), ID);
-                        MySqlCommand command = new MySqlCommand(sql, connection);
-
-                        command.ExecuteNonQuery();
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
 
                         connection.Close();
                     }
@@ -515,16 +482,6 @@ namespace GreenLeaf.ViewModel
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// Преобразовать логическое значение в TinyInt
-        /// </summary>
-        /// <param name="value">значение</param>
-        /// <returns>возвращает 1, если TRUE и 0, если FALSE</returns>
-        private int ToInt(bool value)
-        {
-            return (value) ? 1 : 0;
         }
 
         #endregion
@@ -546,43 +503,29 @@ namespace GreenLeaf.ViewModel
                 {
                     connection.Open();
 
-                    string sql = "SELECT * FROM COUNTERPARTY WHERE IS_PROVIDER=\'" + provider_value + "\' AND IS_ANNULATED = \'0\'";
-                    MySqlCommand command = new MySqlCommand(sql, connection);
+                    string sql = "SELECT * FROM `COUNTERPARTY` WHERE `COUNTERPARTY`.`IS_PROVIDER` = \'" + provider_value + "\' AND `COUNTERPARTY`.`IS_ANNULATED` = \'0\'";
 
-                    using (MySqlDataReader reader = command.ExecuteReader())
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        while (reader.Read())
+                        using (MySqlDataReader reader = command.ExecuteReader())
                         {
-                            Counterparty item = new Counterparty();
+                            while (reader.Read())
+                            {
+                                Counterparty item = new Counterparty();
 
-                            string tempS = reader["ID"].ToString();
-                            int tempI = 0;
-                            if (int.TryParse(tempS, out tempI))
-                                item.ID = tempI;
-                            else
-                                item.ID = 0;
+                                item.ID = Conversion.ToInt(reader["ID"].ToString());
+                                item.Surname = reader["SURNAME"].ToString();
+                                item.Name = reader["SURNAME"].ToString();
+                                item.Patronymic = reader["PATRONYMIC"].ToString();
+                                item.Nomination = reader["NOMINATION"].ToString();
 
-                            item.Surname = reader["SURNAME"].ToString();
-                            item.Name = reader["SURNAME"].ToString();
-                            item.Patronymic = reader["PATRONYMIC"].ToString();
-                            item.Nomination = reader["NOMINATION"].ToString();
+                                item.Adress = Conversion.ToUncriptString(reader["ADRESS"].ToString());
+                                item.Phone = Conversion.ToUncriptString(reader["PHONE"].ToString());
 
-                            tempS = reader["ADRESS"].ToString();
-                            if (tempS != "")
-                                item.Adress = Criptex.UnCript(tempS);
+                                item.IsProvider = Conversion.ToBool(reader["IS_PROVIDER"].ToString());
 
-                            tempS = reader["PHONE"].ToString();
-                            if (tempS != "")
-                                item.Phone = Criptex.UnCript(tempS);
-
-                            tempS = reader["IS_PROVIDER"].ToString();
-                            bool tempB = false;
-                            if (bool.TryParse(tempS, out tempB))
-                                item.IsProvider = tempB;
-                            else
-                                item.IsProvider = false;
-
-                            Counterparties.Add(item);
+                                Counterparties.Add(item);
+                            }
                         }
                     }
 

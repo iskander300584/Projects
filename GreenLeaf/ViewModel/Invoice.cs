@@ -211,42 +211,6 @@ namespace GreenLeaf.ViewModel
         }
 
         /// <summary>
-        /// Вычисление стоимости и купона
-        /// </summary>
-        public void Calc()
-        {
-            double cost = 0;
-            double coupon = 0;
-
-            foreach(InvoiceItem item in Items)
-            {
-                cost += item.Cost;
-                coupon += item.Coupon;
-            }
-
-            Cost = cost;
-            Coupon = coupon;
-        }
-
-        /// <summary>
-        /// Получить список товаров, доступных для добавления
-        /// </summary>
-        public List<Product> GetPossibleProducts()
-        {
-            List<Product> products = Product.GetActualProductList();
-
-            for (int i = 0; i < products.Count;)
-            {
-                if (Items.Any(item => item.ID == products[i].ID))
-                    products.Remove(products[i]);
-                else
-                    i++;
-            }
-
-            return products;
-        }
-
-        /// <summary>
         /// Создание накладной
         /// </summary>
         /// <returns>возвращает TRUE, если накладная создана успешно</returns>
@@ -262,7 +226,8 @@ namespace GreenLeaf.ViewModel
 
                     string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
-                    string sql = String.Format(@"INSERT INTO {0} (`ID_ACCOUNT`, `ID_COUNTERPARTY`, `COST`, `COUPON`) VALUES ('{1}', '{2}', '{3}', '{4}')", table, _id_account, _id_counterparty, _cost, _coupon);
+                    string sql = String.Format(@"INSERT INTO `{0}` (`ID_ACCOUNT`, `ID_COUNTERPARTY`, `COST`, `COUPON`) VALUES ('{1}', '{2}', '{3}', '{4}')", table, _id_account, _id_counterparty, _cost, _coupon);
+
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         ID = command.ExecuteNonQuery();
@@ -299,76 +264,29 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    bool getData = false;
-
                     using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
                         connection.Open();
 
                         string table = (isPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
-                        string sql = "SELECT * FROM " + table + " WHERE ID = " + ID.ToString();
+                        string sql = String.Format(@"SELECT * FROM `{0}` WHERE `{0}`.`ID` = {1}", table, ID);
+
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
                             using (MySqlDataReader reader = command.ExecuteReader())
                             {
                                 while (reader.Read())
                                 {
-                                    string tempS = reader["NUMBER"].ToString();
-                                    int tempI = 0;
-                                    if (int.TryParse(tempS, out tempI))
-                                        Number = tempI;
-                                    else
-                                        Number = 0;
+                                    Number = Conversion.ToInt(reader["NUMBER"].ToString());
+                                    ID_Account = Conversion.ToInt(reader["ID_ACCOUNT"].ToString());
+                                    ID_Counterparty = Conversion.ToInt(reader["ID_COUNTERPARTY"].ToString());
+                                    Date = Conversion.ToDateTime(reader["DATE"].ToString());
+                                    Cost = Conversion.ToDouble(reader["COST"].ToString());
+                                    Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
 
-                                    tempS = reader["ID_ACCOUNT"].ToString();
-                                    tempI = 0;
-                                    if (int.TryParse(tempS, out tempI))
-                                        ID_Account = tempI;
-                                    else
-                                        ID_Account = 0;
-
-                                    tempS = reader["ID_COUNTERPARTY"].ToString();
-                                    tempI = 0;
-                                    if (int.TryParse(tempS, out tempI))
-                                        ID_Counterparty = tempI;
-                                    else
-                                        ID_Counterparty = 0;
-
-                                    tempS = reader["DATE"].ToString();
-                                    DateTime tempDT = DateTime.MinValue;
-                                    if (DateTime.TryParse(tempS, out tempDT))
-                                        Date = tempDT;
-                                    else
-                                        Date = DateTime.MinValue;
-
-                                    tempS = reader["COST"].ToString();
-                                    double tempD = 0;
-                                    if (double.TryParse(tempS, out tempD))
-                                        Cost = tempD;
-                                    else
-                                        Cost = 0;
-
-                                    tempS = reader["COUPON"].ToString();
-                                    tempD = 0;
-                                    if (double.TryParse(tempS, out tempD))
-                                        Coupon = tempD;
-                                    else
-                                        Coupon = 0;
-
-                                    tempS = reader["IS_ISSUED"].ToString();
-                                    bool tempB = false;
-                                    if (bool.TryParse(tempS, out tempB))
-                                        IsIssued = tempB;
-                                    else
-                                        IsIssued = false;
-
-                                    tempS = reader["IS_LOCKED"].ToString();
-                                    tempB = false;
-                                    if (bool.TryParse(tempS, out tempB))
-                                        IsLocked = tempB;
-                                    else
-                                        IsLocked = false;
+                                    IsIssued = Conversion.ToBool(reader["IS_ISSUED"].ToString());
+                                    IsLocked = Conversion.ToBool(reader["IS_LOCKED"].ToString());
                                 }
                             }
                         }
@@ -378,9 +296,7 @@ namespace GreenLeaf.ViewModel
 
                     Items = InvoiceItem.GetInvoiceItemList(_id, _is_purchase);
 
-                    getData = true;
-
-                    result = getData;
+                    result = true;
                 }
                 catch (Exception ex)
                 {
@@ -417,6 +333,42 @@ namespace GreenLeaf.ViewModel
         {
             if (_id != 0)
                 Items = InvoiceItem.GetInvoiceItemList(_id, _is_purchase);
+        }
+
+        /// <summary>
+        /// Вычисление стоимости и купона
+        /// </summary>
+        public void Calc()
+        {
+            double cost = 0;
+            double coupon = 0;
+
+            foreach (InvoiceItem item in Items)
+            {
+                cost += item.Cost;
+                coupon += item.Coupon;
+            }
+
+            Cost = cost;
+            Coupon = coupon;
+        }
+
+        /// <summary>
+        /// Получить список товаров, доступных для добавления
+        /// </summary>
+        public List<Product> GetPossibleProducts()
+        {
+            List<Product> products = Product.GetActualProductList();
+
+            for (int i = 0; i < products.Count;)
+            {
+                if (Items.Any(item => item.ID == products[i].ID))
+                    products.Remove(products[i]);
+                else
+                    i++;
+            }
+
+            return products;
         }
 
         #endregion

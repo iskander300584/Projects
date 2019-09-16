@@ -1,4 +1,6 @@
-﻿namespace GreenLeaf.Classes
+﻿using System;
+
+namespace GreenLeaf.Classes
 {
     /// <summary>
     /// Преобразование данных
@@ -65,6 +67,42 @@
                 return temp;
             else
                 return false;
+        }
+
+        /// <summary>
+        /// Преобразование в дату-время
+        /// </summary>
+        /// <param name="value">строка</param>
+        /// <returns>возвращает значение даты-времени, или DateTime.MinValue, если преобразование не удалось</returns>
+        public static DateTime ToDateTime(string value)
+        {
+            DateTime temp = DateTime.MinValue;
+            if (DateTime.TryParse(value, out temp))
+                return temp;
+            else
+                return DateTime.MinValue;
+        }
+
+        /// <summary>
+        /// Преобразование в расшифрованную строку
+        /// </summary>
+        /// <param name="value">зашифрованная строка</param>
+        /// <returns>возвращает расшифрованную строку, или пустую строку, если преобразование не удалось</returns>
+        public static string ToUncriptString(string value)
+        {
+            string temp = string.Empty;
+
+            if (value != "")
+                try
+                {
+                    temp = Criptex.UnCript(value);
+                }
+                catch
+                {
+                    temp = string.Empty;
+                }
+
+            return temp;
         }
     }
 }

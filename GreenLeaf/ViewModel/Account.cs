@@ -143,6 +143,42 @@ namespace GreenLeaf.ViewModel
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
+        /// <summary>
+        /// Создать новый аккаунт
+        /// </summary>
+        /// <returns>возвращает TRUE, если аккаунт успешно создан</returns>
+        public bool CreateAccount()
+        {
+            bool result = false;
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                {
+                    connection.Open();
+
+                    string newPass = Criptex.Cript("12345");
+
+                    string sql = String.Format(@"INSERT INTO `ACCOUNT` (`LOGIN`, `PASSWORD`, `SURNAME`, `NAME`, `PATRONYMIC`, `ADRESS`, `PHONE`, `SEX`, `PURCHASE_INVOICE`, `SALES_INVOICE`, `REPORTS`, `REPORT_PURCHASE_INVOICE`, `REPORT_SALES_INVOICE`, `REPORT_INCOME_EXPENSE`, `COUNTERPARTY`, `COUNTERPARTY_PROVIDER`, `COUNTERPARTY_PROVIDER_ADD`, `COUNTERPARTY_PROVIDER_EDIT`, `COUNTERPARTY_PROVIDER_DELETE`, `COUNTERPARTY_CUSTOMER`, `COUNTERPARTY_CUSTOMER_ADD`, `COUNTERPARTY_CUSTOMER_EDIT`, `COUNTERPARTY_CUSTOMER_DELETE`, `WAREHOUSE`, `WAREHOUSE_ADD_PRODUCT`, `WAREHOUSE_EDIT_PRODUCT`, `WAREHOUSE_ANNULATE_PRODUCT`, `WAREHOUSE_EDIT_COUNT`, `ADMIN_PANEL`, `ADMIN_PANEL_ADD_ACCOUNT`, `ADMIN_PANEL_EDIT_ACCOUNT`, `ADMIN_PANEL_DELETE_ACCOUNT`, `ADMIN_PANEL_SET_NUMERATOR`, `ADMIN_PANEL_JOURNAL`, `IS_ANNULATED`)  VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}', '{22}', '{23}', '{24}', '{25}', '{26}', '{27}', '{28}', '{29}', '{30}', '{31}', '{32}', '{33}', '{34}')", Login, newPass, PersonalData.Surname, PersonalData.Name, PersonalData.Patronymic, PersonalData.Adress, PersonalData.Phone, Conversion.ToString(PersonalData.Sex), Conversion.ToString(InvoiceData.PurchaseInvoice), Conversion.ToString(InvoiceData.SalesInvoice), Conversion.ToString(ReportsData.Reports), Conversion.ToString(ReportsData.ReportPurchaseInvoice), Conversion.ToString(ReportsData.ReportSalesInvoice), Conversion.ToString(ReportsData.ReportIncomeExpense), Conversion.ToString(CounterpartyData.Counterparty), Conversion.ToString(CounterpartyData.CounterpartyProvider), Conversion.ToString(CounterpartyData.CounterpartyProviderAdd), Conversion.ToString(CounterpartyData.CounterpartyProviderEdit), Conversion.ToString(CounterpartyData.CounterpartyProviderDelete), Conversion.ToString(CounterpartyData.CounterpartyCustomer), Conversion.ToString(CounterpartyData.CounterpartyCustomerAdd), Conversion.ToString(CounterpartyData.CounterpartyCustomerEdit), Conversion.ToString(CounterpartyData.CounterpartyCustomerDelete), Conversion.ToString(WarehouseData.Warehouse), Conversion.ToString(WarehouseData.WarehouseAddProduct), Conversion.ToString(WarehouseData.WarehouseEditProduct), Conversion.ToString(WarehouseData.WarehouseAnnulateProduct), Conversion.ToString(WarehouseData.WarehouseEditCount), Conversion.ToString(AdminPanelData.AdminPanel), Conversion.ToString(AdminPanelData.AdminPanelAddAccount), Conversion.ToString(AdminPanelData.AdminPanelEditAccount), Conversion.ToString(AdminPanelData.AdminPanelDeleteAccount), Conversion.ToString(AdminPanelData.AdminPanelSetNumerator), Conversion.ToString(AdminPanelData.AdminPanelJournal), 0);
+
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        ID = command.ExecuteNonQuery();
+                    }
+
+                    connection.Close();
+                }
+
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка создания пользователя", ex.Message);
+            }
+
+            return result;
+        }
+
         #region Получение данных
 
         /// <summary>
@@ -158,210 +194,67 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    bool getData = false;
-
                     using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
                         connection.Open();
 
-                        string sql = "SELECT * FROM ACCOUNT WHERE ID = " + ID.ToString();
-                        MySqlCommand command = new MySqlCommand(sql, connection);
-
-                        using (MySqlDataReader reader = command.ExecuteReader())
+                        string sql = "SELECT * FROM `ACCOUNT` WHERE `ACCOUNT`.`ID` = " + ID.ToString();
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
-                            while (reader.Read())
+                            using (MySqlDataReader reader = command.ExecuteReader())
                             {
-                                Login = reader["LOGIN"].ToString();
-                                Password = reader["PASSWORD"].ToString();
-                                PersonalData.Surname = reader["SURNAME"].ToString();
-                                PersonalData.Name = reader["SURNAME"].ToString();
-                                PersonalData.Patronymic = reader["PATRONYMIC"].ToString();
+                                while (reader.Read())
+                                {
+                                    Login = reader["LOGIN"].ToString();
+                                    Password = reader["PASSWORD"].ToString();
 
-                                string tempS = reader["ADRESS"].ToString();
-                                if (tempS != "")
-                                    PersonalData.Adress = Criptex.UnCript(tempS);
+                                    PersonalData.Surname = reader["SURNAME"].ToString();
+                                    PersonalData.Name = reader["SURNAME"].ToString();
+                                    PersonalData.Patronymic = reader["PATRONYMIC"].ToString();
+                                    PersonalData.Adress = Conversion.ToUncriptString(reader["ADRESS"].ToString());
+                                    PersonalData.Phone = Conversion.ToUncriptString(reader["PHONE"].ToString());
+                                    PersonalData.Sex = Conversion.ToBool(reader["SEX"].ToString());
 
-                                tempS = reader["PHONE"].ToString();
-                                if (tempS != "")
-                                    PersonalData.Phone = Criptex.UnCript(tempS);
+                                    InvoiceData.PurchaseInvoice = Conversion.ToBool(reader["PURCHASE_INVOICE"].ToString());
+                                    InvoiceData.SalesInvoice = Conversion.ToBool(reader["SALES_INVOICE"].ToString());
 
-                                tempS = reader["SEX"].ToString();
-                                bool tempB = false;
-                                if (bool.TryParse(tempS, out tempB))
-                                    PersonalData.Sex = tempB;
-                                else
-                                    PersonalData.Sex = false;
+                                    ReportsData.Reports = Conversion.ToBool(reader["REPORTS"].ToString());
+                                    ReportsData.ReportPurchaseInvoice = Conversion.ToBool(reader["REPORT_PURCHASE_INVOICE"].ToString());
+                                    ReportsData.ReportSalesInvoice = Conversion.ToBool(reader["REPORT_SALES_INVOICE"].ToString());
+                                    ReportsData.ReportIncomeExpense = Conversion.ToBool(reader["REPORT_INCOME_EXPENSE"].ToString());
 
-                                tempS = reader["PURCHASE_INVOICE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    InvoiceData.PurchaseInvoice = tempB;
-                                else
-                                    InvoiceData.PurchaseInvoice = false;
+                                    CounterpartyData.Counterparty = Conversion.ToBool(reader["COUNTERPARTY"].ToString());
+                                    CounterpartyData.CounterpartyProvider = Conversion.ToBool(reader["COUNTERPARTY_PROVIDER"].ToString());
+                                    CounterpartyData.CounterpartyProviderAdd = Conversion.ToBool(reader["COUNTERPARTY_PROVIDER_ADD"].ToString());
+                                    CounterpartyData.CounterpartyProviderEdit = Conversion.ToBool(reader["COUNTERPARTY_PROVIDER_EDIT"].ToString());
+                                    CounterpartyData.CounterpartyProviderDelete = Conversion.ToBool(reader["COUNTERPARTY_PROVIDER_DELETE"].ToString());
+                                    CounterpartyData.CounterpartyCustomer = Conversion.ToBool(reader["COUNTERPARTY_CUSTOMER"].ToString());
+                                    CounterpartyData.CounterpartyCustomerAdd = Conversion.ToBool(reader["COUNTERPARTY_CUSTOMER_ADD"].ToString());
+                                    CounterpartyData.CounterpartyCustomerEdit = Conversion.ToBool(reader["COUNTERPARTY_CUSTOMER_EDIT"].ToString());
+                                    CounterpartyData.CounterpartyCustomerDelete = Conversion.ToBool(reader["COUNTERPARTY_CUSTOMER_DELETE"].ToString());
 
-                                tempS = reader["SALES_INVOICE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    InvoiceData.SalesInvoice = tempB;
-                                else
-                                    InvoiceData.SalesInvoice = false;
+                                    WarehouseData.Warehouse = Conversion.ToBool(reader["WAREHOUSE"].ToString());
+                                    WarehouseData.WarehouseAddProduct = Conversion.ToBool(reader["WAREHOUSE_ADD_PRODUCT"].ToString());
+                                    WarehouseData.WarehouseEditProduct = Conversion.ToBool(reader["WAREHOUSE_EDIT_PRODUCT"].ToString());
+                                    WarehouseData.WarehouseAnnulateProduct = Conversion.ToBool(reader["WAREHOUSE_ANNULATE_PRODUCT"].ToString());
+                                    WarehouseData.WarehouseEditCount = Conversion.ToBool(reader["WAREHOUSE_EDIT_COUNT"].ToString());
 
-                                tempS = reader["REPORTS"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    ReportsData.Reports = tempB;
-                                else
-                                    ReportsData.Reports = false;
+                                    AdminPanelData.AdminPanel = Conversion.ToBool(reader["ADMIN_PANEL"].ToString());
+                                    AdminPanelData.AdminPanelAddAccount = Conversion.ToBool(reader["ADMIN_PANEL_ADD_ACCOUNT"].ToString());
+                                    AdminPanelData.AdminPanelEditAccount = Conversion.ToBool(reader["ADMIN_PANEL_EDIT_ACCOUNT"].ToString());
+                                    AdminPanelData.AdminPanelDeleteAccount = Conversion.ToBool(reader["ADMIN_PANEL_DELETE_ACCOUNT"].ToString());
+                                    AdminPanelData.AdminPanelSetNumerator = Conversion.ToBool(reader["ADMIN_PANEL_SET_NUMERATOR"].ToString());
+                                    AdminPanelData.AdminPanelJournal = Conversion.ToBool(reader["ADMIN_PANEL_JOURNAL"].ToString());
 
-                                tempS = reader["REPORT_PURCHASE_INVOICE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    ReportsData.ReportPurchaseInvoice = tempB;
-                                else
-                                    ReportsData.ReportPurchaseInvoice = false;
-
-                                tempS = reader["REPORT_SALES_INVOICE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    ReportsData.ReportSalesInvoice = tempB;
-                                else
-                                    ReportsData.ReportSalesInvoice = false;
-
-                                tempS = reader["REPORT_INCOME_EXPENSE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    ReportsData.ReportIncomeExpense = tempB;
-                                else
-                                    ReportsData.ReportIncomeExpense = false;
-
-                                tempS = reader["COUNTERPARTY"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.Counterparty = tempB;
-                                else
-                                    CounterpartyData.Counterparty = false;
-
-                                tempS = reader["COUNTERPARTY_PROVIDER"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyProvider = tempB;
-                                else
-                                    CounterpartyData.CounterpartyProvider = false;
-
-                                tempS = reader["COUNTERPARTY_PROVIDER_ADD"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyProviderAdd = tempB;
-                                else
-                                    CounterpartyData.CounterpartyProviderAdd = false;
-
-                                tempS = reader["COUNTERPARTY_PROVIDER_EDIT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyProviderEdit = tempB;
-                                else
-                                    CounterpartyData.CounterpartyProviderEdit = false;
-
-                                tempS = reader["COUNTERPARTY_PROVIDER_DELETE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyProviderDelete = tempB;
-                                else
-                                    CounterpartyData.CounterpartyProviderDelete = false;
-
-                                tempS = reader["COUNTERPARTY_CUSTOMER"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyCustomer = tempB;
-                                else
-                                    CounterpartyData.CounterpartyCustomer = false;
-
-                                tempS = reader["COUNTERPARTY_CUSTOMER_ADD"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyCustomerAdd = tempB;
-                                else
-                                    CounterpartyData.CounterpartyCustomerAdd = false;
-
-                                tempS = reader["COUNTERPARTY_CUSTOMER_EDIT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyCustomerEdit = tempB;
-                                else
-                                    CounterpartyData.CounterpartyCustomerEdit = false;
-
-                                tempS = reader["COUNTERPARTY_CUSTOMER_DELETE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyCustomerDelete = tempB;
-                                else
-                                    CounterpartyData.CounterpartyCustomerDelete = false;
-
-                                tempS = reader["WAREHOUSE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    WarehouseData.Warehouse = tempB;
-                                else
-                                    WarehouseData.Warehouse = false;
-
-                                tempS = reader["WAREHOUSE_ADD_PRODUCT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    WarehouseData.WarehouseAddProduct = tempB;
-                                else
-                                    WarehouseData.WarehouseAddProduct = false;
-
-                                tempS = reader["WAREHOUSE_EDIT_PRODUCT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    WarehouseData.WarehouseEditProduct = tempB;
-                                else
-                                    WarehouseData.WarehouseEditProduct = false;
-
-                                tempS = reader["WAREHOUSE_ANNULATE_PRODUCT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    WarehouseData.WarehouseAnnulateProduct = tempB;
-                                else
-                                    WarehouseData.WarehouseAnnulateProduct = false;
-
-                                tempS = reader["WAREHOUSE_EDIT_COUNT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    WarehouseData.WarehouseEditCount = tempB;
-                                else
-                                    WarehouseData.WarehouseEditCount = false;
-
-                                tempS = reader["ADMIN_PANEL"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    AdminPanelData.AdminPanel = tempB;
-                                else
-                                    AdminPanelData.AdminPanel = false;
-
-                                tempS = reader["ADMIN_PANEL_ADD_ACCOUNT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    AdminPanelData.AdminPanelAddAccount = tempB;
-                                else
-                                    AdminPanelData.AdminPanelAddAccount = false;
-
-                                tempS = reader["ADMIN_PANEL_EDIT_ACCOUNT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    AdminPanelData.AdminPanelEditAccount = tempB;
-                                else
-                                    AdminPanelData.AdminPanelEditAccount = false;
-
-                                tempS = reader["ADMIN_PANEL_DELETE_ACCOUNT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    AdminPanelData.AdminPanelDeleteAccount = tempB;
-                                else
-                                    AdminPanelData.AdminPanelDeleteAccount = false;
-
-                                tempS = reader["ADMIN_PANEL_SET_NUMERATOR"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    AdminPanelData.AdminPanelSetNumerator = tempB;
-                                else
-                                    AdminPanelData.AdminPanelSetNumerator = false;
-
-                                tempS = reader["ADMIN_PANEL_JOURNAL"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    AdminPanelData.AdminPanelJournal = tempB;
-                                else
-                                    AdminPanelData.AdminPanelJournal = false;
-
-                                tempS = reader["IS_ANNULATED"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    IsAnnulated = tempB;
-                                else
-                                    IsAnnulated = false;
-
-                                getData = true;
+                                    IsAnnulated = Conversion.ToBool(reader["IS_ANNULATED"].ToString());
+                                }
                             }
                         }
 
                         connection.Close();
                     }
 
-                    result = getData;
+                    result = true;
                 }
                 catch (Exception ex)
                 {
@@ -402,205 +295,67 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    bool getData = false;
-
                     using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
                         connection.Open();
 
-                        string sql = "SELECT * FROM ACCOUNT WHERE ID = " + ID.ToString();
-                        MySqlCommand command = new MySqlCommand(sql, connection);
-
-                        using (MySqlDataReader reader = command.ExecuteReader())
+                        string sql = "SELECT * FROM `ACCOUNT` WHERE `ACCOUNT`.`ID` = " + ID.ToString();
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
-                            while (reader.Read())
+                            using (MySqlDataReader reader = command.ExecuteReader())
                             {
-                                Login = reader["LOGIN"].ToString();
-                                Password = reader["PASSWORD"].ToString();
-                                PersonalData.Surname = reader["SURNAME"].ToString();
-                                PersonalData.Name = reader["SURNAME"].ToString();
-                                PersonalData.Patronymic = reader["PATRONYMIC"].ToString();
+                                while (reader.Read())
+                                {
+                                    Login = reader["LOGIN"].ToString();
+                                    Password = reader["PASSWORD"].ToString();
 
-                                PersonalData.Adress = string.Empty;
-                                PersonalData.Phone = string.Empty;
+                                    PersonalData.Surname = reader["SURNAME"].ToString();
+                                    PersonalData.Name = reader["SURNAME"].ToString();
+                                    PersonalData.Patronymic = reader["PATRONYMIC"].ToString();
+                                    PersonalData.Adress = string.Empty;
+                                    PersonalData.Phone = string.Empty;
+                                    PersonalData.Sex = Conversion.ToBool(reader["SEX"].ToString());
 
-                                string tempS = reader["SEX"].ToString();
-                                bool tempB = false;
-                                if (bool.TryParse(tempS, out tempB))
-                                    PersonalData.Sex = tempB;
-                                else
-                                    PersonalData.Sex = false;
+                                    InvoiceData.PurchaseInvoice = Conversion.ToBool(reader["PURCHASE_INVOICE"].ToString());
+                                    InvoiceData.SalesInvoice = Conversion.ToBool(reader["SALES_INVOICE"].ToString());
 
-                                tempS = reader["PURCHASE_INVOICE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    InvoiceData.PurchaseInvoice = tempB;
-                                else
-                                    InvoiceData.PurchaseInvoice = false;
+                                    ReportsData.Reports = Conversion.ToBool(reader["REPORTS"].ToString());
+                                    ReportsData.ReportPurchaseInvoice = Conversion.ToBool(reader["REPORT_PURCHASE_INVOICE"].ToString());
+                                    ReportsData.ReportSalesInvoice = Conversion.ToBool(reader["REPORT_SALES_INVOICE"].ToString());
+                                    ReportsData.ReportIncomeExpense = Conversion.ToBool(reader["REPORT_INCOME_EXPENSE"].ToString());
 
-                                tempS = reader["SALES_INVOICE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    InvoiceData.SalesInvoice = tempB;
-                                else
-                                    InvoiceData.SalesInvoice = false;
+                                    CounterpartyData.Counterparty = Conversion.ToBool(reader["COUNTERPARTY"].ToString());
+                                    CounterpartyData.CounterpartyProvider = Conversion.ToBool(reader["COUNTERPARTY_PROVIDER"].ToString());
+                                    CounterpartyData.CounterpartyProviderAdd = Conversion.ToBool(reader["COUNTERPARTY_PROVIDER_ADD"].ToString());
+                                    CounterpartyData.CounterpartyProviderEdit = Conversion.ToBool(reader["COUNTERPARTY_PROVIDER_EDIT"].ToString());
+                                    CounterpartyData.CounterpartyProviderDelete = Conversion.ToBool(reader["COUNTERPARTY_PROVIDER_DELETE"].ToString());
+                                    CounterpartyData.CounterpartyCustomer = Conversion.ToBool(reader["COUNTERPARTY_CUSTOMER"].ToString());
+                                    CounterpartyData.CounterpartyCustomerAdd = Conversion.ToBool(reader["COUNTERPARTY_CUSTOMER_ADD"].ToString());
+                                    CounterpartyData.CounterpartyCustomerEdit = Conversion.ToBool(reader["COUNTERPARTY_CUSTOMER_EDIT"].ToString());
+                                    CounterpartyData.CounterpartyCustomerDelete = Conversion.ToBool(reader["COUNTERPARTY_CUSTOMER_DELETE"].ToString());
 
-                                tempS = reader["REPORTS"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    ReportsData.Reports = tempB;
-                                else
-                                    ReportsData.Reports = false;
+                                    WarehouseData.Warehouse = Conversion.ToBool(reader["WAREHOUSE"].ToString());
+                                    WarehouseData.WarehouseAddProduct = Conversion.ToBool(reader["WAREHOUSE_ADD_PRODUCT"].ToString());
+                                    WarehouseData.WarehouseEditProduct = Conversion.ToBool(reader["WAREHOUSE_EDIT_PRODUCT"].ToString());
+                                    WarehouseData.WarehouseAnnulateProduct = Conversion.ToBool(reader["WAREHOUSE_ANNULATE_PRODUCT"].ToString());
+                                    WarehouseData.WarehouseEditCount = Conversion.ToBool(reader["WAREHOUSE_EDIT_COUNT"].ToString());
 
-                                tempS = reader["REPORT_PURCHASE_INVOICE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    ReportsData.ReportPurchaseInvoice = tempB;
-                                else
-                                    ReportsData.ReportPurchaseInvoice = false;
+                                    AdminPanelData.AdminPanel = Conversion.ToBool(reader["ADMIN_PANEL"].ToString());
+                                    AdminPanelData.AdminPanelAddAccount = Conversion.ToBool(reader["ADMIN_PANEL_ADD_ACCOUNT"].ToString());
+                                    AdminPanelData.AdminPanelEditAccount = Conversion.ToBool(reader["ADMIN_PANEL_EDIT_ACCOUNT"].ToString());
+                                    AdminPanelData.AdminPanelDeleteAccount = Conversion.ToBool(reader["ADMIN_PANEL_DELETE_ACCOUNT"].ToString());
+                                    AdminPanelData.AdminPanelSetNumerator = Conversion.ToBool(reader["ADMIN_PANEL_SET_NUMERATOR"].ToString());
+                                    AdminPanelData.AdminPanelJournal = Conversion.ToBool(reader["ADMIN_PANEL_JOURNAL"].ToString());
 
-                                tempS = reader["REPORT_SALES_INVOICE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    ReportsData.ReportSalesInvoice = tempB;
-                                else
-                                    ReportsData.ReportSalesInvoice = false;
-
-                                tempS = reader["REPORT_INCOME_EXPENSE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    ReportsData.ReportIncomeExpense = tempB;
-                                else
-                                    ReportsData.ReportIncomeExpense = false;
-
-                                tempS = reader["COUNTERPARTY"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.Counterparty = tempB;
-                                else
-                                    CounterpartyData.Counterparty = false;
-
-                                tempS = reader["COUNTERPARTY_PROVIDER"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyProvider = tempB;
-                                else
-                                    CounterpartyData.CounterpartyProvider = false;
-
-                                tempS = reader["COUNTERPARTY_PROVIDER_ADD"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyProviderAdd = tempB;
-                                else
-                                    CounterpartyData.CounterpartyProviderAdd = false;
-
-                                tempS = reader["COUNTERPARTY_PROVIDER_EDIT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyProviderEdit = tempB;
-                                else
-                                    CounterpartyData.CounterpartyProviderEdit = false;
-
-                                tempS = reader["COUNTERPARTY_PROVIDER_DELETE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyProviderDelete = tempB;
-                                else
-                                    CounterpartyData.CounterpartyProviderDelete = false;
-
-                                tempS = reader["COUNTERPARTY_CUSTOMER"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyCustomer = tempB;
-                                else
-                                    CounterpartyData.CounterpartyCustomer = false;
-
-                                tempS = reader["COUNTERPARTY_CUSTOMER_ADD"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyCustomerAdd = tempB;
-                                else
-                                    CounterpartyData.CounterpartyCustomerAdd = false;
-
-                                tempS = reader["COUNTERPARTY_CUSTOMER_EDIT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyCustomerEdit = tempB;
-                                else
-                                    CounterpartyData.CounterpartyCustomerEdit = false;
-
-                                tempS = reader["COUNTERPARTY_CUSTOMER_DELETE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    CounterpartyData.CounterpartyCustomerDelete = tempB;
-                                else
-                                    CounterpartyData.CounterpartyCustomerDelete = false;
-
-                                tempS = reader["WAREHOUSE"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    WarehouseData.Warehouse = tempB;
-                                else
-                                    WarehouseData.Warehouse = false;
-
-                                tempS = reader["WAREHOUSE_ADD_PRODUCT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    WarehouseData.WarehouseAddProduct = tempB;
-                                else
-                                    WarehouseData.WarehouseAddProduct = false;
-
-                                tempS = reader["WAREHOUSE_EDIT_PRODUCT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    WarehouseData.WarehouseEditProduct = tempB;
-                                else
-                                    WarehouseData.WarehouseEditProduct = false;
-
-                                tempS = reader["WAREHOUSE_ANNULATE_PRODUCT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    WarehouseData.WarehouseAnnulateProduct = tempB;
-                                else
-                                    WarehouseData.WarehouseAnnulateProduct = false;
-
-                                tempS = reader["WAREHOUSE_EDIT_COUNT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    WarehouseData.WarehouseEditCount = tempB;
-                                else
-                                    WarehouseData.WarehouseEditCount = false;
-
-                                tempS = reader["ADMIN_PANEL"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    AdminPanelData.AdminPanel = tempB;
-                                else
-                                    AdminPanelData.AdminPanel = false;
-
-                                tempS = reader["ADMIN_PANEL_ADD_ACCOUNT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    AdminPanelData.AdminPanelAddAccount = tempB;
-                                else
-                                    AdminPanelData.AdminPanelAddAccount = false;
-
-                                tempS = reader["ADMIN_PANEL_EDIT_ACCOUNT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    AdminPanelData.AdminPanelEditAccount = tempB;
-                                else
-                                    AdminPanelData.AdminPanelEditAccount = false;
-
-                                tempS = reader["ADMIN_PANEL_DELETE_ACCOUNT"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    AdminPanelData.AdminPanelDeleteAccount = tempB;
-                                else
-                                    AdminPanelData.AdminPanelDeleteAccount = false;
-
-                                tempS = reader["ADMIN_PANEL_SET_NUMERATOR"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    AdminPanelData.AdminPanelSetNumerator = tempB;
-                                else
-                                    AdminPanelData.AdminPanelSetNumerator = false;
-
-                                tempS = reader["ADMIN_PANEL_JOURNAL"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    AdminPanelData.AdminPanelJournal = tempB;
-                                else
-                                    AdminPanelData.AdminPanelJournal = false;
-
-                                tempS = reader["IS_ANNULATED"].ToString();
-                                if (bool.TryParse(tempS, out tempB))
-                                    IsAnnulated = tempB;
-                                else
-                                    IsAnnulated = false;
-
-                                getData = true;
+                                    IsAnnulated = Conversion.ToBool(reader["IS_ANNULATED"].ToString());
+                                }
                             }
                         }
 
                         connection.Close();
                     }
 
-                    result = getData;
+                    result = true;
                 }
                 catch (Exception ex)
                 {
@@ -640,35 +395,27 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    bool getData = false;
-
                     using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
                         connection.Open();
 
-                        string sql = "SELECT `ADRESS`, `PHONE` FROM ACCOUNT WHERE ID = " + ID.ToString();
-                        MySqlCommand command = new MySqlCommand(sql, connection);
-
-                        using (MySqlDataReader reader = command.ExecuteReader())
+                        string sql = "SELECT `ADRESS`, `PHONE` FROM `ACCOUNT` WHERE `ACCOUNT`.`ID` = " + ID.ToString();
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
-                            while (reader.Read())
+                            using (MySqlDataReader reader = command.ExecuteReader())
                             {
-                                string tempS = reader["ADRESS"].ToString();
-                                if (tempS != "")
-                                    PersonalData.Adress = Criptex.UnCript(tempS);
-
-                                tempS = reader["PHONE"].ToString();
-                                if (tempS != "")
-                                    PersonalData.Phone = Criptex.UnCript(tempS);
-
-                                getData = true;
+                                while (reader.Read())
+                                {
+                                    PersonalData.Adress = Conversion.ToUncriptString(reader["ADRESS"].ToString());
+                                    PersonalData.Phone = Conversion.ToUncriptString(reader["PHONE"].ToString());
+                                }
                             }
                         }
 
                         connection.Close();
                     }
 
-                    result = getData;
+                    result = true;
                 }
                 catch (Exception ex)
                 {
@@ -693,43 +440,30 @@ namespace GreenLeaf.ViewModel
 
             try
             {
-                bool getData = false;
-
                 using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                 {
                     connection.Open();
 
-                    string sql = "SELECT `ID`, `PASSWORD`, `IS_ANNULATED` FROM ACCOUNT WHERE LOGIN = \'" + Login.ToString() + "\'";
-                    MySqlCommand command = new MySqlCommand(sql, connection);
-
-                    using (MySqlDataReader reader = command.ExecuteReader())
+                    string sql = "SELECT `ID`, `PASSWORD`, `IS_ANNULATED` FROM `ACCOUNT` WHERE `ACCOUNT`.`LOGIN` = \'" + Login + "\'";
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        while (reader.Read())
+                        using (MySqlDataReader reader = command.ExecuteReader())
                         {
-                            string tempS = reader["ID"].ToString();
-                            int tempI = 0;
-                            if (int.TryParse(tempS, out tempI))
-                                ID = tempI;
-                            else
-                                ID = 0;
+                            while (reader.Read())
+                            {
+                                ID = Conversion.ToInt(reader["ID"].ToString());
 
-                            Password = reader["PASSWORD"].ToString();
+                                Password = reader["PASSWORD"].ToString();
 
-                            tempS = reader["IS_ANNULATED"].ToString();
-                            bool tempB = false;
-                            if (bool.TryParse(tempS, out tempB))
-                                IsAnnulated = tempB;
-                            else
-                                IsAnnulated = false;
-
-                            getData = true;
+                                IsAnnulated = Conversion.ToBool(reader["IS_ANNULATED"].ToString());
+                            }
                         }
                     }
 
                     connection.Close();
                 }
 
-                result = getData;
+                result = true;
             }
             catch (Exception ex)
             {
@@ -753,44 +487,6 @@ namespace GreenLeaf.ViewModel
 
         #endregion
 
-        /// <summary>
-        /// Создать новый аккаунт
-        /// </summary>
-        /// <returns>возвращает TRUE, если аккаунт успешно создан</returns>
-        public bool CreateAccount()
-        {
-            bool result = false;
-
-            try
-            {
-                bool getData = false;
-
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
-                {
-                    connection.Open();
-
-                    string newPass = Criptex.Cript("12345");
-
-                    string sql = String.Format(@"INSERT INTO ACCOUNT (`LOGIN`, `PASSWORD`, `SURNAME`, `NAME`, `PATRONYMIC`, `ADRESS`, `PHONE`, `SEX`, `PURCHASE_INVOICE`, `SALES_INVOICE`, `REPORTS`, `REPORT_PURCHASE_INVOICE`, `REPORT_SALES_INVOICE`, `REPORT_INCOME_EXPENSE`, `COUNTERPARTY`, `COUNTERPARTY_PROVIDER`, `COUNTERPARTY_PROVIDER_ADD`, `COUNTERPARTY_PROVIDER_EDIT`, `COUNTERPARTY_PROVIDER_DELETE`, `COUNTERPARTY_CUSTOMER`, `COUNTERPARTY_CUSTOMER_ADD`, `COUNTERPARTY_CUSTOMER_EDIT`, `COUNTERPARTY_CUSTOMER_DELETE`, `WAREHOUSE`, `WAREHOUSE_ADD_PRODUCT`, `WAREHOUSE_EDIT_PRODUCT`, `WAREHOUSE_ANNULATE_PRODUCT`, `WAREHOUSE_EDIT_COUNT`, `ADMIN_PANEL`, `ADMIN_PANEL_ADD_ACCOUNT`, `ADMIN_PANEL_EDIT_ACCOUNT`, `ADMIN_PANEL_DELETE_ACCOUNT`, `ADMIN_PANEL_SET_NUMERATOR`, `ADMIN_PANEL_JOURNAL`, `IS_ANNULATED`)  VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}', '{22}', '{23}', '{24}', '{25}', '{26}', '{27}', '{28}', '{29}', '{30}', '{31}', '{32}', '{33}', '{34}')", Login, newPass, PersonalData.Surname, PersonalData.Name, PersonalData.Patronymic, PersonalData.Adress, PersonalData.Phone, ToInt(PersonalData.Sex), ToInt(InvoiceData.PurchaseInvoice), ToInt(InvoiceData.SalesInvoice), ToInt(ReportsData.Reports), ToInt(ReportsData.ReportPurchaseInvoice), ToInt(ReportsData.ReportSalesInvoice), ToInt(ReportsData.ReportIncomeExpense), ToInt(CounterpartyData.Counterparty), ToInt(CounterpartyData.CounterpartyProvider), ToInt(CounterpartyData.CounterpartyProviderAdd), ToInt(CounterpartyData.CounterpartyProviderEdit), ToInt(CounterpartyData.CounterpartyProviderDelete), ToInt(CounterpartyData.CounterpartyCustomer), ToInt(CounterpartyData.CounterpartyCustomerAdd), ToInt(CounterpartyData.CounterpartyCustomerEdit), ToInt(CounterpartyData.CounterpartyCustomerDelete), ToInt(WarehouseData.Warehouse), ToInt(WarehouseData.WarehouseAddProduct), ToInt(WarehouseData.WarehouseEditProduct), ToInt(WarehouseData.WarehouseAnnulateProduct), ToInt(WarehouseData.WarehouseEditCount), ToInt(AdminPanelData.AdminPanel), ToInt(AdminPanelData.AdminPanelAddAccount), ToInt(AdminPanelData.AdminPanelEditAccount), ToInt(AdminPanelData.AdminPanelDeleteAccount), ToInt(AdminPanelData.AdminPanelSetNumerator), ToInt(AdminPanelData.AdminPanelJournal), 0);
-                    MySqlCommand command = new MySqlCommand(sql, connection);
-
-                    ID = command.ExecuteNonQuery();
-
-                    connection.Close();
-                }
-
-                getData = GetBaseDataByLogin();
-
-                result = getData;
-            }
-            catch (Exception ex)
-            {
-                Dialog.ErrorMessage(null, "Ошибка обработки данных", ex.Message);
-            }
-
-            return result;
-        }
-
         #region Редактирование данных
 
         /// <summary>
@@ -805,23 +501,21 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    bool getData = false;
-
                     using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
                         connection.Open();
 
-                        string sql = String.Format(@"UPDATE ACCOUNT SET `LOGIN` = '{0}', `SURNAME` = '{1}', `NAME` = '{2}', `PATRONYMIC` = '{3}', `ADRESS` = '{4}', `PHONE` = '{5}', `SEX` = '{6}', `PURCHASE_INVOICE` = '{7}', `SALES_INVOICE` = '{8}', `REPORTS` = '{9}', `REPORT_PURCHASE_INVOICE` = '{10}', `REPORT_SALES_INVOICE` = '{11}', `REPORT_INCOME_EXPENSE` = '{12}', `COUNTERPARTY` = '{13}', `COUNTERPARTY_PROVIDER` = '{14}', `COUNTERPARTY_PROVIDER_ADD` = '{15}', `COUNTERPARTY_PROVIDER_EDIT` = '{16}', `COUNTERPARTY_PROVIDER_DELETE` = '{17}', `COUNTERPARTY_CUSTOMER` = '{18}', `COUNTERPARTY_CUSTOMER_ADD` = '{19}', `COUNTERPARTY_CUSTOMER_EDIT` = '{20}', `COUNTERPARTY_CUSTOMER_DELETE` = '{21}', `WAREHOUSE` = '{22}', `WAREHOUSE_ADD_PRODUCT` = '{23}', `WAREHOUSE_EDIT_PRODUCT` = '{24}', `WAREHOUSE_ANNULATE_PRODUCT` = '{25}', `WAREHOUSE_EDIT_COUNT` = '{26}', `ADMIN_PANEL` = '{27}', `ADMIN_PANEL_ADD_ACCOUNT` = '{28}', `ADMIN_PANEL_EDIT_ACCOUNT` = '{29}', `ADMIN_PANEL_DELETE_ACCOUNT` = '{30}', `ADMIN_PANEL_SET_NUMERATOR` = '{31}', `ADMIN_PANEL_JOURNAL` = '{32}' WHERE `ID` = {33}", Login, PersonalData.Surname, PersonalData.Name, PersonalData.Patronymic, PersonalData.Adress, PersonalData.Phone, ToInt(PersonalData.Sex), ToInt(InvoiceData.PurchaseInvoice), ToInt(InvoiceData.SalesInvoice), ToInt(ReportsData.Reports), ToInt(ReportsData.ReportPurchaseInvoice), ToInt(ReportsData.ReportSalesInvoice), ToInt(ReportsData.ReportIncomeExpense), ToInt(CounterpartyData.Counterparty), ToInt(CounterpartyData.CounterpartyProvider), ToInt(CounterpartyData.CounterpartyProviderAdd), ToInt(CounterpartyData.CounterpartyProviderEdit), ToInt(CounterpartyData.CounterpartyProviderDelete), ToInt(CounterpartyData.CounterpartyCustomer), ToInt(CounterpartyData.CounterpartyCustomerAdd), ToInt(CounterpartyData.CounterpartyCustomerEdit), ToInt(CounterpartyData.CounterpartyCustomerDelete), ToInt(WarehouseData.Warehouse), ToInt(WarehouseData.WarehouseAddProduct), ToInt(WarehouseData.WarehouseEditProduct), ToInt(WarehouseData.WarehouseAnnulateProduct), ToInt(WarehouseData.WarehouseEditCount), ToInt(AdminPanelData.AdminPanel), ToInt(AdminPanelData.AdminPanelAddAccount), ToInt(AdminPanelData.AdminPanelEditAccount), ToInt(AdminPanelData.AdminPanelDeleteAccount), ToInt(AdminPanelData.AdminPanelSetNumerator), ToInt(AdminPanelData.AdminPanelJournal), ID);
-                        MySqlCommand command = new MySqlCommand(sql, connection);
+                        string sql = String.Format(@"UPDATE `ACCOUNT` SET `LOGIN` = '{0}', `SURNAME` = '{1}', `NAME` = '{2}', `PATRONYMIC` = '{3}', `ADRESS` = '{4}', `PHONE` = '{5}', `SEX` = '{6}', `PURCHASE_INVOICE` = '{7}', `SALES_INVOICE` = '{8}', `REPORTS` = '{9}', `REPORT_PURCHASE_INVOICE` = '{10}', `REPORT_SALES_INVOICE` = '{11}', `REPORT_INCOME_EXPENSE` = '{12}', `COUNTERPARTY` = '{13}', `COUNTERPARTY_PROVIDER` = '{14}', `COUNTERPARTY_PROVIDER_ADD` = '{15}', `COUNTERPARTY_PROVIDER_EDIT` = '{16}', `COUNTERPARTY_PROVIDER_DELETE` = '{17}', `COUNTERPARTY_CUSTOMER` = '{18}', `COUNTERPARTY_CUSTOMER_ADD` = '{19}', `COUNTERPARTY_CUSTOMER_EDIT` = '{20}', `COUNTERPARTY_CUSTOMER_DELETE` = '{21}', `WAREHOUSE` = '{22}', `WAREHOUSE_ADD_PRODUCT` = '{23}', `WAREHOUSE_EDIT_PRODUCT` = '{24}', `WAREHOUSE_ANNULATE_PRODUCT` = '{25}', `WAREHOUSE_EDIT_COUNT` = '{26}', `ADMIN_PANEL` = '{27}', `ADMIN_PANEL_ADD_ACCOUNT` = '{28}', `ADMIN_PANEL_EDIT_ACCOUNT` = '{29}', `ADMIN_PANEL_DELETE_ACCOUNT` = '{30}', `ADMIN_PANEL_SET_NUMERATOR` = '{31}', `ADMIN_PANEL_JOURNAL` = '{32}' WHERE `ACCOUNT`.`ID` = {33}", Login, PersonalData.Surname, PersonalData.Name, PersonalData.Patronymic, PersonalData.Adress, PersonalData.Phone, Conversion.ToString(PersonalData.Sex), Conversion.ToString(InvoiceData.PurchaseInvoice), Conversion.ToString(InvoiceData.SalesInvoice), Conversion.ToString(ReportsData.Reports), Conversion.ToString(ReportsData.ReportPurchaseInvoice), Conversion.ToString(ReportsData.ReportSalesInvoice), Conversion.ToString(ReportsData.ReportIncomeExpense), Conversion.ToString(CounterpartyData.Counterparty), Conversion.ToString(CounterpartyData.CounterpartyProvider), Conversion.ToString(CounterpartyData.CounterpartyProviderAdd), Conversion.ToString(CounterpartyData.CounterpartyProviderEdit), Conversion.ToString(CounterpartyData.CounterpartyProviderDelete), Conversion.ToString(CounterpartyData.CounterpartyCustomer), Conversion.ToString(CounterpartyData.CounterpartyCustomerAdd), Conversion.ToString(CounterpartyData.CounterpartyCustomerEdit), Conversion.ToString(CounterpartyData.CounterpartyCustomerDelete), Conversion.ToString(WarehouseData.Warehouse), Conversion.ToString(WarehouseData.WarehouseAddProduct), Conversion.ToString(WarehouseData.WarehouseEditProduct), Conversion.ToString(WarehouseData.WarehouseAnnulateProduct), Conversion.ToString(WarehouseData.WarehouseEditCount), Conversion.ToString(AdminPanelData.AdminPanel), Conversion.ToString(AdminPanelData.AdminPanelAddAccount), Conversion.ToString(AdminPanelData.AdminPanelEditAccount), Conversion.ToString(AdminPanelData.AdminPanelDeleteAccount), Conversion.ToString(AdminPanelData.AdminPanelSetNumerator), Conversion.ToString(AdminPanelData.AdminPanelJournal), ID);
 
-                        command.ExecuteNonQuery();
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
 
                         connection.Close();
-
-                        getData = true;
                     }
 
-                    result = getData;
+                    result = true;
                 }
                 catch (Exception ex)
                 {
@@ -849,27 +543,25 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    bool getData = false;
-
                     using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
                         connection.Open();
 
                         string newPass = Criptex.Cript(newPassword);
 
-                        string sql = @"UPDATE ACCOUNT SET `PASSWORD` = '" + newPass + @"' WHERE ID = " + ID.ToString();
-                        MySqlCommand command = new MySqlCommand(sql, connection);
+                        string sql = String.Format(@"UPDATE `ACCOUNT` SET `PASSWORD` = '{0}' WHERE `ACCOUNT`.`ID` = {1}", newPass, ID);
 
-                        command.ExecuteNonQuery();
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
 
                         Password = newPass;
-
-                        getData = true;
 
                         connection.Close();
                     }
 
-                    result = getData;
+                    result = true;
                 }
                 catch (Exception ex)
                 {
@@ -896,25 +588,23 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    bool getData = false;
-
                     using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
                         connection.Open();
 
-                        string sql = @"UPDATE ACCOUNT SET `IS_ANNULATED` = '1' WHERE ID = " + ID.ToString();
-                        MySqlCommand command = new MySqlCommand(sql, connection);
+                        string sql = @"UPDATE `ACCOUNT` SET `IS_ANNULATED` = '1' WHERE `ACCOUNT`.`ID` = " + ID.ToString();
 
-                        command.ExecuteNonQuery();
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
 
                         IsAnnulated = true;
-
-                        getData = true;
 
                         connection.Close();
                     }
 
-                    result = getData;
+                    result = true;
                 }
                 catch (Exception ex)
                 {
@@ -927,16 +617,6 @@ namespace GreenLeaf.ViewModel
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// Преобразовать логическое значение в TinyInt
-        /// </summary>
-        /// <param name="value">значение</param>
-        /// <returns>возвращает 1, если TRUE и 0, если FALSE</returns>
-        private int ToInt(bool value)
-        {
-            return (value) ? 1 : 0;
         }
 
         #endregion
@@ -956,28 +636,25 @@ namespace GreenLeaf.ViewModel
                 {
                     connection.Open();
 
-                    string sql = @"SELECT `ID`, `LOGIN`, `SURNAME`, `NAME`, `PATRONYMIC` FROM ACCOUNT WHERE IS_ANNULATED = '0'";
-                    MySqlCommand command = new MySqlCommand(sql, connection);
+                    string sql = @"SELECT `ID`, `LOGIN`, `SURNAME`, `NAME`, `PATRONYMIC` FROM `ACCOUNT` WHERE `ACCOUNT`.`IS_ANNULATED` = '0'";
 
-                    using (MySqlDataReader reader = command.ExecuteReader())
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        while (reader.Read())
+                        using (MySqlDataReader reader = command.ExecuteReader())
                         {
-                            Account account = new Account();
+                            while (reader.Read())
+                            {
+                                Account account = new Account();
 
-                            string tempS = reader["ID"].ToString();
-                            int tempI = 0;
-                            if (int.TryParse(tempS, out tempI))
-                                account.ID = tempI;
-                            else
-                                account.ID = 0;
+                                account.ID = Conversion.ToInt(reader["ID"].ToString());
 
-                            account.Login = reader["LOGIN"].ToString();
-                            account.PersonalData.Surname = reader["SURNAME"].ToString();
-                            account.PersonalData.Name = reader["NAME"].ToString();
-                            account.PersonalData.Patronymic = reader["PATRONYMIC"].ToString();
+                                account.Login = reader["LOGIN"].ToString();
+                                account.PersonalData.Surname = reader["SURNAME"].ToString();
+                                account.PersonalData.Name = reader["NAME"].ToString();
+                                account.PersonalData.Patronymic = reader["PATRONYMIC"].ToString();
 
-                            result.Add(account);
+                                result.Add(account);
+                            }
                         }
                     }
 
