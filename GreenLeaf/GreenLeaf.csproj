@@ -109,7 +109,10 @@
     <Compile Include="ViewModel\Counterparty.cs" />
     <Compile Include="ViewModel\Invoice.cs" />
     <Compile Include="ViewModel\InvoiceItem.cs" />
+    <Compile Include="ViewModel\Journal.cs" />
+    <Compile Include="ViewModel\Numerator.cs" />
     <Compile Include="ViewModel\Product.cs" />
+    <Compile Include="ViewModel\Unit.cs" />
     <Compile Include="Windows\Invoice\CreateInvoiceWindow.xaml.cs">
       <DependentUpon>CreateInvoiceWindow.xaml</DependentUpon>
     </Compile>

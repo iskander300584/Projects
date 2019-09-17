@@ -246,7 +246,8 @@ namespace GreenLeaf.ViewModel
                 {
                     connection.Open();
 
-                    string sql = String.Format(@"INSERT INTO `PRODUCT` (`PRODUCT_CODE`, `NOMINATION`, `COUNT_IN_PACKAGE`, `COST`, `COUPON`, `ID_UNIT`) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", _productCode, _nomination, _countInPackage, _cost, _coupon, _id_unit);
+                    string sql = String.Format(@"INSERT INTO `PRODUCT` (`PRODUCT_CODE`, `NOMINATION`, `COUNT_IN_PACKAGE`, `COST`, `COUPON`, `ID_UNIT`) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", _productCode, _nomination, _countInPackage, Conversion.ToString(_cost), Conversion.ToString(_coupon), _id_unit);
+
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         ID = command.ExecuteNonQuery();
@@ -280,13 +281,12 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    bool getData = false;
-
                     using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
                         connection.Open();
 
                         string sql = "SELECT * FROM `PRODUCT` WHERE `PRODUCT`.`ID` = " + ID.ToString();
+
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
                             using (MySqlDataReader reader = command.ExecuteReader())
@@ -296,56 +296,13 @@ namespace GreenLeaf.ViewModel
                                     ProductCode = reader["PRODUCT_CODE"].ToString();
                                     Nomination = reader["NOMINATION"].ToString();
 
-                                    string tempS = reader["COUNT_IN_PACKAGE"].ToString();
-                                    double tempD = 0;
-                                    if (double.TryParse(tempS, out tempD))
-                                        CountInPackage = tempD;
-                                    else
-                                        CountInPackage = 0;
-
-                                    tempS = reader["COST"].ToString();
-                                    tempD = 0;
-                                    if (double.TryParse(tempS, out tempD))
-                                        Cost = tempD;
-                                    else
-                                        Cost = 0;
-
-                                    tempS = reader["COUPON"].ToString();
-                                    tempD = 0;
-                                    if (double.TryParse(tempS, out tempD))
-                                        Coupon = tempD;
-                                    else
-                                        Coupon = 0;
-
-                                    tempS = reader["COUNT"].ToString();
-                                    tempD = 0;
-                                    if (double.TryParse(tempS, out tempD))
-                                        Count = tempD;
-                                    else
-                                        Count = 0;
-
-                                    tempS = reader["LOCKED_COUNT"].ToString();
-                                    tempD = 0;
-                                    if (double.TryParse(tempS, out tempD))
-                                        LockedCount = tempD;
-                                    else
-                                        LockedCount = 0;
-
-                                    tempS = reader["ID_UNIT"].ToString();
-                                    int tempI = 0;
-                                    if (int.TryParse(tempS, out tempI))
-                                        ID_Unit = tempI;
-                                    else
-                                        ID_Unit = 0;
-
-                                    tempS = reader["IS_ANNULATED"].ToString();
-                                    bool tempB = false;
-                                    if (bool.TryParse(tempS, out tempB))
-                                        IsAnnulated = tempB;
-                                    else
-                                        IsAnnulated = false;
-
-                                    getData = true;
+                                    CountInPackage = Conversion.ToDouble(reader["COUNT_IN_PACKAGE"].ToString());
+                                    Cost = Conversion.ToDouble(reader["COST"].ToString());
+                                    Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
+                                    Count = Conversion.ToDouble(reader["COUNT"].ToString());
+                                    LockedCount = Conversion.ToDouble(reader["LOCKED_COUNT"].ToString());
+                                    ID_Unit = Conversion.ToInt(reader["ID_UNIT"].ToString());
+                                    IsAnnulated = Conversion.ToBool(reader["IS_ANNULATED"].ToString());
                                 }
                             }
                         }
@@ -353,7 +310,7 @@ namespace GreenLeaf.ViewModel
                         connection.Close();
                     }
 
-                    result = getData;
+                    result = true;
                 }
                 catch(Exception ex)
                 {
@@ -398,6 +355,7 @@ namespace GreenLeaf.ViewModel
                         connection.Open();
 
                         string sql = String.Format(@"UPDATE `PRODUCT` SET `PRODUCT_CODE` = '{0}', `NOMINATION` = '{1}', `COUNT_IN_PACKAGE` = '{2}', `COST` = '{3}', `COUPON` = '{4}', `ID_UNIT` = '{5}' WHERE `PRODUCT`.`ID` = {6}", _productCode, _nomination, Conversion.ToString(_countInPackage), Conversion.ToString(_cost), Conversion.ToString(_coupon), _id_unit, _id);
+
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
                             command.ExecuteNonQuery();
@@ -440,6 +398,7 @@ namespace GreenLeaf.ViewModel
                         IsAnnulated = true;
 
                         string sql = String.Format(@"UPDATE `PRODUCT` SET `IS_ANNULATED` = '1' WHERE `PRODUCT`.`ID` = {0}", _id);
+
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
                             command.ExecuteNonQuery();
@@ -482,6 +441,7 @@ namespace GreenLeaf.ViewModel
                         IsAnnulated = false;
 
                         string sql = String.Format(@"UPDATE `PRODUCT` SET `IS_ANNULATED` = '0' WHERE `PRODUCT`.`ID` = {0}", _id);
+
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
                             command.ExecuteNonQuery();
@@ -522,6 +482,7 @@ namespace GreenLeaf.ViewModel
                         connection.Open();
 
                         string sql = String.Format(@"UPDATE `PRODUCT` SET `COUNT` = '{0}', `ID_UNIT` = '{1}' WHERE `PRODUCT`.`ID` = {2}", Conversion.ToString(_count), _id_unit, _id);
+
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
                             command.ExecuteNonQuery();
@@ -624,58 +585,15 @@ namespace GreenLeaf.ViewModel
                             {
                                 Product item = new Product();
 
-                                string tempS = reader["ID"].ToString();
-                                int tempI = 0;
-                                if (int.TryParse(tempS, out tempI))
-                                    item.ID = tempI;
-                                else
-                                    item.ID = 0;
-
+                                item.ID = Conversion.ToInt(reader["ID"].ToString());
                                 item.ProductCode = reader["PRODUCT_CODE"].ToString();
                                 item.Nomination = reader["NOMINATION"].ToString();
-
-                                tempS = reader["COUNT_IN_PACKAGE"].ToString();
-                                double tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    item.CountInPackage = tempD;
-                                else
-                                    item.CountInPackage = 0;
-
-                                tempS = reader["COST"].ToString();
-                                tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    item.Cost = tempD;
-                                else
-                                    item.Cost = 0;
-
-                                tempS = reader["COUPON"].ToString();
-                                tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    item.Coupon = tempD;
-                                else
-                                    item.Coupon = 0;
-
-                                tempS = reader["COUNT"].ToString();
-                                tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    item.Count = tempD;
-                                else
-                                    item.Count = 0;
-
-                                tempS = reader["LOCKED_COUNT"].ToString();
-                                tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    item.LockedCount = tempD;
-                                else
-                                    item.LockedCount = 0;
-
-                                tempS = reader["ID_UNIT"].ToString();
-                                tempI = 0;
-                                if (int.TryParse(tempS, out tempI))
-                                    item.ID_Unit = tempI;
-                                else
-                                    item.ID_Unit = 0;
-
+                                item.CountInPackage = Conversion.ToDouble(reader["COUNT_IN_PACKAGE"].ToString());
+                                item.Cost = Conversion.ToDouble(reader["COST"].ToString());
+                                item.Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
+                                item.Count = Conversion.ToDouble(reader["COUNT"].ToString());
+                                item.LockedCount = Conversion.ToDouble(reader["LOCKED_COUNT"].ToString());
+                                item.ID_Unit = Conversion.ToInt(reader["ID_UNIT"].ToString());
                                 item.IsAnnulated = false;
 
                                 Products.Add(item);
@@ -717,64 +635,16 @@ namespace GreenLeaf.ViewModel
                             {
                                 Product item = new Product();
 
-                                string tempS = reader["ID"].ToString();
-                                int tempI = 0;
-                                if (int.TryParse(tempS, out tempI))
-                                    item.ID = tempI;
-                                else
-                                    item.ID = 0;
-
+                                item.ID = Conversion.ToInt(reader["ID"].ToString());
                                 item.ProductCode = reader["PRODUCT_CODE"].ToString();
                                 item.Nomination = reader["NOMINATION"].ToString();
-
-                                tempS = reader["COUNT_IN_PACKAGE"].ToString();
-                                double tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    item.CountInPackage = tempD;
-                                else
-                                    item.CountInPackage = 0;
-
-                                tempS = reader["COST"].ToString();
-                                tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    item.Cost = tempD;
-                                else
-                                    item.Cost = 0;
-
-                                tempS = reader["COUPON"].ToString();
-                                tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    item.Coupon = tempD;
-                                else
-                                    item.Coupon = 0;
-
-                                tempS = reader["COUNT"].ToString();
-                                tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    item.Count = tempD;
-                                else
-                                    item.Count = 0;
-
-                                tempS = reader["LOCKED_COUNT"].ToString();
-                                tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    item.LockedCount = tempD;
-                                else
-                                    item.LockedCount = 0;
-
-                                tempS = reader["ID_UNIT"].ToString();
-                                tempI = 0;
-                                if (int.TryParse(tempS, out tempI))
-                                    item.ID_Unit = tempI;
-                                else
-                                    item.ID_Unit = 0;
-
-                                tempS = reader["IS_ANNULATED"].ToString();
-                                bool tempB = false;
-                                if (bool.TryParse(tempS, out tempB))
-                                    item.IsAnnulated = tempB;
-                                else
-                                    item.IsAnnulated = false;
+                                item.CountInPackage = Conversion.ToDouble(reader["COUNT_IN_PACKAGE"].ToString());
+                                item.Cost = Conversion.ToDouble(reader["COST"].ToString());
+                                item.Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
+                                item.Count = Conversion.ToDouble(reader["COUNT"].ToString());
+                                item.LockedCount = Conversion.ToDouble(reader["LOCKED_COUNT"].ToString());
+                                item.ID_Unit = Conversion.ToInt(reader["ID_UNIT"].ToString());
+                                item.IsAnnulated = Conversion.ToBool(reader["IS_ANNULATED"].ToString());
 
                                 Products.Add(item);
                             }

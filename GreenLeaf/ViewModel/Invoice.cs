@@ -226,7 +226,7 @@ namespace GreenLeaf.ViewModel
 
                     string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
-                    string sql = String.Format(@"INSERT INTO `{0}` (`ID_ACCOUNT`, `ID_COUNTERPARTY`, `COST`, `COUPON`) VALUES ('{1}', '{2}', '{3}', '{4}')", table, _id_account, _id_counterparty, _cost, _coupon);
+                    string sql = String.Format(@"INSERT INTO `{0}` (`ID_ACCOUNT`, `ID_COUNTERPARTY`, `COST`, `COUPON`) VALUES ('{1}', '{2}', '{3}', '{4}')", table, _id_account, _id_counterparty, Conversion.ToString(_cost), Conversion.ToString(_coupon));
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
@@ -393,7 +393,8 @@ namespace GreenLeaf.ViewModel
 
                         string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
-                        string sql = String.Format(@"UPDATE {0} SET `ID_ACCOUNT` = '{1}', `ID_COUNTERPARTY` = '{2}', `COST` = '{3}', `COUPON` = '{4}' WHERE ID = {5}", table, _id_account, _id_counterparty, _cost, _coupon, _id);
+                        string sql = String.Format(@"UPDATE `{0}` SET `ID_ACCOUNT` = '{1}', `ID_COUNTERPARTY` = '{2}', `COST` = '{3}', `COUPON` = '{4}' WHERE `{0}`.`ID` = {5}", table, _id_account, _id_counterparty, Conversion.ToString(_cost), Conversion.ToString(_coupon), _id);
+
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
                             command.ExecuteNonQuery();
@@ -435,7 +436,8 @@ namespace GreenLeaf.ViewModel
 
                         string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
-                        string sql = String.Format(@"DELETE FROM {0} WHERE ID = {1}", table, _id);
+                        string sql = String.Format(@"DELETE FROM `{0}` WHERE `{0}`.`ID` = {1}", table, _id);
+
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
                             command.ExecuteNonQuery();
@@ -480,7 +482,7 @@ namespace GreenLeaf.ViewModel
                         string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
                         // Блокировка накладной
-                        string sql = String.Format(@"UPDATE {0} SET `IS_LOCKED` = '{1}' WHERE ID = {2}", table, (IsLocked) ? 1 : 0, _id);
+                        string sql = String.Format(@"UPDATE `{0}` SET `IS_LOCKED` = '{1}' WHERE `{0}`.`ID` = {2}", table, (IsLocked) ? 1 : 0, _id);
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
                             command.ExecuteNonQuery();
@@ -489,7 +491,7 @@ namespace GreenLeaf.ViewModel
                         // Блокировка товаров
                         foreach (InvoiceItem item in Items)
                         {
-                            sql = String.Format(@"SELECT `LOCKED_COUNT` FROM PRODUCT WHERE ID = {0}", item.ID_Product);
+                            sql = String.Format(@"SELECT `LOCKED_COUNT` FROM `PRODUCT` WHERE `PRODUCT`.`ID` = {0}", item.ID_Product);
 
                             double lockCount = 0;
 
@@ -511,7 +513,7 @@ namespace GreenLeaf.ViewModel
 
                             lockCount += item.Count;
 
-                            sql = String.Format(@"UPDATE PRODUCT SET `LOCKED_COUNT` = '{0}' WHERE ID = {1}", lockCount, item.ID_Product);
+                            sql = String.Format(@"UPDATE `PRODUCT` SET `LOCKED_COUNT` = '{0}' WHERE `PRODUCT`.`ID` = {1}", lockCount, item.ID_Product);
 
                             using (MySqlCommand command = new MySqlCommand(sql, connection))
                             {
@@ -558,7 +560,7 @@ namespace GreenLeaf.ViewModel
                         string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
                         // Разблокировка накладной
-                        string sql = String.Format(@"UPDATE {0} SET `IS_LOCKED` = '{1}' WHERE ID = {2}", table, (IsLocked) ? 1 : 0, _id);
+                        string sql = String.Format(@"UPDATE `{0}` SET `IS_LOCKED` = '{1}' WHERE `{0}`.`ID` = {2}", table, (IsLocked) ? 1 : 0, _id);
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
                             command.ExecuteNonQuery();
@@ -567,7 +569,7 @@ namespace GreenLeaf.ViewModel
                         // Разблокировка товаров
                         foreach (InvoiceItem item in Items)
                         {
-                            sql = String.Format(@"SELECT `LOCKED_COUNT` FROM PRODUCT WHERE ID = {0}", item.ID_Product);
+                            sql = String.Format(@"SELECT `LOCKED_COUNT` FROM `PRODUCT` WHERE `PRODUCT`.`ID` = {0}", item.ID_Product);
 
                             double lockCount = 0;
 
@@ -591,7 +593,7 @@ namespace GreenLeaf.ViewModel
                             if (lockCount < 0)
                                 lockCount = 0;
 
-                            sql = String.Format(@"UPDATE PRODUCT SET `LOCKED_COUNT` = '{0}' WHERE ID = {1}", lockCount, item.ID_Product);
+                            sql = String.Format(@"UPDATE `PRODUCT` SET `LOCKED_COUNT` = '{0}' WHERE `PRODUCT`.`ID` = {1}", lockCount, item.ID_Product);
 
                             using (MySqlCommand command = new MySqlCommand(sql, connection))
                             {
@@ -637,11 +639,6 @@ namespace GreenLeaf.ViewModel
                         {
                             connection.Open();
 
-                            // Получение даты
-                            DateTime dt = DateTime.Today;
-                            string date = String.Format("{0}-{1}-{2}", dt.Year, dt.Month, dt.Day);
-                            Date = dt;
-
                             // Получение номера
                             string sql = string.Empty;
                             string nomination = string.Empty;
@@ -650,7 +647,7 @@ namespace GreenLeaf.ViewModel
                             else
                                 nomination = "Расходная накладная";
 
-                            sql = String.Format(@"SELECT `VALUE` FROM NUMERATOR WHERE NOMINATION = '{0}'", nomination);
+                            sql = String.Format(@"SELECT `VALUE` FROM `NUMERATOR` WHERE `NUMERATOR`.`NOMINATION` = '{0}'", nomination);
 
                             // Получение значения нумератора
                             using (MySqlCommand command = new MySqlCommand(sql, connection))
@@ -664,13 +661,13 @@ namespace GreenLeaf.ViewModel
                                         if (int.TryParse(tempS, out tempI))
                                             Number = tempI + 1;
                                         else
-                                            Number = 0;
+                                            Number = 1;
                                     }
                                 }
                             }
 
                             // Обновление значения нумератора
-                            sql = String.Format(@"UPDATE NUMERATOR SET `VALUE` = '{0}' WHERE NOMINATION = '{1}'", Number, nomination);
+                            sql = String.Format(@"UPDATE `NUMERATOR` SET `VALUE` = '{0}' WHERE `NUMERATOR`.`NOMINATION` = '{1}'", Number, nomination);
                             using (MySqlCommand command = new MySqlCommand(sql, connection))
                             {
                                 command.ExecuteNonQuery();
@@ -681,16 +678,19 @@ namespace GreenLeaf.ViewModel
                             string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
                             // Проведение накладной
-                            sql = String.Format(@"UPDATE {0} SET `IS_ISSUED` = '{1}' WHERE ID = {2}", table, (IsIssued) ? 1 : 0, _id);
+                            sql = String.Format(@"UPDATE `{0}` SET `NUMBER` = '{1}', `IS_ISSUED` = '{2}', `DATE` = '{3}' WHERE `{0}`.`ID` = {4}", table, Number, Conversion.ToString(IsIssued), Conversion.ToString(DateTime.Today), _id);
+
                             using (MySqlCommand command = new MySqlCommand(sql, connection))
                             {
                                 command.ExecuteNonQuery();
                             }
 
+                            Date = DateTime.Today;
+
                             // Добавление/уменьшение товаров
                             foreach (InvoiceItem item in Items)
                             {
-                                sql = String.Format(@"SELECT `COUNT` FROM PRODUCT WHERE ID = {0}", item.ID_Product);
+                                sql = String.Format(@"SELECT `COUNT` FROM `PRODUCT` WHERE `PRODUCT`.`ID` = {0}", item.ID_Product);
 
                                 double count = 0;
 
@@ -716,7 +716,7 @@ namespace GreenLeaf.ViewModel
                                 else
                                     count -= item.Count;
 
-                                sql = String.Format(@"UPDATE PRODUCT SET `COUNT` = '{0}' WHERE ID = {1}", count, item.ID_Product);
+                                sql = String.Format(@"UPDATE `PRODUCT` SET `COUNT` = '{0}' WHERE `PRODUCT`.`ID` = {1}", count, item.ID_Product);
 
                                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                                 {
@@ -763,30 +763,30 @@ namespace GreenLeaf.ViewModel
 
                     string table = (isPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
-                    string sql = "SELECT * FROM " + table;
+                    string sql = "SELECT * FROM `" + table + "`";
 
                     if (from != null && to != null)
                     {
                         string fromDate = String.Format(@"'{0}-{1}-{2}T00:00:00.000'", ((DateTime)from).Year, ((DateTime)from).Month, ((DateTime)from).Day);
                         string toDate = String.Format(@"'{0}-{1}-{2}T23:59:59.000'", ((DateTime)to).Year, ((DateTime)to).Month, ((DateTime)to).Day);
 
-                        sql += " WHERE DATE >= " + fromDate + " AND DATE <= " + toDate;
+                        sql += " WHERE `" + table + "`.`DATE` >= " + fromDate + " AND `" + table + "`.`DATE` <= " + toDate;
 
                         if (idAccount != null)
-                            sql += " AND ID_ACCOUNT = " + (int)idAccount;
+                            sql += " AND `" + table + "`.`ID_ACCOUNT` = " + (int)idAccount;
 
                         if (idCounterparty != null)
-                            sql += " AND ID_COUNTERPARTY = " + (int)idCounterparty;
+                            sql += " AND `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
                     }
                     else if(idAccount != null)
                     {
-                        sql += " WHERE ID_ACCOUNT = " + (int)idAccount;
+                        sql += " WHERE `" + table + "`.`ID_ACCOUNT` = " + (int)idAccount;
 
                         if (idCounterparty != null)
-                            sql += " AND ID_COUNTERPARTY = " + (int)idCounterparty;
+                            sql += " AND `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
                     }
                     else if (idCounterparty != null)
-                        sql += " WHERE ID_COUNTERPARTY = " + (int)idCounterparty;
+                        sql += " WHERE `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
 
                     MySqlCommand command = new MySqlCommand(sql, connection);
 
@@ -796,68 +796,15 @@ namespace GreenLeaf.ViewModel
                         {
                             Invoice invoice = new Invoice();
 
-                            string tempS = reader["ID"].ToString();
-                            int tempI = 0;
-                            if (int.TryParse(tempS, out tempI))
-                                invoice.ID = tempI;
-                            else
-                                invoice.ID = 0;
-
-                            tempS = reader["NUMBER"].ToString();
-                            tempI = 0;
-                            if (int.TryParse(tempS, out tempI))
-                                invoice.Number = tempI;
-                            else
-                                invoice.Number = 0;
-
-                            tempS = reader["ID_ACCOUNT"].ToString();
-                            tempI = 0;
-                            if (int.TryParse(tempS, out tempI))
-                                invoice.ID_Account = tempI;
-                            else
-                                invoice.ID_Account = 0;
-
-                            tempS = reader["ID_COUNTERPARTY"].ToString();
-                            tempI = 0;
-                            if (int.TryParse(tempS, out tempI))
-                                invoice.ID_Counterparty = tempI;
-                            else
-                                invoice.ID_Counterparty = 0;
-
-                            tempS = reader["DATE"].ToString();
-                            DateTime tempDT = DateTime.MinValue;
-                            if (DateTime.TryParse(tempS, out tempDT))
-                                invoice.Date = tempDT;
-                            else
-                                invoice.Date = DateTime.MinValue;
-
-                            tempS = reader["COST"].ToString();
-                            double tempD = 0;
-                            if (double.TryParse(tempS, out tempD))
-                                invoice.Cost = tempD;
-                            else
-                                invoice.Cost = 0;
-
-                            tempS = reader["COUPON"].ToString();
-                            tempD = 0;
-                            if (double.TryParse(tempS, out tempD))
-                                invoice.Coupon = tempD;
-                            else
-                                invoice.Coupon = 0;
-
-                            tempS = reader["IS_ISSUED"].ToString();
-                            bool tempB = false;
-                            if (bool.TryParse(tempS, out tempB))
-                                invoice.IsIssued = tempB;
-                            else
-                                invoice.IsIssued = false;
-
-                            tempS = reader["IS_LOCKED"].ToString();
-                            tempB = false;
-                            if (bool.TryParse(tempS, out tempB))
-                                invoice.IsLocked = tempB;
-                            else
-                                invoice.IsLocked = false;
+                            invoice.ID = Conversion.ToInt(reader["ID"].ToString());
+                            invoice.Number = Conversion.ToInt(reader["NUMBER"].ToString());
+                            invoice.ID_Account = Conversion.ToInt(reader["ID_ACCOUNT"].ToString());
+                            invoice.ID_Counterparty = Conversion.ToInt(reader["ID_COUNTERPARTY"].ToString());
+                            invoice.Date = Conversion.ToDateTime(reader["DATE"].ToString());
+                            invoice.Cost = Conversion.ToDouble(reader["COST"].ToString());
+                            invoice.Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
+                            invoice.IsIssued = Conversion.ToBool(reader["IS_ISSUED"].ToString());
+                            invoice.IsLocked = Conversion.ToBool(reader["IS_LOCKED"].ToString());
 
                             invoice.IsPurchase = isPurchase;
 

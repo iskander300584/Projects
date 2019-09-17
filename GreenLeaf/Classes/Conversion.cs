@@ -28,6 +28,16 @@ namespace GreenLeaf.Classes
         }
 
         /// <summary>
+        /// Преобразование в строку ДАТЫ
+        /// </summary>
+        /// <param name="value">значение даты-времени</param>
+        /// <returns>возвращает дату, преобразованное в строку, допустимую для записи в БД</returns>
+        public static string ToString(DateTime value)
+        {
+            return String.Format("{0}-{1}-{2}", value.Year, value.Month, value.Day); ;
+        }
+
+        /// <summary>
         /// Преобразование в целое число
         /// </summary>
         /// <param name="value">строка</param>

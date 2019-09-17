@@ -146,18 +146,47 @@ namespace GreenLeaf.ViewModel
         }
 
         /// <summary>
-        /// Вычисление стоимости и купона
+        /// Создание элемента накладной
         /// </summary>
-        private void Calc()
+        /// <param name="isPurchase">приходная накладная</param>
+        /// <returns>возвращает TRUE, если элемент накладной создан успешно</returns>
+        public bool CreateItem(bool isPurchase)
         {
-            if(Product != null)
-            {
-                _cost = Product.Cost * Count;
-                OnPropertyChanged("Cost");
+            bool result = false;
 
-                _coupon = Product.Coupon * Count;
-                OnPropertyChanged("Coupon");
+            if (_id_invoice != 0)
+            {
+                try
+                {
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    {
+                        connection.Open();
+
+                        string table = (isPurchase) ? "PURCHASE_INVOICE_UNIT" : "SALES_INVOICE_UNIT";
+
+                        string sql = String.Format(@"INSERT INTO `{0}` (`ID_INVOICE`, `ID_PRODUCT`, `COUNT`, `COST`, `COUPON`) VALUES ('{1}', '{2}', '{3}', '{4}', '{5}')", table, _id_invoice, _id_product, Conversion.ToString(_count), Conversion.ToString(_cost), Conversion.ToString(_coupon));
+
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            ID = command.ExecuteNonQuery();
+                        }
+
+                        connection.Close();
+
+                        result = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Dialog.ErrorMessage(null, "Ошибка создания позиции накладной", ex.Message);
+                }
             }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID накладной");
+            }
+
+            return result;
         }
 
         #region Получение данных
@@ -176,64 +205,33 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    bool getData = false;
-
                     using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
                         connection.Open();
 
                         string table = (isPurchase) ? "PURCHASE_INVOICE_UNIT" : "SALES_INVOICE_UNIT";
 
-                        string sql = "SELECT * FROM " + table + " WHERE ID = " + ID.ToString();
-                        MySqlCommand command = new MySqlCommand(sql, connection);
+                        string sql = String.Format(@"SELECT * FROM `{0}` WHERE `{0}`.`ID` = {1}", table, ID);
 
-                        using (MySqlDataReader reader = command.ExecuteReader())
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
-                            while (reader.Read())
+                            using (MySqlDataReader reader = command.ExecuteReader())
                             {
-                                string tempS = reader["ID_INVOICE"].ToString();
-                                int tempI = 0;
-                                if (int.TryParse(tempS, out tempI))
-                                    ID_Invoice = tempI;
-                                else
-                                    ID_Invoice = 0;
-
-                                tempS = reader["ID_PRODUCT"].ToString();
-                                tempI = 0;
-                                if (int.TryParse(tempS, out tempI))
-                                    _id_product = tempI;
-                                else
-                                    _id_product = 0;
-
-                                tempS = reader["COUNT"].ToString();
-                                double tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    Count = tempD;
-                                else
-                                    Count = 0;
-
-                                tempS = reader["COST"].ToString();
-                                tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    _cost = tempD;
-                                else
-                                    _cost = 0;
-
-                                tempS = reader["COUPON"].ToString();
-                                tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    _coupon = tempD;
-                                else
-                                    _coupon = 0;
-
-                                getData = true;
+                                while (reader.Read())
+                                {
+                                    ID_Invoice = Conversion.ToInt(reader["ID_INVOICE"].ToString());
+                                    ID_Product = Conversion.ToInt(reader["ID_PRODUCT"].ToString());
+                                    Count = Conversion.ToDouble(reader["COUNT"].ToString());
+                                    Cost = Conversion.ToDouble(reader["COST"].ToString());
+                                    Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
+                                }
                             }
                         }
 
                         connection.Close();
                     }
 
-                    result = getData;
+                    result = true;
                 }
                 catch (Exception ex)
                 {
@@ -267,50 +265,6 @@ namespace GreenLeaf.ViewModel
         #region Редактирование данных
 
         /// <summary>
-        /// Создание элемента накладной
-        /// </summary>
-        /// <param name="isPurchase">приходная накладная</param>
-        /// <returns>возвращает TRUE, если элемент накладной создан успешно</returns>
-        public bool CreateItem(bool isPurchase)
-        {
-            bool result = false;
-
-            if(_id_invoice != 0)
-            {
-                try
-                {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
-                    {
-                        connection.Open();
-
-                        string table = (isPurchase) ? "PURCHASE_INVOICE_UNIT" : "SALES_INVOICE_UNIT";
-
-                        string sql = String.Format(@"INSERT INTO {0} (`ID_INVOICE`, `ID_PRODUCT`, `COUNT`, `COST`, `COUPON`) VALUES ('{1}', '{2}', '{3}', '{4}', '{5}')", table, _id_invoice, _id_product, _count, _cost, _coupon);
-
-                        using (MySqlCommand command = new MySqlCommand(sql, connection))
-                        {
-                            ID = command.ExecuteNonQuery();
-                        }
-
-                        connection.Close();
-
-                        result = true;
-                    }
-                }
-                catch(Exception ex)
-                {
-                    Dialog.ErrorMessage(null, "Ошибка создания позиции накладной", ex.Message);
-                }
-            }
-            else
-            {
-                Dialog.ErrorMessage(null, "Не указан ID накладной");
-            }
-
-            return result;
-        }
-
-        /// <summary>
         /// Удаление элемента накладной
         /// </summary>
         /// <param name="isPurchase">приходная накладная</param>
@@ -329,7 +283,7 @@ namespace GreenLeaf.ViewModel
 
                         string table = (isPurchase) ? "PURCHASE_INVOICE_UNIT" : "SALES_INVOICE_UNIT";
 
-                        string sql = String.Format(@"DELETE FROM {0} WHERE ID = {1}", table, _id);
+                        string sql = String.Format(@"DELETE FROM `{0}` WHERE `{0}`.`ID` = {1}", table, _id);
 
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
@@ -373,7 +327,7 @@ namespace GreenLeaf.ViewModel
 
                         string table = (isPurchase) ? "PURCHASE_INVOICE_UNIT" : "SALES_INVOICE_UNIT";
 
-                        string sql = String.Format(@"UPDATE {0} SET `ID_PRODUCT` = '{1}', `COUNT` = '{2}', `COST` = '{3}', `COUPON` = '{4}' WHERE ID = {5}", table, _id_product, _count, _cost, _coupon, _id);
+                        string sql = String.Format(@"UPDATE `{0}` SET `ID_PRODUCT` = '{1}', `COUNT` = '{2}', `COST` = '{3}', `COUPON` = '{4}' WHERE `{0}`.`ID` = {5}", table, _id_product, Conversion.ToString(_count), Conversion.ToString(_cost), Conversion.ToString(_coupon), _id);
 
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
@@ -411,6 +365,21 @@ namespace GreenLeaf.ViewModel
             Count = count;
 
             return EditItem(isPurchase);
+        }
+
+        /// <summary>
+        /// Вычисление стоимости и купона
+        /// </summary>
+        private void Calc()
+        {
+            if (Product != null)
+            {
+                _cost = Product.Cost * Count;
+                OnPropertyChanged("Cost");
+
+                _coupon = Product.Coupon * Count;
+                OnPropertyChanged("Coupon");
+            }
         }
 
         #endregion
@@ -465,7 +434,8 @@ namespace GreenLeaf.ViewModel
 
                     string table = (isPurchase) ? "PURCHASE_INVOICE_UNIT" : "SALES_INVOICE_UNIT";
 
-                    string sql = "SELECT * FROM " + table + " WHERE ID_INVOICE = " + id_invoice.ToString();
+                    string sql = String.Format(@"SELECT * FROM `{0}` WHERE `{0}`.`ID_INVOICE` = {1}", table, id_invoice);
+
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader())
@@ -475,40 +445,11 @@ namespace GreenLeaf.ViewModel
                                 InvoiceItem item = new InvoiceItem();
                                 item.ID_Invoice = id_invoice;
 
-                                string tempS = reader["ID"].ToString();
-                                int tempI = 0;
-                                if (int.TryParse(tempS, out tempI))
-                                    item.ID = tempI;
-                                else
-                                    item.ID = 0;
-
-                                tempS = reader["ID_PRODUCT"].ToString();
-                                tempI = 0;
-                                if (int.TryParse(tempS, out tempI))
-                                    item.ID_Product = tempI;
-                                else
-                                    item.ID_Product = 0;
-
-                                tempS = reader["COUNT"].ToString();
-                                double tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    item.Count = tempD;
-                                else
-                                    item.Count = 0;
-
-                                tempS = reader["COST"].ToString();
-                                tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    item.Cost = tempD;
-                                else
-                                    item.Cost = 0;
-
-                                tempS = reader["COUPON"].ToString();
-                                tempD = 0;
-                                if (double.TryParse(tempS, out tempD))
-                                    item.Coupon = tempD;
-                                else
-                                    item.Coupon = 0;
+                                item.ID = Conversion.ToInt(reader["ID"].ToString());
+                                item.ID_Product = Conversion.ToInt(reader["ID_PRODUCT"].ToString());
+                                item.Count = Conversion.ToDouble(reader["COUNT"].ToString());
+                                item.Cost = Conversion.ToDouble(reader["COST"].ToString());
+                                item.Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
 
                                 Items.Add(item);
                             }

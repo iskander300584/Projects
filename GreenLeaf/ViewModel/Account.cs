@@ -400,6 +400,7 @@ namespace GreenLeaf.ViewModel
                         connection.Open();
 
                         string sql = "SELECT `ADRESS`, `PHONE` FROM `ACCOUNT` WHERE `ACCOUNT`.`ID` = " + ID.ToString();
+
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
                             using (MySqlDataReader reader = command.ExecuteReader())
@@ -445,6 +446,7 @@ namespace GreenLeaf.ViewModel
                     connection.Open();
 
                     string sql = "SELECT `ID`, `PASSWORD`, `IS_ANNULATED` FROM `ACCOUNT` WHERE `ACCOUNT`.`LOGIN` = \'" + Login + "\'";
+
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader())
