@@ -88,12 +88,58 @@ namespace GreenLeaf.ViewModel
         /// <summary>
         /// Создать запись в журнале событий
         /// </summary>
+        /// <param name="verb">глагол выполненного действия</param>
+        /// <param name="message">сообщение о событии</param>
         /// <returns>возвращает TRUE, если запись создана успешно</returns>
-        public bool CreateJournal()
+        public static bool CreateJournal(string verb, string message)
         {
             bool result = false;
 
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                {
+                    connection.Open();
+
+                    string act = GetHeader(verb) + message;
+                    string sql = String.Format(@"INSERT INTO `JOURNAL` (`DATE`, `ID_ACCOUNT`, `ACT`) VALUES ('{0}', '{1}', '{2}'", CurrentDate(), ConnectSetting.CurrentUser.ID, act);
+
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    connection.Close();
+                }
+
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка сохранения записи в журнал событий", ex.Message);
+            }
+
             return result;
+        }
+
+        /// <summary>
+        /// Начало фразы для записи в журнал событий
+        /// </summary>
+        /// <param name="verb">глагол выполненного действия</param>
+        private static string GetHeader(string verb)
+        {
+            return String.Format("{0} {1} {2} {3} ", ConnectSetting.CurrentUser.PersonalData.Surname, ConnectSetting.CurrentUser.PersonalData.Name, ConnectSetting.CurrentUser.PersonalData.Patronymic, (ConnectSetting.User.Person.Sex) ? verb : verb + "а");
+        }
+
+        /// <summary>
+        /// Текущая дата в формате для SQL
+        /// </summary>
+        private static string CurrentDate()
+        {
+            DateTime dt = DateTime.Now;
+            string date = String.Format("{0}-{1}-{2} {3}:{4}:{5}", dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
+
+            return date;
         }
 
         #region Статические методы
@@ -120,7 +166,7 @@ namespace GreenLeaf.ViewModel
                     if(from != null && to != null)
                     {
                         fromDate = String.Format(@"'{0}-{1}-{2}T00:00:00.000'", ((DateTime)from).Year, ((DateTime)from).Month, ((DateTime)from).Day);
-                        toDate = String.Format(@"'{0}-{1}-{2}T00:00:00.000'", ((DateTime)to).Year, ((DateTime)to).Month, ((DateTime)to).Day);
+                        toDate = String.Format(@"'{0}-{1}-{2}T23:59:59.000'", ((DateTime)to).Year, ((DateTime)to).Month, ((DateTime)to).Day);
                     }
 
                     string sql = String.Format(@"SELECT * FROM `JOURNAL`");

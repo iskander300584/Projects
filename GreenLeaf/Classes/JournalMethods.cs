@@ -26,7 +26,7 @@ namespace GreenLeaf.Classes
         /// <returns></returns>
         public static string JournalItemHeader(string verb)
         {
-            return String.Format("{0} {1} {2} {3} ", ConnectSetting.User.Person.Surname, ConnectSetting.User.Person.Name, ConnectSetting.User.Person.Patronymic, (ConnectSetting.User.Person.Sex) ? verb : verb + "а");
+            return String.Format("{0} {1} {2} {3} ", ConnectSetting.CurrentUser.PersonalData.Surname, ConnectSetting.CurrentUser.PersonalData.Name, ConnectSetting.CurrentUser.PersonalData.Patronymic, (ConnectSetting.User.Person.Sex) ? verb : verb + "а");
         }
     }
 }

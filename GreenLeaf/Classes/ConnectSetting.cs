@@ -90,6 +90,11 @@ namespace GreenLeaf.Classes
         }
 
         /// <summary>
+        /// Подключенный пользователь
+        /// </summary>
+        public static GreenLeaf.ViewModel.Account CurrentUser = new ViewModel.Account();
+
+        /// <summary>
         /// Построение строки подключения
         /// </summary>
         private static void BuildConnectionString()
