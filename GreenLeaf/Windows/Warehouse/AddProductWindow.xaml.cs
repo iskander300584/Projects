@@ -111,8 +111,13 @@ namespace GreenLeaf.Windows.Warehouse
                     break;
                 }
 
-            // Добавление единицы товара
             if (!DoEdit)
+                product.CreateProduct();
+            else
+                product.EditProduct();
+
+            // Добавление единицы товара
+            /*if (!DoEdit)
             {
                 try
                 {
@@ -180,7 +185,7 @@ namespace GreenLeaf.Windows.Warehouse
                     Dialog.ErrorMessage(this, "Ошибка сохранения данных", ex.Message);
                     return;
                 }
-            }
+            }*/
         }
 
         /// <summary>

@@ -81,7 +81,6 @@ namespace GreenLeaf
                     }
                     connWindow.Close();
                 }
-
             }
 
             // Запуск окна авторизации
@@ -92,8 +91,12 @@ namespace GreenLeaf
                 Environment.Exit(0);
                 return;
             }
-            ConnectSetting.User.Login = authWindow.UserName;
+
+            ConnectSetting.CurrentUser.Login = authWindow.UserName;
             authWindow.Close();
+
+            ConnectSetting.CurrentUser.GetBaseDataByLogin();
+            ConnectSetting.CurrentUser.GetPublicDataByID();
 
             MainWindow mainWindow = new MainWindow(splash, dtStartSplash);
             Current.MainWindow = mainWindow;

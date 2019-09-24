@@ -123,12 +123,43 @@ namespace GreenLeaf.ViewModel
         }
 
         /// <summary>
+        /// Создать запись в журнале событий
+        /// </summary>
+        /// <param name="verb">глагол выполненного действия</param>
+        /// <param name="message">сообщение о событии</param>
+        /// <param name="connection">активное подключение к БД</param>
+        /// <returns>возвращает TRUE, если запись создана успешно</returns>
+        public static bool CreateJournal(string verb, string message, MySqlConnection connection)
+        {
+            bool result = false;
+
+            try
+            {
+                string act = GetHeader(verb) + message;
+                string sql = String.Format(@"INSERT INTO `JOURNAL` (`DATE`, `ID_ACCOUNT`, `ACT`) VALUES ('{0}', '{1}', '{2}'", CurrentDate(), ConnectSetting.CurrentUser.ID, act);
+
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка сохранения записи в журнал событий", ex.Message);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Начало фразы для записи в журнал событий
         /// </summary>
         /// <param name="verb">глагол выполненного действия</param>
         private static string GetHeader(string verb)
         {
-            return String.Format("{0} {1} {2} {3} ", ConnectSetting.CurrentUser.PersonalData.Surname, ConnectSetting.CurrentUser.PersonalData.Name, ConnectSetting.CurrentUser.PersonalData.Patronymic, (ConnectSetting.User.Person.Sex) ? verb : verb + "а");
+            return String.Format("{0} {1} {2} {3} ", ConnectSetting.CurrentUser.PersonalData.Surname, ConnectSetting.CurrentUser.PersonalData.Name, ConnectSetting.CurrentUser.PersonalData.Patronymic, (ConnectSetting.CurrentUser.PersonalData.Sex) ? verb : verb + "а");
         }
 
         /// <summary>

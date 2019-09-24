@@ -105,40 +105,40 @@ namespace GreenLeaf.Windows
         private void SetControlsVisible()
         {
             // приходная накладная
-            this.btnPurchaseInvoice.Visibility = (ConnectSetting.User.GrantInvoice.PurchaseInvoice) ? Visibility.Visible : Visibility.Collapsed;
+            this.btnPurchaseInvoice.Visibility = (ConnectSetting.CurrentUser.InvoiceData.PurchaseInvoice) ? Visibility.Visible : Visibility.Collapsed;
 
             // расходная накладная
-            this.btnSalesInvoice.Visibility = (ConnectSetting.User.GrantInvoice.SalesInvoice) ? Visibility.Visible : Visibility.Collapsed;
+            this.btnSalesInvoice.Visibility = (ConnectSetting.CurrentUser.InvoiceData.SalesInvoice) ? Visibility.Visible : Visibility.Collapsed;
 
             // отчеты
-            this.btnReports.Visibility = (ConnectSetting.User.GrantReport.Reports) ? Visibility.Visible : Visibility.Collapsed;
+            this.btnReports.Visibility = (ConnectSetting.CurrentUser.ReportsData.Reports) ? Visibility.Visible : Visibility.Collapsed;
 
             // контрагенты
-            this.btnCounterparty.Visibility = (ConnectSetting.User.GrantCounterparty.Counterparty) ? Visibility.Visible : Visibility.Collapsed;
+            this.btnCounterparty.Visibility = (ConnectSetting.CurrentUser.CounterpartyData.Counterparty) ? Visibility.Visible : Visibility.Collapsed;
 
             #region Управление складом
 
             // управление складом
-            this.btnWarehouseManagement.Visibility = (ConnectSetting.User.GrantWarehouse.WarehouseManagement) ? Visibility.Visible : Visibility.Collapsed;
+            this.btnWarehouseManagement.Visibility = (ConnectSetting.CurrentUser.WarehouseData.Warehouse) ? Visibility.Visible : Visibility.Collapsed;
 
             // добавление товара
-            btnAddProduct.IsEnabled = ConnectSetting.User.GrantWarehouse.WarehouseAddProduct;
+            btnAddProduct.IsEnabled = ConnectSetting.CurrentUser.WarehouseData.WarehouseAddProduct;
 
             // редактирование товара
-            btnEditProduct.IsEnabled = ConnectSetting.User.GrantWarehouse.WarehouseEditProduct;
+            btnEditProduct.IsEnabled = ConnectSetting.CurrentUser.WarehouseData.WarehouseEditProduct;
 
             // аннулирование товара
-            btnAnnulateProduct.IsEnabled = ConnectSetting.User.GrantWarehouse.WarehouseAnnulateProduct;
-            btnUnAnnulateProduct.IsEnabled = ConnectSetting.User.GrantWarehouse.WarehouseAnnulateProduct;
-            cbHideAnnuled.IsEnabled = ConnectSetting.User.GrantWarehouse.WarehouseAnnulateProduct;
+            btnAnnulateProduct.IsEnabled = ConnectSetting.CurrentUser.WarehouseData.WarehouseAnnulateProduct;
+            btnUnAnnulateProduct.IsEnabled = ConnectSetting.CurrentUser.WarehouseData.WarehouseAnnulateProduct;
+            cbHideAnnuled.IsEnabled = ConnectSetting.CurrentUser.WarehouseData.WarehouseAnnulateProduct;
 
             // редактирование количества
-            btnEditProductCount.IsEnabled = ConnectSetting.User.GrantWarehouse.WarehouseEditCount;
+            btnEditProductCount.IsEnabled = ConnectSetting.CurrentUser.WarehouseData.WarehouseEditCount;
 
             #endregion
 
             // панель управления
-            this.btnAdminPanel.Visibility = (ConnectSetting.User.GrantAdminPanel.AdminPanel) ? Visibility.Visible : Visibility.Collapsed;
+            this.btnAdminPanel.Visibility = (ConnectSetting.CurrentUser.AdminPanelData.AdminPanel) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #region Отображение данных в таблице
@@ -178,6 +178,7 @@ namespace GreenLeaf.Windows
                             condition += " AND ";
 
                         condition += "`PRODUCT`.`COUNT`>0";
+                        isAdded = true;
                     }
 
                     if (code != "")
@@ -410,7 +411,14 @@ namespace GreenLeaf.Windows
 
                 if (!product.IsAnnulated && Dialog.QuestionMessage(this, product.ProductCode + " будет аннулирован. Продолжить?") == MessageBoxResult.Yes)
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    if(product.AnnulateProduct())
+                    {
+                        LoadData();
+
+                        Dialog.TransparentMessage(this, "Операция выполнена");
+                    }
+
+                    /*using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
                         connection.Open();
 
@@ -438,7 +446,7 @@ namespace GreenLeaf.Windows
 
                     LoadData();
 
-                    Dialog.TransparentMessage(this, "Операция выполнена");
+                    Dialog.TransparentMessage(this, "Операция выполнена");*/
                 }
             }
             catch (Exception ex)
@@ -464,7 +472,14 @@ namespace GreenLeaf.Windows
 
                 if (product.IsAnnulated && Dialog.QuestionMessage(this, "Для " + product.ProductCode + " будет отменено аннулирование. Продолжить?") == MessageBoxResult.Yes)
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    if(product.UnAnnulateProduct())
+                    {
+                        LoadData();
+
+                        Dialog.TransparentMessage(this, "Операция выполнена");
+                    }
+
+                    /*using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
                         connection.Open();
 
@@ -492,7 +507,7 @@ namespace GreenLeaf.Windows
 
                     LoadData();
 
-                    Dialog.TransparentMessage(this, "Операция выполнена");
+                    Dialog.TransparentMessage(this, "Операция выполнена");*/
                 }
             }
             catch (Exception ex)
@@ -543,7 +558,12 @@ namespace GreenLeaf.Windows
                     product.ID_Unit = view.ID_Unit;
                     view.Close();
 
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    if(product.EditCount())
+                    {
+                        Dialog.TransparentMessage(this, "Операция выполнена");
+                    }
+
+                    /*using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
                     {
                         connection.Open();
 
@@ -564,7 +584,7 @@ namespace GreenLeaf.Windows
                         connection.Close();
                     }
 
-                    Dialog.TransparentMessage(this, "Операция выполнена");
+                    Dialog.TransparentMessage(this, "Операция выполнена");*/
                 }
                 else
                     view.Close();

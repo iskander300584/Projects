@@ -1,5 +1,4 @@
-﻿using MySql.Data.MySqlClient;
-
+﻿
 namespace GreenLeaf.Classes
 {
     /// <summary>
@@ -112,7 +111,7 @@ namespace GreenLeaf.Classes
             }
         }
 
-        public static class User
+        /*public static class User
         {
             private static string _login = string.Empty;
             /// <summary>
@@ -679,6 +678,6 @@ namespace GreenLeaf.Classes
                     }
                 }
             }
-        }
+        }*/
     }
 }

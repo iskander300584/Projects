@@ -166,6 +166,8 @@ namespace GreenLeaf.ViewModel
                         ID = command.ExecuteNonQuery();
                     }
 
+                    Journal.CreateJournal("создал", "пользователя " + _login, connection);
+
                     connection.Close();
                 }
 
@@ -514,6 +516,9 @@ namespace GreenLeaf.ViewModel
                             command.ExecuteNonQuery();
                         }
 
+                        if (ConnectSetting.CurrentUser.ID != _id)
+                            Journal.CreateJournal("изменил", "данные пользователя " + _login, connection);
+
                         connection.Close();
                     }
 
@@ -602,6 +607,8 @@ namespace GreenLeaf.ViewModel
                         }
 
                         IsAnnulated = true;
+
+                        Journal.CreateJournal("аннулировал", "пользователя " + _login, connection);
 
                         connection.Close();
                     }
