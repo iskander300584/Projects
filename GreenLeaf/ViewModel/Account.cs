@@ -277,7 +277,7 @@ namespace GreenLeaf.ViewModel
         /// </summary>
         /// <param name="id">ID</param>
         /// <returns>возвращает TRUE, если данные успешно получены</returns>
-        public bool GetFullDateByID(int id)
+        public bool GetFullDataByID(int id)
         {
             _id = id;
 
@@ -635,7 +635,7 @@ namespace GreenLeaf.ViewModel
         /// <summary>
         /// Получить список не аннулированных аккаунтов с незащищенными персональными данными
         /// </summary>
-        public static List<Account> GetNotAnnuledAccountsPersonalDate()
+        public static List<Account> GetNotAnnuledAccountsPersonalData()
         {
             List<Account> result = new List<Account>();
 

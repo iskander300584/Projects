@@ -253,6 +253,8 @@ namespace GreenLeaf.ViewModel
                         ID = command.ExecuteNonQuery();
                     }
 
+                    Journal.CreateJournal("создал", "товар " + ProductCode, connection);
+
                     connection.Close();
                 }
 
@@ -361,6 +363,8 @@ namespace GreenLeaf.ViewModel
                             command.ExecuteNonQuery();
                         }
 
+                        Journal.CreateJournal("изменил", "товар " + ProductCode, connection);
+
                         connection.Close();
                     }
 
@@ -403,6 +407,8 @@ namespace GreenLeaf.ViewModel
                         {
                             command.ExecuteNonQuery();
                         }
+
+                        Journal.CreateJournal("аннулировал", "товар " + ProductCode, connection);
 
                         connection.Close();
                     }
@@ -447,6 +453,8 @@ namespace GreenLeaf.ViewModel
                             command.ExecuteNonQuery();
                         }
 
+                        Journal.CreateJournal("отменил", "аннулирование товара " + ProductCode, connection);
+
                         connection.Close();
                     }
 
@@ -487,6 +495,8 @@ namespace GreenLeaf.ViewModel
                         {
                             command.ExecuteNonQuery();
                         }
+
+                        Journal.CreateJournal("изменил", "количество товара " + ProductCode, connection);
 
                         connection.Close();
                     }

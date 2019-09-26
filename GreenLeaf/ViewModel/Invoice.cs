@@ -90,7 +90,7 @@ namespace GreenLeaf.ViewModel
             get { return _date; }
             set
             {
-                if(_date != value)
+                if (_date != value)
                 {
                     _date = value;
                     OnPropertyChanged();
@@ -107,7 +107,7 @@ namespace GreenLeaf.ViewModel
             get { return _cost; }
             set
             {
-                if(_cost != value)
+                if (_cost != value)
                 {
                     _cost = value;
                     OnPropertyChanged();
@@ -141,7 +141,7 @@ namespace GreenLeaf.ViewModel
             get { return _is_issued; }
             set
             {
-                if(_is_issued != value)
+                if (_is_issued != value)
                 {
                     _is_issued = value;
                     OnPropertyChanged();
@@ -158,7 +158,7 @@ namespace GreenLeaf.ViewModel
             get { return _is_locked; }
             set
             {
-                if(_is_locked != value)
+                if (_is_locked != value)
                 {
                     _is_locked = value;
                     OnPropertyChanged();
@@ -192,7 +192,7 @@ namespace GreenLeaf.ViewModel
             get { return _items; }
             set
             {
-                if(_items != value)
+                if (_items != value)
                 {
                     _items = value;
                     OnPropertyChanged();
@@ -724,6 +724,10 @@ namespace GreenLeaf.ViewModel
                                 }
                             }
 
+                            string name = (IsPurchase) ? "приходную накладную " : "расходную накладную ";
+
+                            Journal.CreateJournal("провел", name + Number.ToString(), connection);
+
                             connection.Close();
                         }
                     }
@@ -778,7 +782,7 @@ namespace GreenLeaf.ViewModel
                         if (idCounterparty != null)
                             sql += " AND `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
                     }
-                    else if(idAccount != null)
+                    else if (idAccount != null)
                     {
                         sql += " WHERE `" + table + "`.`ID_ACCOUNT` = " + (int)idAccount;
 

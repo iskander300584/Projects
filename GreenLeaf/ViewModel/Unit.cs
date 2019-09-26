@@ -92,6 +92,8 @@ namespace GreenLeaf.ViewModel
                         ID = command.ExecuteNonQuery();
                     }
 
+                    Journal.CreateJournal("создал", "единицу измерения " + Nomination, connection);
+
                     connection.Close();
                 }
 
@@ -127,6 +129,8 @@ namespace GreenLeaf.ViewModel
                     {
                         command.ExecuteNonQuery();
                     }
+
+                    Journal.CreateJournal("изменил", "единицу измерения " + Nomination, connection);
 
                     connection.Close();
                 }
@@ -173,6 +177,8 @@ namespace GreenLeaf.ViewModel
                     {
                         command.ExecuteNonQuery();
                     }
+
+                    Journal.CreateJournal("аннулировал", "единицу измерения " + Nomination, connection);
 
                     connection.Close();
 

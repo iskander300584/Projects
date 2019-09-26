@@ -93,6 +93,8 @@ namespace GreenLeaf.ViewModel
                         command.ExecuteNonQuery();
                     }
 
+                    Journal.CreateJournal("переустановил", "значение нумератора " + Nomination, connection);
+
                     connection.Close();
 
                     Value = value;
@@ -175,6 +177,8 @@ namespace GreenLeaf.ViewModel
                     {
                         command.ExecuteNonQuery();
                     }
+
+                    Journal.CreateJournal("переустановил", "значение нумератора " + nomination, connection);
 
                     connection.Close();
                 }

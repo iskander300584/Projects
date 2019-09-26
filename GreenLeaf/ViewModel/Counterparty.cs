@@ -211,6 +211,10 @@ namespace GreenLeaf.ViewModel
                         ID = command.ExecuteNonQuery();
                     }
 
+                    string name = (Nomination != "") ? Nomination : Surname + " " + Name;
+
+                    Journal.CreateJournal("создал", "контрагента " + name, connection);
+
                     connection.Close();
                 }
 
@@ -425,6 +429,10 @@ namespace GreenLeaf.ViewModel
 
                         IsAnnulated = true;
 
+                        string name = (Nomination != "") ? Nomination : Surname + " " + Name;
+
+                        Journal.CreateJournal("аннулировал", "контрагента " + name, connection);
+
                         connection.Close();
                     }
 
@@ -465,6 +473,10 @@ namespace GreenLeaf.ViewModel
                         {
                             command.ExecuteNonQuery();
                         }
+
+                        string name = (Nomination != "") ? Nomination : Surname + " " + Name;
+
+                        Journal.CreateJournal("изменил", "данные контрагента " + name, connection);
 
                         connection.Close();
                     }
