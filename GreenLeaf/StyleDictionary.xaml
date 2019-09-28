@@ -112,6 +112,27 @@
         </Style.Triggers>
     </Style>
 
+    <!-- Стиль для кнопки Сброс поиска -->
+    <Style x:Key="SortDirectionButtonStyle" BasedOn="{StaticResource BaseButtonSearchStyle}" >
+        <Style.Triggers>
+            <Trigger Property="Button.Tag" Value="ascending">
+                <Setter Property="Button.Content" >
+                    <Setter.Value>
+                        <Image Source="Images\triangle_up.png" Width="14" />
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            <Trigger Property="Button.Tag" Value="descending">
+                <Setter Property="Button.Content" >
+                    <Setter.Value>
+                        <Image Source="Images\triangle_down.png" Width="14" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Button.Background" Value="GhostWhite" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <!-- Стиль для кнопки ОК -->
     <Style x:Key="ButtonOKStyle" BasedOn="{StaticResource BaseButtonStyle}">
         <Setter Property="Button.Width" Value="150" />
@@ -163,7 +184,7 @@
     <Style x:Key="TextBlockGridStyle" BasedOn="{StaticResource BaseTextBlockStyle}">
         <Setter Property="TextBlock.FontSize" Value="16" />
         <Setter Property="TextBlock.FontFamily" Value="Yu Gothic UI Semilight" />
-        <Setter Property="TextBlock.Foreground" Value="Black" />
+        <Setter Property="TextBlock.Foreground" Value="DarkGreen" />
         <Setter Property="TextBlock.Margin" Value="5,2,5,2" />
     </Style>
 

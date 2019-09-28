@@ -7,7 +7,7 @@
         xmlns:win="clr-namespace:GreenLeaf.Windows"
         mc:Ignorable="d"
         Icon="..\Images\greenleaf.png"
-        Title="Green Leaf" Height="1000" MinWidth="600" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        Title="Green Leaf" Height="1000" MinWidth="600" Width="1500" WindowStartupLocation="CenterScreen" WindowState="Maximized">
 
     <Window.CommandBindings>
 
@@ -195,7 +195,14 @@
             <Button DockPanel.Dock="Left" ToolTip="Сбросить фильтры поиска" Style="{DynamicResource ResetSearchButtonStyle}" 
                     Command="win:MainWindow.ResetSearch" />
             
-            <!-- -->
+            <!-- Сортировка -->
+            <TextBlock Text="Сортировка" DockPanel.Dock="Left" Style="{DynamicResource TextBlockGridStyle}" Margin="30,2,5,2" />
+            <ComboBox x:Name="cbSortField" DockPanel.Dock="Left" Style="{DynamicResource ComboBoxStyle}" Margin="5,2,5,2" Width="140" >
+                <ComboBoxItem>Код товара</ComboBoxItem>
+                <ComboBoxItem>Наименование</ComboBoxItem>
+            </ComboBox>
+
+            <!-- Скрыть отсутствующие -->
             <CheckBox x:Name="cbHideEmpty" DockPanel.Dock="Right" Margin="0,0,5,0" VerticalAlignment="Center" Height="Auto" IsChecked="True" >
                 <CheckBox.Content>
                     <TextBlock Style="{DynamicResource TextBlockStyle}" Text="Скрыть отсутствующие" VerticalAlignment="Center" Height="Auto" />
@@ -234,30 +241,44 @@
                 </DataGridTextColumn>
 
                 <!-- Стоимость -->
-                <DataGridTextColumn Width="150" Binding="{Binding Path=Cost}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="100" Binding="{Binding Path=Cost}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Стоимость" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Купон -->
-                <DataGridTextColumn Width="150" Binding="{Binding Path=Coupon}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="100" Binding="{Binding Path=Coupon}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Купон" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Штук в упаковке -->
-                <DataGridTextColumn Width="150" Binding="{Binding Path=CountInPackage}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="100" Binding="{Binding Path=CountInPackage}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Шт. в упаковке" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                        <TextBlock Text="Шт. в упак." Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Количество -->
-                <DataGridTextColumn Width="150" Binding="{Binding Path=Count}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="100" Binding="{Binding Path=Count}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Количество" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                        <TextBlock Text="Кол-во" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Заблокировано -->
+                <DataGridTextColumn Width="100" Binding="{Binding Path=LockedCount}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Блокир." Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Доступно -->
+                <DataGridTextColumn Width="100" Binding="{Binding Path=AllowedCount}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Доступно" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
@@ -269,9 +290,9 @@
                 </DataGridTextColumn>
 
                 <!-- Аннулирован -->
-                <DataGridTextColumn x:Name="AnnuledColumn" Width="150" Binding="{Binding Path=IsAnnuled, Converter={StaticResource BoolToYesNo}}" Visibility="Collapsed" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn x:Name="AnnuledColumn" Width="100" Binding="{Binding Path=IsAnnulated, Converter={StaticResource BoolToYesNo}}" Visibility="Collapsed" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Аннулирован" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                        <TextBlock Text="Аннулир." Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
             </DataGrid.Columns>

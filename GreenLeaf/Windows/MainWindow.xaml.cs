@@ -83,6 +83,9 @@ namespace GreenLeaf.Windows
             cbHideEmpty.Checked += HideEmpty_Change;
             cbHideEmpty.Unchecked += HideEmpty_Change;
 
+            cbSortField.SelectedIndex = 0;
+            cbSortField.SelectionChanged += cbSortField_SelectionChanged;
+
             // Определение доступности элементов интерфейса
             SetControlsVisible();
 
@@ -150,135 +153,20 @@ namespace GreenLeaf.Windows
         {
             this.Cursor = Cursors.Wait;
 
+            dataGrid.ItemsSource = null;
+
             try
             {
-                string sql = "SELECT * FROM PRODUCT";
-
-                // Добавление условий поиска
-                string condition = string.Empty;
-                string code = tbSearchProductCode.Text.Trim();
-                string nomination = tbSearchNomination.Text.Trim();
-
-                if ((bool)cbHideAnnuled.IsChecked || (bool)cbHideEmpty.IsChecked ||
-                    code != "" || nomination != "")
-                {
-                    condition = " WHERE ";
-
-                    bool isAdded = false;
-
-                    if ((bool)cbHideAnnuled.IsChecked)
-                    {
-                        condition += @"`PRODUCT`.`IS_ANNULED`='0'";
-                        isAdded = true;
-                    }
-
-                    if((bool)cbHideEmpty.IsChecked)
-                    {
-                        if (isAdded)
-                            condition += " AND ";
-
-                        condition += "`PRODUCT`.`COUNT`>0";
-                        isAdded = true;
-                    }
-
-                    if (code != "")
-                    {
-                        if (isAdded)
-                            condition += " AND ";
-
-                        condition += "`PRODUCT`.`PRODUCT_CODE` LIKE \'%" + code + "%\'";
-                        isAdded = true;
-                    }
-
-                    if (nomination != "")
-                    {
-                        if (isAdded)
-                            condition += " AND ";
-
-                        condition += "`PRODUCT`.`NOMINATION` LIKE \'%" + nomination + "%\'";
-                        isAdded = true;
-                    }
-
-                    sql += condition;
-                }
-
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
-                {
-                    connection.Open();
-
-                    dataGrid.ItemsSource = null;
-                    Warehouse = new List<Product>();
-
-                    using (MySqlCommand command = new MySqlCommand(sql, connection))
-                    {
-                        MySqlDataReader reader = command.ExecuteReader();
-
-                        while (reader.Read())
-                        {
-                            Product item = new Product();
-
-                            string tempS = reader["ID"].ToString();
-                            int tempI = 0;
-                            if (int.TryParse(tempS, out tempI))
-                                item.ID = tempI;
-                            else
-                                item.ID = 0;
-
-                            tempS = reader["COUNT"].ToString();
-                            double tempD = 0;
-                            if (double.TryParse(tempS, out tempD))
-                                item.Count = tempD;
-                            else
-                                item.Count = tempD;
-
-                            tempS = reader["ID_UNIT"].ToString();
-                            if (int.TryParse(tempS, out tempI))
-                                item.ID_Unit = tempI;
-                            else
-                                item.ID_Unit = 0;
-
-                            item.ProductCode = reader["PRODUCT_CODE"].ToString();
-                            item.Nomination = reader["NOMINATION"].ToString();
-
-                            tempS = reader["COUNT_IN_PACKAGE"].ToString();
-                            if (double.TryParse(tempS, out tempD))
-                                item.CountInPackage = tempD;
-                            else
-                                item.CountInPackage = 0;
-
-                            tempS = reader["COST"].ToString();
-                            if (double.TryParse(tempS, out tempD))
-                                item.Cost = tempD;
-                            else
-                                item.Cost = 0;
-
-                            tempS = reader["COUPON"].ToString();
-                            if (double.TryParse(tempS, out tempD))
-                                item.Coupon = tempD;
-                            else
-                                item.Coupon = 0;
-
-                            tempS = reader["IS_ANNULED"].ToString();
-                            bool tempB = false;
-                            if (bool.TryParse(tempS, out tempB))
-                                item.IsAnnulated = tempB;
-                            else
-                                item.IsAnnulated = false;
-
-                            Warehouse.Add(item);
-                        }
-                    }
-
-                    connection.Close();
-                }
-
-                dataGrid.ItemsSource = Warehouse.OrderBy(p => p.ProductCode);
+                Warehouse = Product.GetProductListByParameters((bool)cbHideAnnuled.IsChecked, (bool)cbHideEmpty.IsChecked, tbSearchProductCode.Text.Trim(), tbSearchNomination.Text.Trim());
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 Dialog.ErrorMessage(this, "Ошибка загрузки данных", ex.Message);
+                Warehouse = new List<Product>();
             }
 
+            dataGrid.ItemsSource = Warehouse.OrderBy(p => p.ProductCode);
+            
             this.Cursor = Cursors.Arrow;
         }
 
@@ -321,6 +209,14 @@ namespace GreenLeaf.Windows
         /// Смена флага скрытия отсутствующих
         /// </summary>
         private void HideEmpty_Change(object sender, RoutedEventArgs e)
+        {
+            LoadData();
+        }
+
+        /// <summary>
+        /// Смена выбора поля сортировки
+        /// </summary>
+        private void cbSortField_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             LoadData();
         }
@@ -601,8 +497,6 @@ namespace GreenLeaf.Windows
         /// <summary>
         /// Создать приходную накладную
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void CreatePurchaseInvoice_Execute(object sender, ExecutedRoutedEventArgs e)
         {
             Invoice.CreateInvoiceWindow view = new Invoice.CreateInvoiceWindow(true);
@@ -611,5 +505,7 @@ namespace GreenLeaf.Windows
             view.ShowDialog();
             LoadData();
         }
+
+
     }
 }

@@ -575,7 +575,6 @@ namespace GreenLeaf.ViewModel
         /// <summary>
         /// Возвращает список не аннулированного товара
         /// </summary>
-        /// <returns></returns>
         public static List<Product> GetActualProductList()
         {
             List<Product> Products = new List<Product>();
@@ -625,7 +624,6 @@ namespace GreenLeaf.ViewModel
         /// <summary>
         /// Возвращает список товаров, включая аннулированные
         /// </summary>
-        /// <returns></returns>
         public static List<Product> GetAllProductList()
         {
             List<Product> Products = new List<Product>();
@@ -637,6 +635,113 @@ namespace GreenLeaf.ViewModel
                     connection.Open();
 
                     string sql = "SELECT * FROM `PRODUCT`";
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Product item = new Product();
+
+                                item.ID = Conversion.ToInt(reader["ID"].ToString());
+                                item.ProductCode = reader["PRODUCT_CODE"].ToString();
+                                item.Nomination = reader["NOMINATION"].ToString();
+                                item.CountInPackage = Conversion.ToDouble(reader["COUNT_IN_PACKAGE"].ToString());
+                                item.Cost = Conversion.ToDouble(reader["COST"].ToString());
+                                item.Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
+                                item.Count = Conversion.ToDouble(reader["COUNT"].ToString());
+                                item.LockedCount = Conversion.ToDouble(reader["LOCKED_COUNT"].ToString());
+                                item.ID_Unit = Conversion.ToInt(reader["ID_UNIT"].ToString());
+                                item.IsAnnulated = Conversion.ToBool(reader["IS_ANNULATED"].ToString());
+
+                                Products.Add(item);
+                            }
+                        }
+                    }
+
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка получения списка товара", ex.Message);
+            }
+
+            return Products.OrderBy(p => p.ProductCode).ToList();
+        }
+
+        /// <summary>
+        /// Возвращает список товаров, согласно параметрам поиска
+        /// </summary>
+        /// <param name="hideAnnulated">скрыть аннулированные</param>
+        /// <param name="hideEmpty">скрыть пустой товар</param>
+        /// <param name="productCode">код товара</param>
+        /// <param name="nomination">наименование товара</param>
+        public static List<Product> GetProductListByParameters(bool hideAnnulated = true, bool hideEmpty = true, string productCode = "", string nomination = "")
+        {
+            List<Product> Products = new List<Product>();
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                {
+                    connection.Open();
+
+                    string sql = "SELECT * FROM `PRODUCT`";
+
+                    bool whereAdded = false;
+
+                    if(hideAnnulated)
+                    {
+                        sql += @" WHERE `PRODUCT`.`IS_ANNULATED` = '0'";
+                        whereAdded = true;
+                    }
+
+                    if(hideEmpty)
+                    {
+                        if(whereAdded)
+                        {
+                            sql += " AND ";
+                        }
+                        else
+                        {
+                            sql += " WHERE ";
+                            whereAdded = true;
+                        }
+
+                        sql += "`PRODUCT`.`COUNT` > 0";
+                    }
+
+                    if(productCode != "")
+                    {
+                        if (whereAdded)
+                        {
+                            sql += " AND ";
+                        }
+                        else
+                        {
+                            sql += " WHERE ";
+                            whereAdded = true;
+                        }
+
+                        sql += @"`PRODUCT`.`PRODUCT_CODE` LIKE '%" + productCode + @"%'";
+                    }
+
+                    if (nomination != "")
+                    {
+                        if (whereAdded)
+                        {
+                            sql += " AND ";
+                        }
+                        else
+                        {
+                            sql += " WHERE ";
+                            whereAdded = true;
+                        }
+
+                        sql += @"`PRODUCT`.`NOMINATION` LIKE '%" + nomination + @"%'";
+                    }
+
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
                         using (MySqlDataReader reader = command.ExecuteReader())
