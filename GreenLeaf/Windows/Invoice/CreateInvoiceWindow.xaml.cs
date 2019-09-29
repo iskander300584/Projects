@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using GreenLeaf.Classes;
 using GreenLeaf.ViewModel;
 
-namespace GreenLeaf.Windows.Invoice
+namespace GreenLeaf.Windows.InvoiceView
 {
     /// <summary>
     /// Окно создания / редактирования накладной
@@ -22,17 +15,7 @@ namespace GreenLeaf.Windows.Invoice
     public partial class CreateInvoiceWindow : Window
     {
         /// <summary>
-        /// ID редактируемой накладной
-        /// </summary>
-        private int ID = 0;
-
-        /// <summary>
-        /// Признак приходной накладной
-        /// </summary>
-        private bool IsPurchase = true;
-
-        /// <summary>
-        /// Редактируемая накладная
+        /// Накладная
         /// </summary>
         private ViewModel.Invoice CurrentInvoice = new ViewModel.Invoice();
 
@@ -47,16 +30,6 @@ namespace GreenLeaf.Windows.Invoice
         private List<Product> ProductList = new List<Product>();
 
         /// <summary>
-        /// Свободные коды товара
-        /// </summary>
-        private List<string> FreeProductCodes = new List<string>();
-
-        /// <summary>
-        /// Использованные коды товара
-        /// </summary>
-        private List<string> UsedProductCodes = new List<string>();
-
-        /// <summary>
         /// Окно создания / редактирования накладной
         /// </summary>
         /// <param name="isPurchase">TRUE - приходная накладная, FALSE - расходная накладная</param>
@@ -67,78 +40,69 @@ namespace GreenLeaf.Windows.Invoice
 
             this.Title = (isPurchase) ? "Приходная накладная" : "Расходная накладная";
 
-            IsPurchase = isPurchase;
-            CurrentInvoice.IsPurchase = IsPurchase;
+            if(id == 0)
+            {
+                // Создание накладной
+                CurrentInvoice = Invoice.CreateInvoice(isPurchase);
+            }
+            else
+            {
+                // Загрузка накладной
+                CurrentInvoice = Invoice.GetInvoiceByID(isPurchase, id);
 
-            ID = id;
-            
-            // Загрузка списка контрагентов
-            LoadCounterparties();
+                tbTotalCost.Text = String.Format(@"{0:#.##}", CurrentInvoice.Cost).Replace(',','.');
+                tbTotalCoupon.Text = String.Format(@"{0:#.##}", CurrentInvoice.Coupon).Replace(',', '.');
+            }
 
-            // Получение данных по редактируемой накладной
-            if (ID != 0)
-                LoadEditedPurchaseDate();
+            // Загрузка контрагентов
+            if (isPurchase)
+                Counterparties = Counterparty.GetProviderList().OrderBy(c => c.VisibleName).ToList();
+            else
+                Counterparties = Counterparty.GetCustomerList().OrderBy(c => c.VisibleName).ToList();
 
-            // Загрузка списка товаров
-            LoadProducts();
+            foreach (Counterparty customer in Counterparties)
+                cbCounterparty.Items.Add(customer.VisibleName);
 
-            // Загрузка исполнителя, клиента и даты
-            LoadExecutor();
+            if (CurrentInvoice.ID_Counterparty != 0)
+            {
+                Counterparty currCounterparty = Counterparties.FirstOrDefault(c => c.ID == CurrentInvoice.ID_Counterparty);
+
+                if (currCounterparty != null)
+                    cbCounterparty.SelectedItem = currCounterparty.VisibleName;
+                else
+                    cbCounterparty.SelectedIndex = 0;
+            }
+            else
+                cbCounterparty.SelectedIndex = 0;
+
+            // Загрузка списка товара
+            ProductList = Product.GetActualProductList();
+
+            GetFreeProductList();
+
+            tbExecutor.Text = Account.GetAccountByID(CurrentInvoice.ID_Account).PersonalData.VisibleName;
+
+            if (CurrentInvoice.Date != DateTime.MinValue)
+                tbDate.Text = String.Format(@"{0}.{1}.{2}", (CurrentInvoice.Date.Day < 10) ? "0" + CurrentInvoice.Date.Day.ToString() : CurrentInvoice.Date.Day.ToString(), (CurrentInvoice.Date.Month < 10) ? "0" + CurrentInvoice.Date.Month.ToString() : CurrentInvoice.Date.Month.ToString(), CurrentInvoice.Date.Year);
 
             dataGrid.ItemsSource = CurrentInvoice.Items;
         }
 
         /// <summary>
-        /// Получение данных по редактируемой накладной
+        /// Получить список доступного товара
         /// </summary>
-        private void LoadEditedPurchaseDate()
+        private void GetFreeProductList()
         {
-            CurrentInvoice.ID = ID;
-            CurrentInvoice.GetDataByID(IsPurchase);
-        }
-
-        /// <summary>
-        /// Загрузить список клиентов
-        /// </summary>
-        private void LoadCounterparties()
-        {
-            Counterparties = Counterparty.GetCustomerList().OrderBy(c => c.VisibleName).ToList();
-
-            foreach (Counterparty customer in Counterparties)
-                cbCounterparty.Items.Add(customer.VisibleName);
-
-            if (Counterparties.Count == 1)
-                cbCounterparty.SelectedIndex = 0;
-        }
-
-        /// <summary>
-        /// Загрузить данные о товаре
-        /// </summary>
-        private void LoadProducts()
-        {
-            ProductList = Product.GetActualProductList();
-
-            // Заполнение списка использованного товара
-            foreach (InvoiceItem item in CurrentInvoice.Items)
-                UsedProductCodes.Add(item.Product.ProductCode);
+            cbProduct.Items.Clear();
 
             // Заполнение списка не использованного товара
             foreach (Product product in ProductList)
-                if (!UsedProductCodes.Contains(product.ProductCode))
-                {
-                    FreeProductCodes.Add(product.ProductCode);
+            {
+                InvoiceItem item = CurrentInvoice.Items.FirstOrDefault(i => i.ID_Product == product.ID);
+
+                if (item == null)
                     cbProduct.Items.Add(product.ProductCode);
-                }
-        }
-
-        // TODO
-
-        /// <summary>
-        /// Загрузить данные об исполнителе, клиенте и дате
-        /// </summary>
-        private void LoadExecutor()
-        {
-
+            }
         }
 
         /// <summary>
@@ -148,8 +112,6 @@ namespace GreenLeaf.Windows.Invoice
         {
             e.Handled = NumericTextBoxMethods.DoubleTextBox_PreviewKeyDown(tbCount.Text, e);
         }
-
-        // TODO расчет суммы
 
         /// <summary>
         /// Изменение количества

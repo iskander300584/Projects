@@ -144,7 +144,7 @@ namespace GreenLeaf.Classes.Account
 
                 if (_name.Trim() != "")
                 {
-                    _visibleName += _name[0] + ".";
+                    _visibleName += " " + _name[0] + ".";
 
                     if (_patronymic.Trim() != "")
                         _visibleName += " " + _patronymic[0] + ".";

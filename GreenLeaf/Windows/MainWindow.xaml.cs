@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using GreenLeaf.Classes;
 using GreenLeaf.ViewModel;
-using MySql.Data.MySqlClient;
 
 //ConnectSetting.Server = "remotemysql.com";
 //ServerAccount = aldr046@mail.ru
@@ -26,7 +17,7 @@ using MySql.Data.MySqlClient;
 namespace GreenLeaf.Windows
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Главное окно
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -74,6 +65,11 @@ namespace GreenLeaf.Windows
 
         #endregion
 
+        /// <summary>
+        /// Главное окно
+        /// </summary>
+        /// <param name="splash">окно загрузки</param>
+        /// <param name="dtStart">время запуска программы</param>
         public MainWindow(Windows.Authentificate.SplashWindow splash, DateTime dtStart)
         {
             InitializeComponent();
@@ -85,6 +81,8 @@ namespace GreenLeaf.Windows
 
             cbSortField.SelectedIndex = 0;
             cbSortField.SelectionChanged += cbSortField_SelectionChanged;
+
+            btnSortDirection.Tag = "ascending";
 
             // Определение доступности элементов интерфейса
             SetControlsVisible();
@@ -124,19 +122,8 @@ namespace GreenLeaf.Windows
             // управление складом
             this.btnWarehouseManagement.Visibility = (ConnectSetting.CurrentUser.WarehouseData.Warehouse) ? Visibility.Visible : Visibility.Collapsed;
 
-            // добавление товара
-            btnAddProduct.IsEnabled = ConnectSetting.CurrentUser.WarehouseData.WarehouseAddProduct;
-
-            // редактирование товара
-            btnEditProduct.IsEnabled = ConnectSetting.CurrentUser.WarehouseData.WarehouseEditProduct;
-
-            // аннулирование товара
-            btnAnnulateProduct.IsEnabled = ConnectSetting.CurrentUser.WarehouseData.WarehouseAnnulateProduct;
-            btnUnAnnulateProduct.IsEnabled = ConnectSetting.CurrentUser.WarehouseData.WarehouseAnnulateProduct;
+            // скрыть аннулированные товары
             cbHideAnnuled.IsEnabled = ConnectSetting.CurrentUser.WarehouseData.WarehouseAnnulateProduct;
-
-            // редактирование количества
-            btnEditProductCount.IsEnabled = ConnectSetting.CurrentUser.WarehouseData.WarehouseEditCount;
 
             #endregion
 
@@ -165,9 +152,42 @@ namespace GreenLeaf.Windows
                 Warehouse = new List<Product>();
             }
 
-            dataGrid.ItemsSource = Warehouse.OrderBy(p => p.ProductCode);
-            
+            SortData();
+
             this.Cursor = Cursors.Arrow;
+        }
+
+        /// <summary>
+        /// Сортировка данных
+        /// </summary>
+        private void SortData()
+        {
+            dataGrid.ItemsSource = null;
+
+            if (cbSortField.SelectedIndex == 0)
+            {
+                if(btnSortDirection.Tag.ToString() == "ascending")
+                {
+                    Warehouse = Warehouse.OrderBy(p => p.ProductCode).ToList();
+                }
+                else
+                {
+                    Warehouse = Warehouse.OrderByDescending(p => p.ProductCode).ToList();
+                }
+            }
+            else
+            {
+                if (btnSortDirection.Tag.ToString() == "ascending")
+                {
+                    Warehouse = Warehouse.OrderBy(p => p.Nomination).ToList();
+                }
+                else
+                {
+                    Warehouse = Warehouse.OrderByDescending(p => p.Nomination).ToList();
+                }
+            }
+
+            dataGrid.ItemsSource = Warehouse;
         }
 
         /// <summary>
@@ -218,7 +238,17 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void cbSortField_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            LoadData();
+            SortData();
+        }
+
+        /// <summary>
+        /// Нажатие кнопки Сортировка
+        /// </summary>
+        private void btnSortDirection_Click(object sender, RoutedEventArgs e)
+        {
+            btnSortDirection.Tag = (btnSortDirection.Tag.ToString() == "ascending") ? "descending" : "ascending";
+
+            SortData();
         }
 
         #endregion
@@ -231,6 +261,14 @@ namespace GreenLeaf.Windows
         private void WarehouseManagement_Execute(object sender, ExecutedRoutedEventArgs e)
         {
             stackWarehouseManagement.Visibility = (stackWarehouseManagement.Visibility == Visibility.Visible) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        /// <summary>
+        /// Проверка возможности добавления единицы товара
+        /// </summary>
+        private void WarehouseAddProduct_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (ConnectSetting.CurrentUser.WarehouseData.Warehouse && ConnectSetting.CurrentUser.WarehouseData.WarehouseAddProduct) ? true : false;
         }
 
         /// <summary>
@@ -253,6 +291,14 @@ namespace GreenLeaf.Windows
             }
             else
                 view.Close();
+        }
+
+        /// <summary>
+        /// Проверка возможности редактирования единицы товара
+        /// </summary>
+        private void WarehouseEditProduct_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (ConnectSetting.CurrentUser.WarehouseData.Warehouse && ConnectSetting.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null) ? true : false;
         }
 
         /// <summary>
@@ -291,6 +337,14 @@ namespace GreenLeaf.Windows
         }
 
         /// <summary>
+        /// Проверка возможности аннулирования товара
+        /// </summary>
+        private void WarehouseAnnulateProduct_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (ConnectSetting.CurrentUser.WarehouseData.Warehouse && ConnectSetting.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null && !((Product)dataGrid.SelectedItem).IsAnnulated ) ? true : false;
+        }
+
+        /// <summary>
         /// Аннулирование товара
         /// </summary>
         private void WarehouseAnnulateProduct_Execute(object sender, ExecutedRoutedEventArgs e)
@@ -313,42 +367,20 @@ namespace GreenLeaf.Windows
 
                         Dialog.TransparentMessage(this, "Операция выполнена");
                     }
-
-                    /*using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
-                    {
-                        connection.Open();
-
-                        using (MySqlCommand command = new MySqlCommand())
-                        {
-                            command.Connection = connection;
-
-                            // Аннулирование товара
-                            string sql = "UPDATE `PRODUCT` SET `IS_ANNULED`=\'1\' WHERE `PRODUCT`.`ID`=" + product.ID.ToString();
-
-                            command.CommandText = sql;
-                            command.ExecuteNonQuery();
-
-                            // Запись в журнал событий
-                            string act = JournalMethods.JournalItemHeader("аннулировал") + "вид товара " + product.ProductCode;
-                            sql = @"INSERT INTO `JOURNAL` (`DATE`, `ID_ACCOUNT`, `ACT`) VALUES ('" + JournalMethods.CurrentDate() + @"', '" +
-                                ConnectSetting.User.Person.ID.ToString() + @"', '" + act + @"');";
-
-                            command.CommandText = sql;
-                            command.ExecuteNonQuery();
-                        }
-
-                        connection.Close();
-                    }
-
-                    LoadData();
-
-                    Dialog.TransparentMessage(this, "Операция выполнена");*/
                 }
             }
             catch (Exception ex)
             {
                 Dialog.ErrorMessage(this, "Ошибка аннулирования видов товара", ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Проверка возможности отмены аннулирования товара
+        /// </summary>
+        private void WarehouseUnAnnulateProduct_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (ConnectSetting.CurrentUser.WarehouseData.Warehouse && ConnectSetting.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null && ((Product)dataGrid.SelectedItem).IsAnnulated) ? true : false;
         }
 
         /// <summary>
@@ -373,37 +405,7 @@ namespace GreenLeaf.Windows
                         LoadData();
 
                         Dialog.TransparentMessage(this, "Операция выполнена");
-                    }
-
-                    /*using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
-                    {
-                        connection.Open();
-
-                        using (MySqlCommand command = new MySqlCommand())
-                        {
-                            command.Connection = connection;
-
-                            // Аннулирование товара
-                            string sql = "UPDATE `PRODUCT` SET `IS_ANNULED`=\'0\' WHERE `PRODUCT`.`ID`=" + product.ID.ToString();
-
-                            command.CommandText = sql;
-                            command.ExecuteNonQuery();
-
-                            // Запись в журнал событий
-                            string act = JournalMethods.JournalItemHeader("отменил") + "аннулирование товара " + product.ProductCode;
-                            sql = @"INSERT INTO `JOURNAL` (`DATE`, `ID_ACCOUNT`, `ACT`) VALUES ('" + JournalMethods.CurrentDate() + @"', '" +
-                                ConnectSetting.User.Person.ID.ToString() + @"', '" + act + @"');";
-
-                            command.CommandText = sql;
-                            command.ExecuteNonQuery();
-                        }
-
-                        connection.Close();
-                    }
-
-                    LoadData();
-
-                    Dialog.TransparentMessage(this, "Операция выполнена");*/
+                    } 
                 }
             }
             catch (Exception ex)
@@ -428,6 +430,14 @@ namespace GreenLeaf.Windows
         {
             AnnuledColumn.Visibility = Visibility.Visible;
             LoadData();
+        }
+
+        /// <summary>
+        /// Проверка возможности редактирования количества
+        /// </summary>
+        private void WarehouseEditCount_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (ConnectSetting.CurrentUser.WarehouseData.Warehouse && ConnectSetting.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null) ? true : false;
         }
 
         /// <summary>
@@ -458,29 +468,6 @@ namespace GreenLeaf.Windows
                     {
                         Dialog.TransparentMessage(this, "Операция выполнена");
                     }
-
-                    /*using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
-                    {
-                        connection.Open();
-
-                        string sql = String.Format("UPDATE `PRODUCT` SET `COUNT`=\'{0}\', `ID_UNIT`= \'{1}\' WHERE `PRODUCT`.`ID`={2}", product.Count.ToString().Replace(',','.'), product.ID_Unit, product.ID);
-
-                        using (MySqlCommand command = new MySqlCommand(sql, connection))
-                        {
-                            command.ExecuteNonQuery();
-
-                            string act = JournalMethods.JournalItemHeader("изменил") + "количество товара " + product.ProductCode;
-                            sql = @"INSERT INTO `JOURNAL` (`DATE`, `ID_ACCOUNT`, `ACT`) VALUES ('" + JournalMethods.CurrentDate() + @"', '" +
-                                ConnectSetting.User.Person.ID.ToString() + @"', '" + act + @"');";
-
-                            command.CommandText = sql;
-                            command.ExecuteNonQuery();
-                        }
-
-                        connection.Close();
-                    }
-
-                    Dialog.TransparentMessage(this, "Операция выполнена");*/
                 }
                 else
                     view.Close();
@@ -491,7 +478,6 @@ namespace GreenLeaf.Windows
             }
         }
 
-
         #endregion
 
         /// <summary>
@@ -499,13 +485,11 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void CreatePurchaseInvoice_Execute(object sender, ExecutedRoutedEventArgs e)
         {
-            Invoice.CreateInvoiceWindow view = new Invoice.CreateInvoiceWindow(true);
+            InvoiceView.CreateInvoiceWindow view = new InvoiceView.CreateInvoiceWindow(true);
             view.Owner = this;
 
             view.ShowDialog();
             LoadData();
         }
-
-
     }
 }

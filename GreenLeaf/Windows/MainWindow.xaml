@@ -27,19 +27,19 @@
         <CommandBinding Command="win:MainWindow.WarehouseManagement" Executed="WarehouseManagement_Execute" />
 
         <!-- Добавление единицы товара -->
-        <CommandBinding Command="win:MainWindow.WarehouseAddProduct" Executed="WarehouseAddProduct_Execute" />
+        <CommandBinding Command="win:MainWindow.WarehouseAddProduct" Executed="WarehouseAddProduct_Execute" CanExecute="WarehouseAddProduct_CanExecute" />
 
         <!-- Редактирование единицы товара -->
-        <CommandBinding Command="win:MainWindow.WarehouseEditProduct" Executed="WarehouseEditProduct_Execute" />
+        <CommandBinding Command="win:MainWindow.WarehouseEditProduct" Executed="WarehouseEditProduct_Execute" CanExecute="WarehouseEditProduct_CanExecute" />
 
         <!-- Аннулирование единицы товара -->
-        <CommandBinding Command="win:MainWindow.WarehouseAnnulateProduct" Executed="WarehouseAnnulateProduct_Execute" />
+        <CommandBinding Command="win:MainWindow.WarehouseAnnulateProduct" Executed="WarehouseAnnulateProduct_Execute" CanExecute="WarehouseAnnulateProduct_CanExecute" />
 
         <!-- Отмена аннулирования -->
-        <CommandBinding Command="win:MainWindow.WarehouseUnAnnulateProduct" Executed="WarehouseUnAnnulateProduct_Execute" />
+        <CommandBinding Command="win:MainWindow.WarehouseUnAnnulateProduct" Executed="WarehouseUnAnnulateProduct_Execute" CanExecute="WarehouseUnAnnulateProduct_CanExecute" />
 
         <!-- Редактирование количества товара -->
-        <CommandBinding Command="win:MainWindow.WarehouseEditCount" Executed="WarehouseEditCount_Execute" />
+        <CommandBinding Command="win:MainWindow.WarehouseEditCount" Executed="WarehouseEditCount_Execute" CanExecute="WarehouseEditCount_CanExecute" />
     </Window.CommandBindings>
     
     <Window.Resources>
@@ -201,6 +201,8 @@
                 <ComboBoxItem>Код товара</ComboBoxItem>
                 <ComboBoxItem>Наименование</ComboBoxItem>
             </ComboBox>
+            <Button x:Name="btnSortDirection" DockPanel.Dock="Left" Style="{DynamicResource SortDirectionButtonStyle}" 
+                    Click="btnSortDirection_Click" />
 
             <!-- Скрыть отсутствующие -->
             <CheckBox x:Name="cbHideEmpty" DockPanel.Dock="Right" Margin="0,0,5,0" VerticalAlignment="Center" Height="Auto" IsChecked="True" >

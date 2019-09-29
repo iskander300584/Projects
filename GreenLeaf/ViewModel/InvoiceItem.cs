@@ -467,6 +467,50 @@ namespace GreenLeaf.ViewModel
             return Items;
         }
 
+        /// <summary>
+        /// Возвращает список элементов накладной
+        /// </summary>
+        /// <param name="id_invoice">ID накладной</param>
+        /// <param name="isPurchase">TRUE если приходная накладная, FALSE если расходная</param>
+        /// <param name="connection">соединение с БД</param>
+        public static List<InvoiceItem> GetInvoiceItemList(int id_invoice, bool isPurchase, MySqlConnection connection)
+        {
+            List<InvoiceItem> Items = new List<InvoiceItem>();
+
+            try
+            {
+                string table = (isPurchase) ? "PURCHASE_INVOICE_UNIT" : "SALES_INVOICE_UNIT";
+
+                string sql = String.Format(@"SELECT * FROM `{0}` WHERE `{0}`.`ID_INVOICE` = {1}", table, id_invoice);
+
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            InvoiceItem item = new InvoiceItem();
+                            item.ID_Invoice = id_invoice;
+
+                            item.ID = Conversion.ToInt(reader["ID"].ToString());
+                            item.ID_Product = Conversion.ToInt(reader["ID_PRODUCT"].ToString());
+                            item.Count = Conversion.ToDouble(reader["COUNT"].ToString());
+                            item.Cost = Conversion.ToDouble(reader["COST"].ToString());
+                            item.Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
+
+                            Items.Add(item);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка получения списка элементов накладной", ex.Message);
+            }
+
+            return Items;
+        }
+
         #endregion
     }
 }

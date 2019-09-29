@@ -99,7 +99,6 @@
     <Compile Include="Classes\Account\ReportsData.cs" />
     <Compile Include="Classes\Account\WarehouseData.cs" />
     <Compile Include="Classes\Conversion.cs" />
-    <Compile Include="Classes\JournalMethods.cs" />
     <Compile Include="Classes\MeasureUnit.cs" />
     <Compile Include="Classes\NumericTextBoxMethods.cs" />
     <Compile Include="Converters\Bool_to_UnVisibility_Converter.cs" />

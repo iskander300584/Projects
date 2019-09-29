@@ -112,7 +112,7 @@
         </Style.Triggers>
     </Style>
 
-    <!-- Стиль для кнопки Сброс поиска -->
+    <!-- Стиль для кнопки Сортировка -->
     <Style x:Key="SortDirectionButtonStyle" BasedOn="{StaticResource BaseButtonSearchStyle}" >
         <Style.Triggers>
             <Trigger Property="Button.Tag" Value="ascending">
@@ -121,11 +121,21 @@
                         <Image Source="Images\triangle_up.png" Width="14" />
                     </Setter.Value>
                 </Setter>
+                <Setter Property="Button.ToolTip">
+                    <Setter.Value>
+                        <TextBlock Text="Сортировка по возрастанию" />
+                    </Setter.Value>
+                </Setter>
             </Trigger>
             <Trigger Property="Button.Tag" Value="descending">
                 <Setter Property="Button.Content" >
                     <Setter.Value>
                         <Image Source="Images\triangle_down.png" Width="14" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Button.ToolTip">
+                    <Setter.Value>
+                        <TextBlock Text="Сортировка по убыванию" />
                     </Setter.Value>
                 </Setter>
                 <Setter Property="Button.Background" Value="GhostWhite" />

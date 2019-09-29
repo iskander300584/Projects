@@ -85,6 +85,8 @@ namespace GreenLeaf.ViewModel
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
+        #region Статические методы
+
         /// <summary>
         /// Создать запись в журнале событий
         /// </summary>
@@ -102,7 +104,7 @@ namespace GreenLeaf.ViewModel
                     connection.Open();
 
                     string act = GetHeader(verb) + message;
-                    string sql = String.Format(@"INSERT INTO `JOURNAL` (`DATE`, `ID_ACCOUNT`, `ACT`) VALUES ('{0}', '{1}', '{2}'", CurrentDate(), ConnectSetting.CurrentUser.ID, act);
+                    string sql = String.Format(@"INSERT INTO `JOURNAL` (`DATE`, `ID_ACCOUNT`, `ACT`) VALUES ('{0}', '{1}', '{2}')", CurrentDate(), ConnectSetting.CurrentUser.ID, act);
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
@@ -136,7 +138,7 @@ namespace GreenLeaf.ViewModel
             try
             {
                 string act = GetHeader(verb) + message;
-                string sql = String.Format(@"INSERT INTO `JOURNAL` (`DATE`, `ID_ACCOUNT`, `ACT`) VALUES ('{0}', '{1}', '{2}'", CurrentDate(), ConnectSetting.CurrentUser.ID, act);
+                string sql = String.Format(@"INSERT INTO `JOURNAL` (`DATE`, `ID_ACCOUNT`, `ACT`) VALUES ('{0}', '{1}', '{2}')", CurrentDate(), ConnectSetting.CurrentUser.ID, act);
 
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
@@ -172,8 +174,6 @@ namespace GreenLeaf.ViewModel
 
             return date;
         }
-
-        #region Статические методы
 
         /// <summary>
         /// Получить список записей журнала

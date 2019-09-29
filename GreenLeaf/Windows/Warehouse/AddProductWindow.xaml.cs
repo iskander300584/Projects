@@ -1,8 +1,6 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using GreenLeaf.ViewModel;
 using GreenLeaf.Classes;
-using MySql.Data.MySqlClient;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Controls;
@@ -116,76 +114,7 @@ namespace GreenLeaf.Windows.Warehouse
             else
                 product.EditProduct();
 
-            // Добавление единицы товара
-            /*if (!DoEdit)
-            {
-                try
-                {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
-                    {
-                        connection.Open();
-
-                        string sql = @"INSERT INTO `PRODUCT` (`PRODUCT_CODE`, `NOMINATION`, `COUNT_IN_PACKAGE`, `COST`, `COUPON`, `ID_UNIT`, `COUNT`) VALUES ('" +
-                            product.ProductCode + @"', '" + product.Nomination + @"', '" + product.CountInPackage.ToString().Replace(',','.') + @"', '" +
-                            product.Cost.ToString().Replace(',', '.') + @"', '" + product.Coupon.ToString().Replace(',', '.') + @"', '" + product.ID_Unit + "', '" + product.Count.ToString().Replace(',', '.') + @"');";
-
-                        using (MySqlCommand command = new MySqlCommand(sql, connection))
-                        {
-                            command.ExecuteNonQuery();
-
-                            string act = JournalMethods.JournalItemHeader("создал") + "новый вид товара " + product.ProductCode;
-                            sql = @"INSERT INTO `JOURNAL` (`DATE`, `ID_ACCOUNT`, `ACT`) VALUES ('" + JournalMethods.CurrentDate() + @"', '" +
-                                ConnectSetting.User.Person.ID.ToString() + @"', '" + act + @"');";
-
-                            command.CommandText = sql;
-                            command.ExecuteNonQuery();
-                        }
-
-                        connection.Close();
-                    }
-
-                    this.DialogResult = true;
-                }
-                catch (Exception ex)
-                {
-                    Dialog.ErrorMessage(this, "Ошибка сохранения данных", ex.Message);
-                    return;
-                }
-            }
-            // Редактирование товара
-            else
-            {
-                try
-                {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
-                    {
-                        connection.Open();
-
-                        string sql = String.Format("UPDATE `PRODUCT` SET `PRODUCT_CODE`=\'{0}\', `NOMINATION`=\'{1}\', `COUNT_IN_PACKAGE`=\'{2}\', `COST`=\'{3}\', `COUPON`=\'{4}\', `ID_UNIT`= \'{5}\' WHERE `PRODUCT`.`ID`={6}", product.ProductCode, product.Nomination, product.CountInPackage.ToString().Replace(',', '.'), product.Cost.ToString().Replace(',', '.'), product.Coupon.ToString().Replace(',', '.'), product.ID_Unit, product.ID);
-
-                        using (MySqlCommand command = new MySqlCommand(sql, connection))
-                        {
-                            command.ExecuteNonQuery();
-
-                            string act = JournalMethods.JournalItemHeader("изменил") + "вид товара " + product.ProductCode;
-                            sql = @"INSERT INTO `JOURNAL` (`DATE`, `ID_ACCOUNT`, `ACT`) VALUES ('" + JournalMethods.CurrentDate() + @"', '" +
-                                ConnectSetting.User.Person.ID.ToString() + @"', '" + act + @"');";
-
-                            command.CommandText = sql;
-                            command.ExecuteNonQuery();
-                        }
-
-                        connection.Close();
-                    }
-
-                    this.DialogResult = true;
-                }
-                catch (Exception ex)
-                {
-                    Dialog.ErrorMessage(this, "Ошибка сохранения данных", ex.Message);
-                    return;
-                }
-            }*/
+            this.DialogResult = true;
         }
 
         /// <summary>

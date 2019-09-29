@@ -291,10 +291,10 @@ namespace GreenLeaf.ViewModel
                             }
                         }
 
+                        Items = InvoiceItem.GetInvoiceItemList(_id, _is_purchase, connection);
+
                         connection.Close();
                     }
-
-                    Items = InvoiceItem.GetInvoiceItemList(_id, _is_purchase);
 
                     result = true;
                 }
@@ -318,7 +318,7 @@ namespace GreenLeaf.ViewModel
         /// <param name="id">ID</param>
         /// <param name="isPurchase">TRUE если приходная накладная, FALSE если расходная</param>
         /// <returns>возвращает TRUE, если данные успешно получены</returns>
-        public bool GetDateByID(int id, bool isPurchase)
+        public bool GetDataByID(int id, bool isPurchase)
         {
             _id = id;
 
@@ -622,7 +622,7 @@ namespace GreenLeaf.ViewModel
         /// <summary>
         /// Провести накладную
         /// </summary>
-        /// <returns>возвращает TRUE, если накладная разблокирована успешно</returns>
+        /// <returns>возвращает TRUE, если накладная проведена успешно</returns>
         public bool IssueInvoice()
         {
             bool result = false;
@@ -639,38 +639,42 @@ namespace GreenLeaf.ViewModel
                         {
                             connection.Open();
 
-                            // Получение номера
                             string sql = string.Empty;
-                            string nomination = string.Empty;
-                            if (IsPurchase)
-                                nomination = "Приходная накладная";
-                            else
-                                nomination = "Расходная накладная";
 
-                            sql = String.Format(@"SELECT `VALUE` FROM `NUMERATOR` WHERE `NUMERATOR`.`NOMINATION` = '{0}'", nomination);
-
-                            // Получение значения нумератора
-                            using (MySqlCommand command = new MySqlCommand(sql, connection))
+                            if (Number == 0)
                             {
-                                using (MySqlDataReader reader = command.ExecuteReader())
+                                // Получение номера
+                                string nomination = string.Empty;
+                                if (IsPurchase)
+                                    nomination = "Приходная накладная";
+                                else
+                                    nomination = "Расходная накладная";
+
+                                sql = String.Format(@"SELECT `VALUE` FROM `NUMERATOR` WHERE `NUMERATOR`.`NOMINATION` = '{0}'", nomination);
+
+                                // Получение значения нумератора
+                                using (MySqlCommand command = new MySqlCommand(sql, connection))
                                 {
-                                    while (reader.Read())
+                                    using (MySqlDataReader reader = command.ExecuteReader())
                                     {
-                                        string tempS = reader["VALUE"].ToString();
-                                        int tempI = 0;
-                                        if (int.TryParse(tempS, out tempI))
-                                            Number = tempI + 1;
-                                        else
-                                            Number = 1;
+                                        while (reader.Read())
+                                        {
+                                            string tempS = reader["VALUE"].ToString();
+                                            int tempI = 0;
+                                            if (int.TryParse(tempS, out tempI))
+                                                Number = tempI + 1;
+                                            else
+                                                Number = 1;
+                                        }
                                     }
                                 }
-                            }
 
-                            // Обновление значения нумератора
-                            sql = String.Format(@"UPDATE `NUMERATOR` SET `VALUE` = '{0}' WHERE `NUMERATOR`.`NOMINATION` = '{1}'", Number, nomination);
-                            using (MySqlCommand command = new MySqlCommand(sql, connection))
-                            {
-                                command.ExecuteNonQuery();
+                                // Обновление значения нумератора
+                                sql = String.Format(@"UPDATE `NUMERATOR` SET `VALUE` = '{0}' WHERE `NUMERATOR`.`NOMINATION` = '{1}'", Number, nomination);
+                                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                                {
+                                    command.ExecuteNonQuery();
+                                }
                             }
 
                             IsIssued = true;
@@ -736,6 +740,95 @@ namespace GreenLeaf.ViewModel
                         result = false;
                         Dialog.ErrorMessage(null, "Ошибка проведения накладной", ex.Message);
                     }
+                }
+            }
+            else
+            {
+                Dialog.ErrorMessage(null, "Не указан ID накладной");
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Отменить проведение накладной
+        /// </summary>
+        /// <returns>возвращает TRUE, если отмена проведения накладной выполнена успешно</returns>
+        public bool UnIssueInvoice()
+        {
+            bool result = false;
+
+            if (_id != 0)
+            {
+                try
+                {
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    {
+                        connection.Open();
+
+                        string sql = string.Empty;
+
+                        IsIssued = false;
+                        Date = DateTime.MinValue;
+
+                        string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
+
+                        // Проведение накладной
+                        sql = String.Format(@"UPDATE `{0}` SET `IS_ISSUED` = '{1}', `DATE` = '{2}' WHERE `{0}`.`ID` = {3}", table, Conversion.ToString(IsIssued), Conversion.ToString(Date), _id);
+
+                        using (MySqlCommand command = new MySqlCommand(sql, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+
+                        // Добавление/уменьшение товаров
+                        foreach (InvoiceItem item in Items)
+                        {
+                            sql = String.Format(@"SELECT `COUNT` FROM `PRODUCT` WHERE `PRODUCT`.`ID` = {0}", item.ID_Product);
+
+                            double count = 0;
+
+                            using (MySqlCommand command = new MySqlCommand(sql, connection))
+                            {
+                                using (MySqlDataReader reader = command.ExecuteReader())
+                                {
+                                    while (reader.Read())
+                                    {
+                                        string tempS = reader["COUNT"].ToString();
+                                        double tempD = 0;
+                                        if (double.TryParse(tempS, out tempD))
+                                            count = tempD;
+                                        else
+                                            count = 0;
+                                    }
+                                }
+                            }
+
+                            // Изменение количества товара
+                            if (IsPurchase)
+                                count -= item.Count;
+                            else
+                                count += item.Count;
+
+                            sql = String.Format(@"UPDATE `PRODUCT` SET `COUNT` = '{0}' WHERE `PRODUCT`.`ID` = {1}", count, item.ID_Product);
+
+                            using (MySqlCommand command = new MySqlCommand(sql, connection))
+                            {
+                                command.ExecuteNonQuery();
+                            }
+                        }
+
+                        string name = (IsPurchase) ? "проведение приходной накладной " : "проведение расходной накладной ";
+
+                        Journal.CreateJournal("отменил", name + Number.ToString(), connection);
+
+                        connection.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result = false;
+                    Dialog.ErrorMessage(null, "Ошибка отмены проведения накладной", ex.Message);
                 }
             }
             else
@@ -925,11 +1018,26 @@ namespace GreenLeaf.ViewModel
         {
             Invoice invoice = new Invoice();
             invoice.IsPurchase = isPurchase;
+            invoice.ID_Account = ConnectSetting.CurrentUser.ID;
 
             if (invoice.CreateInvoice())
                 return invoice;
             else
                 return null;
+        }
+
+        /// <summary>
+        /// Получение накладной
+        /// </summary>
+        /// <param name="isPurchase">признак приходной накладной</param>
+        /// <param name="id">ID</param>
+        public static Invoice GetInvoiceByID(bool isPurchase, int id)
+        {
+            Invoice invoice = new Invoice();
+
+            invoice.GetDataByID(id, isPurchase);
+
+            return invoice;
         }
 
         #endregion
