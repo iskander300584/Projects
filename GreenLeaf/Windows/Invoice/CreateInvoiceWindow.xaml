@@ -3,8 +3,35 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:conv="clr-namespace:GreenLeaf.Converters"
+        xmlns:win="clr-namespace:GreenLeaf.Windows.InvoiceView"
         mc:Ignorable="d"
-        Title="Накладная" Style="{DynamicResource ModalWindow}" SizeToContent="Manual" Width="800" Height="600" WindowState="Maximized" > 
+        Title="Накладная" Style="{DynamicResource ModalWindow}" SizeToContent="Manual" Width="800" Height="600" WindowState="Maximized" >
+
+    <!-- Объявление команд -->
+    <Window.CommandBindings>
+
+        <!-- Блокировка накладной -->
+        <CommandBinding Command="win:CreateInvoiceWindow.DoLockInvoice" Executed="DoLockInvoice_Execute" CanExecute="DoLockInvoice_CanExecute" />
+
+        <!-- Проведение накладной -->
+        <CommandBinding Command="win:CreateInvoiceWindow.DoIssueInvoice" Executed="DoIssueInvoice_Execute" CanExecute="DoIssueInvoice_CanExecute" />
+
+        <!-- Удаление накладной -->
+        <CommandBinding Command="win:CreateInvoiceWindow.DoDeleteInvoice" Executed="DoDeleteInvoice_Execute" CanExecute="DoDeleteInvoice_CanExecute" />
+
+        <!-- Добавление элемента накладной -->
+        <CommandBinding Command="win:CreateInvoiceWindow.DoAddItem" Executed="DoAddItem_Execute" CanExecute="DoAddItem_CanExecute" />
+
+        <!-- Редактирование элемента накладной -->
+        <CommandBinding Command="win:CreateInvoiceWindow.DoEditItem" Executed="DoEditItem_Execute" CanExecute="DoEditItem_CanExecute" />
+
+        <!-- Удаление элемента накладной -->
+        <CommandBinding Command="win:CreateInvoiceWindow.DoDeleteItem" Executed="DoDeleteItem_Execute" CanExecute="DoDeleteItem_CanExecute" />
+
+    </Window.CommandBindings>
+    
+    
     
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -134,7 +161,7 @@
 
                 <!-- Количество -->
                 <DataGridTextColumn Width="150" Binding="{Binding Path=Count, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Delay=500}" 
-                                    FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="False" >
+                                    FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Количество" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>

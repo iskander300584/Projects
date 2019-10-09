@@ -489,6 +489,7 @@ namespace GreenLeaf.Windows
             view.Owner = this;
 
             view.ShowDialog();
+            view.Close();
             LoadData();
         }
     }
