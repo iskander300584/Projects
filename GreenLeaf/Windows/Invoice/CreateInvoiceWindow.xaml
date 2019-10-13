@@ -6,7 +6,7 @@
         xmlns:conv="clr-namespace:GreenLeaf.Converters"
         xmlns:win="clr-namespace:GreenLeaf.Windows.InvoiceView"
         mc:Ignorable="d"
-        Title="Накладная" Style="{DynamicResource ModalWindow}" SizeToContent="Manual" Width="800" Height="600" WindowState="Maximized" >
+        Title="Накладная" Style="{DynamicResource ModalWindow}" SizeToContent="Manual" Width="1000" Height="600" WindowState="Maximized" >
 
     <!-- Объявление команд -->
     <Window.CommandBindings>
@@ -29,9 +29,15 @@
         <!-- Удаление элемента накладной -->
         <CommandBinding Command="win:CreateInvoiceWindow.DoDeleteItem" Executed="DoDeleteItem_Execute" CanExecute="DoDeleteItem_CanExecute" />
 
+        <!-- Вывод в Excel -->
+        <CommandBinding Command="win:CreateInvoiceWindow.DoExcelOutput" Executed="DoExcelOutput_Execute" CanExecute="DoExcelOutput_CanExecute" />
+
     </Window.CommandBindings>
-    
-    
+
+    <Window.Resources>
+        <!-- Преобразование NULL в FALSE -->
+        <conv:Null_to_False_Converter x:Key="NullToFalseConverter" />
+    </Window.Resources>
     
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -68,40 +74,267 @@
             </DockPanel>
 
             <!-- Кнопка "Удалить" -->
-            <Button x:Name="btnDeleteInvoice" Style="{StaticResource MainMenuButtonStyle}" DockPanel.Dock="Right" Margin="0" >
-                <Button.Content>
-                    <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                        <Image Source="..\..\Images\cancel.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                        <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
-                            <Run>Удалить</Run>
-                        </TextBlock>
-                    </DockPanel>
-                </Button.Content>
+            <Button x:Name="btnDeleteInvoice" DockPanel.Dock="Right" Margin="0" Command="win:CreateInvoiceWindow.DoDeleteInvoice" >
+                <Button.Style>
+                    <Style BasedOn="{StaticResource MainMenuButtonStyle}">
+                        <Style.Triggers>
+                            <Trigger Property="Button.IsEnabled" Value="True">
+                                <Setter Property="Button.Content">
+                                    <Setter.Value>
+                                        <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                            <Image Source="..\..\Images\cancel.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                                            <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                                <Run>Удалить</Run>
+                                            </TextBlock>
+                                        </DockPanel>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+
+                            <Trigger Property="Button.IsEnabled" Value="False">
+                                <Setter Property="Button.Content">
+                                    <Setter.Value>
+                                        <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                            <Image Source="..\..\Images\cancel_gray.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                                            <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray">
+                                                <Run>Удалить</Run>
+                                            </TextBlock>
+                                        </DockPanel>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Button.Background" Value="GhostWhite" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
             </Button>
 
-            <!-- Кнопка "Оформить" -->
-            <Button x:Name="btnIssueInvoice" Style="{StaticResource MainMenuButtonStyle}" DockPanel.Dock="Right" >
-                <Button.Content>
-                    <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                        <Image Source="..\..\Images\stamp.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                        <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
-                            <Run>Оформить</Run>
-                        </TextBlock>
-                    </DockPanel>
-                </Button.Content>
+            <!-- Кнопка "Провести" -->
+            <Button x:Name="btnIssueInvoice" DockPanel.Dock="Right" Command="win:CreateInvoiceWindow.DoIssueInvoice" >
+                <Button.Style>
+                    <Style BasedOn="{StaticResource MainMenuButtonStyle}">
+                        <Style.Triggers>
+                            <!-- Кнопка активна, накладная НЕ проведена -->
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" Value="True" />
+                                    <Condition Binding="{Binding IsIssued, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToFalseConverter}}" Value="False" />
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                                <Image Source="..\..\Images\stamp.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                                    <Run>Провести</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+
+                            <!-- Кнопка НЕ активна, накладная НЕ проведена -->
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" Value="False" />
+                                    <Condition Binding="{Binding IsIssued, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToFalseConverter}}" Value="False" />
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                                <Image Source="..\..\Images\stamp_gray.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray" >
+                                                    <Run>Провести</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Button.Background" Value="GhostWhite" />
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+
+                            <!-- Кнопка активна, накладная проведена -->
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" Value="True" />
+                                    <Condition Binding="{Binding IsIssued, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToFalseConverter}}" Value="True" />
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                                <Image Source="..\..\Images\unstamp.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                                    <Run>Отменить</Run><LineBreak/>
+                                                    <Run>проведение</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+
+                            <!-- Кнопка НЕ активна, накладная проведена -->
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" Value="False" />
+                                    <Condition Binding="{Binding IsIssued, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToFalseConverter}}" Value="True" />
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                                <Image Source="..\..\Images\unstamp_gray.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray" >
+                                                    <Run>Отменить</Run><LineBreak/>
+                                                    <Run>проведение</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Button.Background" Value="GhostWhite" />
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
             </Button>
 
-            <!-- Кнопка "Сохранить" -->
-            <Button x:Name="btnSaveInvoice" Style="{StaticResource MainMenuButtonStyle}" DockPanel.Dock="Right" >
-                <Button.Content>
-                    <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                        <Image Source="..\..\Images\save.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                        <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
-                            <Run>Сохранить</Run>
-                        </TextBlock>
-                    </DockPanel>
-                </Button.Content>
+            <!-- Кнопка "Заблокировать" -->
+            <Button x:Name="btnLockInvoice" DockPanel.Dock="Right" Command="win:CreateInvoiceWindow.DoLockInvoice" >
+                <Button.Style>
+                    <Style BasedOn="{StaticResource MainMenuButtonStyle}">
+                        <Style.Triggers>
+                            <!-- Кнопка активна, накладная НЕ заблокирована -->
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" Value="True" />
+                                    <Condition Binding="{Binding IsLocked, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToFalseConverter}}" Value="False" />
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                                <Image Source="..\..\Images\lock.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                                    <Run>Заблокировать</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+
+                            <!-- Кнопка НЕ активна, накладная НЕ заблокирована -->
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" Value="False" />
+                                    <Condition Binding="{Binding IsLocked, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToFalseConverter}}" Value="False" />
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                                <Image Source="..\..\Images\lock_gray.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray" >
+                                                    <Run>Заблокировать</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Button.Background" Value="GhostWhite" />
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+
+                            <!-- Кнопка активна, накладная заблокирована -->
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" Value="True" />
+                                    <Condition Binding="{Binding IsLocked, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToFalseConverter}}" Value="True" />
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                                <Image Source="..\..\Images\unlock.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                                    <Run>Снять</Run><LineBreak/>
+                                                    <Run>блокировку</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+
+                            <!-- Кнопка НЕ активна, накладная заблокирована -->
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled}" Value="False" />
+                                    <Condition Binding="{Binding IsLocked, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToFalseConverter}}" Value="True" />
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Button.Content">
+                                        <Setter.Value>
+                                            <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                                <Image Source="..\..\Images\unlock_gray.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray" >
+                                                    <Run>Снять</Run><LineBreak/>
+                                                    <Run>блокировку</Run>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Button.Background" Value="GhostWhite" />
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
             </Button>
+
+            <!-- Кнопка "Выгрузить в Excel" -->
+            <Button x:Name="btnExcelOutputInvoice" DockPanel.Dock="Right" Command="win:CreateInvoiceWindow.DoExcelOutput" >
+                <Button.Style>
+                    <Style BasedOn="{StaticResource MainMenuButtonStyle}">
+                        <Style.Triggers>
+                            <Trigger Property="Button.IsEnabled" Value="True">
+                                <Setter Property="Button.Content">
+                                    <Setter.Value>
+                                        <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                            <Image Source="..\..\Images\excel.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                                            <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                                <Run>Выгрузить</Run><LineBreak/>
+                                                <Run>в Excel</Run>
+                                            </TextBlock>
+                                        </DockPanel>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+
+                            <Trigger Property="Button.IsEnabled" Value="False">
+                                <Setter Property="Button.Content">
+                                    <Setter.Value>
+                                        <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                            <Image Source="..\..\Images\excel_gray.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                                            <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray">
+                                                <Run>Выгрузить</Run><LineBreak/>
+                                                <Run>в Excel</Run>
+                                            </TextBlock>
+                                        </DockPanel>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Button.Background" Value="GhostWhite" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
         </DockPanel>
 
         <!-- Разделитель -->
@@ -121,7 +354,7 @@
             </Button>
         </DockPanel>
 
-        <DataGrid x:Name="dataGrid" Grid.Row="3" Style="{DynamicResource DataGridStyle}" SelectionMode="Single" >
+        <DataGrid x:Name="dataGrid" Grid.Row="3" Style="{DynamicResource DataGridStyle}" SelectionMode="Single" ItemsSource="{Binding Items}" >
             <DataGrid.Columns>
 
                 <!-- Код товара -->

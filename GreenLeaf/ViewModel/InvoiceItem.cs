@@ -511,6 +511,44 @@ namespace GreenLeaf.ViewModel
             return Items;
         }
 
+        /// <summary>
+        /// Удаление элемента накладной
+        /// </summary>
+        /// <param name="id">ID элемента накладной</param>
+        /// <param name="isPurchase"></param>
+        /// <returns></returns>
+        public static bool DeleteItem(int id, bool isPurchase)
+        {
+            bool result = false;
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                {
+                    connection.Open();
+
+                    string table = (isPurchase) ? "PURCHASE_INVOICE_UNIT" : "SALES_INVOICE_UNIT";
+
+                    string sql = String.Format(@"DELETE FROM `{0}` WHERE`{0}`.`ID` = {1}", table, id);
+
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    connection.Close();
+
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка удаления позиции накладной", ex.Message);
+            }
+
+            return result;
+        }
+
         #endregion
     }
 }

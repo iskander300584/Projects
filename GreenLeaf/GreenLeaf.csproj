@@ -104,6 +104,7 @@
     <Compile Include="Converters\Bool_to_UnVisibility_Converter.cs" />
     <Compile Include="Converters\Bool_to_Visibility_Converter.cs" />
     <Compile Include="Converters\Bool_to_YesNo_Converter.cs" />
+    <Compile Include="Converters\Null_to_False_Converter.cs" />
     <Compile Include="ViewModel\Account.cs" />
     <Compile Include="ViewModel\Counterparty.cs" />
     <Compile Include="ViewModel\Invoice.cs" />
@@ -310,11 +311,27 @@
     <Resource Include="Images\save.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\triangle_down.png" />
+    <Resource Include="Images\triangle_up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\cancel_gray.png" />
+    <Resource Include="Images\excel.png" />
+    <Resource Include="Images\lock.png" />
+    <Resource Include="Images\lock_gray.png" />
+    <Resource Include="Images\stamp_gray.png" />
+    <Resource Include="Images\unlock.png" />
+    <Resource Include="Images\unlock_gray.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Images\stamp.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\triangle_down.png" />
-    <Resource Include="Images\triangle_up.png" />
+    <Resource Include="Images\unstamp.png" />
+    <Resource Include="Images\unstamp_gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\excel_gray.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

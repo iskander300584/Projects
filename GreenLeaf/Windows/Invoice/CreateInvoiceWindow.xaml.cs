@@ -46,6 +46,11 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         public static RoutedUICommand DoDeleteItem = new RoutedUICommand("Удаление элемента накладной", "DoDeleteItem", typeof(CreateInvoiceWindow));
 
+        /// <summary>
+        /// Команда вывода данных в Excel
+        /// </summary>
+        public static RoutedUICommand DoExcelOutput = new RoutedUICommand("Вывести в Excel", "DoExcelOutput", typeof(CreateInvoiceWindow));
+
         #endregion
 
         /// <summary>
@@ -119,7 +124,9 @@ namespace GreenLeaf.Windows.InvoiceView
             if (CurrentInvoice.Date != DateTime.MinValue)
                 tbDate.Text = String.Format(@"{0}.{1}.{2}", (CurrentInvoice.Date.Day < 10) ? "0" + CurrentInvoice.Date.Day.ToString() : CurrentInvoice.Date.Day.ToString(), (CurrentInvoice.Date.Month < 10) ? "0" + CurrentInvoice.Date.Month.ToString() : CurrentInvoice.Date.Month.ToString(), CurrentInvoice.Date.Year);
 
-            dataGrid.ItemsSource = CurrentInvoice.Items;
+            //dataGrid.ItemsSource = CurrentInvoice.Items;
+
+            this.DataContext = CurrentInvoice;
         }
 
         /// <summary>
@@ -160,7 +167,7 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         private void DoLockInvoice_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (CurrentInvoice != null && !CurrentInvoice.IsIssued) ? true : false;
+            e.CanExecute = (CurrentInvoice != null && !CurrentInvoice.IsIssued && CurrentInvoice.Items != null && CurrentInvoice.Items.Count > 0) ? true : false;
         }
 
         /// <summary>
@@ -188,7 +195,7 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         private void DoIssueInvoice_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (CurrentInvoice != null && !CurrentInvoice.IsLocked && (!CurrentInvoice.IsIssued || (CurrentInvoice.IsPurchase && ConnectSetting.CurrentUser.ReportsData.ReportUnIssuePurchaseInvoice) || (!CurrentInvoice.IsPurchase && ConnectSetting.CurrentUser.ReportsData.ReportUnIssueSalesInvoice))) ? true : false;
+            e.CanExecute = (CurrentInvoice != null && !CurrentInvoice.IsLocked && CurrentInvoice.Items != null && CurrentInvoice.Items.Count > 0 && (!CurrentInvoice.IsIssued || (CurrentInvoice.IsPurchase && ConnectSetting.CurrentUser.ReportsData.ReportUnIssuePurchaseInvoice) || (!CurrentInvoice.IsPurchase && ConnectSetting.CurrentUser.ReportsData.ReportUnIssueSalesInvoice))) ? true : false;
         }
 
         /// <summary>
@@ -283,6 +290,8 @@ namespace GreenLeaf.Windows.InvoiceView
 
             GetFreeProductList();
 
+            CurrentInvoice.Calc();
+
             dataGrid.Items.Refresh();
 
             Dialog.TransparentMessage(this, "Операция выполнена");
@@ -315,9 +324,48 @@ namespace GreenLeaf.Windows.InvoiceView
         }
 
         /// <summary>
-        /// Удаление элемента накладной     TODO
+        /// Удаление элемента накладной
         /// </summary>
         private void DoDeleteItem_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            InvoiceItem item = dataGrid.SelectedItem as InvoiceItem;
+
+            if (item != null)
+            {
+                if (Dialog.QuestionMessage(this, "Удалить позицию " + item.Product.ProductCode + "?", "Внимание!") != MessageBoxResult.Yes)
+                    return;
+
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                if (InvoiceItem.DeleteItem(item.ID, CurrentInvoice.IsPurchase))
+                {
+                    CurrentInvoice.Items.Remove(item);
+
+                    GetFreeProductList();
+
+                    CurrentInvoice.Calc();
+
+                    dataGrid.Items.Refresh();
+
+                    Dialog.TransparentMessage(this, "Операция выполнена");
+                }
+
+                Mouse.OverrideCursor = null;
+            }
+        }
+
+        /// <summary>
+        /// Проверка возможности вывода в Excel
+        /// </summary>
+        private void DoExcelOutput_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (CurrentInvoice != null && CurrentInvoice.Items != null && CurrentInvoice.Items.Count > 0) ? true : false;
+        }
+
+        /// <summary>
+        /// Вывод в Excel     TODO
+        /// </summary>
+        private void DoExcelOutput_Execute(object sender, ExecutedRoutedEventArgs e)
         {
 
         }
