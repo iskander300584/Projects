@@ -31,6 +31,9 @@ namespace GreenLeaf.Windows
         // Создать приходную накладную
         public static RoutedUICommand CreatePurchaseInvoice = new RoutedUICommand("Создать приходную накладную", "CreatePurchaseInvoice", typeof(MainWindow));
 
+        // Создать расходную накладную
+        public static RoutedUICommand CreateSalesInvoice = new RoutedUICommand("Создать расходную накладную", "CreateSalesInvoice", typeof(MainWindow));
+
         #region Поиск
 
         // Поиск
@@ -138,7 +141,7 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void LoadData()
         {
-            this.Cursor = Cursors.Wait;
+            Mouse.OverrideCursor = Cursors.Wait;
 
             dataGrid.ItemsSource = null;
 
@@ -154,7 +157,7 @@ namespace GreenLeaf.Windows
 
             SortData();
 
-            this.Cursor = Cursors.Arrow;
+            Mouse.OverrideCursor = null;
         }
 
         /// <summary>
@@ -486,6 +489,19 @@ namespace GreenLeaf.Windows
         private void CreatePurchaseInvoice_Execute(object sender, ExecutedRoutedEventArgs e)
         {
             InvoiceView.CreateInvoiceWindow view = new InvoiceView.CreateInvoiceWindow(true);
+            view.Owner = this;
+
+            view.ShowDialog();
+            view.Close();
+            LoadData();
+        }
+
+        /// <summary>
+        /// Создать расходную накладную
+        /// </summary>
+        private void CreateSalesInvoice_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            InvoiceView.CreateInvoiceWindow view = new InvoiceView.CreateInvoiceWindow(false);
             view.Owner = this;
 
             view.ShowDialog();

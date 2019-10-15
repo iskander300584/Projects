@@ -115,16 +115,17 @@ namespace GreenLeaf.Windows.InvoiceView
                 cbCounterparty.SelectedIndex = 0;
 
             // Загрузка списка товара
-            ProductList = Product.GetActualProductList();
+            ProductList = (isPurchase)? Product.GetActualProductList() : Product.GetProductListByParameters(true, true);
 
             GetFreeProductList();
 
             tbExecutor.Text = Account.GetAccountByID(CurrentInvoice.ID_Account).PersonalData.VisibleName;
 
-            if (CurrentInvoice.Date != DateTime.MinValue)
-                tbDate.Text = String.Format(@"{0}.{1}.{2}", (CurrentInvoice.Date.Day < 10) ? "0" + CurrentInvoice.Date.Day.ToString() : CurrentInvoice.Date.Day.ToString(), (CurrentInvoice.Date.Month < 10) ? "0" + CurrentInvoice.Date.Month.ToString() : CurrentInvoice.Date.Month.ToString(), CurrentInvoice.Date.Year);
-
-            //dataGrid.ItemsSource = CurrentInvoice.Items;
+            // Отключение кнопки блокировки для приходной накладной
+            if(CurrentInvoice.IsPurchase)
+            {
+                btnLockInvoice.Visibility = Visibility.Collapsed;
+            }
 
             this.DataContext = CurrentInvoice;
         }
@@ -167,7 +168,7 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         private void DoLockInvoice_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (CurrentInvoice != null && !CurrentInvoice.IsIssued && CurrentInvoice.Items != null && CurrentInvoice.Items.Count > 0) ? true : false;
+            e.CanExecute = (CurrentInvoice != null && !CurrentInvoice.IsPurchase && !CurrentInvoice.IsIssued && CurrentInvoice.Items != null && CurrentInvoice.Items.Count > 0) ? true : false;
         }
 
         /// <summary>
@@ -262,7 +263,7 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         private void DoAddItem_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (CurrentInvoice != null && !CurrentInvoice.IsLocked && !CurrentInvoice.IsIssued) ? true : false;
+            e.CanExecute = (CurrentInvoice != null && CurrentInvoice.EditEnabled && cbProduct != null && cbProduct.SelectedItem != null && tbCount != null && tbCount.Text.Trim() != "") ? true : false;
         }
 
         /// <summary>
@@ -284,6 +285,18 @@ namespace GreenLeaf.Windows.InvoiceView
                 return;
             }
 
+            if(count <= 0)
+            {
+                Dialog.WarningMessage(this, "Не корректное количество количество товара");
+                return;
+            }
+
+            if(!CurrentInvoice.IsPurchase && count > product.AllowedCount)
+            {
+                Dialog.WarningMessage(this, "Указанное количество превышает допустимое количество товара");
+                return;
+            }
+
             Mouse.OverrideCursor = Cursors.Wait;
 
             CurrentInvoice.Items.Add(InvoiceItem.CreateItem(CurrentInvoice.ID, product.ID, count, CurrentInvoice.IsPurchase));
@@ -293,6 +306,10 @@ namespace GreenLeaf.Windows.InvoiceView
             CurrentInvoice.Calc();
 
             dataGrid.Items.Refresh();
+
+            tbCount.Text = "";
+            tbMaxCount.Text = "0";
+            tbNomination.Text = "";
 
             Dialog.TransparentMessage(this, "Операция выполнена");
 
@@ -304,7 +321,7 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         private void DoEditItem_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (CurrentInvoice != null && !CurrentInvoice.IsLocked && !CurrentInvoice.IsIssued && dataGrid.SelectedItem != null) ? true : false;
+            e.CanExecute = (CurrentInvoice != null && CurrentInvoice.EditEnabled && dataGrid != null && dataGrid.SelectedItem != null) ? true : false;
         }
 
         /// <summary>
@@ -320,7 +337,7 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         private void DoDeleteItem_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (CurrentInvoice != null && !CurrentInvoice.IsLocked && !CurrentInvoice.IsIssued && dataGrid.SelectedItem != null) ? true : false;
+            e.CanExecute = (CurrentInvoice != null && CurrentInvoice.EditEnabled && dataGrid != null && dataGrid.SelectedItem != null) ? true : false;
         }
 
         /// <summary>
@@ -368,6 +385,36 @@ namespace GreenLeaf.Windows.InvoiceView
         private void DoExcelOutput_Execute(object sender, ExecutedRoutedEventArgs e)
         {
 
+        }
+
+        /// <summary>
+        /// Смена выбранного кода товара
+        /// </summary>
+        private void cbProduct_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if(cbProduct.SelectedItem != null)
+            {
+                Product product = ProductList.FirstOrDefault(p => p.ProductCode == cbProduct.SelectedItem.ToString());
+
+                if(product != null)
+                {
+                    if (!CurrentInvoice.IsPurchase)
+                    {
+                        tbMaxCount.Text = Conversion.ToString(product.AllowedCount);
+                    }
+
+                    tbNomination.Text = product.Nomination;
+                }
+                else
+                {
+                    if (!CurrentInvoice.IsPurchase)
+                    {
+                        tbMaxCount.Text = "0";
+                    }
+
+                    tbNomination.Text = "";
+                }
+            }
         }
     }
 }

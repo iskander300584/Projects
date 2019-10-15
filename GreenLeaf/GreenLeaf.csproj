@@ -104,6 +104,9 @@
     <Compile Include="Converters\Bool_to_UnVisibility_Converter.cs" />
     <Compile Include="Converters\Bool_to_Visibility_Converter.cs" />
     <Compile Include="Converters\Bool_to_YesNo_Converter.cs" />
+    <Compile Include="Converters\Date_To_String_Converter.cs" />
+    <Compile Include="Converters\Double_To_Summ_String_Converter.cs" />
+    <Compile Include="Converters\Invoice_Number_To_String_Converter.cs" />
     <Compile Include="Converters\Null_to_False_Converter.cs" />
     <Compile Include="ViewModel\Account.cs" />
     <Compile Include="ViewModel\Counterparty.cs" />

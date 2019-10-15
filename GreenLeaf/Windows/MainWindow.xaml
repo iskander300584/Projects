@@ -17,6 +17,9 @@
         <!-- Создать приходную накладную -->
         <CommandBinding Command="win:MainWindow.CreatePurchaseInvoice" Executed="CreatePurchaseInvoice_Execute" />
 
+        <!-- Создать расходную накладную -->
+        <CommandBinding Command="win:MainWindow.CreateSalesInvoice" Executed="CreateSalesInvoice_Execute" />
+
         <!-- Поиск -->
         <CommandBinding Command="win:MainWindow.Search" Executed="Search_Execute" CanExecute="Search_CanExecute" />
 
@@ -107,7 +110,7 @@
             </Button>
             
             <!-- Кнопка "Расходная накладная" -->
-            <Button x:Name="btnSalesInvoice" Style="{StaticResource MainMenuButtonStyle}" >
+            <Button x:Name="btnSalesInvoice" Style="{StaticResource MainMenuButtonStyle}" Command="win:MainWindow.CreateSalesInvoice" >
                 <Button.Content>
                     <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Image Source="..\Images\invoice.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />

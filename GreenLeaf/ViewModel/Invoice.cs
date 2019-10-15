@@ -145,6 +145,8 @@ namespace GreenLeaf.ViewModel
                 {
                     _is_issued = value;
                     OnPropertyChanged();
+
+                    GetEditEnabled();
                 }
             }
         }
@@ -162,6 +164,8 @@ namespace GreenLeaf.ViewModel
                 {
                     _is_locked = value;
                     OnPropertyChanged();
+
+                    GetEditEnabled();
                 }
             }
         }
@@ -178,6 +182,23 @@ namespace GreenLeaf.ViewModel
                 if (_is_purchase != value)
                 {
                     _is_purchase = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private bool _editEnabled = true;
+        /// <summary>
+        /// Доступность для редактирования
+        /// </summary>
+        public bool EditEnabled
+        {
+            get { return _editEnabled; }
+            set
+            {
+                if (_editEnabled != value)
+                {
+                    _editEnabled = value;
                     OnPropertyChanged();
                 }
             }
@@ -230,7 +251,9 @@ namespace GreenLeaf.ViewModel
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        ID = command.ExecuteNonQuery();
+                        command.ExecuteNonQuery();
+
+                        ID = (int)command.LastInsertedId;
                     }
 
                     connection.Close();
@@ -441,6 +464,19 @@ namespace GreenLeaf.ViewModel
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
                             command.ExecuteNonQuery();
+
+                            // Удаление элементов накладной
+                            table = (IsPurchase) ? "PURCHASE_INVOICE_UNIT" : "SALES_INVOICE_UNIT";
+
+                            foreach (InvoiceItem item in Items)
+                            {
+                                sql = String.Format(@"DELETE FROM `{0}` WHERE `{0}`.`ID` = {1}", table, item.ID);
+
+                                using (MySqlCommand cmd = new MySqlCommand(sql, connection))
+                                {
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
                         }
 
                         connection.Close();
@@ -489,35 +525,38 @@ namespace GreenLeaf.ViewModel
                         }
 
                         // Блокировка товаров
-                        foreach (InvoiceItem item in Items)
+                        if (!IsPurchase)
                         {
-                            sql = String.Format(@"SELECT `LOCKED_COUNT` FROM `PRODUCT` WHERE `PRODUCT`.`ID` = {0}", item.ID_Product);
-
-                            double lockCount = 0;
-
-                            using (MySqlCommand command = new MySqlCommand(sql, connection))
+                            foreach (InvoiceItem item in Items)
                             {
-                                using (MySqlDataReader reader = command.ExecuteReader())
+                                sql = String.Format(@"SELECT `LOCKED_COUNT` FROM `PRODUCT` WHERE `PRODUCT`.`ID` = {0}", item.ID_Product);
+
+                                double lockCount = 0;
+
+                                using (MySqlCommand command = new MySqlCommand(sql, connection))
                                 {
-                                    while (reader.Read())
+                                    using (MySqlDataReader reader = command.ExecuteReader())
                                     {
-                                        string tempS = reader["LOCKED_COUNT"].ToString();
-                                        double tempD = 0;
-                                        if (double.TryParse(tempS, out tempD))
-                                            lockCount = tempD;
-                                        else
-                                            lockCount = 0;
+                                        while (reader.Read())
+                                        {
+                                            string tempS = reader["LOCKED_COUNT"].ToString();
+                                            double tempD = 0;
+                                            if (double.TryParse(tempS, out tempD))
+                                                lockCount = tempD;
+                                            else
+                                                lockCount = 0;
+                                        }
                                     }
                                 }
-                            }
 
-                            lockCount += item.Count;
+                                lockCount += item.Count;
 
-                            sql = String.Format(@"UPDATE `PRODUCT` SET `LOCKED_COUNT` = '{0}' WHERE `PRODUCT`.`ID` = {1}", lockCount, item.ID_Product);
+                                sql = String.Format(@"UPDATE `PRODUCT` SET `LOCKED_COUNT` = '{0}' WHERE `PRODUCT`.`ID` = {1}", lockCount, item.ID_Product);
 
-                            using (MySqlCommand command = new MySqlCommand(sql, connection))
-                            {
-                                command.ExecuteNonQuery();
+                                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                                {
+                                    command.ExecuteNonQuery();
+                                }
                             }
                         }
 
@@ -567,37 +606,40 @@ namespace GreenLeaf.ViewModel
                         }
 
                         // Разблокировка товаров
-                        foreach (InvoiceItem item in Items)
+                        if (!IsPurchase)
                         {
-                            sql = String.Format(@"SELECT `LOCKED_COUNT` FROM `PRODUCT` WHERE `PRODUCT`.`ID` = {0}", item.ID_Product);
-
-                            double lockCount = 0;
-
-                            using (MySqlCommand command = new MySqlCommand(sql, connection))
+                            foreach (InvoiceItem item in Items)
                             {
-                                using (MySqlDataReader reader = command.ExecuteReader())
+                                sql = String.Format(@"SELECT `LOCKED_COUNT` FROM `PRODUCT` WHERE `PRODUCT`.`ID` = {0}", item.ID_Product);
+
+                                double lockCount = 0;
+
+                                using (MySqlCommand command = new MySqlCommand(sql, connection))
                                 {
-                                    while (reader.Read())
+                                    using (MySqlDataReader reader = command.ExecuteReader())
                                     {
-                                        string tempS = reader["LOCKED_COUNT"].ToString();
-                                        double tempD = 0;
-                                        if (double.TryParse(tempS, out tempD))
-                                            lockCount = tempD;
-                                        else
-                                            lockCount = 0;
+                                        while (reader.Read())
+                                        {
+                                            string tempS = reader["LOCKED_COUNT"].ToString();
+                                            double tempD = 0;
+                                            if (double.TryParse(tempS, out tempD))
+                                                lockCount = tempD;
+                                            else
+                                                lockCount = 0;
+                                        }
                                     }
                                 }
-                            }
 
-                            lockCount -= item.Count;
-                            if (lockCount < 0)
-                                lockCount = 0;
+                                lockCount -= item.Count;
+                                if (lockCount < 0)
+                                    lockCount = 0;
 
-                            sql = String.Format(@"UPDATE `PRODUCT` SET `LOCKED_COUNT` = '{0}' WHERE `PRODUCT`.`ID` = {1}", lockCount, item.ID_Product);
+                                sql = String.Format(@"UPDATE `PRODUCT` SET `LOCKED_COUNT` = '{0}' WHERE `PRODUCT`.`ID` = {1}", lockCount, item.ID_Product);
 
-                            using (MySqlCommand command = new MySqlCommand(sql, connection))
-                            {
-                                command.ExecuteNonQuery();
+                                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                                {
+                                    command.ExecuteNonQuery();
+                                }
                             }
                         }
 
@@ -837,6 +879,14 @@ namespace GreenLeaf.ViewModel
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Получение доступности для редактирования
+        /// </summary>
+        private void GetEditEnabled()
+        {
+            EditEnabled = !(IsLocked || IsIssued);
         }
 
         #endregion

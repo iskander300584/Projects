@@ -208,7 +208,9 @@ namespace GreenLeaf.ViewModel
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
-                        ID = command.ExecuteNonQuery();
+                        command.ExecuteNonQuery();
+
+                        ID = (int)command.LastInsertedId;
                     }
 
                     string name = (Nomination != "") ? Nomination : Surname + " " + Name;
