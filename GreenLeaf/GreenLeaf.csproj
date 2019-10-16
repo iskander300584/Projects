@@ -119,6 +119,9 @@
     <Compile Include="Windows\Invoice\CreateInvoiceWindow.xaml.cs">
       <DependentUpon>CreateInvoiceWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\Invoice\EditItemCountWindow.xaml.cs">
+      <DependentUpon>EditItemCountWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\Warehouse\AddProductWindow.xaml.cs">
       <DependentUpon>AddProductWindow.xaml</DependentUpon>
     </Compile>
@@ -168,6 +171,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Windows\Invoice\CreateInvoiceWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Invoice\EditItemCountWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

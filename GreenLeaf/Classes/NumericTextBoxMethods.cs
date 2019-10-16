@@ -13,13 +13,13 @@ namespace GreenLeaf.Classes
         /// Список доступных кнопок для дробных чисел
         /// </summary>
         private static List<Key> DoubleDigits = new List<Key> { Key.D0, Key.D1, Key.D2, Key.D3, Key.D4, Key.D5, Key.D6, Key.D7, Key.D8, Key.D9,
-                Key.NumPad0, Key.NumPad1, Key.NumPad2, Key.NumPad3, Key.NumPad4, Key.NumPad5, Key.NumPad6, Key.NumPad7, Key.NumPad8, Key.NumPad9, Key.Back, Key.Delete, Key.Left, Key.Right, Key.OemPeriod, Key.OemComma, Key.Decimal, Key.OemQuestion, Key.Tab, Key.LeftCtrl, Key.RightCtrl, Key.C, Key.V };
+                Key.NumPad0, Key.NumPad1, Key.NumPad2, Key.NumPad3, Key.NumPad4, Key.NumPad5, Key.NumPad6, Key.NumPad7, Key.NumPad8, Key.NumPad9, Key.Back, Key.Delete, Key.Left, Key.Right, Key.OemPeriod, Key.OemComma, Key.Decimal, Key.OemQuestion, Key.Tab, Key.LeftCtrl, Key.RightCtrl, Key.C, Key.V, Key.Enter };
 
         /// <summary>
         /// Список доступных кнопок для целых чисел
         /// </summary>
         private static List<Key> IntDigits = new List<Key> { Key.D0, Key.D1, Key.D2, Key.D3, Key.D4, Key.D5, Key.D6, Key.D7, Key.D8, Key.D9,
-                Key.NumPad0, Key.NumPad1, Key.NumPad2, Key.NumPad3, Key.NumPad4, Key.NumPad5, Key.NumPad6, Key.NumPad7, Key.NumPad8, Key.NumPad9, Key.Back, Key.Delete, Key.Left, Key.Right, Key.Tab, Key.LeftCtrl, Key.RightCtrl, Key.C, Key.V };
+                Key.NumPad0, Key.NumPad1, Key.NumPad2, Key.NumPad3, Key.NumPad4, Key.NumPad5, Key.NumPad6, Key.NumPad7, Key.NumPad8, Key.NumPad9, Key.Back, Key.Delete, Key.Left, Key.Right, Key.Tab, Key.LeftCtrl, Key.RightCtrl, Key.C, Key.V, Key.Enter };
 
         /// <summary>
         /// Обработчик PreviewKeyDown для дробных значений

@@ -82,12 +82,12 @@ namespace GreenLeaf.Windows.InvoiceView
             if(id == 0)
             {
                 // Создание накладной
-                CurrentInvoice = Invoice.CreateInvoice(isPurchase);
+                CurrentInvoice = ViewModel.Invoice.CreateInvoice(isPurchase);
             }
             else
             {
                 // Загрузка накладной
-                CurrentInvoice = Invoice.GetInvoiceByID(isPurchase, id);
+                CurrentInvoice = ViewModel.Invoice.GetInvoiceByID(isPurchase, id);
 
                 tbTotalCost.Text = String.Format(@"{0:#.##}", CurrentInvoice.Cost).Replace(',','.');
                 tbTotalCoupon.Text = String.Format(@"{0:#.##}", CurrentInvoice.Coupon).Replace(',', '.');
@@ -325,11 +325,37 @@ namespace GreenLeaf.Windows.InvoiceView
         }
 
         /// <summary>
-        /// Редактирование элемента накладной       TODO
+        /// Редактирование элемента накладной
         /// </summary>
         private void DoEditItem_Execute(object sender, ExecutedRoutedEventArgs e)
         {
-            
+            InvoiceItem item = dataGrid.SelectedItem as InvoiceItem;
+
+            EditItemCountWindow view = (CurrentInvoice.IsPurchase) ? new EditItemCountWindow(item.Count, item.Product.ProductCode, item.Product.Nomination) : new EditItemCountWindow(item.Count, item.Product.ProductCode, item.Product.Nomination, item.Product.AllowedCount);
+
+            view.Owner = this;
+
+            if ((bool)view.ShowDialog() && view.NewValue != item.Count)
+            {
+                Mouse.OverrideCursor = Cursors.Wait;
+
+                item.Count = view.NewValue;
+
+                view.Close();
+
+                if(item.EditItem(CurrentInvoice.IsPurchase))
+                {
+                    CurrentInvoice.Calc();
+
+                    dataGrid.Items.Refresh();
+
+                    Dialog.TransparentMessage(this, "Операция выполнена");
+                }
+
+                Mouse.OverrideCursor = null;
+            }
+            else
+                view.Close();
         }
 
         /// <summary>
