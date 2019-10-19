@@ -98,6 +98,23 @@ namespace GreenLeaf.ViewModel
             }
         }
 
+        private DateTime _createDate = DateTime.MinValue;
+        /// <summary>
+        /// Дата создания накладной
+        /// </summary>
+        public DateTime CreateDate
+        {
+            get { return _createDate; }
+            set
+            {
+                if (_createDate != value)
+                {
+                    _createDate = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private double _cost = 0;
         /// <summary>
         /// Стоимость
@@ -247,7 +264,9 @@ namespace GreenLeaf.ViewModel
 
                     string table = (IsPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
-                    string sql = String.Format(@"INSERT INTO `{0}` (`ID_ACCOUNT`, `ID_COUNTERPARTY`, `COST`, `COUPON`) VALUES ('{1}', '{2}', '{3}', '{4}')", table, _id_account, _id_counterparty, Conversion.ToString(_cost), Conversion.ToString(_coupon));
+                    string sql = String.Format(@"INSERT INTO `{0}` (`ID_ACCOUNT`, `ID_COUNTERPARTY`, `COST`, `COUPON`, `CREATE_DATE`) VALUES ('{1}', '{2}', '{3}', '{4}', '{5}')", table, _id_account, _id_counterparty, Conversion.ToString(_cost), Conversion.ToString(_coupon), Conversion.ToString(DateTime.Today));
+
+                    CreateDate = DateTime.Today;
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
@@ -305,6 +324,7 @@ namespace GreenLeaf.ViewModel
                                     ID_Account = Conversion.ToInt(reader["ID_ACCOUNT"].ToString());
                                     ID_Counterparty = Conversion.ToInt(reader["ID_COUNTERPARTY"].ToString());
                                     Date = Conversion.ToDateTime(reader["DATE"].ToString());
+                                    CreateDate = Conversion.ToDateTime(reader["CREATE_DATE"].ToString());
                                     Cost = Conversion.ToDouble(reader["COST"].ToString());
                                     Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
 
@@ -948,6 +968,7 @@ namespace GreenLeaf.ViewModel
                             invoice.ID_Account = Conversion.ToInt(reader["ID_ACCOUNT"].ToString());
                             invoice.ID_Counterparty = Conversion.ToInt(reader["ID_COUNTERPARTY"].ToString());
                             invoice.Date = Conversion.ToDateTime(reader["DATE"].ToString());
+                            invoice.CreateDate = Conversion.ToDateTime(reader["CREATE_DATE"].ToString());
                             invoice.Cost = Conversion.ToDouble(reader["COST"].ToString());
                             invoice.Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
                             invoice.IsIssued = Conversion.ToBool(reader["IS_ISSUED"].ToString());

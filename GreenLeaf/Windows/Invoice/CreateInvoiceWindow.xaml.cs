@@ -6,6 +6,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using GreenLeaf.Classes;
 using GreenLeaf.ViewModel;
+using Excel = Microsoft.Office.Interop.Excel;
+using Microsoft.Win32;
+using System.IO;
+using System.Diagnostics;
 
 namespace GreenLeaf.Windows.InvoiceView
 {
@@ -111,8 +115,6 @@ namespace GreenLeaf.Windows.InvoiceView
                 else
                     cbCounterparty.SelectedIndex = 0;
             }
-            else
-                cbCounterparty.SelectedIndex = 0;
 
             // Загрузка списка товара
             ProductList = (isPurchase)? Product.GetActualProductList() : Product.GetProductListByParameters(true, true);
@@ -128,6 +130,24 @@ namespace GreenLeaf.Windows.InvoiceView
             }
 
             this.DataContext = CurrentInvoice;
+        }
+
+        /// <summary>
+        /// Смена выбранного контрагента
+        /// </summary>
+        private void cbCounterparty_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            Counterparty currCounterparty = Counterparties.FirstOrDefault(c => c.VisibleName == cbCounterparty.SelectedItem.ToString());
+
+            if (currCounterparty != null)
+            {
+                CurrentInvoice.ID_Counterparty = currCounterparty.ID;
+                CurrentInvoice.EditInvoice();
+            }
+
+            Mouse.OverrideCursor = null;
         }
 
         /// <summary>
@@ -196,7 +216,7 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         private void DoIssueInvoice_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (CurrentInvoice != null && !CurrentInvoice.IsLocked && CurrentInvoice.Items != null && CurrentInvoice.Items.Count > 0 && (!CurrentInvoice.IsIssued || (CurrentInvoice.IsPurchase && ConnectSetting.CurrentUser.ReportsData.ReportUnIssuePurchaseInvoice) || (!CurrentInvoice.IsPurchase && ConnectSetting.CurrentUser.ReportsData.ReportUnIssueSalesInvoice))) ? true : false;
+            e.CanExecute = (CurrentInvoice != null && !CurrentInvoice.IsLocked && CurrentInvoice.ID_Counterparty != 0 && CurrentInvoice.Items != null && CurrentInvoice.Items.Count > 0 && (!CurrentInvoice.IsIssued || (CurrentInvoice.IsPurchase && ConnectSetting.CurrentUser.ReportsData.ReportUnIssuePurchaseInvoice) || (!CurrentInvoice.IsPurchase && ConnectSetting.CurrentUser.ReportsData.ReportUnIssueSalesInvoice))) ? true : false;
         }
 
         /// <summary>
@@ -406,11 +426,157 @@ namespace GreenLeaf.Windows.InvoiceView
         }
 
         /// <summary>
-        /// Вывод в Excel     TODO
+        /// Вывод в Excel
         /// </summary>
         private void DoExcelOutput_Execute(object sender, ExecutedRoutedEventArgs e)
         {
+            if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "шаблон накладной.xls"))
+            {
+                Dialog.ErrorMessage(this, "Шаблон накладной не найден. Обратитесь к администратору");
+                return;
+            }
 
+            try
+            {
+                SaveFileDialog saveDialog = new SaveFileDialog();
+
+                saveDialog.Filter = "Файлы Excel|*.xls";
+                saveDialog.FilterIndex = 0;
+                saveDialog.FileName = "";
+                saveDialog.CheckPathExists = true;
+                saveDialog.CheckFileExists = false;
+
+                if ((bool)saveDialog.ShowDialog())
+                {
+                    Mouse.OverrideCursor = Cursors.Wait;
+
+                    string fileName = saveDialog.FileName;
+                    if (!fileName.Contains(".xls"))
+                        fileName += ".xls";
+
+                    // Копирование шаблона накладной
+                    FileInfo template = new FileInfo(AppDomain.CurrentDomain.BaseDirectory + "шаблон накладной.xls");
+                    FileInfo report = template.CopyTo(fileName, true);
+
+                    Excel.Application excellApp = new Excel.Application(); // открываем Excel
+                    excellApp.Visible = false;
+                    excellApp.DisplayAlerts = false;
+
+                    Excel.Workbook workbook = excellApp.Workbooks.Open(report.FullName);
+                    workbook.DisplayInkComments = false;
+
+                    Excel.Worksheet worksheet = workbook.Worksheets.get_Item(1);
+
+                    // Заполнение ячейки "Номер документа"
+                    if (CurrentInvoice.Number != 0)
+                        worksheet.Cells[5, 6] = CurrentInvoice.Number.ToString();
+
+                    // Заполнение ячейки "Дата составления"
+                    worksheet.Cells[5, 8] = (CurrentInvoice.Date != DateTime.MinValue) ? CurrentInvoice.Date.ToShortDateString() : CurrentInvoice.CreateDate.ToShortDateString();
+
+                    // Заполнение ячейки "Итого количество"
+                    worksheet.Cells[11, 10] = CurrentInvoice.Items.Count.ToString();
+
+                    // Заполнение ячейки "Итого стоимость"
+                    worksheet.Cells[11, 11] = CurrentInvoice.Cost.ToString() + " ₽";
+
+                    // Заполнение ячейки "Итого купон"
+                    worksheet.Cells[11, 12] = CurrentInvoice.Coupon.ToString() + " ₽";
+
+                    if (CurrentInvoice.ID_Counterparty != 0)
+                    {
+                        // Получение контрагента
+                        Counterparty counterparty = Counterparty.GetCounterpartyByID(CurrentInvoice.ID_Counterparty);
+
+                        // Заполнение ячеек "Отправитель" и "Получатель"
+                        if (CurrentInvoice.IsPurchase)
+                        {
+                            worksheet.Cells[1, 3] = counterparty.VisibleName;
+                            worksheet.Cells[2, 3] = "GREEN LEAF СЦ Тольятти";
+                        }
+                        else
+                        {
+                            worksheet.Cells[1, 3] = "GREEN LEAF СЦ Тольятти";
+                            worksheet.Cells[2, 3] = counterparty.VisibleName;
+                        }
+                    }
+
+                    // Заполнение элементов накладной
+                    int i = CurrentInvoice.Items.Count; // счетчик элементов накладной
+                    foreach (InvoiceItem item in CurrentInvoice.Items.OrderByDescending(it => it.Product.ProductCode))
+                    {
+                        // Добавление пустой строки
+                        Excel.Range cellRange = (Excel.Range)worksheet.Cells[10, 1];
+                        Excel.Range rowRange = cellRange.EntireRow;
+                        rowRange.Insert(Excel.XlInsertShiftDirection.xlShiftDown, false);
+
+                        // Объединение ячеек Наименование
+                        Excel.Range range = worksheet.get_Range("B10", "C10");
+                        range.Merge(Type.Missing);
+
+                        // Объединение ячеек Код товара
+                        range = worksheet.get_Range("D10", "E10");
+                        range.Merge(Type.Missing);
+
+                        // Заполнение ячейки "№ п/п"
+                        worksheet.Cells[11, 1] = i--.ToString();
+
+                        // Заполнение ячейки "Наименование"
+                        worksheet.Cells[11, 2] = item.Product.Nomination;
+
+                        // Заполнение ячейки "Код товара"
+                        worksheet.Cells[11, 4] = item.Product.ProductCode;
+
+                        // Заполнение ячейки "Количество в упаковке"
+                        worksheet.Cells[11, 6] = item.Product.CountInPackage.ToString();
+
+                        // Заполнение ячейки "Единица измерения"
+                        worksheet.Cells[11, 7] = item.Product.UnitNomination;
+
+                        // Заполнение ячейки "Стоимость"
+                        worksheet.Cells[11, 8] = item.Product.Cost.ToString() + " ₽";
+
+                        // Заполнение ячейки "Купон"
+                        worksheet.Cells[11, 9] = item.Product.Coupon.ToString() + " ₽";
+
+                        // Заполнение ячейки "Количество"
+                        worksheet.Cells[11, 10] = item.Count.ToString();
+
+                        // Заполнение ячейки "Итого стоимость"
+                        worksheet.Cells[11, 11] = item.Cost.ToString() + " ₽";
+
+                        // Заполнение ячейки "Итого купон"
+                        worksheet.Cells[11, 12] = item.Coupon.ToString() + " ₽";
+                    }
+
+                    // Удаление пустых строк
+                    Excel.Range cRange = (Excel.Range)worksheet.Cells[10, 1];
+                    Excel.Range rRange = cRange.EntireRow;
+                    rRange.Delete(Excel.XlDeleteShiftDirection.xlShiftUp);
+                    cRange = (Excel.Range)worksheet.Cells[9, 1];
+                    rRange = cRange.EntireRow;
+                    rRange.Delete(Excel.XlDeleteShiftDirection.xlShiftUp);
+
+                    // сохранение накладной
+                    workbook.Save();
+
+                    // Закрытие Excel
+                    workbook.Close(false);
+                    excellApp.Quit();
+
+                    workbook = null;
+                    excellApp = null;
+
+                    // Запуск отчета
+                    Process.Start(report.FullName);
+                }
+            }
+            catch(Exception ex)
+            {
+                Dialog.ErrorMessage(this, "Ошибка выгрузки накладной в Excel", ex.Message);
+            }
+
+            Mouse.OverrideCursor = null;
         }
 
         /// <summary>
