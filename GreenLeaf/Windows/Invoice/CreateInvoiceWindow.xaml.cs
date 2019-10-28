@@ -492,11 +492,11 @@ namespace GreenLeaf.Windows.InvoiceView
                         if (CurrentInvoice.IsPurchase)
                         {
                             worksheet.Cells[1, 3] = counterparty.VisibleName;
-                            worksheet.Cells[2, 3] = "GREEN LEAF СЦ Тольятти";
+                            worksheet.Cells[2, 3] = ConnectSetting.ProgramSettings[SettingsNames.CompanyNameForInvoice];
                         }
                         else
                         {
-                            worksheet.Cells[1, 3] = "GREEN LEAF СЦ Тольятти";
+                            worksheet.Cells[1, 3] = ConnectSetting.ProgramSettings[SettingsNames.CompanyNameForInvoice];
                             worksheet.Cells[2, 3] = counterparty.VisibleName;
                         }
                     }

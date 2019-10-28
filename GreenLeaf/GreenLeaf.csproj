@@ -106,6 +106,7 @@
     <Compile Include="Classes\Conversion.cs" />
     <Compile Include="Classes\MeasureUnit.cs" />
     <Compile Include="Classes\NumericTextBoxMethods.cs" />
+    <Compile Include="Classes\SettingsNames.cs" />
     <Compile Include="Converters\Bool_to_UnVisibility_Converter.cs" />
     <Compile Include="Converters\Bool_to_Visibility_Converter.cs" />
     <Compile Include="Converters\Bool_to_YesNo_Converter.cs" />

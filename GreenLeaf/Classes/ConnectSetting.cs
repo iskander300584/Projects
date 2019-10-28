@@ -1,4 +1,6 @@
-﻿
+﻿using System.Collections.Generic;
+
+
 namespace GreenLeaf.Classes
 {
     /// <summary>
@@ -92,6 +94,11 @@ namespace GreenLeaf.Classes
         /// Подключенный пользователь
         /// </summary>
         public static GreenLeaf.ViewModel.Account CurrentUser = new ViewModel.Account();
+
+        /// <summary>
+        /// Коллекция настроек
+        /// </summary>
+        public static IDictionary<string, string> ProgramSettings = new Dictionary<string, string>();
 
         /// <summary>
         /// Построение строки подключения

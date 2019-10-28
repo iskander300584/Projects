@@ -67,6 +67,7 @@ namespace GreenLeaf
                     MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString));
                     connection.Open();
                     connection.Close();
+                    connection.Dispose();
                     connection = null;
                 }
                 catch
@@ -98,10 +99,62 @@ namespace GreenLeaf
             ConnectSetting.CurrentUser.GetBaseDataByLogin();
             ConnectSetting.CurrentUser.GetPublicDataByID();
 
+            GetSettings();
+
             MainWindow mainWindow = new MainWindow(splash, dtStartSplash);
             Current.MainWindow = mainWindow;
             Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
             app.Run(mainWindow);
+        }
+
+        /// <summary>
+        /// Получение настроек программы из БД
+        /// </summary>
+        private static void GetSettings()
+        {
+            using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+            {
+                string sql = @"SELECT * FROM `SETTINGS`";
+
+                connection.Open();
+
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    using (MySqlDataReader reader = command.ExecuteReader())
+                    {
+                        while(reader.Read())
+                        {
+                            string nomination = string.Empty;
+                            string value = string.Empty;
+
+                            try
+                            {
+                                nomination = reader["NOMINATION"].ToString();
+                            }
+                            catch
+                            {
+                                nomination = "";
+                            }
+
+                            try
+                            {
+                                value = reader["VALUE"].ToString();
+                            }
+                            catch
+                            {
+                                value = string.Empty;
+                            }
+
+                            if(nomination != "")
+                            {
+                                ConnectSetting.ProgramSettings.Add(nomination, value);
+                            }
+                        }
+                    }
+                }
+
+                connection.Close();
+            }
         }
     }
 }

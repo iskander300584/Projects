@@ -28,11 +28,24 @@ namespace GreenLeaf.Windows
         // Обновить данные
         public static RoutedUICommand RefreshData = new RoutedUICommand("Обновить данные", "RefreshData", typeof(MainWindow));
 
+        #region Накладные
+
         // Создать приходную накладную
         public static RoutedUICommand CreatePurchaseInvoice = new RoutedUICommand("Создать приходную накладную", "CreatePurchaseInvoice", typeof(MainWindow));
 
         // Создать расходную накладную
         public static RoutedUICommand CreateSalesInvoice = new RoutedUICommand("Создать расходную накладную", "CreateSalesInvoice", typeof(MainWindow));
+
+        #endregion
+
+        #region Отчеты
+
+        /// <summary>
+        /// Отчеты
+        /// </summary>
+        public static RoutedUICommand ReportPopup = new RoutedUICommand("Отчеты", "ReportPopup", typeof(MainWindow));
+
+        #endregion
 
         #region Поиск
 
@@ -507,6 +520,11 @@ namespace GreenLeaf.Windows
             view.ShowDialog();
             view.Close();
             LoadData();
+        }
+
+        private void ReportPopup_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            ReportsPopup.IsOpen = !ReportsPopup.IsOpen;
         }
     }
 }

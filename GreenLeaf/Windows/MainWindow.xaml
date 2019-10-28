@@ -43,6 +43,9 @@
 
         <!-- Редактирование количества товара -->
         <CommandBinding Command="win:MainWindow.WarehouseEditCount" Executed="WarehouseEditCount_Execute" CanExecute="WarehouseEditCount_CanExecute" />
+
+        <!-- Отчеты -->
+        <CommandBinding Command="win:MainWindow.ReportPopup" Executed="ReportPopup_Execute" />
     </Window.CommandBindings>
     
     <Window.Resources>
@@ -124,7 +127,7 @@
             </Button>
 
             <!-- Кнопка "Отчеты" -->
-            <Button x:Name="btnReports" Style="{StaticResource MainMenuButtonStyle}" >
+            <Button x:Name="btnReports" Style="{StaticResource MainMenuButtonStyle}" Command="win:MainWindow.ReportPopup" >
                 <Button.Content>
                     <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Image Source="..\Images\report.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
@@ -174,6 +177,17 @@
                 </Button.Content>
             </Button>
         </StackPanel>
+
+        <Popup x:Name="ReportsPopup" IsOpen="False" PlacementTarget="{Binding ElementName=btnReports}" Placement="Bottom" 
+               Width="Auto" Height="Auto" >
+            <StackPanel Orientation="Vertical" Background="White">
+                <Button x:Name="btnReportsPurchaseInvoice" Width="200" Content="Приходные накладные" ></Button>
+
+                <Button x:Name="btnReportsSalesInvoice" Width="200" Content="Расходные накладные" ></Button>
+
+                <Button x:Name="btnReportsIncome" Width="200" Content="Приход/расход" ></Button>
+            </StackPanel>
+        </Popup>
         
         <!-- Разделитель -->
         <Separator Grid.Row="1" Grid.ColumnSpan="2" Style="{DynamicResource HorizontalSeparatorStyle}" />
