@@ -97,12 +97,12 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\Account\AdminPanelData.cs" />
-    <Compile Include="Classes\Account\CounterpartyData.cs" />
-    <Compile Include="Classes\Account\InvoiceData.cs" />
-    <Compile Include="Classes\Account\PersonalData.cs" />
-    <Compile Include="Classes\Account\ReportsData.cs" />
-    <Compile Include="Classes\Account\WarehouseData.cs" />
+    <Compile Include="Classes\AccountData\AdminPanelData.cs" />
+    <Compile Include="Classes\AccountData\CounterpartyData.cs" />
+    <Compile Include="Classes\AccountData\InvoiceData.cs" />
+    <Compile Include="Classes\AccountData\PersonalData.cs" />
+    <Compile Include="Classes\AccountData\ReportsData.cs" />
+    <Compile Include="Classes\AccountData\WarehouseData.cs" />
     <Compile Include="Classes\Conversion.cs" />
     <Compile Include="Classes\MeasureUnit.cs" />
     <Compile Include="Classes\NumericTextBoxMethods.cs" />

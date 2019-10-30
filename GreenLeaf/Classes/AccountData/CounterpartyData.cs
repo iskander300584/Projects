@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace GreenLeaf.Classes.Account
+namespace GreenLeaf.Classes.AccountData
 {
     /// <summary>
     /// Данные о доступе к контрагентам

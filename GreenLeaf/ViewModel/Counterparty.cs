@@ -29,6 +29,23 @@ namespace GreenLeaf.ViewModel
             }
         }
 
+        private string _code = string.Empty;
+        /// <summary>
+        /// Код контрагента
+        /// </summary>
+        public string Code
+        {
+            get { return _code; }
+            set
+            {
+                if(_code != value)
+                {
+                    _code = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private string _surname = string.Empty;
         /// <summary>
         /// Фамилия
@@ -204,7 +221,7 @@ namespace GreenLeaf.ViewModel
                 {
                     connection.Open();
 
-                    string sql = String.Format(@"INSERT INTO `COUNTERPARTY` (`SURNAME`, `NAME`, `PATRONYMIC`, `ADRESS`, `PHONE`, `NOMINATION`, `IS_PROVIDER`, `IS_ANNULATED`)  VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')", Surname, Name, Patronymic, Adress, Phone, Nomination, Conversion.ToString(IsProvider), 0);
+                    string sql = String.Format(@"INSERT INTO `COUNTERPARTY` (`SURNAME`, `NAME`, `PATRONYMIC`, `ADRESS`, `PHONE`, `NOMINATION`, `IS_PROVIDER`, `IS_ANNULATED`, `CODE`)  VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')", Surname, Name, Patronymic, Adress, Phone, Nomination, Conversion.ToString(IsProvider), 0, Code);
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
@@ -257,6 +274,7 @@ namespace GreenLeaf.ViewModel
                             {
                                 while (reader.Read())
                                 {
+                                    Code = reader["CODE"].ToString();
                                     Surname = reader["SURNAME"].ToString();
                                     Name = reader["SURNAME"].ToString();
                                     Patronymic = reader["PATRONYMIC"].ToString();
@@ -327,6 +345,7 @@ namespace GreenLeaf.ViewModel
                             {
                                 while (reader.Read())
                                 {
+                                    Code = reader["CODE"].ToString();
                                     Surname = reader["SURNAME"].ToString();
                                     Name = reader["SURNAME"].ToString();
                                     Patronymic = reader["PATRONYMIC"].ToString();
@@ -469,7 +488,7 @@ namespace GreenLeaf.ViewModel
                     {
                         connection.Open();
 
-                        string sql = String.Format(@"UPDATE `COUNTERPARTY` SET `SURNAME` = '{0}', `NAME` = '{1}', `PATRONYMIC` = '{2}', `ADRESS` = '{3}', `PHONE` = '{4}', `NOMINATION` = '{5}', `IS_PROVIDER` = '{6}' WHERE `COUNTERPARTY`.`ID` = {7}", Surname, Name, Patronymic, Adress, Phone, Nomination, Conversion.ToString(IsProvider), ID);
+                        string sql = String.Format(@"UPDATE `COUNTERPARTY` SET `SURNAME` = '{0}', `NAME` = '{1}', `PATRONYMIC` = '{2}', `ADRESS` = '{3}', `PHONE` = '{4}', `NOMINATION` = '{5}', `IS_PROVIDER` = '{6}', `CODE` = '{7}' WHERE `COUNTERPARTY`.`ID` = {8}", Surname, Name, Patronymic, Adress, Phone, Nomination, Conversion.ToString(IsProvider), Code, ID);
 
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
@@ -528,6 +547,7 @@ namespace GreenLeaf.ViewModel
                                 Counterparty item = new Counterparty();
 
                                 item.ID = Conversion.ToInt(reader["ID"].ToString());
+                                item.Code = reader["CODE"].ToString();
                                 item.Surname = reader["SURNAME"].ToString();
                                 item.Name = reader["SURNAME"].ToString();
                                 item.Patronymic = reader["PATRONYMIC"].ToString();

@@ -115,6 +115,40 @@ namespace GreenLeaf.ViewModel
             }
         }
 
+        private double _costPurchase = 0;
+        /// <summary>
+        /// Стоимость закупки
+        /// </summary>
+        public double CostPurchase
+        {
+            get { return _costPurchase; }
+            set
+            {
+                if(_costPurchase != value)
+                {
+                    _costPurchase = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private double _couponPurchase = 0;
+        /// <summary>
+        /// Купон по закупке
+        /// </summary>
+        public double CouponPurchase
+        {
+            get { return _couponPurchase; }
+            set
+            {
+                if (_couponPurchase != value)
+                {
+                    _couponPurchase = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private double _count = 0;
         /// <summary>
         /// Количество товара на складе
@@ -246,7 +280,7 @@ namespace GreenLeaf.ViewModel
                 {
                     connection.Open();
 
-                    string sql = String.Format(@"INSERT INTO `PRODUCT` (`PRODUCT_CODE`, `NOMINATION`, `COUNT_IN_PACKAGE`, `COST`, `COUPON`, `ID_UNIT`) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", _productCode, _nomination, _countInPackage, Conversion.ToString(_cost), Conversion.ToString(_coupon), _id_unit);
+                    string sql = String.Format(@"INSERT INTO `PRODUCT` (`PRODUCT_CODE`, `NOMINATION`, `COUNT_IN_PACKAGE`, `COST`, `COUPON`, `ID_UNIT`, `COST_PURCHASE`, `COUPON_PURCHASE`) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')", _productCode, _nomination, _countInPackage, Conversion.ToString(_cost), Conversion.ToString(_coupon), _id_unit, Conversion.ToString(_costPurchase), Conversion.ToString(_couponPurchase));
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
@@ -303,6 +337,8 @@ namespace GreenLeaf.ViewModel
                                     CountInPackage = Conversion.ToDouble(reader["COUNT_IN_PACKAGE"].ToString());
                                     Cost = Conversion.ToDouble(reader["COST"].ToString());
                                     Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
+                                    CostPurchase = Conversion.ToDouble(reader["COST_PURCHASE"].ToString());
+                                    CouponPurchase = Conversion.ToDouble(reader["COUPON_PURCHASE"].ToString());
                                     Count = Conversion.ToDouble(reader["COUNT"].ToString());
                                     LockedCount = Conversion.ToDouble(reader["LOCKED_COUNT"].ToString());
                                     ID_Unit = Conversion.ToInt(reader["ID_UNIT"].ToString());
@@ -358,7 +394,7 @@ namespace GreenLeaf.ViewModel
                     {
                         connection.Open();
 
-                        string sql = String.Format(@"UPDATE `PRODUCT` SET `PRODUCT_CODE` = '{0}', `NOMINATION` = '{1}', `COUNT_IN_PACKAGE` = '{2}', `COST` = '{3}', `COUPON` = '{4}', `ID_UNIT` = '{5}' WHERE `PRODUCT`.`ID` = {6}", _productCode, _nomination, Conversion.ToString(_countInPackage), Conversion.ToString(_cost), Conversion.ToString(_coupon), _id_unit, _id);
+                        string sql = String.Format(@"UPDATE `PRODUCT` SET `PRODUCT_CODE` = '{0}', `NOMINATION` = '{1}', `COUNT_IN_PACKAGE` = '{2}', `COST` = '{3}', `COUPON` = '{4}', `ID_UNIT` = '{5}', `COST_PURCHASE` = '{6}', `COUPON_PURCHASE` = '{7}' WHERE `PRODUCT`.`ID` = {8}", _productCode, _nomination, Conversion.ToString(_countInPackage), Conversion.ToString(_cost), Conversion.ToString(_coupon), _id_unit, _costPurchase, _couponPurchase, _id);
 
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
@@ -558,7 +594,7 @@ namespace GreenLeaf.ViewModel
         /// <param name="coupon">купон</param>
         /// <param name="idUnit">ID единицы измерения</param>
         /// <returns></returns>
-        public static Product CreateProduct(string productCode, string nomination, double countInPackage, double cost, double coupon, int idUnit)
+        public static Product CreateProduct(string productCode, string nomination, double countInPackage, double cost, double coupon, double costPurchase, double couponPurchase, int idUnit)
         {
             Product product = new Product();
             product.ProductCode = productCode;
@@ -566,6 +602,8 @@ namespace GreenLeaf.ViewModel
             product.CountInPackage = countInPackage;
             product.Cost = cost;
             product.Coupon = coupon;
+            product.CostPurchase = costPurchase;
+            product.CouponPurchase = couponPurchase;
             product.ID_Unit = idUnit;
 
             if (product.CreateProduct())
@@ -602,6 +640,8 @@ namespace GreenLeaf.ViewModel
                                 item.CountInPackage = Conversion.ToDouble(reader["COUNT_IN_PACKAGE"].ToString());
                                 item.Cost = Conversion.ToDouble(reader["COST"].ToString());
                                 item.Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
+                                item.CostPurchase = Conversion.ToDouble(reader["COST_PURCHASE"].ToString());
+                                item.CouponPurchase = Conversion.ToDouble(reader["COUPON_PURCHASE"].ToString());
                                 item.Count = Conversion.ToDouble(reader["COUNT"].ToString());
                                 item.LockedCount = Conversion.ToDouble(reader["LOCKED_COUNT"].ToString());
                                 item.ID_Unit = Conversion.ToInt(reader["ID_UNIT"].ToString());
@@ -651,6 +691,8 @@ namespace GreenLeaf.ViewModel
                                 item.CountInPackage = Conversion.ToDouble(reader["COUNT_IN_PACKAGE"].ToString());
                                 item.Cost = Conversion.ToDouble(reader["COST"].ToString());
                                 item.Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
+                                item.CostPurchase = Conversion.ToDouble(reader["COST_PURCHASE"].ToString());
+                                item.CouponPurchase = Conversion.ToDouble(reader["COUPON_PURCHASE"].ToString());
                                 item.Count = Conversion.ToDouble(reader["COUNT"].ToString());
                                 item.LockedCount = Conversion.ToDouble(reader["LOCKED_COUNT"].ToString());
                                 item.ID_Unit = Conversion.ToInt(reader["ID_UNIT"].ToString());
@@ -758,6 +800,8 @@ namespace GreenLeaf.ViewModel
                                 item.CountInPackage = Conversion.ToDouble(reader["COUNT_IN_PACKAGE"].ToString());
                                 item.Cost = Conversion.ToDouble(reader["COST"].ToString());
                                 item.Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
+                                item.CostPurchase = Conversion.ToDouble(reader["COST_PURCHASE"].ToString());
+                                item.CouponPurchase = Conversion.ToDouble(reader["COUPON_PURCHASE"].ToString());
                                 item.Count = Conversion.ToDouble(reader["COUNT"].ToString());
                                 item.LockedCount = Conversion.ToDouble(reader["LOCKED_COUNT"].ToString());
                                 item.ID_Unit = Conversion.ToInt(reader["ID_UNIT"].ToString());

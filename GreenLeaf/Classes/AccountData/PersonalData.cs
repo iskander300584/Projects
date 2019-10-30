@@ -1,13 +1,30 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace GreenLeaf.Classes.Account
+namespace GreenLeaf.Classes.AccountData
 {
     /// <summary>
     /// Персональные данные пользователя
     /// </summary>
     public class PersonalData : INotifyPropertyChanged
     {
+        private string _code = string.Empty;
+        /// <summary>
+        /// Код пользователя
+        /// </summary>
+        public string Code
+        {
+            get { return _code; }
+            set
+            {
+                if(_code != value)
+                {
+                    _code = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private string _surname = string.Empty;
         /// <summary>
         /// Фамилия

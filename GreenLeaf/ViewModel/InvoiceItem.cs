@@ -70,7 +70,7 @@ namespace GreenLeaf.ViewModel
 
                     OnPropertyChanged("Product");
 
-                    Calc();
+                    
                 }
             }
         }
@@ -82,6 +82,44 @@ namespace GreenLeaf.ViewModel
         public Product Product
         {
             get { return _product; }
+        }
+
+        private double _productCost = 0;
+        /// <summary>
+        /// Стоимость единицы товара
+        /// </summary>
+        public double ProductCost
+        {
+            get { return _productCost; }
+            set
+            {
+                if(_productCost != value)
+                {
+                    _productCost = value;
+                    OnPropertyChanged();
+
+                    Calc();
+                }
+            }
+        }
+
+        private double _productCoupon = 0;
+        /// <summary>
+        /// Купон единицы товара
+        /// </summary>
+        public double ProductCoupon
+        {
+            get { return _productCoupon; }
+            set
+            {
+                if(_productCoupon != value)
+                {
+                    _productCoupon = value;
+                    OnPropertyChanged();
+
+                    Calc();
+                }
+            }
         }
 
         private double _count = 0;
@@ -164,7 +202,7 @@ namespace GreenLeaf.ViewModel
 
                         string table = (isPurchase) ? "PURCHASE_INVOICE_UNIT" : "SALES_INVOICE_UNIT";
 
-                        string sql = String.Format(@"INSERT INTO `{0}` (`ID_INVOICE`, `ID_PRODUCT`, `COUNT`, `COST`, `COUPON`) VALUES ('{1}', '{2}', '{3}', '{4}', '{5}')", table, _id_invoice, _id_product, Conversion.ToString(_count), Conversion.ToString(_cost), Conversion.ToString(_coupon));
+                        string sql = String.Format(@"INSERT INTO `{0}` (`ID_INVOICE`, `ID_PRODUCT`, `COUNT`, `COST`, `COUPON`, `PRODUCT_COST`, `PRODUCT_COUPON`) VALUES ('{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')", table, _id_invoice, _id_product, Conversion.ToString(_count), Conversion.ToString(_cost), Conversion.ToString(_coupon), Conversion.ToString(_productCost), Conversion.ToString(_productCoupon));
 
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
@@ -226,6 +264,8 @@ namespace GreenLeaf.ViewModel
                                     Count = Conversion.ToDouble(reader["COUNT"].ToString());
                                     Cost = Conversion.ToDouble(reader["COST"].ToString());
                                     Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
+                                    ProductCost = Conversion.ToDouble(reader["PRODUCT_COST"].ToString());
+                                    ProductCoupon = Conversion.ToDouble(reader["PRODUCT_COUPON"].ToString());
                                 }
                             }
                         }
@@ -329,7 +369,7 @@ namespace GreenLeaf.ViewModel
 
                         string table = (isPurchase) ? "PURCHASE_INVOICE_UNIT" : "SALES_INVOICE_UNIT";
 
-                        string sql = String.Format(@"UPDATE `{0}` SET `ID_PRODUCT` = '{1}', `COUNT` = '{2}', `COST` = '{3}', `COUPON` = '{4}' WHERE `{0}`.`ID` = {5}", table, _id_product, Conversion.ToString(_count), Conversion.ToString(_cost), Conversion.ToString(_coupon), _id);
+                        string sql = String.Format(@"UPDATE `{0}` SET `ID_PRODUCT` = '{1}', `COUNT` = '{2}', `COST` = '{3}', `COUPON` = '{4}', `PRODUCT_COST` = '{5}', `PRODUCT_COUPON` = '{6}' WHERE `{0}`.`ID` = {7}", table, _id_product, Conversion.ToString(_count), Conversion.ToString(_cost), Conversion.ToString(_coupon), Conversion.ToString(_productCost), Conversion.ToString(_productCoupon), _id);
 
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
@@ -359,11 +399,15 @@ namespace GreenLeaf.ViewModel
         /// </summary>
         /// <param name="id_product">ID товара</param>
         /// <param name="count">количество товара</param>
+        /// <param name="productCost">стоимость единицы товара</param>
+        /// <param name="productCoupon">купон на единицу товара</param>
         /// <param name="isPurchase">приходная накладная</param>
         /// <returns>возвращает TRUE, если элемент накладной отредактирован успешно</returns>
-        public bool EditItem(int id_product, double count, bool isPurchase)
+        public bool EditItem(int id_product, double count, double productCost, double productCoupon, bool isPurchase)
         {
             ID_Product = id_product;
+            ProductCost = productCost;
+            ProductCoupon = productCoupon;
             Count = count;
 
             return EditItem(isPurchase);
@@ -374,14 +418,20 @@ namespace GreenLeaf.ViewModel
         /// </summary>
         private void Calc()
         {
-            if (Product != null)
-            {
-                _cost = Product.Cost * Count;
-                OnPropertyChanged("Cost");
+            _cost = ProductCost * Count;
+            _coupon = ProductCoupon * Count;
 
-                _coupon = Product.Coupon * Count;
-                OnPropertyChanged("Coupon");
-            }
+            OnPropertyChanged("Cost");
+            OnPropertyChanged("Coupon");
+
+            //if (Product != null)
+            //{
+            //    _cost = Product.Cost * Count;
+            //    OnPropertyChanged("Cost");
+
+            //    _coupon = Product.Coupon * Count;
+            //    OnPropertyChanged("Coupon");
+            //}
         }
 
         #endregion
@@ -393,10 +443,12 @@ namespace GreenLeaf.ViewModel
         /// </summary>
         /// <param name="id_invoice">ID накладной</param>
         /// <param name="id_product">ID товара</param>
+        /// <param name="productCost">стоимость единицы товара</param>
+        /// <param name="productCoupon">купон на единицу товара</param>
         /// <param name="count">количество товара</param>
         /// <param name="isPurshase">элемент приходной накладной</param>
         /// <returns>возвращает элемент накладной</returns>
-        public static InvoiceItem CreateItem(int id_invoice, int id_product, double count, bool isPurshase)
+        public static InvoiceItem CreateItem(int id_invoice, int id_product, double productCost, double productCoupon, double count, bool isPurshase)
         {
             InvoiceItem item = null;
             
@@ -406,6 +458,8 @@ namespace GreenLeaf.ViewModel
 
                 item.ID_Invoice = id_invoice;
                 item.ID_Product = id_product;
+                item.ProductCost = productCost;
+                item.ProductCoupon = productCoupon;
                 item.Count = count;
 
                 item.CreateItem(isPurshase);

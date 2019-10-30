@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GreenLeaf.ViewModel;
 
 
 namespace GreenLeaf.Classes
@@ -93,7 +94,7 @@ namespace GreenLeaf.Classes
         /// <summary>
         /// Подключенный пользователь
         /// </summary>
-        public static GreenLeaf.ViewModel.Account CurrentUser = new ViewModel.Account();
+        public static Account CurrentUser = new Account();
 
         /// <summary>
         /// Коллекция настроек
