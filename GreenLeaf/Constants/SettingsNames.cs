@@ -1,5 +1,5 @@
 ﻿
-namespace GreenLeaf.Classes
+namespace GreenLeaf.Constants
 {
     /// <summary>
     /// Наименования настроек программы из БД

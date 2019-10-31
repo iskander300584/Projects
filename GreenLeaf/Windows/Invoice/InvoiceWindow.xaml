@@ -1,4 +1,4 @@
-﻿<Window x:Class="GreenLeaf.Windows.InvoiceView.CreateInvoiceWindow"
+﻿<Window x:Class="GreenLeaf.Windows.InvoiceView.InvoiceWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -12,25 +12,25 @@
     <Window.CommandBindings>
 
         <!-- Блокировка накладной -->
-        <CommandBinding Command="win:CreateInvoiceWindow.DoLockInvoice" Executed="DoLockInvoice_Execute" CanExecute="DoLockInvoice_CanExecute" />
+        <CommandBinding Command="win:InvoiceWindow.DoLockInvoice" Executed="DoLockInvoice_Execute" CanExecute="DoLockInvoice_CanExecute" />
 
         <!-- Проведение накладной -->
-        <CommandBinding Command="win:CreateInvoiceWindow.DoIssueInvoice" Executed="DoIssueInvoice_Execute" CanExecute="DoIssueInvoice_CanExecute" />
+        <CommandBinding Command="win:InvoiceWindow.DoIssueInvoice" Executed="DoIssueInvoice_Execute" CanExecute="DoIssueInvoice_CanExecute" />
 
         <!-- Удаление накладной -->
-        <CommandBinding Command="win:CreateInvoiceWindow.DoDeleteInvoice" Executed="DoDeleteInvoice_Execute" CanExecute="DoDeleteInvoice_CanExecute" />
+        <CommandBinding Command="win:InvoiceWindow.DoDeleteInvoice" Executed="DoDeleteInvoice_Execute" CanExecute="DoDeleteInvoice_CanExecute" />
 
         <!-- Добавление элемента накладной -->
-        <CommandBinding Command="win:CreateInvoiceWindow.DoAddItem" Executed="DoAddItem_Execute" CanExecute="DoAddItem_CanExecute" />
+        <CommandBinding Command="win:InvoiceWindow.DoAddItem" Executed="DoAddItem_Execute" CanExecute="DoAddItem_CanExecute" />
 
         <!-- Редактирование элемента накладной -->
-        <CommandBinding Command="win:CreateInvoiceWindow.DoEditItem" Executed="DoEditItem_Execute" CanExecute="DoEditItem_CanExecute" />
+        <CommandBinding Command="win:InvoiceWindow.DoEditItem" Executed="DoEditItem_Execute" CanExecute="DoEditItem_CanExecute" />
 
         <!-- Удаление элемента накладной -->
-        <CommandBinding Command="win:CreateInvoiceWindow.DoDeleteItem" Executed="DoDeleteItem_Execute" CanExecute="DoDeleteItem_CanExecute" />
+        <CommandBinding Command="win:InvoiceWindow.DoDeleteItem" Executed="DoDeleteItem_Execute" CanExecute="DoDeleteItem_CanExecute" />
 
         <!-- Вывод в Excel -->
-        <CommandBinding Command="win:CreateInvoiceWindow.DoExcelOutput" Executed="DoExcelOutput_Execute" CanExecute="DoExcelOutput_CanExecute" />
+        <CommandBinding Command="win:InvoiceWindow.DoExcelOutput" Executed="DoExcelOutput_Execute" CanExecute="DoExcelOutput_CanExecute" />
 
     </Window.CommandBindings>
 
@@ -119,7 +119,7 @@
             </DockPanel>
 
             <!-- Кнопка "Удалить" -->
-            <Button x:Name="btnDeleteInvoice" DockPanel.Dock="Right" Margin="0" Command="win:CreateInvoiceWindow.DoDeleteInvoice" >
+            <Button x:Name="btnDeleteInvoice" DockPanel.Dock="Right" Margin="0" Command="win:InvoiceWindow.DoDeleteInvoice" >
                 <Button.Style>
                     <Style BasedOn="{StaticResource MainMenuButtonStyle}">
                         <Style.Triggers>
@@ -155,7 +155,7 @@
             </Button>
 
             <!-- Кнопка "Провести" -->
-            <Button x:Name="btnIssueInvoice" DockPanel.Dock="Right" Command="win:CreateInvoiceWindow.DoIssueInvoice" >
+            <Button x:Name="btnIssueInvoice" DockPanel.Dock="Right" Command="win:InvoiceWindow.DoIssueInvoice" >
                 <Button.Style>
                     <Style BasedOn="{StaticResource MainMenuButtonStyle}">
                         <Style.Triggers>
@@ -249,7 +249,7 @@
             </Button>
 
             <!-- Кнопка "Заблокировать" -->
-            <Button x:Name="btnLockInvoice" DockPanel.Dock="Right" Command="win:CreateInvoiceWindow.DoLockInvoice" >
+            <Button x:Name="btnLockInvoice" DockPanel.Dock="Right" Command="win:InvoiceWindow.DoLockInvoice" >
                 <Button.Style>
                     <Style BasedOn="{StaticResource MainMenuButtonStyle}">
                         <Style.Triggers>
@@ -343,7 +343,7 @@
             </Button>
 
             <!-- Кнопка "Выгрузить в Excel" -->
-            <Button x:Name="btnExcelOutputInvoice" DockPanel.Dock="Right" Command="win:CreateInvoiceWindow.DoExcelOutput" >
+            <Button x:Name="btnExcelOutputInvoice" DockPanel.Dock="Right" Command="win:InvoiceWindow.DoExcelOutput" >
                 <Button.Style>
                     <Style BasedOn="{StaticResource MainMenuButtonStyle}">
                         <Style.Triggers>
@@ -436,7 +436,7 @@
             
             <!-- Кнопка Добавить позицию накладной -->
             <Button Margin="30,5,5,5" DockPanel.Dock="Left" Width="25" Height="25"
-                    ToolTip="Добавить позицию" Command="win:CreateInvoiceWindow.DoAddItem" >
+                    ToolTip="Добавить позицию" Command="win:InvoiceWindow.DoAddItem" >
                 <Button.Style>
                     <Style BasedOn="{StaticResource BaseButtonStyle}">
                         <Style.Triggers>
@@ -463,7 +463,7 @@
 
             <!-- Кнопка Удалить позицию накладной -->
             <Button Margin="5" DockPanel.Dock="Right" Width="25" Height="25"
-                    ToolTip="Удалить позицию" Command="win:CreateInvoiceWindow.DoDeleteItem" >
+                    ToolTip="Удалить позицию" Command="win:InvoiceWindow.DoDeleteItem" >
                 <Button.Style>
                     <Style BasedOn="{StaticResource BaseButtonStyle}">
                         <Style.Triggers>
@@ -490,7 +490,7 @@
 
             <!-- Кнопка Удалить позицию накладной -->
             <Button Margin="5,5,10,5" DockPanel.Dock="Right" Width="25" Height="25"
-                    ToolTip="Редактировать позицию" Command="win:CreateInvoiceWindow.DoEditItem" >
+                    ToolTip="Редактировать позицию" Command="win:InvoiceWindow.DoEditItem" >
                 <Button.Style>
                     <Style BasedOn="{StaticResource BaseButtonStyle}">
                         <Style.Triggers>
@@ -524,6 +524,7 @@
             <TextBlock x:Name="tbNomination" Style="{DynamicResource TextBlockGridStyle}" Margin="5" DockPanel.Dock="Left" Foreground="Black" />
         </DockPanel>
 
+        <!-- Элементы накладной -->
         <DataGrid x:Name="dataGrid" Grid.Row="4" Style="{DynamicResource DataGridStyle}" SelectionMode="Single" ItemsSource="{Binding Items}" >
             <DataGrid.Columns>
 
@@ -542,14 +543,14 @@
                 </DataGridTextColumn>
 
                 <!-- Стоимость -->
-                <DataGridTextColumn Width="100" Binding="{Binding Path=Product.Cost}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="100" Binding="{Binding Path=ProductCost}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Стоимость" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Купон -->
-                <DataGridTextColumn Width="100" Binding="{Binding Path=Product.Coupon}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="100" Binding="{Binding Path=ProductCoupon}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Купон" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>

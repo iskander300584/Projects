@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using MySql.Data.MySqlClient;
 using GreenLeaf.Classes;
 using System.Linq;
+using GreenLeaf.Constants;
 
 namespace GreenLeaf.ViewModel
 {
@@ -370,9 +371,8 @@ namespace GreenLeaf.ViewModel
 
         /// <summary>
         /// Получение списка элементов
-        /// <paramref name="calc">вычислять стоимость и купон</paramref>
         /// </summary>
-        public void GetItems(bool calc = true)
+        public void GetItems()
         {
             if (_id != 0)
                 Items = InvoiceItem.GetInvoiceItemList(_id, _is_purchase);
@@ -488,15 +488,22 @@ namespace GreenLeaf.ViewModel
                             // Удаление элементов накладной
                             table = (IsPurchase) ? "PURCHASE_INVOICE_UNIT" : "SALES_INVOICE_UNIT";
 
-                            foreach (InvoiceItem item in Items)
-                            {
-                                sql = String.Format(@"DELETE FROM `{0}` WHERE `{0}`.`ID` = {1}", table, item.ID);
+                            sql = String.Format(@"DELETE FROM `{0}` WHERE `{0}`.`ID_Invoice` = {1}", table, ID);
 
-                                using (MySqlCommand cmd = new MySqlCommand(sql, connection))
-                                {
-                                    cmd.ExecuteNonQuery();
-                                }
+                            using (MySqlCommand cmd = new MySqlCommand(sql, connection))
+                            {
+                                cmd.ExecuteNonQuery();
                             }
+
+                            //foreach (InvoiceItem item in Items)
+                            //{
+                            //    sql = String.Format(@"DELETE FROM `{0}` WHERE `{0}`.`ID` = {1}", table, item.ID);
+
+                            //    using (MySqlCommand cmd = new MySqlCommand(sql, connection))
+                            //    {
+                            //        cmd.ExecuteNonQuery();
+                            //    }
+                            //}
                         }
 
                         connection.Close();
@@ -708,9 +715,9 @@ namespace GreenLeaf.ViewModel
                                 // Получение номера
                                 string nomination = string.Empty;
                                 if (IsPurchase)
-                                    nomination = "Приходная накладная";
+                                    nomination = NumeratorNames.PurchaseInvoice;
                                 else
-                                    nomination = "Расходная накладная";
+                                    nomination = NumeratorNames.SalesInvoice;
 
                                 sql = String.Format(@"SELECT `VALUE` FROM `NUMERATOR` WHERE `NUMERATOR`.`NOMINATION` = '{0}'", nomination);
 
@@ -914,11 +921,11 @@ namespace GreenLeaf.ViewModel
         #region Статические методы
 
         /// <summary>
-        /// Получить список накладных без элементов
+        /// Получить список накладных БЕЗ элементов накладных
         /// </summary>
         /// <param name="isPurchase">TRUE если приходные накладные, FALSE если расходные</param>
         /// <returns></returns>
-        private static List<Invoice> GetInvoices(bool isPurchase, DateTime? from, DateTime? to, int? idAccount, int? idCounterparty)
+        public static List<Invoice> GetInvoices(bool isPurchase, DateTime? from, DateTime? to, int? idAccount, int? idCounterparty)
         {
             List<Invoice> result = new List<Invoice>();
 

@@ -16,14 +16,14 @@
 
         <Image Source="../../Images/info.png" Margin="10" Tag="Info" />
         <TextBlock x:Name="tbMessage" Grid.Column="1" Margin="10" TextWrapping="Wrap" FontSize="16" FontFamily="Yu Gothic UI Semilight" TextAlignment="Justify" />
-        
-        <DockPanel Grid.Row="1" Grid.ColumnSpan="2" LastChildFill="False" Margin="10">
-            <Button IsDefault="True" DockPanel.Dock="Right" Background="White" Width="100" Height="30" Click="Button_Click" >
+
+        <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Style="{DynamicResource DockPanelOKContainerStyle}" Margin="5" >
+            <Button IsDefault="True" Style="{DynamicResource ButtonOKStyle}" Width="100" Click="Button_Click" >
                 <Button.Content>
-                    <StackPanel Orientation="Horizontal" >
-                        <Image Source="../../Images/ok.png" Height="20" />
-                        <TextBlock Text="OK" Margin="10,0,0,0" FontSize="20" FontFamily="Yu Gothic UI Semilight" VerticalAlignment="Center" />
-                    </StackPanel>
+                    <DockPanel Style="{DynamicResource DockPanelOKStyle}" >
+                        <Image Source="../../Images/ok.png" Style="{DynamicResource ImageOKStyle}" />
+                        <TextBlock Text="OK" Style="{DynamicResource TextBlockOKStyle}" />
+                    </DockPanel>
                 </Button.Content>
             </Button>
         </DockPanel>

@@ -17,22 +17,22 @@
         <Image Source="../../Images/question.png" Margin="10" Tag="Info" />
         <TextBlock x:Name="tbMessage" Grid.Column="1" Margin="10" TextWrapping="Wrap" FontSize="16" FontFamily="Yu Gothic UI Semilight" TextAlignment="Justify" />
 
-        <DockPanel Grid.Row="1" Grid.ColumnSpan="2" LastChildFill="False" Margin="10">
-            <Button IsCancel="True" DockPanel.Dock="Right" Background="White" Width="100" Height="30" Click="Button_Click_1">
+        <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Style="{DynamicResource DockPanelOKContainerStyle}" Margin="5" >
+            <Button IsCancel="True" Style="{DynamicResource ButtonOKStyle}" Width="100" Click="Button_Click_1">
                 <Button.Content>
-                    <StackPanel Orientation="Horizontal" >
-                        <Image Source="../../Images/cancel.png" Height="20" />
-                        <TextBlock Text="НЕТ" Margin="10,0,0,0" FontSize="20" FontFamily="Yu Gothic UI Semilight" VerticalAlignment="Center" />
-                    </StackPanel>
+                    <DockPanel Style="{DynamicResource DockPanelOKStyle}" >
+                        <Image Source="../../Images/cancel.png" Style="{DynamicResource ImageOKStyle}" />
+                        <TextBlock Text="НЕТ" Style="{DynamicResource TextBlockOKStyle}" />
+                    </DockPanel>
                 </Button.Content>
             </Button>
-            
-            <Button IsDefault="True" DockPanel.Dock="Right" Background="White" Width="100" Height="30" Click="Button_Click" Margin="0,0,10,0" >
+
+            <Button IsDefault="True" Style="{DynamicResource ButtonOKStyle}" Width="100" Click="Button_Click" >
                 <Button.Content>
-                    <StackPanel Orientation="Horizontal" >
-                        <Image Source="../../Images/ok.png" Height="20" />
-                        <TextBlock Text="ДА" Margin="10,0,0,0" FontSize="20" FontFamily="Yu Gothic UI Semilight" VerticalAlignment="Center" />
-                    </StackPanel>
+                    <DockPanel Style="{DynamicResource DockPanelOKStyle}" >
+                        <Image Source="../../Images/ok.png" Style="{DynamicResource ImageOKStyle}" />
+                        <TextBlock Text="ДА" Style="{DynamicResource TextBlockOKStyle}" />
+                    </DockPanel>
                 </Button.Content>
             </Button>
         </DockPanel>

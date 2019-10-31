@@ -261,6 +261,7 @@
     <!-- Стиль для DockPanel контейнера кнопок OK -->
     <Style x:Key="DockPanelOKContainerStyle" BasedOn="{StaticResource DockPanelOKStyle}" >
         <Setter Property="DockPanel.Margin" Value="5,5,0,5" />
+        <Setter Property="DockPanel.LastChildFill" Value="False" />
     </Style>
     
     <!--#endregion-->

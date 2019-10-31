@@ -16,6 +16,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -36,26 +38,36 @@
                  Text="{Binding Nomination, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" VerticalContentAlignment="Top"
                  ScrollViewer.VerticalScrollBarVisibility="Auto"/>
 
+        <!-- Стоимость закупки -->
+        <TextBlock Text="Стоимость закупки" Grid.Row="3" Style="{DynamicResource TextBlockGridStyle}" />
+        <TextBox x:Name="tbCostPurchase" Grid.Row="3" Grid.Column="1" Style="{DynamicResource TextBoxStyle}"  Margin="5"
+                 PreviewKeyDown="TextBox_KeyDown" KeyDown="TextBox_KeyDown" TextChanged="TextBox_TextChanged" />
+
+        <!-- Купон при закупке -->
+        <TextBlock Text="Купон при закупке" Grid.Row="4" Style="{DynamicResource TextBlockGridStyle}" />
+        <TextBox x:Name="tbCouponPurchase" Grid.Row="4" Grid.Column="1" Style="{DynamicResource TextBoxStyle}" Margin="5"
+                 PreviewKeyDown="TextBox_KeyDown" KeyDown="TextBox_KeyDown" TextChanged="TextBox_TextChanged" />
+
         <!-- Количество в упаковке -->
-        <TextBlock Text="Кол-во в упаковке" Grid.Row="3" Style="{DynamicResource TextBlockGridStyle}" />
-        <TextBox x:Name="tbCountInPackage" Grid.Row="3" Grid.Column="1" Style="{DynamicResource TextBoxStyle}" Margin="5"
+        <TextBlock Text="Кол-во в упаковке" Grid.Row="5" Style="{DynamicResource TextBlockGridStyle}" />
+        <TextBox x:Name="tbCountInPackage" Grid.Row="5" Grid.Column="1" Style="{DynamicResource TextBoxStyle}" Margin="5"
                  PreviewKeyDown="TextBox_KeyDown" KeyDown="TextBox_KeyDown" TextChanged="TextBox_TextChanged" />
 
-        <!-- Стоимость -->
-        <TextBlock Text="Стоимость" Grid.Row="4" Style="{DynamicResource TextBlockGridStyle}" />
-        <TextBox x:Name="tbCost" Grid.Row="4" Grid.Column="1" Style="{DynamicResource TextBoxStyle}"  Margin="5"
+        <!-- Стоимость реализации -->
+        <TextBlock Text="Стоимость реализации" Grid.Row="6" Style="{DynamicResource TextBlockGridStyle}" />
+        <TextBox x:Name="tbCost" Grid.Row="6" Grid.Column="1" Style="{DynamicResource TextBoxStyle}"  Margin="5"
                  PreviewKeyDown="TextBox_KeyDown" KeyDown="TextBox_KeyDown" TextChanged="TextBox_TextChanged" />
 
-        <!-- Купон -->
-        <TextBlock Text="Купон" Grid.Row="5" Style="{DynamicResource TextBlockGridStyle}" />
-        <TextBox x:Name="tbCoupon" Grid.Row="5" Grid.Column="1" Style="{DynamicResource TextBoxStyle}" Margin="5"
+        <!-- Купон при реализации -->
+        <TextBlock Text="Купон при реализации" Grid.Row="7" Style="{DynamicResource TextBlockGridStyle}" />
+        <TextBox x:Name="tbCoupon" Grid.Row="7" Grid.Column="1" Style="{DynamicResource TextBoxStyle}" Margin="5"
                  PreviewKeyDown="TextBox_KeyDown" KeyDown="TextBox_KeyDown" TextChanged="TextBox_TextChanged" />
 
         <!-- Единица измерения -->
-        <TextBlock Text="Единица" Grid.Row="6" Style="{DynamicResource TextBlockGridStyle}" />
-        <ComboBox x:Name="cbUnit" Grid.Row="6" Grid.Column="1" Style="{DynamicResource ComboBoxStyle}" />
+        <TextBlock Text="Единица" Grid.Row="8" Style="{DynamicResource TextBlockGridStyle}" />
+        <ComboBox x:Name="cbUnit" Grid.Row="8" Grid.Column="1" Style="{DynamicResource ComboBoxStyle}" />
 
-        <DockPanel Grid.Row="7" Grid.ColumnSpan="2" Style="{DynamicResource DockPanelOKContainerStyle}" >
+        <DockPanel Grid.Row="9" Grid.ColumnSpan="2" Style="{DynamicResource DockPanelOKContainerStyle}" >
             <!-- Кнопка Отмена -->
             <Button IsCancel="True" Style="{DynamicResource ButtonOKStyle}" >
                 <Button.Content>

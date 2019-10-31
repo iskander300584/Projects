@@ -10,7 +10,7 @@ namespace GreenLeaf.Classes
     public static class MeasureUnit
     {
         /// <summary>
-        /// Словарь единиц измерения
+        /// Словарь единиц измерения ID - Наименование
         /// </summary>
         public static Dictionary<int, string> Units = new Dictionary<int, string>();
 

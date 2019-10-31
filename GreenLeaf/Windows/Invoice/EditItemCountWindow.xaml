@@ -18,6 +18,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Код товара -->
@@ -36,11 +38,25 @@
         <!-- Количество -->
         <DockPanel LastChildFill="False" Grid.Row="3" Grid.ColumnSpan="2" >
             <TextBlock Text="Новое количество" DockPanel.Dock="Left" Style="{DynamicResource TextBlockStyle}" Margin="5" />
-            <TextBox x:Name="tbCount" DockPanel.Dock="Right" Width="50" Margin="5" Style="{StaticResource TextBoxStyle}" TextAlignment="Right"
+            <TextBox x:Name="tbCount" DockPanel.Dock="Right" Width="100" Margin="5" Style="{StaticResource TextBoxStyle}" TextAlignment="Right"
                      PreviewKeyDown="TextBlock_KeyDown" KeyDown="TextBlock_KeyDown" TextChanged="TextBlock_TextChanged"/>
         </DockPanel>
 
-        <DockPanel Grid.Row="4" Grid.ColumnSpan="2" Style="{DynamicResource DockPanelOKContainerStyle}" >
+        <!-- Стоимость -->
+        <DockPanel x:Name="dpCost" LastChildFill="False" Grid.Row="4" Grid.ColumnSpan="2" >
+            <TextBlock Text="Стоимость единицы товара" DockPanel.Dock="Left" Style="{DynamicResource TextBlockStyle}" Margin="5" />
+            <TextBox x:Name="tbCost" DockPanel.Dock="Right" Width="100" Margin="5" Style="{StaticResource TextBoxStyle}" TextAlignment="Right"
+                     PreviewKeyDown="TextBlock_KeyDown" KeyDown="TextBlock_KeyDown" TextChanged="TextBlock_TextChanged"/>
+        </DockPanel>
+
+        <!-- Стоимость -->
+        <DockPanel x:Name="dpCoupon" LastChildFill="False" Grid.Row="5" Grid.ColumnSpan="2" >
+            <TextBlock Text="Купон за единицу товара" DockPanel.Dock="Left" Style="{DynamicResource TextBlockStyle}" Margin="5" />
+            <TextBox x:Name="tbCoupon" DockPanel.Dock="Right" Width="100" Margin="5" Style="{StaticResource TextBoxStyle}" TextAlignment="Right"
+                     PreviewKeyDown="TextBlock_KeyDown" KeyDown="TextBlock_KeyDown" TextChanged="TextBlock_TextChanged"/>
+        </DockPanel>
+
+        <DockPanel Grid.Row="6" Grid.ColumnSpan="2" Style="{DynamicResource DockPanelOKContainerStyle}" >
             <!-- Кнопка Отмена -->
             <Button IsCancel="True" Style="{DynamicResource ButtonOKStyle}" >
                 <Button.Content>

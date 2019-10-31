@@ -10,50 +10,51 @@ using Excel = Microsoft.Office.Interop.Excel;
 using Microsoft.Win32;
 using System.IO;
 using System.Diagnostics;
+using GreenLeaf.Constants;
 
 namespace GreenLeaf.Windows.InvoiceView
 {
     /// <summary>
     /// Окно создания / редактирования накладной
     /// </summary>
-    public partial class CreateInvoiceWindow : Window
+    public partial class InvoiceWindow : Window
     {
         #region Объявление команд
 
         /// <summary>
         /// Команда блокировки накладной
         /// </summary>
-        public static RoutedUICommand DoLockInvoice = new RoutedUICommand("Блокировка накладной", "DoLockInvoice", typeof(CreateInvoiceWindow));
+        public static RoutedUICommand DoLockInvoice = new RoutedUICommand("Блокировка накладной", "DoLockInvoice", typeof(InvoiceWindow));
 
         /// <summary>
         /// Команда проведения накладной
         /// </summary>
-        public static RoutedUICommand DoIssueInvoice = new RoutedUICommand("Проведение накладной", "DoIssueInvoice", typeof(CreateInvoiceWindow));
+        public static RoutedUICommand DoIssueInvoice = new RoutedUICommand("Проведение накладной", "DoIssueInvoice", typeof(InvoiceWindow));
 
         /// <summary>
         /// Команда удаления накладной
         /// </summary>
-        public static RoutedUICommand DoDeleteInvoice = new RoutedUICommand("Удаление накладной", "DoDeleteInvoice", typeof(CreateInvoiceWindow));
+        public static RoutedUICommand DoDeleteInvoice = new RoutedUICommand("Удаление накладной", "DoDeleteInvoice", typeof(InvoiceWindow));
 
         /// <summary>
         /// Команда добавления элемента накладной
         /// </summary>
-        public static RoutedUICommand DoAddItem = new RoutedUICommand("Добавление элемента накладной", "DoAddItem", typeof(CreateInvoiceWindow));
+        public static RoutedUICommand DoAddItem = new RoutedUICommand("Добавление элемента накладной", "DoAddItem", typeof(InvoiceWindow));
 
         /// <summary>
         /// Команда редактирования элемента накладной
         /// </summary>
-        public static RoutedUICommand DoEditItem = new RoutedUICommand("Редактирование элемента накладной", "DoEditItem", typeof(CreateInvoiceWindow));
+        public static RoutedUICommand DoEditItem = new RoutedUICommand("Редактирование элемента накладной", "DoEditItem", typeof(InvoiceWindow));
 
         /// <summary>
         /// Команда удаления элемента накладной
         /// </summary>
-        public static RoutedUICommand DoDeleteItem = new RoutedUICommand("Удаление элемента накладной", "DoDeleteItem", typeof(CreateInvoiceWindow));
+        public static RoutedUICommand DoDeleteItem = new RoutedUICommand("Удаление элемента накладной", "DoDeleteItem", typeof(InvoiceWindow));
 
         /// <summary>
         /// Команда вывода данных в Excel
         /// </summary>
-        public static RoutedUICommand DoExcelOutput = new RoutedUICommand("Вывести в Excel", "DoExcelOutput", typeof(CreateInvoiceWindow));
+        public static RoutedUICommand DoExcelOutput = new RoutedUICommand("Вывести в Excel", "DoExcelOutput", typeof(InvoiceWindow));
 
         #endregion
 
@@ -77,7 +78,7 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         /// <param name="isPurchase">TRUE - приходная накладная, FALSE - расходная накладная</param>
         /// <param name="id">ID редактируемой накладной, если 0, создается новая накладная</param>
-        public CreateInvoiceWindow(bool isPurchase, int id=0)
+        public InvoiceWindow(bool isPurchase, int id=0)
         {
             InitializeComponent();
 
@@ -319,11 +320,17 @@ namespace GreenLeaf.Windows.InvoiceView
 
             Mouse.OverrideCursor = Cursors.Wait;
 
-            CurrentInvoice.Items.Add(InvoiceItem.CreateItem(CurrentInvoice.ID, product.ID, count, CurrentInvoice.IsPurchase));
+            // определение стоимости и купона
+            double _cost = (CurrentInvoice.IsPurchase) ? product.CostPurchase : product.Cost;
+            double _coupon = (CurrentInvoice.IsPurchase) ? product.CostPurchase : product.Coupon;
+
+            CurrentInvoice.Items.Add(InvoiceItem.CreateItem(CurrentInvoice.ID, product.ID, _cost, _coupon, count, CurrentInvoice.IsPurchase));
 
             GetFreeProductList();
 
             CurrentInvoice.Calc();
+
+            CurrentInvoice.EditInvoice();
 
             dataGrid.Items.Refresh();
 
@@ -351,21 +358,29 @@ namespace GreenLeaf.Windows.InvoiceView
         {
             InvoiceItem item = dataGrid.SelectedItem as InvoiceItem;
 
-            EditItemCountWindow view = (CurrentInvoice.IsPurchase) ? new EditItemCountWindow(item.Count, item.Product.ProductCode, item.Product.Nomination) : new EditItemCountWindow(item.Count, item.Product.ProductCode, item.Product.Nomination, item.Product.AllowedCount);
+            EditItemCountWindow view = (CurrentInvoice.IsPurchase) ? new EditItemCountWindow(item.Count, item.Product.ProductCode, item.Product.Nomination, true, item.ProductCost, item.ProductCoupon) : new EditItemCountWindow(item.Count, item.Product.ProductCode, item.Product.Nomination, item.Product.AllowedCount, false);
 
             view.Owner = this;
 
-            if ((bool)view.ShowDialog() && view.NewValue != item.Count)
+            if ((bool)view.ShowDialog())
             {
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                item.Count = view.NewValue;
+                item.Count = view.NewCount;
+
+                if(CurrentInvoice.IsPurchase)
+                {
+                    item.ProductCost = view.NewCost;
+                    item.ProductCoupon = view.NewCoupon;
+                }
 
                 view.Close();
 
                 if(item.EditItem(CurrentInvoice.IsPurchase))
                 {
                     CurrentInvoice.Calc();
+
+                    CurrentInvoice.EditInvoice();
 
                     dataGrid.Items.Refresh();
 
@@ -407,6 +422,8 @@ namespace GreenLeaf.Windows.InvoiceView
                     GetFreeProductList();
 
                     CurrentInvoice.Calc();
+
+                    CurrentInvoice.EditInvoice();
 
                     dataGrid.Items.Refresh();
 
@@ -534,10 +551,10 @@ namespace GreenLeaf.Windows.InvoiceView
                         worksheet.Cells[11, 7] = item.Product.UnitNomination;
 
                         // Заполнение ячейки "Стоимость"
-                        worksheet.Cells[11, 8] = item.Product.Cost.ToString() + " ₽";
+                        worksheet.Cells[11, 8] = item.ProductCost.ToString() + " ₽";
 
                         // Заполнение ячейки "Купон"
-                        worksheet.Cells[11, 9] = item.Product.Coupon.ToString() + " ₽";
+                        worksheet.Cells[11, 9] = item.ProductCoupon.ToString() + " ₽";
 
                         // Заполнение ячейки "Количество"
                         worksheet.Cells[11, 10] = item.Count.ToString();

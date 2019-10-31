@@ -397,6 +397,19 @@ namespace GreenLeaf.ViewModel
         /// <summary>
         /// Редактирование элемента накладной
         /// </summary>
+        /// <param name="count">количество товара</param>
+        /// <param name="isPurchase">приходная накладная</param>
+        /// <returns>возвращает TRUE, если элемент накладной отредактирован успешно</returns>
+        public bool EditItem(double count, bool isPurchase)
+        {
+            Count = count;
+
+            return EditItem(isPurchase);
+        }
+
+        /// <summary>
+        /// Редактирование элемента накладной
+        /// </summary>
         /// <param name="id_product">ID товара</param>
         /// <param name="count">количество товара</param>
         /// <param name="productCost">стоимость единицы товара</param>
@@ -418,11 +431,8 @@ namespace GreenLeaf.ViewModel
         /// </summary>
         private void Calc()
         {
-            _cost = ProductCost * Count;
-            _coupon = ProductCoupon * Count;
-
-            OnPropertyChanged("Cost");
-            OnPropertyChanged("Coupon");
+            Cost = ProductCost * Count;
+            Coupon = ProductCoupon * Count;
 
             //if (Product != null)
             //{
@@ -504,9 +514,10 @@ namespace GreenLeaf.ViewModel
                                 item.ID = Conversion.ToInt(reader["ID"].ToString());
                                 item.ID_Product = Conversion.ToInt(reader["ID_PRODUCT"].ToString());
                                 item.Count = Conversion.ToDouble(reader["COUNT"].ToString());
+                                item.ProductCost = Conversion.ToDouble(reader["PRDUCT_COST"].ToString());
+                                item.ProductCoupon = Conversion.ToDouble(reader["PRODUCT_COUPON"].ToString());
                                 item.Cost = Conversion.ToDouble(reader["COST"].ToString());
                                 item.Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
-
                                 Items.Add(item);
                             }
                         }
@@ -550,6 +561,8 @@ namespace GreenLeaf.ViewModel
 
                             item.ID = Conversion.ToInt(reader["ID"].ToString());
                             item.ID_Product = Conversion.ToInt(reader["ID_PRODUCT"].ToString());
+                            item.ProductCost = Conversion.ToDouble(reader["PRDUCT_COST"].ToString());
+                            item.ProductCoupon = Conversion.ToDouble(reader["PRODUCT_COUPON"].ToString());
                             item.Count = Conversion.ToDouble(reader["COUNT"].ToString());
                             item.Cost = Conversion.ToDouble(reader["COST"].ToString());
                             item.Coupon = Conversion.ToDouble(reader["COUPON"].ToString());

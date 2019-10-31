@@ -51,9 +51,11 @@ namespace GreenLeaf.Windows.Warehouse
                     cbUnit.SelectedItem = MeasureUnit.Units[product.ID_Unit];
             }
 
-            tbCountInPackage.Text = product.CountInPackage.ToString().Replace(',', '.');
-            tbCost.Text = product.Cost.ToString().Replace(',', '.');
-            tbCoupon.Text = product.Coupon.ToString().Replace(',', '.');
+            tbCountInPackage.Text = Conversion.ToString(product.CountInPackage);
+            tbCost.Text = Conversion.ToString(product.Cost);
+            tbCoupon.Text = Conversion.ToString(product.Coupon);
+            tbCostPurchase.Text = Conversion.ToString(product.CostPurchase);
+            tbCouponPurchase.Text = Conversion.ToString(product.CouponPurchase);
 
             this.DataContext = product;
         }
@@ -71,19 +73,37 @@ namespace GreenLeaf.Windows.Warehouse
 
             product.CountInPackage = temp;
 
-            // Получение стоимости
+            // Получение стоимости закупки
+            if (!double.TryParse(tbCostPurchase.Text.Replace('.', ','), out temp))
+            {
+                Dialog.WarningMessage(this, "Не корректно указана стоимость закупки");
+                return;
+            }
+
+            product.CostPurchase = temp;
+
+            // Получение купона при реализации
+            if (!double.TryParse(tbCouponPurchase.Text.Replace('.', ','), out temp))
+            {
+                Dialog.WarningMessage(this, "Не корректно указан купон при закупке");
+                return;
+            }
+
+            product.CouponPurchase = temp;
+
+            // Получение стоимости реализации
             if (!double.TryParse(tbCost.Text.Replace('.', ','), out temp))
             {
-                Dialog.WarningMessage(this, "Не корректно указана стоимость");
+                Dialog.WarningMessage(this, "Не корректно указана стоимость при реализации");
                 return;
             }
 
             product.Cost = temp;
 
-            // Получение купона
+            // Получение купона при реализации
             if (!double.TryParse(tbCoupon.Text.Replace('.', ','), out temp))
             {
-                Dialog.WarningMessage(this, "Не корректно указан купон");
+                Dialog.WarningMessage(this, "Не корректно указан купон при реализации");
                 return;
             }
 

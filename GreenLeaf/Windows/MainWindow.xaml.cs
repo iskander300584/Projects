@@ -501,7 +501,7 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void CreatePurchaseInvoice_Execute(object sender, ExecutedRoutedEventArgs e)
         {
-            InvoiceView.CreateInvoiceWindow view = new InvoiceView.CreateInvoiceWindow(true);
+            InvoiceView.InvoiceWindow view = new InvoiceView.InvoiceWindow(true);
             view.Owner = this;
 
             view.ShowDialog();
@@ -514,7 +514,7 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void CreateSalesInvoice_Execute(object sender, ExecutedRoutedEventArgs e)
         {
-            InvoiceView.CreateInvoiceWindow view = new InvoiceView.CreateInvoiceWindow(false);
+            InvoiceView.InvoiceWindow view = new InvoiceView.InvoiceWindow(false);
             view.Owner = this;
 
             view.ShowDialog();
@@ -522,6 +522,9 @@ namespace GreenLeaf.Windows
             LoadData();
         }
 
+        /// <summary>
+        /// Отчеты
+        /// </summary>
         private void ReportPopup_Execute(object sender, ExecutedRoutedEventArgs e)
         {
             ReportsPopup.IsOpen = !ReportsPopup.IsOpen;
