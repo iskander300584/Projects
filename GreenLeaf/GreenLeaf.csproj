@@ -123,6 +123,9 @@
     <Compile Include="ViewModel\Numerator.cs" />
     <Compile Include="ViewModel\Product.cs" />
     <Compile Include="ViewModel\Unit.cs" />
+    <Compile Include="Windows\Invoice\InvoiceListWindow.xaml.cs">
+      <DependentUpon>InvoiceListWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\Invoice\InvoiceWindow.xaml.cs">
       <DependentUpon>InvoiceWindow.xaml</DependentUpon>
     </Compile>
@@ -176,6 +179,10 @@
     <Page Include="Windows\Dialogs\WarningView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Invoice\InvoiceListWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\Invoice\InvoiceWindow.xaml">
       <SubType>Designer</SubType>

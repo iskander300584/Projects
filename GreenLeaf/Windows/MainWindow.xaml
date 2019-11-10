@@ -178,14 +178,15 @@
             </Button>
         </StackPanel>
 
+        <!-- Панель отчетов -->
         <Popup x:Name="ReportsPopup" IsOpen="False" PlacementTarget="{Binding ElementName=btnReports}" Placement="Bottom" 
                Width="Auto" Height="Auto" >
             <StackPanel Orientation="Vertical" Background="White">
-                <Button x:Name="btnReportsPurchaseInvoice" Width="200" Content="Приходные накладные" ></Button>
+                <Button x:Name="btnReportsPurchaseInvoice" Style="{StaticResource PopupButtonStyle}" Content="Приходные накладные" />
 
-                <Button x:Name="btnReportsSalesInvoice" Width="200" Content="Расходные накладные" ></Button>
+                <Button x:Name="btnReportsSalesInvoice" Style="{StaticResource PopupButtonStyle}" Content="Расходные накладные" />
 
-                <Button x:Name="btnReportsIncome" Width="200" Content="Приход/расход" ></Button>
+                <Button x:Name="btnReportsIncome" Style="{StaticResource PopupButtonStyle}" Content="Приход/расход" />
             </StackPanel>
         </Popup>
         
@@ -231,7 +232,7 @@
         </DockPanel>
 
         <!-- Таблица склада -->
-        <DataGrid x:Name="dataGrid" Grid.Row="3" Style="{DynamicResource DataGridStyle}" SelectionMode="Single">
+        <DataGrid x:Name="dataGrid" Grid.Row="3" Style="{DynamicResource DataGridStyle}" >
             <!-- Стиль для закрашивания аннулированных позиций -->
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">

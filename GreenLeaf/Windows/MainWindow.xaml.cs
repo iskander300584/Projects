@@ -21,6 +21,9 @@ namespace GreenLeaf.Windows
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// Список товаров на складе
+        /// </summary>
         private List<Product> Warehouse = new List<Product>();
 
         #region Объявление команд
@@ -81,6 +84,8 @@ namespace GreenLeaf.Windows
 
         #endregion
 
+        #region Загрузка программы
+
         /// <summary>
         /// Главное окно
         /// </summary>
@@ -130,6 +135,15 @@ namespace GreenLeaf.Windows
             // отчеты
             this.btnReports.Visibility = (ConnectSetting.CurrentUser.ReportsData.Reports) ? Visibility.Visible : Visibility.Collapsed;
 
+            // отчеты по приходным накладным
+            this.btnReportsPurchaseInvoice.IsEnabled = ConnectSetting.CurrentUser.InvoiceData.PurchaseInvoice;
+
+            // отчет по расходным накладным
+            this.btnReportsSalesInvoice.IsEnabled = ConnectSetting.CurrentUser.InvoiceData.SalesInvoice;
+
+            // отчет приход/расход
+            this.btnReportsIncome.IsEnabled = ConnectSetting.CurrentUser.ReportsData.ReportIncomeExpense;
+
             // контрагенты
             this.btnCounterparty.Visibility = (ConnectSetting.CurrentUser.CounterpartyData.Counterparty) ? Visibility.Visible : Visibility.Collapsed;
 
@@ -146,6 +160,8 @@ namespace GreenLeaf.Windows
             // панель управления
             this.btnAdminPanel.Visibility = (ConnectSetting.CurrentUser.AdminPanelData.AdminPanel) ? Visibility.Visible : Visibility.Collapsed;
         }
+
+        #endregion
 
         #region Отображение данных в таблице
 
@@ -496,6 +512,8 @@ namespace GreenLeaf.Windows
 
         #endregion
 
+        #region Накладные
+
         /// <summary>
         /// Создать приходную накладную
         /// </summary>
@@ -522,6 +540,10 @@ namespace GreenLeaf.Windows
             LoadData();
         }
 
+        #endregion
+
+        #region Отчеты
+
         /// <summary>
         /// Отчеты
         /// </summary>
@@ -529,5 +551,7 @@ namespace GreenLeaf.Windows
         {
             ReportsPopup.IsOpen = !ReportsPopup.IsOpen;
         }
+
+        #endregion
     }
 }

@@ -6,7 +6,7 @@
         xmlns:conv="clr-namespace:GreenLeaf.Converters"
         xmlns:win="clr-namespace:GreenLeaf.Windows.InvoiceView"
         mc:Ignorable="d"
-        Title="Накладная" Style="{DynamicResource ModalWindow}" SizeToContent="Manual" ResizeMode="CanResizeWithGrip" Width="1000" Height="600" WindowState="Maximized" >
+        Title="Накладная" Style="{DynamicResource ModalWindow}" SizeToContent="Manual" ResizeMode="CanResizeWithGrip" WindowState="Maximized" >
 
     <!-- Объявление команд -->
     <Window.CommandBindings>
@@ -34,6 +34,7 @@
 
     </Window.CommandBindings>
 
+    <!-- Ресурсы -->
     <Window.Resources>
         <!-- Преобразование NULL в FALSE -->
         <conv:Null_to_False_Converter x:Key="NullToFalseConverter" />

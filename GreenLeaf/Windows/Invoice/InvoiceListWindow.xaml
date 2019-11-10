@@ -1,0 +1,224 @@
+﻿<Window x:Class="GreenLeaf.Windows.InvoiceView.InvoiceListWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GreenLeaf.Windows.InvoiceView"
+        mc:Ignorable="d"
+        Title="Отчет по накладным" Style="{StaticResource ModalWindow}" SizeToContent="Manual" ResizeMode="CanResizeWithGrip" WindowState="Maximized" >
+    
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Панель поиска -->
+        <DockPanel LastChildFill="False">
+            <!-- Поиск по пользователям -->
+            <Grid DockPanel.Dock="Left">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Пользователь" Style="{StaticResource TextBlockStyle}" Margin="0,5,5,5"/>
+                <ComboBox x:Name="cbUser" Grid.Column="1" Width="200" Margin="5"
+                          >
+                    <ComboBox.Style>
+                        <Style BasedOn="{StaticResource ComboBoxStyle}">
+                            <Style.Triggers>
+                                <Trigger Property="ComboBox.IsEnabled" Value="True" >
+                                    <Setter Property="ComboBox.Background" Value="White" />
+                                    <Setter Property="ComboBox.Foreground" Value="Black" />
+                                </Trigger>
+
+                                <Trigger Property="ComboBox.IsEnabled" Value="False" >
+                                    <Setter Property="ComboBox.Background" Value="White" />
+                                    <Setter Property="ComboBox.Foreground" Value="Black" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.Style>
+                </ComboBox>
+
+                <TextBlock Text="Контрагент" Grid.Row="1" Style="{StaticResource TextBlockStyle}" Margin="0,5,5,5"/>
+                <ComboBox x:Name="cbCounterparty" Grid.Row="1" Grid.Column="1" Width="200" Margin="5"
+                          >
+                    <ComboBox.Style>
+                        <Style BasedOn="{StaticResource ComboBoxStyle}">
+                            <Style.Triggers>
+                                <Trigger Property="ComboBox.IsEnabled" Value="True" >
+                                    <Setter Property="ComboBox.Background" Value="White" />
+                                    <Setter Property="ComboBox.Foreground" Value="Black" />
+                                </Trigger>
+
+                                <Trigger Property="ComboBox.IsEnabled" Value="False" >
+                                    <Setter Property="ComboBox.Background" Value="White" />
+                                    <Setter Property="ComboBox.Foreground" Value="Black" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.Style>
+                </ComboBox>
+            </Grid>
+
+            <!-- Поиск по параметрам -->
+            <Grid DockPanel.Dock="Left" Margin="20,0,0,0" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Период -->
+                <TextBlock Text="c" Style="{StaticResource TextBlockStyle}" Margin="5"/>
+                <DatePicker x:Name="dpFromPeriod" Grid.Column="1" Style="{StaticResource DatePickerBaseStyle}" />
+                <TextBlock Text="по" Grid.Row="1" Style="{StaticResource TextBlockStyle}" Margin="5"/>
+                <DatePicker x:Name="dpToPeriod" Grid.Row="1"  Grid.Column="1" Style="{StaticResource DatePickerBaseStyle}" />
+
+                <!-- Номер -->
+                <TextBlock Text="Номер" Grid.Column="2" Style="{StaticResource TextBlockStyle}" Margin="10,5,5,5"/>
+                <TextBox Grid.Row="1" Grid.Column="2" Margin="10,5,5,5" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Stretch" />
+                
+                <!-- Кнопка Поиск -->
+                <Button Grid.Column="3" Margin="10,5,5,5" Style="{StaticResource SearchButtonStyle}" Width="30" Height="30" ></Button>
+                
+                <!-- Сброс поиска -->
+                <Button Grid.Row="1" Grid.Column="3" Margin="10,5,5,5" Style="{StaticResource ResetSearchButtonStyle}" Width="30" Height="30" ></Button>
+                
+            </Grid>
+
+            <!-- Кнопка Открыть накладную -->
+            <Button DockPanel.Dock="Right" Margin="5,5,0,5" Height="70" Width="70" VerticalAlignment="Center" ToolTip="Открыть накладную">
+                <Button.Style>
+                    <Style BasedOn="{StaticResource MainMenuButtonStyle}" >
+                        <Style.Triggers>
+                            <Trigger Property="Button.IsEnabled" Value="True">
+                                <Setter Property="Button.Content" >
+                                    <Setter.Value>
+                                        <DockPanel LastChildFill="False" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                                            <Image Source="..\..\Images\invoice.png" Height="50" DockPanel.Dock="Top" Margin="0,5,0,0" />
+                                            <Image Source="..\..\Images\edit.png" DockPanel.Dock="Top" Height="20" Margin="25,-15,0,0" HorizontalAlignment="Center" />
+                                        </DockPanel>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+
+                            <Trigger Property="Button.IsEnabled" Value="False">
+                                <Setter Property="Button.Content" >
+                                    <Setter.Value>
+                                        <DockPanel LastChildFill="False" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                                            <Image Source="..\..\Images\invoice_gray.png" Height="50" DockPanel.Dock="Top" Margin="0,5,0,0" />
+                                            <Image Source="..\..\Images\edit_gray.png" DockPanel.Dock="Top" Height="20" Margin="25,-15,0,0" HorizontalAlignment="Center" />
+                                        </DockPanel>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Button.Background" Value="GhostWhite" />
+                            </Trigger>
+                        </Style.Triggers>
+
+                    </Style>
+                </Button.Style>
+            </Button>
+        </DockPanel>
+
+        <!-- Разделитель -->
+        <Separator Grid.Row="1" Style="{StaticResource HorizontalSeparatorStyle}" />
+
+        <!-- Список накладных -->
+        <DataGrid Grid.Row="2" Style="{StaticResource DataGridStyle}" >
+            <!-- Стиль для закрашивания не проведенных и заблокированных накладных -->
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsIssued}" Value="False">
+                            <Setter Property="Background" Value="LightBlue" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding IsLocked}" Value="True">
+                            <Setter Property="Background" Value="Orange" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+
+            <DataGrid.Columns>
+
+                <!-- Номер -->
+                <DataGridTextColumn Width="50" Binding="{Binding Path=LockedCount}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Номер" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                
+                <!-- Пользователь -->
+                <DataGridTextColumn Width="150" Binding="{Binding Path=ProductCode}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Пользователь" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Контрагент -->
+                <DataGridTextColumn Width="*" Binding="{Binding Path=Nomination}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Контрагент" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Дата создания -->
+                <DataGridTextColumn Width="100" Binding="{Binding Path=Cost}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Дата создания" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Дата проведения -->
+                <DataGridTextColumn Width="100" Binding="{Binding Path=Coupon}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Дата проведения" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Сумма -->
+                <DataGridTextColumn Width="100" Binding="{Binding Path=CountInPackage}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Сумма" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Купон -->
+                <DataGridTextColumn Width="100" Binding="{Binding Path=Count}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Купон" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Итого -->
+        <DockPanel LastChildFill="False" Grid.Row="3"  >
+            <!-- Купон -->
+            <TextBlock x:Name="tbCoupon" DockPanel.Dock="Right" Style="{StaticResource TextBlockGridStyle}"  Margin="5,5,0,5" />
+            <TextBlock Text="Купон:" DockPanel.Dock="Right" Style="{StaticResource TextBlockStyle}" Margin="5"/>
+
+            <!-- Сумма -->
+            <TextBlock x:Name="tbCost" DockPanel.Dock="Right" Style="{StaticResource TextBlockGridStyle}"  Margin="5,5,20,5" />
+            <TextBlock Text="Сумма:" DockPanel.Dock="Right" Style="{StaticResource TextBlockStyle}" Margin="5"/>
+
+            <TextBlock Text="ИТОГО" Style="{DynamicResource TextBlockStyle}" DockPanel.Dock="Left" Margin="0,5,0,0" />
+        </DockPanel>
+    </Grid>
+</Window>

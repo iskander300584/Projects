@@ -322,7 +322,7 @@ namespace GreenLeaf.Windows.InvoiceView
 
             // определение стоимости и купона
             double _cost = (CurrentInvoice.IsPurchase) ? product.CostPurchase : product.Cost;
-            double _coupon = (CurrentInvoice.IsPurchase) ? product.CostPurchase : product.Coupon;
+            double _coupon = (CurrentInvoice.IsPurchase) ? product.CouponPurchase : product.Coupon;
 
             CurrentInvoice.Items.Add(InvoiceItem.CreateItem(CurrentInvoice.ID, product.ID, _cost, _coupon, count, CurrentInvoice.IsPurchase));
 

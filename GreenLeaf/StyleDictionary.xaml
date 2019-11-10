@@ -38,6 +38,7 @@
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="DataGrid.VerticalGridLinesBrush" Value="Gray" />
         <Setter Property="DataGrid.HorizontalGridLinesBrush" Value="Gray" />
+        <Setter Property="DataGrid.SelectionMode" Value="Single" />
     </Style>
     
     <!--#endregion-->
@@ -148,6 +149,19 @@
         <Setter Property="Button.Width" Value="150" />
         <Setter Property="Button.Height" Value="30" />
         <Setter Property="DockPanel.Dock" Value="Right" />
+    </Style>
+
+    <!-- Стиль для кнопок выпадающего меню -->
+    <Style x:Key="PopupButtonStyle" >
+        <Setter Property="Button.FontSize" Value="16" />
+        <Setter Property="Button.FontFamily" Value="Yu Gothic UI Semilight" />
+        <Setter Property="Button.Foreground" Value="Black" />
+        <Setter Property="Button.Width" Value="200" />
+        <Setter Property="Button.Height" Value="40" />
+        <Setter Property="Button.VerticalContentAlignment" Value="Center" />
+        <Setter Property="Button.HorizontalContentAlignment" Value="Center" />
+        <Setter Property="Border.CornerRadius" Value="5" />
+        <Setter Property="Button.Background" Value="GhostWhite" />
     </Style>
 
     <!--#endregion-->
@@ -287,6 +301,21 @@
         <Setter Property="Separator.Height" Value="1" />
         <Setter Property="Separator.HorizontalAlignment" Value="Stretch" />
         <Setter Property="Separator.Margin" Value="0,5,0,5" />
+    </Style>
+    
+    <!--#endregion-->
+
+    
+    <!--#region DATE_PICKER-->
+    
+    <!-- Базовый стиль для DatePicker -->
+    <Style x:Key="DatePickerBaseStyle" >
+        <Setter Property="DatePicker.Background" Value="White" />
+        <Setter Property="DatePicker.FontSize" Value="16" />
+        <Setter Property="DatePicker.FontFamily" Value="Yu Gothic UI Semibold" />
+        <Setter Property="DatePicker.Width" Value="150" />
+        <Setter Property="DatePicker.VerticalContentAlignment" Value="Center" />
+        <Setter Property="DatePicker.Margin" Value="5" />
     </Style>
     
     <!--#endregion-->
