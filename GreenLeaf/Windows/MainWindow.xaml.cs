@@ -540,6 +540,36 @@ namespace GreenLeaf.Windows
             LoadData();
         }
 
+        /// <summary>
+        /// Отчет по приходным накладным
+        /// </summary>
+        private void btnReportsPurchaseInvoice_Click(object sender, RoutedEventArgs e)
+        {
+            ReportsPopup.IsOpen = false;
+
+            InvoiceView.InvoiceListWindow view = new InvoiceView.InvoiceListWindow(true);
+            view.Owner = this;
+
+            view.ShowDialog();
+            view.Close();
+            LoadData();
+        }
+
+        /// <summary>
+        /// Отчет по расходным накладным
+        /// </summary>
+        private void btnReportsSalesInvoice_Click(object sender, RoutedEventArgs e)
+        {
+            ReportsPopup.IsOpen = false;
+
+            InvoiceView.InvoiceListWindow view = new InvoiceView.InvoiceListWindow(false);
+            view.Owner = this;
+
+            view.ShowDialog();
+            view.Close();
+            LoadData();
+        }
+
         #endregion
 
         #region Отчеты
@@ -552,6 +582,9 @@ namespace GreenLeaf.Windows
             ReportsPopup.IsOpen = !ReportsPopup.IsOpen;
         }
 
+
         #endregion
+
+        
     }
 }

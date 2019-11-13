@@ -29,7 +29,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Text="Пользователь" Style="{StaticResource TextBlockStyle}" Margin="0,5,5,5"/>
-                <ComboBox x:Name="cbUser" Grid.Column="1" Width="200" Margin="5"
+                <ComboBox x:Name="cbUser" Grid.Column="1" Width="200" Margin="5" 
                           >
                     <ComboBox.Style>
                         <Style BasedOn="{StaticResource ComboBoxStyle}">
@@ -50,7 +50,7 @@
 
                 <TextBlock Text="Контрагент" Grid.Row="1" Style="{StaticResource TextBlockStyle}" Margin="0,5,5,5"/>
                 <ComboBox x:Name="cbCounterparty" Grid.Row="1" Grid.Column="1" Width="200" Margin="5"
-                          >
+                        DisplayMemberPath="VisibleName" >
                     <ComboBox.Style>
                         <Style BasedOn="{StaticResource ComboBoxStyle}">
                             <Style.Triggers>

@@ -182,9 +182,11 @@
         <Popup x:Name="ReportsPopup" IsOpen="False" PlacementTarget="{Binding ElementName=btnReports}" Placement="Bottom" 
                Width="Auto" Height="Auto" >
             <StackPanel Orientation="Vertical" Background="White">
-                <Button x:Name="btnReportsPurchaseInvoice" Style="{StaticResource PopupButtonStyle}" Content="Приходные накладные" />
+                <Button x:Name="btnReportsPurchaseInvoice" Style="{StaticResource PopupButtonStyle}" Content="Приходные накладные"
+                        Click="btnReportsPurchaseInvoice_Click"/>
 
-                <Button x:Name="btnReportsSalesInvoice" Style="{StaticResource PopupButtonStyle}" Content="Расходные накладные" />
+                <Button x:Name="btnReportsSalesInvoice" Style="{StaticResource PopupButtonStyle}" Content="Расходные накладные"
+                        Click="btnReportsSalesInvoice_Click"/>
 
                 <Button x:Name="btnReportsIncome" Style="{StaticResource PopupButtonStyle}" Content="Приход/расход" />
             </StackPanel>
