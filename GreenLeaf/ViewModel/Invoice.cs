@@ -946,20 +946,20 @@ namespace GreenLeaf.ViewModel
 
                         sql += " WHERE `" + table + "`.`DATE` >= " + fromDate + " AND `" + table + "`.`DATE` <= " + toDate;
 
-                        if (idAccount != null)
+                        if (idAccount != null && idAccount != 0)
                             sql += " AND `" + table + "`.`ID_ACCOUNT` = " + (int)idAccount;
 
-                        if (idCounterparty != null)
+                        if (idCounterparty != null && idCounterparty != 0)
                             sql += " AND `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
                     }
-                    else if (idAccount != null)
+                    else if (idAccount != null && idAccount != 0)
                     {
                         sql += " WHERE `" + table + "`.`ID_ACCOUNT` = " + (int)idAccount;
 
-                        if (idCounterparty != null)
+                        if (idCounterparty != null && idCounterparty != 0)
                             sql += " AND `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
                     }
-                    else if (idCounterparty != null)
+                    else if (idCounterparty != null && idCounterparty != 0)
                         sql += " WHERE `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
 
                     MySqlCommand command = new MySqlCommand(sql, connection);

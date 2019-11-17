@@ -715,6 +715,63 @@ namespace GreenLeaf.ViewModel
                 return null;
         }
 
+        /// <summary>
+        /// Получить список пользователей с ролью
+        /// </summary>
+        /// <param name="isPurchase">роль "Создание приходной накладной"</param>
+        public static List<Account> GetAccountsByRoles(bool isPurchase)
+        {
+            List<Account> list = new List<Account>();
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                {
+                    connection.Open();
+
+                    string sql = "";
+
+                    if (isPurchase)
+                    {
+                        sql = @"SELECT `ID`, `LOGIN`, `CODE`, `SURNAME`, `NAME`, `PATRONYMIC` FROM `ACCOUNT` WHERE `ACCOUNT`.`IS_ANNULATED` = '0' AND `ACCOUNT`.`PURCHASE_INVOICE` = '1'";
+                    }
+                    else
+                    {
+                        sql = @"SELECT `ID`, `LOGIN`, `CODE`, `SURNAME`, `NAME`, `PATRONYMIC` FROM `ACCOUNT` WHERE `ACCOUNT`.`IS_ANNULATED` = '0' AND `ACCOUNT`.`SALES_INVOICE` = '1'";
+                    }
+
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Account account = new Account();
+
+                                account.ID = Conversion.ToInt(reader["ID"].ToString());
+
+                                account.Login = reader["LOGIN"].ToString();
+                                account.PersonalData.Code = reader["CODE"].ToString();
+                                account.PersonalData.Surname = reader["SURNAME"].ToString();
+                                account.PersonalData.Name = reader["NAME"].ToString();
+                                account.PersonalData.Patronymic = reader["PATRONYMIC"].ToString();
+
+                                list.Add(account);
+                            }
+                        }
+                    }
+
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка получения списка пользователей", ex.Message);
+            }
+
+            return list;
+        }
+
         #endregion
     }
 }

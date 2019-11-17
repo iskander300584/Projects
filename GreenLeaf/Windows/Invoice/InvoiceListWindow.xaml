@@ -28,9 +28,10 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
+                <!-- Пользователь -->
                 <TextBlock Text="Пользователь" Style="{StaticResource TextBlockStyle}" Margin="0,5,5,5"/>
                 <ComboBox x:Name="cbUser" Grid.Column="1" Width="200" Margin="5" 
-                          >
+                          DisplayMemberPath="PersonalData.VisibleName">
                     <ComboBox.Style>
                         <Style BasedOn="{StaticResource ComboBoxStyle}">
                             <Style.Triggers>
@@ -48,6 +49,7 @@
                     </ComboBox.Style>
                 </ComboBox>
 
+                <!-- Контрагент -->
                 <TextBlock Text="Контрагент" Grid.Row="1" Style="{StaticResource TextBlockStyle}" Margin="0,5,5,5"/>
                 <ComboBox x:Name="cbCounterparty" Grid.Row="1" Grid.Column="1" Width="200" Margin="5"
                         DisplayMemberPath="VisibleName" >
@@ -90,7 +92,7 @@
 
                 <!-- Номер -->
                 <TextBlock Text="Номер" Grid.Column="2" Style="{StaticResource TextBlockStyle}" Margin="10,5,5,5"/>
-                <TextBox Grid.Row="1" Grid.Column="2" Margin="10,5,5,5" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Stretch" />
+                <TextBox x:Name="tbNumber" Grid.Row="1" Grid.Column="2" Margin="10,5,5,5" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Stretch" />
                 
                 <!-- Кнопка Поиск -->
                 <Button Grid.Column="3" Margin="10,5,5,5" Style="{StaticResource SearchButtonStyle}" Width="30" Height="30" ></Button>
@@ -138,7 +140,7 @@
         <Separator Grid.Row="1" Style="{StaticResource HorizontalSeparatorStyle}" />
 
         <!-- Список накладных -->
-        <DataGrid Grid.Row="2" Style="{StaticResource DataGridStyle}" >
+        <DataGrid x:Name="dgInvoices" Grid.Row="2" Style="{StaticResource DataGridStyle}" >
             <!-- Стиль для закрашивания не проведенных и заблокированных накладных -->
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
@@ -157,49 +159,49 @@
             <DataGrid.Columns>
 
                 <!-- Номер -->
-                <DataGridTextColumn Width="50" Binding="{Binding Path=LockedCount}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="80" Binding="{Binding Path=Number}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Номер" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
                 
                 <!-- Пользователь -->
-                <DataGridTextColumn Width="150" Binding="{Binding Path=ProductCode}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="*" Binding="{Binding Path=Account.PersonalData.VisibleName}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Пользователь" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Контрагент -->
-                <DataGridTextColumn Width="*" Binding="{Binding Path=Nomination}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="*" Binding="{Binding Path=Counterparty.VisibleName}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Контрагент" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Дата создания -->
-                <DataGridTextColumn Width="100" Binding="{Binding Path=Cost}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="150" Binding="{Binding Path=CreateDate}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Дата создания" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Дата проведения -->
-                <DataGridTextColumn Width="100" Binding="{Binding Path=Coupon}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="150" Binding="{Binding Path=Date}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Дата проведения" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Сумма -->
-                <DataGridTextColumn Width="100" Binding="{Binding Path=CountInPackage}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="100" Binding="{Binding Path=Cost}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Сумма" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Купон -->
-                <DataGridTextColumn Width="100" Binding="{Binding Path=Count}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="100" Binding="{Binding Path=Coupon}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Купон" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>

@@ -37,6 +37,11 @@ namespace GreenLeaf.Windows.InvoiceView
         private List<Counterparty> CounterpartyList = new List<Counterparty>();
 
         /// <summary>
+        /// Список пользователей
+        /// </summary>
+        private List<Account> AccountList = new List<Account>();
+
+        /// <summary>
         /// Список накладных
         /// </summary>
         /// <param name="showPurchase">отображать приходные накладные</param>
@@ -51,6 +56,10 @@ namespace GreenLeaf.Windows.InvoiceView
             dpFromPeriod.SelectedDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
 
             GetCounterparties();
+
+            GetAccounts();
+
+            GetData();
         }
 
         /// <summary>
@@ -76,9 +85,59 @@ namespace GreenLeaf.Windows.InvoiceView
             cbCounterparty.SelectedIndex = 0;
         }
 
+        /// <summary>
+        /// Получить список аккаунтов
+        /// </summary>
         private void GetAccounts()
         {
+            if ((ShowPurchase && ConnectSetting.CurrentUser.ReportsData.ReportPurchaseInvoice) || (!ShowPurchase && ConnectSetting.CurrentUser.ReportsData.ReportSalesInvoice))
+            {
+                Account all = new Account();
+                all.PersonalData.Surname = "Все";
 
+                AccountList.Add(all);
+
+                foreach (Account acc in Account.GetAccountsByRoles(ShowPurchase).OrderBy(a => a.PersonalData.VisibleName))
+                {
+                    AccountList.Add(acc);
+                }
+            }
+            else
+                AccountList.Add(ConnectSetting.CurrentUser);
+
+            cbUser.ItemsSource = AccountList;
+            cbUser.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// Получение списка накладных
+        /// </summary>
+        private void GetData()
+        {
+            DateTime from = (DateTime)dpFromPeriod.SelectedDate;
+            DateTime to = (DateTime)dpToPeriod.SelectedDate;
+            string number = tbNumber.Text.Trim();
+            int id_acc = (cbUser.SelectedItem as Account).ID;
+            int id_cp = (cbCounterparty.SelectedItem as Counterparty).ID;
+
+            dgInvoices.ItemsSource = null;
+
+            if (ShowPurchase)
+            {
+                InvoiceList = Invoice.GetPurchaseInvoices(from, to, id_acc, id_cp).OrderBy(i => i.CreateDate).ToList();
+
+                if (number != "")
+                    InvoiceList = InvoiceList.Where(i => i.Number.ToString().Contains(number)).ToList();
+            }
+            else
+            {
+                InvoiceList = Invoice.GetSalesInvoices(from, to, id_acc, id_cp).OrderBy(i => i.CreateDate).ToList();
+
+                if (number != "")
+                    InvoiceList = InvoiceList.Where(i => i.Number.ToString().Contains(number)).ToList();
+            }
+
+            dgInvoices.ItemsSource = InvoiceList;
         }
     }
 }
