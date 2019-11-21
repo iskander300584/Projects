@@ -90,6 +90,8 @@
                 <Setter Property="Button.Background" Value="GhostWhite" />
             </Trigger>
         </Style.Triggers>
+
+        <Setter Property="Button.ToolTip" Value="Поиск" />
     </Style>
 
     <!-- Стиль для кнопки Сброс поиска -->
@@ -111,6 +113,8 @@
                 <Setter Property="Button.Background" Value="GhostWhite" />
             </Trigger>
         </Style.Triggers>
+
+        <Setter Property="Button.ToolTip" Value="Сброс фильтров поиска" />
     </Style>
 
     <!-- Стиль для кнопки Сортировка -->

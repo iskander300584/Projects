@@ -114,5 +114,30 @@ namespace GreenLeaf.Classes
 
             return temp;
         }
+
+        /// <summary>
+        /// Преобразование в денежное представление
+        /// </summary>
+        /// <param name="value">значение</param>
+        /// <returns>возвращает строку в денежном представлении</returns>
+        public static string ToFinance(double value)
+        {
+            string tempS = String.Format("{0:.##}", value).Replace(',', '.');
+
+            if (tempS == "")
+                tempS = "0.00";
+            else if (!tempS.Contains("."))
+            {
+                tempS += ".00";
+            }
+            else
+            {
+                int index = tempS.LastIndexOf('.');
+                if (index == tempS.Length - 2)
+                    tempS += "0";
+            }
+
+            return tempS;
+        }
     }
 }

@@ -1,16 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using GreenLeaf.ViewModel;
 using GreenLeaf.Classes;
 
@@ -21,6 +13,25 @@ namespace GreenLeaf.Windows.InvoiceView
     /// </summary>
     public partial class InvoiceListWindow : Window
     {
+        #region Объявление команд
+
+        /// <summary>
+        /// Загрузка данных
+        /// </summary>
+        public static RoutedUICommand LoadData = new RoutedUICommand("Загрузить данные", "LoadData", typeof(InvoiceListWindow));
+
+        /// <summary>
+        /// Открыть накладную
+        /// </summary>
+        public static RoutedUICommand OpenInvoice = new RoutedUICommand("Открыть накладную", "OpenInvoice", typeof(InvoiceListWindow));
+
+        /// <summary>
+        /// Сбросить фильтры
+        /// </summary>
+        public static RoutedUICommand ResetFilter = new RoutedUICommand("Сбросить фильтры", "ResetFilter", typeof(InvoiceListWindow));
+
+        #endregion
+
         /// <summary>
         /// Признак отображения приходных накладных
         /// </summary>
@@ -125,19 +136,121 @@ namespace GreenLeaf.Windows.InvoiceView
             if (ShowPurchase)
             {
                 InvoiceList = Invoice.GetPurchaseInvoices(from, to, id_acc, id_cp).OrderBy(i => i.CreateDate).ToList();
-
-                if (number != "")
-                    InvoiceList = InvoiceList.Where(i => i.Number.ToString().Contains(number)).ToList();
             }
             else
             {
                 InvoiceList = Invoice.GetSalesInvoices(from, to, id_acc, id_cp).OrderBy(i => i.CreateDate).ToList();
+            }
 
-                if (number != "")
-                    InvoiceList = InvoiceList.Where(i => i.Number.ToString().Contains(number)).ToList();
+            if (number != "")
+                InvoiceList = InvoiceList.Where(i => i.Number.ToString().Contains(number)).ToList();
+
+            double summ = 0;
+            double coupon = 0;
+
+            foreach (Invoice inv in InvoiceList)
+            {
+                inv.GetUsers();
+                summ += inv.Cost;
+                coupon += inv.Coupon;
             }
 
             dgInvoices.ItemsSource = InvoiceList;
+
+            tbCost.Text = Conversion.ToFinance(summ);
+            tbCoupon.Text = Conversion.ToFinance(coupon);
+        }
+
+        /// <summary>
+        /// Загрузить данные
+        /// </summary>
+        private void LoadData_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            GetData();
+
+            Mouse.OverrideCursor = null;
+        }
+
+        /// <summary>
+        /// Проверка возможности открыть накладную
+        /// </summary>
+        private void OpenInvoice_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (dgInvoices != null && dgInvoices.SelectedItem != null) ? true : false;
+        }
+
+        /// <summary>
+        /// Открыть накладную
+        /// </summary>
+        private void OpenInvoice_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            ShowInvoice();
+        }
+
+        /// <summary>
+        /// Открыть накладную
+        /// </summary>
+        private void ShowInvoice()
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            Invoice invoice = dgInvoices.SelectedItem as Invoice;
+
+            InvoiceWindow view = new InvoiceWindow(invoice.IsPurchase, invoice.ID);
+            view.Owner = this;
+
+            Mouse.OverrideCursor = null;
+
+            view.ShowDialog();
+
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            view.Close();
+
+            GetData();
+
+            Mouse.OverrideCursor = null;
+        }
+
+        /// <summary>
+        /// Проверка возможности сбросить фильтры
+        /// </summary>
+        private void ResetFilter_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = ((cbCounterparty != null && cbCounterparty.SelectedIndex != 0) || (cbUser != null && cbUser.SelectedIndex != 0) || (tbNumber != null && tbNumber.Text != "") || (dpFromPeriod != null && ((DateTime)dpFromPeriod.SelectedDate).Date != new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).Date) || (dpToPeriod != null && ((DateTime)dpToPeriod.SelectedDate).Date != DateTime.Today.Date)) ? true : false;
+        }
+
+        /// <summary>
+        /// Сбросить фильтры
+        /// </summary>
+        private void ResetFilter_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            dpToPeriod.SelectedDate = DateTime.Today;
+
+            dpFromPeriod.SelectedDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+
+            tbNumber.Text = "";
+
+            cbCounterparty.SelectedIndex = 0;
+
+            cbUser.SelectedIndex = 0;
+
+            GetData();
+
+            Mouse.OverrideCursor = null;
+        }
+
+        /// <summary>
+        /// Двойной клик по накладной
+        /// </summary>
+        private void dgInvoices_DoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dgInvoices.SelectedItem != null)
+                ShowInvoice();
         }
     }
 }

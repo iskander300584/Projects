@@ -561,7 +561,7 @@ namespace GreenLeaf.ViewModel
 
                             item.ID = Conversion.ToInt(reader["ID"].ToString());
                             item.ID_Product = Conversion.ToInt(reader["ID_PRODUCT"].ToString());
-                            item.ProductCost = Conversion.ToDouble(reader["PRDUCT_COST"].ToString());
+                            item.ProductCost = Conversion.ToDouble(reader["PRODUCT_COST"].ToString());
                             item.ProductCoupon = Conversion.ToDouble(reader["PRODUCT_COUPON"].ToString());
                             item.Count = Conversion.ToDouble(reader["COUNT"].ToString());
                             item.Cost = Conversion.ToDouble(reader["COST"].ToString());

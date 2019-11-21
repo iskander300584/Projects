@@ -519,8 +519,12 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void CreatePurchaseInvoice_Execute(object sender, ExecutedRoutedEventArgs e)
         {
+            Mouse.OverrideCursor = Cursors.Wait;
+
             InvoiceView.InvoiceWindow view = new InvoiceView.InvoiceWindow(true);
             view.Owner = this;
+
+            Mouse.OverrideCursor = null;
 
             view.ShowDialog();
             view.Close();
@@ -532,38 +536,12 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void CreateSalesInvoice_Execute(object sender, ExecutedRoutedEventArgs e)
         {
+            Mouse.OverrideCursor = Cursors.Wait;
+
             InvoiceView.InvoiceWindow view = new InvoiceView.InvoiceWindow(false);
             view.Owner = this;
 
-            view.ShowDialog();
-            view.Close();
-            LoadData();
-        }
-
-        /// <summary>
-        /// Отчет по приходным накладным
-        /// </summary>
-        private void btnReportsPurchaseInvoice_Click(object sender, RoutedEventArgs e)
-        {
-            ReportsPopup.IsOpen = false;
-
-            InvoiceView.InvoiceListWindow view = new InvoiceView.InvoiceListWindow(true);
-            view.Owner = this;
-
-            view.ShowDialog();
-            view.Close();
-            LoadData();
-        }
-
-        /// <summary>
-        /// Отчет по расходным накладным
-        /// </summary>
-        private void btnReportsSalesInvoice_Click(object sender, RoutedEventArgs e)
-        {
-            ReportsPopup.IsOpen = false;
-
-            InvoiceView.InvoiceListWindow view = new InvoiceView.InvoiceListWindow(false);
-            view.Owner = this;
+            Mouse.OverrideCursor = null;
 
             view.ShowDialog();
             view.Close();
@@ -582,9 +560,46 @@ namespace GreenLeaf.Windows
             ReportsPopup.IsOpen = !ReportsPopup.IsOpen;
         }
 
+        /// <summary>
+        /// Отчет по приходным накладным
+        /// </summary>
+        private void btnReportsPurchaseInvoice_Click(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            ReportsPopup.IsOpen = false;
+
+            InvoiceView.InvoiceListWindow view = new InvoiceView.InvoiceListWindow(true);
+            view.Owner = this;
+
+            Mouse.OverrideCursor = null;
+
+            view.ShowDialog();
+            view.Close();
+            LoadData();
+        }
+
+        /// <summary>
+        /// Отчет по расходным накладным
+        /// </summary>
+        private void btnReportsSalesInvoice_Click(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            ReportsPopup.IsOpen = false;
+
+            InvoiceView.InvoiceListWindow view = new InvoiceView.InvoiceListWindow(false);
+            view.Owner = this;
+
+            Mouse.OverrideCursor = null;
+
+            view.ShowDialog();
+            view.Close();
+            LoadData();
+        }
 
         #endregion
 
-        
+
     }
 }

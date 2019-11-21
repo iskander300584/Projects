@@ -66,7 +66,10 @@
 
         <!-- Преобразование "TRUE" в "Да", "FALSE" в "Нет" -->
         <conv:Bool_to_YesNo_Converter x:Key="BoolToYesNo" />
-        
+
+        <!-- Преобразование в сумму -->
+        <conv:Double_To_Summ_String_Converter x:Key="DoubleToSumm" />
+
     </Window.Resources>
     
     <Grid Margin="10">
@@ -225,9 +228,9 @@
                     Click="btnSortDirection_Click" />
 
             <!-- Скрыть отсутствующие -->
-            <CheckBox x:Name="cbHideEmpty" DockPanel.Dock="Right" Margin="0,0,5,0" VerticalAlignment="Center" Height="Auto" IsChecked="True" >
+            <CheckBox x:Name="cbHideEmpty" DockPanel.Dock="Right" Margin="0,0,5,0" VerticalAlignment="Center" Height="Auto" IsChecked="True" VerticalContentAlignment="Center" >
                 <CheckBox.Content>
-                    <TextBlock Style="{DynamicResource TextBlockStyle}" Text="Скрыть отсутствующие" VerticalAlignment="Center" Height="Auto" />
+                    <TextBlock Style="{DynamicResource TextBlockStyle}" Margin="0" Text="Скрыть отсутствующие" VerticalAlignment="Center" Height="Auto" />
                 </CheckBox.Content>
             </CheckBox>
 
@@ -263,14 +266,14 @@
                 </DataGridTextColumn>
 
                 <!-- Стоимость -->
-                <DataGridTextColumn Width="100" Binding="{Binding Path=Cost}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="100" Binding="{Binding Path=Cost, Converter={StaticResource DoubleToSumm}}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Стоимость" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Купон -->
-                <DataGridTextColumn Width="100" Binding="{Binding Path=Coupon}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="100" Binding="{Binding Path=Coupon, Converter={StaticResource DoubleToSumm}}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Купон" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>

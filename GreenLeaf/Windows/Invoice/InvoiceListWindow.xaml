@@ -3,9 +3,32 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:GreenLeaf.Windows.InvoiceView"
+        xmlns:conv="clr-namespace:GreenLeaf.Converters"
+        xmlns:win="clr-namespace:GreenLeaf.Windows.InvoiceView"
         mc:Ignorable="d"
         Title="Отчет по накладным" Style="{StaticResource ModalWindow}" SizeToContent="Manual" ResizeMode="CanResizeWithGrip" WindowState="Maximized" >
+
+    <Window.CommandBindings>
+        <!-- Загрузить данные -->
+        <CommandBinding Command="win:InvoiceListWindow.LoadData" Executed="LoadData_Execute" />
+
+        <!-- Открыть накладную -->
+        <CommandBinding Command="win:InvoiceListWindow.OpenInvoice" Executed="OpenInvoice_Execute" CanExecute="OpenInvoice_CanExecute" />
+
+        <!-- Сбросить фильтры -->
+        <CommandBinding Command="win:InvoiceListWindow.ResetFilter" Executed="ResetFilter_Execute" CanExecute="ResetFilter_CanExecute" />
+    </Window.CommandBindings>
+
+    <Window.Resources>
+        <!-- Преобразование в дату -->
+        <conv:Date_To_String_Converter x:Key="DateToString" />
+
+        <!-- Преобразование в номер -->
+        <conv:Invoice_Number_To_String_Converter x:Key="NumberToString" />
+
+        <!-- Преобразование в сумму -->
+        <conv:Double_To_Summ_String_Converter x:Key="DoubleToSumm" />
+    </Window.Resources>
     
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -95,15 +118,18 @@
                 <TextBox x:Name="tbNumber" Grid.Row="1" Grid.Column="2" Margin="10,5,5,5" Style="{StaticResource TextBoxStyle}" VerticalAlignment="Stretch" />
                 
                 <!-- Кнопка Поиск -->
-                <Button Grid.Column="3" Margin="10,5,5,5" Style="{StaticResource SearchButtonStyle}" Width="30" Height="30" ></Button>
-                
+                <Button Grid.Column="3" Margin="10,5,5,5" Style="{StaticResource SearchButtonStyle}" Width="30" Height="30" 
+                        Command="win:InvoiceListWindow.LoadData"/>
+
                 <!-- Сброс поиска -->
-                <Button Grid.Row="1" Grid.Column="3" Margin="10,5,5,5" Style="{StaticResource ResetSearchButtonStyle}" Width="30" Height="30" ></Button>
-                
+                <Button Grid.Row="1" Grid.Column="3" Margin="10,5,5,5" Style="{StaticResource ResetSearchButtonStyle}" Width="30" Height="30" 
+                        Command="win:InvoiceListWindow.ResetFilter" />
+
             </Grid>
 
             <!-- Кнопка Открыть накладную -->
-            <Button DockPanel.Dock="Right" Margin="5,5,0,5" Height="70" Width="70" VerticalAlignment="Center" ToolTip="Открыть накладную">
+            <Button DockPanel.Dock="Right" Margin="5,5,0,5" Height="70" Width="70" VerticalAlignment="Center" ToolTip="Открыть накладную"
+                    Command="win:InvoiceListWindow.OpenInvoice">
                 <Button.Style>
                     <Style BasedOn="{StaticResource MainMenuButtonStyle}" >
                         <Style.Triggers>
@@ -144,6 +170,8 @@
             <!-- Стиль для закрашивания не проведенных и заблокированных накладных -->
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
+                    <EventSetter Event="MouseDoubleClick" Handler="dgInvoices_DoubleClick" />
+
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsIssued}" Value="False">
                             <Setter Property="Background" Value="LightBlue" />
@@ -159,49 +187,49 @@
             <DataGrid.Columns>
 
                 <!-- Номер -->
-                <DataGridTextColumn Width="80" Binding="{Binding Path=Number}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="80" Binding="{Binding Path=Number, Converter={StaticResource NumberToString}}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Номер" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
                 
                 <!-- Пользователь -->
-                <DataGridTextColumn Width="*" Binding="{Binding Path=Account.PersonalData.VisibleName}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="*" Binding="{Binding Path=AccountUser.PersonalData.VisibleName}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Пользователь" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Контрагент -->
-                <DataGridTextColumn Width="*" Binding="{Binding Path=Counterparty.VisibleName}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="*" Binding="{Binding Path=CounterpartyUser.VisibleName}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Контрагент" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Дата создания -->
-                <DataGridTextColumn Width="150" Binding="{Binding Path=CreateDate}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="150" Binding="{Binding Path=CreateDate, Converter={StaticResource DateToString}}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Дата создания" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Дата проведения -->
-                <DataGridTextColumn Width="150" Binding="{Binding Path=Date}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="150" Binding="{Binding Path=Date, Converter={StaticResource DateToString}}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Дата проведения" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Сумма -->
-                <DataGridTextColumn Width="100" Binding="{Binding Path=Cost}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="100" Binding="{Binding Path=Cost, Converter={StaticResource DoubleToSumm}}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Сумма" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Купон -->
-                <DataGridTextColumn Width="100" Binding="{Binding Path=Coupon}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="100" Binding="{Binding Path=Coupon, Converter={StaticResource DoubleToSumm}}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Купон" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>

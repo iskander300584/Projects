@@ -222,6 +222,24 @@ namespace GreenLeaf.ViewModel
             }
         }
 
+        private Account _account = null;
+        /// <summary>
+        /// Пользователь
+        /// </summary>
+        public Account AccountUser
+        {
+            get { return _account; }
+        }
+
+        private Counterparty _counterparty = null;
+        /// <summary>
+        /// Контрагент
+        /// </summary>
+        public Counterparty CounterpartyUser
+        {
+            get { return _counterparty; }
+        }
+
         private List<InvoiceItem> _items = new List<InvoiceItem>();
         /// <summary>
         /// Список элементов накладной
@@ -412,6 +430,41 @@ namespace GreenLeaf.ViewModel
             }
 
             return products;
+        }
+
+        /// <summary>
+        /// Получение пользователя и контрагента
+        /// </summary>
+        /// <returns>Возвращает TRUE, если какие-либо данные были получены</returns>
+        public bool GetUsers()
+        {
+            bool result = false;
+
+            if (_id_account != 0)
+            {
+                try
+                {
+                    _account = Account.GetAccountByID(_id_account);
+                    result = true;
+
+                    OnPropertyChanged("AccountUser");
+                }
+                catch { }
+            }
+
+            if(_id_counterparty != 0)
+            {
+                try
+                {
+                    _counterparty = Counterparty.GetCounterpartyByID(_id_counterparty);
+                    result = true;
+
+                    OnPropertyChanged("CounterpartyUser");
+                }
+                catch { }
+            }
+
+            return result;
         }
 
         #endregion
