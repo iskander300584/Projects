@@ -144,6 +144,9 @@ namespace GreenLeaf.Windows
             // отчет приход/расход
             this.btnReportsIncome.IsEnabled = ConnectSetting.CurrentUser.ReportsData.ReportIncomeExpense;
 
+            // отчет остаток на складе
+            this.btnReportsWarehouse.IsEnabled = ConnectSetting.CurrentUser.ReportsData.ReportIncomeExpense;
+
             // контрагенты
             this.btnCounterparty.Visibility = (ConnectSetting.CurrentUser.CounterpartyData.Counterparty) ? Visibility.Visible : Visibility.Collapsed;
 
@@ -281,6 +284,15 @@ namespace GreenLeaf.Windows
             btnSortDirection.Tag = (btnSortDirection.Tag.ToString() == "ascending") ? "descending" : "ascending";
 
             SortData();
+        }
+
+        /// <summary>
+        /// Нажатие ENTER в поисковом поле
+        /// </summary>
+        private void Search_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                LoadData();
         }
 
         #endregion
@@ -598,8 +610,9 @@ namespace GreenLeaf.Windows
             LoadData();
         }
 
+
         #endregion
 
-
+        
     }
 }

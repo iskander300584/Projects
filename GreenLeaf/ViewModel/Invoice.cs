@@ -997,7 +997,7 @@ namespace GreenLeaf.ViewModel
                         string fromDate = String.Format(@"'{0}-{1}-{2}T00:00:00.000'", ((DateTime)from).Year, ((DateTime)from).Month, ((DateTime)from).Day);
                         string toDate = String.Format(@"'{0}-{1}-{2}T23:59:59.000'", ((DateTime)to).Year, ((DateTime)to).Month, ((DateTime)to).Day);
 
-                        sql += " WHERE `" + table + "`.`DATE` >= " + fromDate + " AND `" + table + "`.`DATE` <= " + toDate;
+                        sql += " WHERE `" + table + "`.`CREATE_DATE` >= " + fromDate + " AND `" + table + "`.`CREATE_DATE` <= " + toDate;
 
                         if (idAccount != null && idAccount != 0)
                             sql += " AND `" + table + "`.`ID_ACCOUNT` = " + (int)idAccount;

@@ -56,6 +56,12 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         public static RoutedUICommand DoExcelOutput = new RoutedUICommand("Вывести в Excel", "DoExcelOutput", typeof(InvoiceWindow));
 
+        // Поиск
+        public static RoutedUICommand Search = new RoutedUICommand("Поиск", "Search", typeof(InvoiceWindow));
+
+        // Сбросить фильтры поиска
+        public static RoutedUICommand ResetSearch = new RoutedUICommand("Сбросить фильтры поиска", "ResetSearch", typeof(InvoiceWindow));
+
         #endregion
 
         /// <summary>
@@ -72,6 +78,11 @@ namespace GreenLeaf.Windows.InvoiceView
         /// Список не аннулированного товара
         /// </summary>
         private List<Product> ProductList = new List<Product>();
+
+        /// <summary>
+        /// Доступный товар
+        /// </summary>
+        private List<Product> ActualProduct = new List<Product>();
 
         /// <summary>
         /// Окно создания / редактирования накладной
@@ -93,9 +104,6 @@ namespace GreenLeaf.Windows.InvoiceView
             {
                 // Загрузка накладной
                 CurrentInvoice = ViewModel.Invoice.GetInvoiceByID(isPurchase, id);
-
-                tbTotalCost.Text = String.Format(@"{0:#.##}", CurrentInvoice.Cost).Replace(',','.');
-                tbTotalCoupon.Text = String.Format(@"{0:#.##}", CurrentInvoice.Coupon).Replace(',', '.');
             }
 
             // Загрузка контрагентов
@@ -124,10 +132,19 @@ namespace GreenLeaf.Windows.InvoiceView
 
             tbExecutor.Text = Account.GetAccountByID(CurrentInvoice.ID_Account).PersonalData.VisibleName;
 
-            // Отключение кнопки блокировки для приходной накладной
+            // Активация элементов в зависимости от типа накладной
             if(CurrentInvoice.IsPurchase)
             {
                 btnLockInvoice.Visibility = Visibility.Collapsed;
+                grColumnCostSales.Visibility = Visibility.Collapsed;
+                grColumnCouponSales.Visibility = Visibility.Collapsed;
+                grColumnCountSales.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                grColumnCostPurchase.Visibility = Visibility.Collapsed;
+                grColumnCountPurchase.Visibility = Visibility.Collapsed;
+                grColumnCouponPurchase.Visibility = Visibility.Collapsed;
             }
 
             this.DataContext = CurrentInvoice;
@@ -156,16 +173,43 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         private void GetFreeProductList()
         {
-            cbProduct.Items.Clear();
+            dataGridAllowed.ItemsSource = null;
+
+            ActualProduct.Clear();
 
             // Заполнение списка не использованного товара
             foreach (Product product in ProductList)
             {
                 InvoiceItem item = CurrentInvoice.Items.FirstOrDefault(i => i.ID_Product == product.ID);
 
+                string code = tbSearchProductCode.Text.Trim().ToLower();
+                string nomination = tbSearchNomination.Text.Trim().ToLower();
+
                 if (item == null)
-                    cbProduct.Items.Add(product.ProductCode);
+                {
+                    if (code == "" && nomination == "")
+                    {
+                        ActualProduct.Add(product);
+                    }
+                    else if(code != "" && nomination != "")
+                    {
+                        if(product.ProductCode.ToLower().Contains(code) && product.Nomination.ToLower().Contains(nomination))
+                            ActualProduct.Add(product);
+                    }
+                    else if(code != "")
+                    {
+                        if (product.ProductCode.ToLower().Contains(code))
+                            ActualProduct.Add(product);
+                    }
+                    else
+                    {
+                        if (product.Nomination.ToLower().Contains(nomination))
+                            ActualProduct.Add(product);
+                    }
+                }
             }
+
+            dataGridAllowed.ItemsSource = ActualProduct;
         }
 
         /// <summary>
@@ -173,7 +217,10 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         private void TextBlock_KeyDown(object sender, KeyEventArgs e)
         {
-            e.Handled = NumericTextBoxMethods.DoubleTextBox_PreviewKeyDown(tbCount.Text, e);
+            if (e.Key == Key.Enter)
+                DoAddItem_Execute(null, null);
+            else
+                e.Handled = NumericTextBoxMethods.DoubleTextBox_PreviewKeyDown(tbCount.Text, e);
         }
 
         /// <summary>
@@ -284,7 +331,7 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         private void DoAddItem_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (CurrentInvoice != null && CurrentInvoice.EditEnabled && cbProduct != null && cbProduct.SelectedItem != null && tbCount != null && tbCount.Text.Trim() != "") ? true : false;
+            e.CanExecute = (CurrentInvoice != null && CurrentInvoice.EditEnabled && dataGridAllowed != null && dataGridAllowed.SelectedItem != null && tbCount != null && tbCount.Text.Trim() != "") ? true : false;
         }
 
         /// <summary>
@@ -292,7 +339,13 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         private void DoAddItem_Execute(object sender, ExecutedRoutedEventArgs e)
         {
-            Product product = ProductList.FirstOrDefault(p => p.ProductCode == cbProduct.SelectedItem.ToString());
+            if(dataGridAllowed.SelectedItem == null)
+            {
+                //Dialog.WarningMessage(this, "Не выбран товар");
+                return;
+            }
+
+            Product product = dataGridAllowed.SelectedItem as Product;
             if(product == null)
             {
                 Dialog.WarningMessage(this, "Не удалось получить выбранный товар");
@@ -300,7 +353,7 @@ namespace GreenLeaf.Windows.InvoiceView
             }
 
             double count = 0;
-            if(!double.TryParse(tbCount.Text.Trim(), out count))
+            if(!double.TryParse(tbCount.Text.Trim().Replace('.',','), out count))
             {
                 Dialog.WarningMessage(this, "Ошибка получения количества товара");
                 return;
@@ -335,8 +388,6 @@ namespace GreenLeaf.Windows.InvoiceView
             dataGrid.Items.Refresh();
 
             tbCount.Text = "";
-            tbMaxCount.Text = "0";
-            tbNomination.Text = "";
 
             Dialog.TransparentMessage(this, "Операция выполнена");
 
@@ -597,33 +648,63 @@ namespace GreenLeaf.Windows.InvoiceView
         }
 
         /// <summary>
-        /// Смена выбранного кода товара
+        /// Нажатие ENTER в поиске
         /// </summary>
-        private void cbProduct_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void SearchText_KeyDown(object sender, KeyEventArgs e)
         {
-            if(cbProduct.SelectedItem != null)
+            if (e.Key == Key.Enter)
             {
-                Product product = ProductList.FirstOrDefault(p => p.ProductCode == cbProduct.SelectedItem.ToString());
+                Mouse.OverrideCursor = Cursors.Wait;
 
-                if(product != null)
-                {
-                    if (!CurrentInvoice.IsPurchase)
-                    {
-                        tbMaxCount.Text = Conversion.ToString(product.AllowedCount);
-                    }
+                GetFreeProductList();
 
-                    tbNomination.Text = product.Nomination;
-                }
-                else
-                {
-                    if (!CurrentInvoice.IsPurchase)
-                    {
-                        tbMaxCount.Text = "0";
-                    }
+                e.Handled = true;
 
-                    tbNomination.Text = "";
-                }
+                Mouse.OverrideCursor = null;
             }
+        }
+
+        /// <summary>
+        /// Проверка возможности поска доступной позиции
+        /// </summary>
+        private void Search_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = ((tbSearchNomination != null && tbSearchNomination.Text.Trim() != "") || (tbSearchProductCode != null && tbSearchProductCode.Text.Trim() != "")) ? true : false;
+        }
+
+        /// <summary>
+        /// Поиск доступной позиции
+        /// </summary>
+        private void Search_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            GetFreeProductList();
+
+            Mouse.OverrideCursor = null;
+        }
+
+        /// <summary>
+        /// Проверка возможности сброса фильтров поиска
+        /// </summary>
+        private void ResetSearch_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = ((tbSearchNomination != null && tbSearchNomination.Text.Trim() != "") || (tbSearchProductCode != null && tbSearchProductCode.Text.Trim() != "")) ? true : false;
+        }
+
+        /// <summary>
+        /// Сброс фильтров поиска
+        /// </summary>
+        private void ResetSearch_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            tbSearchNomination.Text = "";
+            tbSearchProductCode.Text = "";
+
+            GetFreeProductList();
+
+            Mouse.OverrideCursor = null;
         }
     }
 }

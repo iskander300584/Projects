@@ -174,7 +174,7 @@
 
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsIssued}" Value="False">
-                            <Setter Property="Background" Value="LightBlue" />
+                            <Setter Property="Background" Value="YellowGreen" />
                         </DataTrigger>
 
                         <DataTrigger Binding="{Binding IsLocked}" Value="True">

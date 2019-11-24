@@ -6,7 +6,7 @@
         xmlns:conv="clr-namespace:GreenLeaf.Converters"
         xmlns:win="clr-namespace:GreenLeaf.Windows.InvoiceView"
         mc:Ignorable="d"
-        Title="Накладная" Style="{DynamicResource ModalWindow}" SizeToContent="Manual" ResizeMode="CanResizeWithGrip" WindowState="Maximized" >
+        Title="Накладная" Style="{StaticResource ModalWindow}" SizeToContent="Manual" ResizeMode="CanResizeWithGrip" WindowState="Maximized" >
 
     <!-- Объявление команд -->
     <Window.CommandBindings>
@@ -31,6 +31,12 @@
 
         <!-- Вывод в Excel -->
         <CommandBinding Command="win:InvoiceWindow.DoExcelOutput" Executed="DoExcelOutput_Execute" CanExecute="DoExcelOutput_CanExecute" />
+
+        <!-- Поиск -->
+        <CommandBinding Command="win:InvoiceWindow.Search" Executed="Search_Execute" CanExecute="Search_CanExecute" />
+
+        <!-- Сброс фильтров поиска -->
+        <CommandBinding Command="win:InvoiceWindow.ResetSearch" Executed="ResetSearch_Execute" CanExecute="ResetSearch_CanExecute" />
 
     </Window.CommandBindings>
 
@@ -58,15 +64,18 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Управляющие кнопки -->
-        <DockPanel Style="{DynamicResource DockPanelOKStyle}">
+        <DockPanel Style="{StaticResource DockPanelOKStyle}">
             <!-- Контрагент -->
             <DockPanel Width="400" DockPanel.Dock="Left" LastChildFill="False" >
-                <TextBlock Text="Контрагент" Style="{DynamicResource TextBlockStyle}" DockPanel.Dock="Top" />
+                <TextBlock Text="Контрагент" Style="{StaticResource TextBlockStyle}" DockPanel.Dock="Top" />
                 <ComboBox x:Name="cbCounterparty" DockPanel.Dock="Top" IsEnabled="{Binding EditEnabled, UpdateSourceTrigger=PropertyChanged}" 
                           SelectionChanged="cbCounterparty_SelectionChanged">
                     <ComboBox.Style>
@@ -96,24 +105,24 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="Исполнитель" Style="{DynamicResource TextBlockStyle}" Margin="5" />
-                    <TextBlock Text="Дата" Grid.Row="1" Style="{DynamicResource TextBlockStyle}" Margin="5" />
+                    <TextBlock Text="Исполнитель" Style="{StaticResource TextBlockStyle}" Margin="5" />
+                    <TextBlock Text="Дата" Grid.Row="1" Style="{StaticResource TextBlockStyle}" Margin="5" />
 
                     <!-- Исполнитель -->
-                    <TextBlock x:Name="tbExecutor" Text="Фамилия И.О." Grid.Column="1" Style="{DynamicResource TextBlockGridStyle}" Margin="5" HorizontalAlignment="Right" Foreground="Black" />
+                    <TextBlock x:Name="tbExecutor" Text="Фамилия И.О." Grid.Column="1" Style="{StaticResource TextBlockGridStyle}" Margin="5" HorizontalAlignment="Right" Foreground="Black" />
 
                     <DockPanel LastChildFill="False" Grid.Row="1" Grid.Column="1">
                         
                         <!-- Дата -->
                         <TextBlock x:Name="tbDate" Text="{Binding Date, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DateToString}}"
-                                   Style="{DynamicResource TextBlockGridStyle}" Margin="5" HorizontalAlignment="Right" Foreground="Black"
+                                   Style="{StaticResource TextBlockGridStyle}" Margin="5" HorizontalAlignment="Right" Foreground="Black"
                                    DockPanel.Dock="Left"/>
 
                         <!-- Номер -->
                         <TextBlock x:Name="tbNumber" Text="{Binding Number, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NumberToString}}"
-                                   Style="{DynamicResource TextBlockGridStyle}" Margin="5" HorizontalAlignment="Right" Foreground="Black"
+                                   Style="{StaticResource TextBlockGridStyle}" Margin="5" HorizontalAlignment="Right" Foreground="Black"
                                    DockPanel.Dock="Right"/>
-                        <TextBlock Text="Номер" DockPanel.Dock="Right" Style="{DynamicResource TextBlockStyle}" Margin="5,5,10,5" />
+                        <TextBlock Text="Номер" DockPanel.Dock="Right" Style="{StaticResource TextBlockStyle}" Margin="5,5,10,5" />
                     </DockPanel>
                                     
                 </Grid>
@@ -129,7 +138,7 @@
                                     <Setter.Value>
                                         <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                                             <Image Source="..\..\Images\cancel.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                                            <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                            <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" >
                                                 <Run>Удалить</Run>
                                             </TextBlock>
                                         </DockPanel>
@@ -142,7 +151,7 @@
                                     <Setter.Value>
                                         <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                                             <Image Source="..\..\Images\cancel_gray.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                                            <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray">
+                                            <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" Foreground="Gray">
                                                 <Run>Удалить</Run>
                                             </TextBlock>
                                         </DockPanel>
@@ -171,7 +180,7 @@
                                         <Setter.Value>
                                             <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                                                 <Image Source="..\..\Images\stamp.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                                <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" >
                                                     <Run>Провести</Run>
                                                 </TextBlock>
                                             </DockPanel>
@@ -191,7 +200,7 @@
                                         <Setter.Value>
                                             <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                                                 <Image Source="..\..\Images\stamp_gray.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray" >
+                                                <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" Foreground="Gray" >
                                                     <Run>Провести</Run>
                                                 </TextBlock>
                                             </DockPanel>
@@ -212,7 +221,7 @@
                                         <Setter.Value>
                                             <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                                                 <Image Source="..\..\Images\unstamp.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                                <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" >
                                                     <Run>Отменить</Run><LineBreak/>
                                                     <Run>проведение</Run>
                                                 </TextBlock>
@@ -233,7 +242,7 @@
                                         <Setter.Value>
                                             <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                                                 <Image Source="..\..\Images\unstamp_gray.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray" >
+                                                <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" Foreground="Gray" >
                                                     <Run>Отменить</Run><LineBreak/>
                                                     <Run>проведение</Run>
                                                 </TextBlock>
@@ -265,7 +274,7 @@
                                         <Setter.Value>
                                             <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                                                 <Image Source="..\..\Images\unlock.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                                <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" >
                                                     <Run>Заблокировать</Run>
                                                 </TextBlock>
                                             </DockPanel>
@@ -285,7 +294,7 @@
                                         <Setter.Value>
                                             <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                                                 <Image Source="..\..\Images\unlock_gray.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray" >
+                                                <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" Foreground="Gray" >
                                                     <Run>Заблокировать</Run>
                                                 </TextBlock>
                                             </DockPanel>
@@ -306,7 +315,7 @@
                                         <Setter.Value>
                                             <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                                                 <Image Source="..\..\Images\lock.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                                <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" >
                                                     <Run>Снять</Run><LineBreak/>
                                                     <Run>блокировку</Run>
                                                 </TextBlock>
@@ -327,7 +336,7 @@
                                         <Setter.Value>
                                             <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                                                 <Image Source="..\..\Images\lock_gray.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                                                <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray" >
+                                                <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" Foreground="Gray" >
                                                     <Run>Снять</Run><LineBreak/>
                                                     <Run>блокировку</Run>
                                                 </TextBlock>
@@ -353,7 +362,7 @@
                                     <Setter.Value>
                                         <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                                             <Image Source="..\..\Images\excel.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                                            <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" >
+                                            <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" >
                                                 <Run>Выгрузить</Run><LineBreak/>
                                                 <Run>в Excel</Run>
                                             </TextBlock>
@@ -367,7 +376,7 @@
                                     <Setter.Value>
                                         <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                                             <Image Source="..\..\Images\excel_gray.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                                            <TextBlock Style="{DynamicResource TextBlockMainButtonStyle}" Foreground="Gray">
+                                            <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" Foreground="Gray">
                                                 <Run>Выгрузить</Run><LineBreak/>
                                                 <Run>в Excel</Run>
                                             </TextBlock>
@@ -384,37 +393,98 @@
         </DockPanel>
 
         <!-- Разделитель -->
-        <Separator Grid.Row="1" Style="{DynamicResource HorizontalSeparatorStyle}" />
+        <Separator Grid.Row="1" Style="{StaticResource HorizontalSeparatorStyle}" />
 
-        <!-- Панель добавления элементов -->
-        <DockPanel Grid.Row="2" Style="{DynamicResource DockPanelOKStyle}">
-            <!-- Выбор товара -->
-            <TextBlock Text="Код товара" Style="{DynamicResource TextBlockStyle}" DockPanel.Dock="Left" />
-            <ComboBox x:Name="cbProduct" Width="200" DockPanel.Dock="Left" Margin="10,5,5,5"
-                      SelectionChanged="cbProduct_SelectionChanged" IsEnabled="{Binding EditEnabled, UpdateSourceTrigger=PropertyChanged}" >
-                <ComboBox.Style>
-                    <Style BasedOn="{StaticResource ComboBoxStyle}">
-                        <Style.Triggers>
-                            <Trigger Property="ComboBox.IsEnabled" Value="True" >
-                                <Setter Property="ComboBox.Background" Value="White" />
-                                <Setter Property="ComboBox.Foreground" Value="Black" />
-                            </Trigger>
+        <!-- Поиск -->
+        <DockPanel Grid.Row="2" LastChildFill="False" >
+            <TextBlock Text="Поиск" DockPanel.Dock="Left" Style="{StaticResource TextBlockStyle}" FontSize="16" VerticalAlignment="Center" />
 
-                            <Trigger Property="ComboBox.IsEnabled" Value="False" >
-                                <Setter Property="ComboBox.Background" Value="White" />
-                                <Setter Property="ComboBox.Foreground" Value="Black" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </ComboBox.Style>
-            </ComboBox>
+            <!-- Код товара -->
+            <TextBlock Text="Код товара" DockPanel.Dock="Left" Style="{StaticResource TextBlockGridStyle}" Margin="30,2,5,2" />
+            <TextBox x:Name="tbSearchProductCode" Style="{StaticResource TextBoxStyle}" DockPanel.Dock="Left" Width="150" 
+                     PreviewKeyDown="SearchText_KeyDown" IsEnabled="{Binding EditEnabled, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <!-- Выбор товара -->
-            <TextBlock Text="Макс:" Style="{DynamicResource TextBlockStyle}" DockPanel.Dock="Left" Margin="10,0,0,0" Visibility="{Binding IsPurchase, Converter={StaticResource BoolToUnVisibility}}" />
-            <TextBlock x:Name="tbMaxCount" Text="0" Style="{DynamicResource TextBlockStyle}" FontFamily="Yu Gothic UI Semilight" Margin="10,0,0,0" DockPanel.Dock="Left" Visibility="{Binding IsPurchase, Converter={StaticResource BoolToUnVisibility}}" />
+            <!-- Наименование товара -->
+            <TextBlock Text="Наименование товара" DockPanel.Dock="Left" Style="{StaticResource TextBlockGridStyle}" Margin="30,2,5,2" />
+            <TextBox x:Name="tbSearchNomination" Style="{StaticResource TextBoxStyle}" DockPanel.Dock="Left" Width="300" 
+                     PreviewKeyDown="SearchText_KeyDown" IsEnabled="{Binding EditEnabled, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <!-- Кнопка поиск по фильтрам -->
+            <Button DockPanel.Dock="Left" Style="{StaticResource SearchButtonStyle}" Command="win:InvoiceWindow.Search" />
+
+            <!-- Кнопка сбросить фильтры -->
+            <Button DockPanel.Dock="Left" Style="{StaticResource ResetSearchButtonStyle}" Command="win:InvoiceWindow.ResetSearch" />
+        </DockPanel>
+
+        <!-- Доступные позиции -->
+        <DataGrid x:Name="dataGridAllowed" Grid.Row="3" Style="{StaticResource DataGridStyle}" SelectionMode="Single" Height="160" 
+                  IsEnabled="{Binding EditEnabled, UpdateSourceTrigger=PropertyChanged}">
+            <DataGrid.Columns>
+                <!-- Код товара -->
+                <DataGridTextColumn Width="150" Binding="{Binding Path=ProductCode}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Код товара" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Наименование товара -->
+                <DataGridTextColumn Width="*" Binding="{Binding Path=Nomination}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Наименование" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Стоимость для расходной накладной -->
+                <DataGridTextColumn x:Name="grColumnCostSales" Width="100" Binding="{Binding Path=Cost}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Стоимость" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Купон для расходной накладной -->
+                <DataGridTextColumn x:Name="grColumnCouponSales" Width="100" Binding="{Binding Path=Coupon}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Купон" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Стоимость для приходной накладной -->
+                <DataGridTextColumn x:Name="grColumnCostPurchase" Width="100" Binding="{Binding Path=CostPurchase}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Стоимость" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Купон для приходной накладной -->
+                <DataGridTextColumn x:Name="grColumnCouponPurchase" Width="100" Binding="{Binding Path=CouponPurchase}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Купон" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <!-- Kоличество -->
+                <DataGridTextColumn x:Name="grColumnCountPurchase" Width="110" Binding="{Binding Path=Count, UpdateSourceTrigger=PropertyChanged}" 
+                                    FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Количество" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                
+                <!-- Доступное количество -->
+                <DataGridTextColumn x:Name="grColumnCountSales" Width="110" Binding="{Binding Path=AllowedCount, UpdateSourceTrigger=PropertyChanged}" 
+                                    FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="Количество" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        <!-- Элементы добавления / редактирования -->
+        <DockPanel Grid.Row="4" Style="{StaticResource DockPanelOKStyle}">
 
             <!-- Количество товара -->
-            <TextBlock Text="Количество" Style="{DynamicResource TextBlockStyle}" DockPanel.Dock="Left" Margin="20,0,0,0" />
+            <TextBlock Text="Количество" Style="{StaticResource TextBlockStyle}" DockPanel.Dock="Left" Margin="0,5,5,5" />
             <TextBox x:Name="tbCount" Margin="10,5,5,5" Width="40" DockPanel.Dock="Left" 
                      PreviewKeyDown="TextBlock_KeyDown" KeyDown="TextBlock_KeyDown" TextChanged="TextBlock_TextChanged" 
                      TextAlignment="Right" IsEnabled="{Binding EditEnabled, UpdateSourceTrigger=PropertyChanged}">
@@ -434,33 +504,6 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
-            
-            <!-- Кнопка Добавить позицию накладной -->
-            <Button Margin="30,5,5,5" DockPanel.Dock="Left" Width="25" Height="25"
-                    ToolTip="Добавить позицию" Command="win:InvoiceWindow.DoAddItem" >
-                <Button.Style>
-                    <Style BasedOn="{StaticResource BaseButtonStyle}">
-                        <Style.Triggers>
-                            <Trigger Property="Button.IsEnabled" Value="True">
-                                <Setter Property="Button.Content">
-                                    <Setter.Value>
-                                        <Image Source="..\..\Images\plus.png" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-
-                            <Trigger Property="Button.IsEnabled" Value="False">
-                                <Setter Property="Button.Content">
-                                    <Setter.Value>
-                                        <Image Source="..\..\Images\plus_gray.png" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                    </Setter.Value>
-                                </Setter>
-                                <Setter Property="Button.Background" Value="GhostWhite" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
 
             <!-- Кнопка Удалить позицию накладной -->
             <Button Margin="5" DockPanel.Dock="Right" Width="25" Height="25"
@@ -516,44 +559,68 @@
                 </Button.Style>
             </Button>
 
+            <!-- Кнопка Добавить позицию накладной -->
+            <Button Margin="5,5,10,5" DockPanel.Dock="Right" Width="25" Height="25"
+                    ToolTip="Добавить позицию" Command="win:InvoiceWindow.DoAddItem" >
+                <Button.Style>
+                    <Style BasedOn="{StaticResource BaseButtonStyle}">
+                        <Style.Triggers>
+                            <Trigger Property="Button.IsEnabled" Value="True">
+                                <Setter Property="Button.Content">
+                                    <Setter.Value>
+                                        <Image Source="..\..\Images\plus.png" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+
+                            <Trigger Property="Button.IsEnabled" Value="False">
+                                <Setter Property="Button.Content">
+                                    <Setter.Value>
+                                        <Image Source="..\..\Images\plus_gray.png" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Button.Background" Value="GhostWhite" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
         </DockPanel>
 
-        <!-- Наименование выбранного товара -->
-        <DockPanel LastChildFill="False" Grid.Row="3">
-            <TextBlock Text="Наименование" Style="{DynamicResource TextBlockStyle}" Margin="0,5,5,5"/>
-
-            <TextBlock x:Name="tbNomination" Style="{DynamicResource TextBlockGridStyle}" Margin="5" DockPanel.Dock="Left" Foreground="Black" />
-        </DockPanel>
-
+        <!-- Разделитель -->
+        <Separator Grid.Row="5" Style="{StaticResource HorizontalSeparatorStyle}" />
+        
         <!-- Элементы накладной -->
-        <DataGrid x:Name="dataGrid" Grid.Row="4" Style="{DynamicResource DataGridStyle}" SelectionMode="Single" ItemsSource="{Binding Items}" >
+        <TextBlock Text="Позиции накладной" Style="{StaticResource TextBlockStyle}" Margin="0,5,5,5" Grid.Row="6"/>
+        <DataGrid x:Name="dataGrid" Grid.Row="7" Style="{StaticResource DataGridStyle}" SelectionMode="Single" ItemsSource="{Binding Items}" >
             <DataGrid.Columns>
 
                 <!-- Код товара -->
                 <DataGridTextColumn Width="150" Binding="{Binding Path=Product.ProductCode}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Код товара" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                        <TextBlock Text="Код товара" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Наименование товара -->
                 <DataGridTextColumn Width="*" Binding="{Binding Path=Product.Nomination}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Наименование" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                        <TextBlock Text="Наименование" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Стоимость -->
                 <DataGridTextColumn Width="100" Binding="{Binding Path=ProductCost}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Стоимость" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                        <TextBlock Text="Стоимость" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Купон -->
                 <DataGridTextColumn Width="100" Binding="{Binding Path=ProductCoupon}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Купон" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                        <TextBlock Text="Купон" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
@@ -568,40 +635,40 @@
                 <DataGridTextColumn Width="110" Binding="{Binding Path=Count, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Delay=500}" 
                                     FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Количество" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                        <TextBlock Text="Количество" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Единица измерения -->
                 <DataGridTextColumn Width="100" Binding="{Binding Path=Product.UnitNomination}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Единица" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                        <TextBlock Text="Единица" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Итого Стоимость -->
                 <DataGridTextColumn Width="100" Binding="{Binding Path=Cost}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Итог стоим." Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                        <TextBlock Text="Итог стоим." Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Итого Купон -->
                 <DataGridTextColumn Width="100" Binding="{Binding Path=Coupon}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
-                        <TextBlock Text="Итог купон." Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
+                        <TextBlock Text="Итог купон." Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
             </DataGrid.Columns>
         </DataGrid>
 
-        <DockPanel Grid.Row="5" Style="{DynamicResource DockPanelOKStyle}" >
-            <TextBlock Text="ИТОГО" Style="{DynamicResource TextBlockStyle}" DockPanel.Dock="Left" Margin="0,5,0,0" />
+        <DockPanel Grid.Row="8" Style="{StaticResource DockPanelOKStyle}" >
+            <TextBlock Text="ИТОГО" Style="{StaticResource TextBlockStyle}" DockPanel.Dock="Left" Margin="0,5,0,0" />
             <TextBlock x:Name="tbTotalCoupon" Text="{Binding Coupon, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleToSumm}}" Style="{DynamicResource TextBlockGridStyle}" FontWeight="Bold" Margin="0,5,0,0" DockPanel.Dock="Right" />
-            <TextBlock Text="Купон" Style="{DynamicResource TextBlockGridStyle}" Margin="0,5,20,0" DockPanel.Dock="Right" />
+            <TextBlock Text="Купон" Style="{StaticResource TextBlockGridStyle}" Margin="0,5,20,0" DockPanel.Dock="Right" />
             <TextBlock x:Name="tbTotalCost" Text="{Binding Cost, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleToSumm}}" Style="{DynamicResource TextBlockGridStyle}" FontWeight="Bold" Margin="0,5,50,0" DockPanel.Dock="Right" />
-            <TextBlock Text="Сумма" Style="{DynamicResource TextBlockGridStyle}" Margin="0,5,20,0" DockPanel.Dock="Right" />
+            <TextBlock Text="Сумма" Style="{StaticResource TextBlockGridStyle}" Margin="0,5,20,0" DockPanel.Dock="Right" />
         </DockPanel>
     </Grid>
 </Window>
