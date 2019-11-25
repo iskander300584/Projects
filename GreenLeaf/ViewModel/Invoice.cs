@@ -222,6 +222,23 @@ namespace GreenLeaf.ViewModel
             }
         }
 
+        private double _serviceCharge = 0;
+        /// <summary>
+        /// Сервисный сбор
+        /// </summary>
+        public double ServiceCharge
+        {
+            get { return _serviceCharge; }
+            set
+            {
+                if(_serviceCharge != value)
+                {
+                    _serviceCharge = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private Account _account = null;
         /// <summary>
         /// Пользователь
@@ -408,6 +425,12 @@ namespace GreenLeaf.ViewModel
             {
                 cost += item.Cost;
                 coupon += item.Coupon;
+            }
+
+            if(!IsPurchase)
+            {
+                ServiceCharge = cost * 0.05;
+                cost += ServiceCharge;
             }
 
             Cost = cost;

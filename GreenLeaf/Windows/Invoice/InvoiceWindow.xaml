@@ -669,6 +669,12 @@
             <TextBlock Text="Купон" Style="{StaticResource TextBlockGridStyle}" Margin="0,5,20,0" DockPanel.Dock="Right" />
             <TextBlock x:Name="tbTotalCost" Text="{Binding Cost, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleToSumm}}" Style="{DynamicResource TextBlockGridStyle}" FontWeight="Bold" Margin="0,5,50,0" DockPanel.Dock="Right" />
             <TextBlock Text="Сумма" Style="{StaticResource TextBlockGridStyle}" Margin="0,5,20,0" DockPanel.Dock="Right" />
+
+            <TextBlock x:Name="tbServiceCharge" Text="{Binding ServiceCharge, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleToSumm}}" Style="{DynamicResource TextBlockGridStyle}"
+                       Visibility="{Binding IsPurchase, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToUnVisibility}}"
+                       FontWeight="Bold" Margin="0,5,50,0" DockPanel.Dock="Right" />
+            <TextBlock Text="Сервисный сбор" Style="{StaticResource TextBlockGridStyle}" Margin="0,5,20,0" DockPanel.Dock="Right"
+                       Visibility="{Binding IsPurchase, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToUnVisibility}}"/>
         </DockPanel>
     </Grid>
 </Window>

@@ -560,17 +560,58 @@ namespace GreenLeaf.Windows.InvoiceView
                         if (CurrentInvoice.IsPurchase)
                         {
                             worksheet.Cells[1, 3] = counterparty.VisibleName;
+                            worksheet.Cells[1, 11] = counterparty.Code;
                             worksheet.Cells[2, 3] = ConnectSetting.ProgramSettings[SettingsNames.CompanyNameForInvoice];
                         }
                         else
                         {
                             worksheet.Cells[1, 3] = ConnectSetting.ProgramSettings[SettingsNames.CompanyNameForInvoice];
                             worksheet.Cells[2, 3] = counterparty.VisibleName;
+                            worksheet.Cells[2, 11] = counterparty.Code;
                         }
                     }
 
-                    // Заполнение элементов накладной
                     int i = CurrentInvoice.Items.Count; // счетчик элементов накладной
+
+                    // Заполнение сервисного сбора
+                    if (!CurrentInvoice.IsPurchase)
+                    {
+                        // Добавление пустой строки
+                        Excel.Range cellRange = (Excel.Range)worksheet.Cells[11, 1];
+                        Excel.Range rowRange = cellRange.EntireRow;
+                        rowRange.Insert(Excel.XlInsertShiftDirection.xlShiftDown, false);
+
+                        // Заполнение ячейки "5%"
+                        worksheet.Cells[11, 9] = "5 %";
+
+                        // Заполнение ячейки "5% количество"
+                        worksheet.Cells[11, 10] = "-";
+
+                        // Заполнение ячейки "5% стоимость"
+                        worksheet.Cells[11, 11] = CurrentInvoice.ServiceCharge.ToString() + " ₽";
+
+                        // Заполнение ячейки "5% купон"
+                        worksheet.Cells[11, 12] = "0 ₽";
+
+                        // Добавление пустой строки
+                        cellRange = (Excel.Range)worksheet.Cells[11, 1];
+                        rowRange = cellRange.EntireRow;
+                        rowRange.Insert(Excel.XlInsertShiftDirection.xlShiftDown, false);
+
+                        // Заполнение ячейки "Сумма"
+                        worksheet.Cells[11, 9] = "Сумма";
+
+                        // Заполнение ячейки "Сумма количество"
+                        worksheet.Cells[11, 10] = "-";
+
+                        // Заполнение ячейки "Сумма стоимость"
+                        worksheet.Cells[11, 11] = (CurrentInvoice.Cost - CurrentInvoice.ServiceCharge).ToString() + " ₽";
+
+                        // Заполнение ячейки "Сумма купон"
+                        worksheet.Cells[11, 12] = CurrentInvoice.Coupon.ToString() + " ₽"; 
+                    }
+
+                    // Заполнение элементов накладной
                     foreach (InvoiceItem item in CurrentInvoice.Items.OrderByDescending(it => it.Product.ProductCode))
                     {
                         // Добавление пустой строки
