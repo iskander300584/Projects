@@ -532,7 +532,7 @@ namespace GreenLeaf.Windows.InvoiceView
                     DateTime dt = DateTime.Today;
                     if (fileName[fileName.Length - 1] != '\\')
                         fileName += @"\";
-                    fileName += String.Format("{0}.{1}.{2}", dt.Year, dt.Month, dt.Day);
+                    fileName += Conversion.ToStringDateReverse(DateTime.Today);
 
                     if (CurrentInvoice.CounterpartyUser != null)
                         fileName += " " + CurrentInvoice.CounterpartyUser.VisibleName + ".xls";

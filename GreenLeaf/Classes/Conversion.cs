@@ -34,7 +34,27 @@ namespace GreenLeaf.Classes
         /// <returns>возвращает дату, преобразованное в строку, допустимую для записи в БД</returns>
         public static string ToString(DateTime value)
         {
-            return String.Format("{0}-{1}-{2}", value.Year, value.Month, value.Day); ;
+            return String.Format("{0}-{1}-{2}", value.Year, value.Month, value.Day); 
+        }
+
+        /// <summary>
+        /// Преобразование в выводимую строку даты DD.MM.YYYY
+        /// </summary>
+        /// <param name="value">значение даты-времени</param>
+        /// <returns>возвращает дату в формате DD.MM.YYYY</returns>
+        public static string ToStringDate(DateTime value)
+        {
+            return String.Format("{0}.{1}.{2}", (value.Day > 9) ? value.Day.ToString() : "0" + value.Day.ToString(), (value.Month > 9) ? value.Month.ToString() : "0" + value.Month.ToString(), value.Year);
+        }
+
+        /// <summary>
+        /// Преобразование в выводимую строку даты YYYY.MM.DD
+        /// </summary>
+        /// <param name="value">значение даты-времени</param>
+        /// <returns>возвращает дату в формате YYYY.MM.DD</returns>
+        public static string ToStringDateReverse(DateTime value)
+        {
+            return String.Format("{0}.{1}.{2}", value.Year, (value.Month > 9)? value.Month.ToString() : "0" + value.Month.ToString(), (value.Day > 9)? value.Day.ToString() : "0" + value.Day.ToString());
         }
 
         /// <summary>
