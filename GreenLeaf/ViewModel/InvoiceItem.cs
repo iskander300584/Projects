@@ -196,7 +196,7 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                     {
                         connection.Open();
 
@@ -245,7 +245,7 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                     {
                         connection.Open();
 
@@ -319,7 +319,7 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                     {
                         connection.Open();
 
@@ -363,7 +363,7 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                     {
                         connection.Open();
 
@@ -433,15 +433,6 @@ namespace GreenLeaf.ViewModel
         {
             Cost = ProductCost * Count;
             Coupon = ProductCoupon * Count;
-
-            //if (Product != null)
-            //{
-            //    _cost = Product.Cost * Count;
-            //    OnPropertyChanged("Cost");
-
-            //    _coupon = Product.Coupon * Count;
-            //    OnPropertyChanged("Coupon");
-            //}
         }
 
         #endregion
@@ -494,7 +485,7 @@ namespace GreenLeaf.ViewModel
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                 {
                     connection.Open();
 
@@ -592,7 +583,7 @@ namespace GreenLeaf.ViewModel
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                 {
                     connection.Open();
 

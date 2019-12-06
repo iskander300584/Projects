@@ -49,13 +49,13 @@ namespace GreenLeaf.Windows.Warehouse
                 }
                 else if (MeasureUnit.Units.Keys.Contains(product.ID_Unit))
                     cbUnit.SelectedItem = MeasureUnit.Units[product.ID_Unit];
-            }
 
-            tbCountInPackage.Text = Conversion.ToString(product.CountInPackage);
-            tbCost.Text = Conversion.ToString(product.Cost);
-            tbCoupon.Text = Conversion.ToString(product.Coupon);
-            tbCostPurchase.Text = Conversion.ToString(product.CostPurchase);
-            tbCouponPurchase.Text = Conversion.ToString(product.CouponPurchase);
+                tbCountInPackage.Text = Conversion.ToString(product.CountInPackage);
+                tbCost.Text = Conversion.ToString(product.Cost);
+                tbCoupon.Text = Conversion.ToString(product.Coupon);
+                tbCostPurchase.Text = Conversion.ToString(product.CostPurchase);
+                tbCouponPurchase.Text = Conversion.ToString(product.CouponPurchase);
+            }
 
             this.DataContext = product;
         }

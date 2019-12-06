@@ -99,12 +99,12 @@ namespace GreenLeaf.ViewModel
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                 {
                     connection.Open();
 
                     string act = GetHeader(verb) + message;
-                    string sql = String.Format(@"INSERT INTO `JOURNAL` (`DATE`, `ID_ACCOUNT`, `ACT`) VALUES ('{0}', '{1}', '{2}')", CurrentDate(), ConnectSetting.CurrentUser.ID, act);
+                    string sql = String.Format(@"INSERT INTO `JOURNAL` (`DATE`, `ID_ACCOUNT`, `ACT`) VALUES ('{0}', '{1}', '{2}')", CurrentDate(), ProgramSettings.CurrentUser.ID, act);
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
@@ -138,7 +138,7 @@ namespace GreenLeaf.ViewModel
             try
             {
                 string act = GetHeader(verb) + message;
-                string sql = String.Format(@"INSERT INTO `JOURNAL` (`DATE`, `ID_ACCOUNT`, `ACT`) VALUES ('{0}', '{1}', '{2}')", CurrentDate(), ConnectSetting.CurrentUser.ID, act);
+                string sql = String.Format(@"INSERT INTO `JOURNAL` (`DATE`, `ID_ACCOUNT`, `ACT`) VALUES ('{0}', '{1}', '{2}')", CurrentDate(), ProgramSettings.CurrentUser.ID, act);
 
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
@@ -161,7 +161,7 @@ namespace GreenLeaf.ViewModel
         /// <param name="verb">глагол выполненного действия</param>
         private static string GetHeader(string verb)
         {
-            return String.Format("{0} {1} {2} {3} ", ConnectSetting.CurrentUser.PersonalData.Surname, ConnectSetting.CurrentUser.PersonalData.Name, ConnectSetting.CurrentUser.PersonalData.Patronymic, (ConnectSetting.CurrentUser.PersonalData.Sex) ? verb : verb + "а");
+            return String.Format("{0} {1} {2} {3} ", ProgramSettings.CurrentUser.PersonalData.Surname, ProgramSettings.CurrentUser.PersonalData.Name, ProgramSettings.CurrentUser.PersonalData.Patronymic, (ProgramSettings.CurrentUser.PersonalData.Sex) ? verb : verb + "а");
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace GreenLeaf.ViewModel
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                 {
                     connection.Open();
 

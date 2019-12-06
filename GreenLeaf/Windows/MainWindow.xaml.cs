@@ -127,41 +127,41 @@ namespace GreenLeaf.Windows
         private void SetControlsVisible()
         {
             // приходная накладная
-            this.btnPurchaseInvoice.Visibility = (ConnectSetting.CurrentUser.InvoiceData.PurchaseInvoice) ? Visibility.Visible : Visibility.Collapsed;
+            this.btnPurchaseInvoice.Visibility = (ProgramSettings.CurrentUser.InvoiceData.PurchaseInvoice) ? Visibility.Visible : Visibility.Collapsed;
 
             // расходная накладная
-            this.btnSalesInvoice.Visibility = (ConnectSetting.CurrentUser.InvoiceData.SalesInvoice) ? Visibility.Visible : Visibility.Collapsed;
+            this.btnSalesInvoice.Visibility = (ProgramSettings.CurrentUser.InvoiceData.SalesInvoice) ? Visibility.Visible : Visibility.Collapsed;
 
             // отчеты
-            this.btnReports.Visibility = (ConnectSetting.CurrentUser.ReportsData.Reports) ? Visibility.Visible : Visibility.Collapsed;
+            this.btnReports.Visibility = (ProgramSettings.CurrentUser.ReportsData.Reports) ? Visibility.Visible : Visibility.Collapsed;
 
             // отчеты по приходным накладным
-            this.btnReportsPurchaseInvoice.IsEnabled = ConnectSetting.CurrentUser.InvoiceData.PurchaseInvoice;
+            this.btnReportsPurchaseInvoice.IsEnabled = ProgramSettings.CurrentUser.InvoiceData.PurchaseInvoice;
 
             // отчет по расходным накладным
-            this.btnReportsSalesInvoice.IsEnabled = ConnectSetting.CurrentUser.InvoiceData.SalesInvoice;
+            this.btnReportsSalesInvoice.IsEnabled = ProgramSettings.CurrentUser.InvoiceData.SalesInvoice;
 
             // отчет приход/расход
-            this.btnReportsIncome.IsEnabled = ConnectSetting.CurrentUser.ReportsData.ReportIncomeExpense;
+            this.btnReportsIncome.IsEnabled = ProgramSettings.CurrentUser.ReportsData.ReportIncomeExpense;
 
             // отчет остаток на складе
-            this.btnReportsWarehouse.IsEnabled = ConnectSetting.CurrentUser.ReportsData.ReportIncomeExpense;
+            this.btnReportsWarehouse.IsEnabled = ProgramSettings.CurrentUser.ReportsData.ReportIncomeExpense;
 
             // контрагенты
-            this.btnCounterparty.Visibility = (ConnectSetting.CurrentUser.CounterpartyData.Counterparty) ? Visibility.Visible : Visibility.Collapsed;
+            this.btnCounterparty.Visibility = (ProgramSettings.CurrentUser.CounterpartyData.Counterparty) ? Visibility.Visible : Visibility.Collapsed;
 
             #region Управление складом
 
             // управление складом
-            this.btnWarehouseManagement.Visibility = (ConnectSetting.CurrentUser.WarehouseData.Warehouse) ? Visibility.Visible : Visibility.Collapsed;
+            this.btnWarehouseManagement.Visibility = (ProgramSettings.CurrentUser.WarehouseData.Warehouse) ? Visibility.Visible : Visibility.Collapsed;
 
             // скрыть аннулированные товары
-            cbHideAnnuled.IsEnabled = ConnectSetting.CurrentUser.WarehouseData.WarehouseAnnulateProduct;
+            cbHideAnnuled.IsEnabled = ProgramSettings.CurrentUser.WarehouseData.WarehouseAnnulateProduct;
 
             #endregion
 
             // панель управления
-            this.btnAdminPanel.Visibility = (ConnectSetting.CurrentUser.AdminPanelData.AdminPanel) ? Visibility.Visible : Visibility.Collapsed;
+            this.btnAdminPanel.Visibility = (ProgramSettings.CurrentUser.AdminPanelData.AdminPanel) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion
@@ -312,7 +312,7 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void WarehouseAddProduct_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (ConnectSetting.CurrentUser.WarehouseData.Warehouse && ConnectSetting.CurrentUser.WarehouseData.WarehouseAddProduct) ? true : false;
+            e.CanExecute = (ProgramSettings.CurrentUser.WarehouseData.Warehouse && ProgramSettings.CurrentUser.WarehouseData.WarehouseAddProduct) ? true : false;
         }
 
         /// <summary>
@@ -342,7 +342,7 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void WarehouseEditProduct_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (ConnectSetting.CurrentUser.WarehouseData.Warehouse && ConnectSetting.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null) ? true : false;
+            e.CanExecute = (ProgramSettings.CurrentUser.WarehouseData.Warehouse && ProgramSettings.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null) ? true : false;
         }
 
         /// <summary>
@@ -385,7 +385,7 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void WarehouseAnnulateProduct_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (ConnectSetting.CurrentUser.WarehouseData.Warehouse && ConnectSetting.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null && !((Product)dataGrid.SelectedItem).IsAnnulated ) ? true : false;
+            e.CanExecute = (ProgramSettings.CurrentUser.WarehouseData.Warehouse && ProgramSettings.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null && !((Product)dataGrid.SelectedItem).IsAnnulated ) ? true : false;
         }
 
         /// <summary>
@@ -424,7 +424,7 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void WarehouseUnAnnulateProduct_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (ConnectSetting.CurrentUser.WarehouseData.Warehouse && ConnectSetting.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null && ((Product)dataGrid.SelectedItem).IsAnnulated) ? true : false;
+            e.CanExecute = (ProgramSettings.CurrentUser.WarehouseData.Warehouse && ProgramSettings.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null && ((Product)dataGrid.SelectedItem).IsAnnulated) ? true : false;
         }
 
         /// <summary>
@@ -481,7 +481,7 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void WarehouseEditCount_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (ConnectSetting.CurrentUser.WarehouseData.Warehouse && ConnectSetting.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null) ? true : false;
+            e.CanExecute = (ProgramSettings.CurrentUser.WarehouseData.Warehouse && ProgramSettings.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null) ? true : false;
         }
 
         /// <summary>

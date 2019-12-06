@@ -60,6 +60,8 @@ namespace GreenLeaf.Windows.InvoiceView
         {
             InitializeComponent();
 
+            this.Title = (showPurchase) ? "Отчет по приходным накладным" : "Отчет по расходным накладным";
+
             ShowPurchase = showPurchase;
 
             dpToPeriod.SelectedDate = DateTime.Today;
@@ -101,7 +103,7 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         private void GetAccounts()
         {
-            if ((ShowPurchase && ConnectSetting.CurrentUser.ReportsData.ReportPurchaseInvoice) || (!ShowPurchase && ConnectSetting.CurrentUser.ReportsData.ReportSalesInvoice))
+            if ((ShowPurchase && ProgramSettings.CurrentUser.ReportsData.ReportPurchaseInvoice) || (!ShowPurchase && ProgramSettings.CurrentUser.ReportsData.ReportSalesInvoice))
             {
                 Account all = new Account();
                 all.PersonalData.Surname = "Все";
@@ -114,7 +116,7 @@ namespace GreenLeaf.Windows.InvoiceView
                 }
             }
             else
-                AccountList.Add(ConnectSetting.CurrentUser);
+                AccountList.Add(ProgramSettings.CurrentUser);
 
             cbUser.ItemsSource = AccountList;
             cbUser.SelectedIndex = 0;

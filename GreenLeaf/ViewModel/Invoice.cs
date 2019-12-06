@@ -294,7 +294,7 @@ namespace GreenLeaf.ViewModel
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                 {
                     connection.Open();
 
@@ -342,7 +342,7 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                     {
                         connection.Open();
 
@@ -506,7 +506,7 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                     {
                         connection.Open();
 
@@ -549,7 +549,7 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                     {
                         connection.Open();
 
@@ -570,16 +570,6 @@ namespace GreenLeaf.ViewModel
                             {
                                 cmd.ExecuteNonQuery();
                             }
-
-                            //foreach (InvoiceItem item in Items)
-                            //{
-                            //    sql = String.Format(@"DELETE FROM `{0}` WHERE `{0}`.`ID` = {1}", table, item.ID);
-
-                            //    using (MySqlCommand cmd = new MySqlCommand(sql, connection))
-                            //    {
-                            //        cmd.ExecuteNonQuery();
-                            //    }
-                            //}
                         }
 
                         connection.Close();
@@ -612,7 +602,7 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                     {
                         connection.Open();
 
@@ -693,7 +683,7 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                     {
                         connection.Open();
 
@@ -780,7 +770,7 @@ namespace GreenLeaf.ViewModel
                 {
                     try
                     {
-                        using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                        using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                         {
                             connection.Open();
 
@@ -907,7 +897,7 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                     {
                         connection.Open();
 
@@ -1007,7 +997,7 @@ namespace GreenLeaf.ViewModel
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                 {
                     connection.Open();
 
@@ -1172,7 +1162,7 @@ namespace GreenLeaf.ViewModel
         {
             Invoice invoice = new Invoice();
             invoice.IsPurchase = isPurchase;
-            invoice.ID_Account = ConnectSetting.CurrentUser.ID;
+            invoice.ID_Account = ProgramSettings.CurrentUser.ID;
 
             if (invoice.CreateInvoice())
                 return invoice;

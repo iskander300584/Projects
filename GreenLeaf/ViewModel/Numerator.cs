@@ -82,7 +82,7 @@ namespace GreenLeaf.ViewModel
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                 {
                     connection.Open();
 
@@ -123,7 +123,7 @@ namespace GreenLeaf.ViewModel
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                 {
                     connection.Open();
 
@@ -165,7 +165,7 @@ namespace GreenLeaf.ViewModel
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                 {
                     connection.Open();
 
@@ -202,7 +202,7 @@ namespace GreenLeaf.ViewModel
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                 {
                     connection.Open();
 

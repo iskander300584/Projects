@@ -486,7 +486,7 @@
             <!-- Количество товара -->
             <TextBlock Text="Количество" Style="{StaticResource TextBlockStyle}" DockPanel.Dock="Left" Margin="0,5,5,5" />
             <TextBox x:Name="tbCount" Margin="10,5,5,5" Width="40" DockPanel.Dock="Left" 
-                     PreviewKeyDown="TextBlock_KeyDown" KeyDown="TextBlock_KeyDown" TextChanged="TextBlock_TextChanged" 
+                     PreviewKeyDown="TextBlock_PreviewKeyDown" KeyDown="TextBlock_KeyDown" TextChanged="TextBlock_TextChanged" 
                      TextAlignment="Right" IsEnabled="{Binding EditEnabled, UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.Style>
                     <Style BasedOn="{StaticResource TextBoxStyle}">

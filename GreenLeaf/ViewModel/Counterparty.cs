@@ -217,7 +217,7 @@ namespace GreenLeaf.ViewModel
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                 {
                     connection.Open();
 
@@ -262,7 +262,7 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                     {
                         connection.Open();
 
@@ -276,7 +276,7 @@ namespace GreenLeaf.ViewModel
                                 {
                                     Code = reader["CODE"].ToString();
                                     Surname = reader["SURNAME"].ToString();
-                                    Name = reader["SURNAME"].ToString();
+                                    Name = reader["NAME"].ToString();
                                     Patronymic = reader["PATRONYMIC"].ToString();
                                     Nomination = reader["NOMINATION"].ToString();
 
@@ -333,7 +333,7 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                     {
                         connection.Open();
 
@@ -347,7 +347,7 @@ namespace GreenLeaf.ViewModel
                                 {
                                     Code = reader["CODE"].ToString();
                                     Surname = reader["SURNAME"].ToString();
-                                    Name = reader["SURNAME"].ToString();
+                                    Name = reader["NAME"].ToString();
                                     Patronymic = reader["PATRONYMIC"].ToString();
                                     Nomination = reader["NOMINATION"].ToString();
 
@@ -398,19 +398,19 @@ namespace GreenLeaf.ViewModel
         {
             if (_nomination.Trim() != "")
                 _visibleName = _nomination;
-            else if (_surname.Trim() != string.Empty)
+            else if (_surname.Trim() != "")
             {
                 _visibleName = _surname;
 
                 if (_name.Trim() != "")
                 {
-                    _visibleName += _name[0] + ".";
+                    _visibleName += " " + _name[0] + ".";
 
                     if (_patronymic.Trim() != "")
-                        _visibleName += " " + _patronymic[0] + ".";
+                        _visibleName += _patronymic[0] + ".";
                 }
             }
-            else if (_name.Trim() != string.Empty)
+            else if (_name.Trim() != "")
             {
                 _visibleName = _name;
 
@@ -437,7 +437,7 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                     {
                         connection.Open();
 
@@ -484,7 +484,7 @@ namespace GreenLeaf.ViewModel
             {
                 try
                 {
-                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                    using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                     {
                         connection.Open();
 
@@ -532,7 +532,7 @@ namespace GreenLeaf.ViewModel
 
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                 {
                     connection.Open();
 

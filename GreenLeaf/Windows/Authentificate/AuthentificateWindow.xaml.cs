@@ -26,9 +26,9 @@ namespace GreenLeaf.Windows.Authentificate
 
             try
             {
-                if (File.Exists(ConnectSetting.WorkFolder + "settings.plg"))
+                if (File.Exists(ProgramSettings.WorkFolder + "settings.plg"))
                 {
-                    using (FileStream fs = new FileStream(ConnectSetting.WorkFolder + "settings.plg", FileMode.Open))
+                    using (FileStream fs = new FileStream(ProgramSettings.WorkFolder + "settings.plg", FileMode.Open))
                     {
                         BinaryFormatter serializer = new BinaryFormatter();
                         AuthentificateSettings auth = (AuthentificateSettings)serializer.Deserialize(fs);
@@ -64,7 +64,7 @@ namespace GreenLeaf.Windows.Authentificate
             {
                 bool accept = false;
 
-                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
                 {
                     connection.Open();
 
@@ -104,7 +104,7 @@ namespace GreenLeaf.Windows.Authentificate
                     AuthentificateSettings auth = new AuthentificateSettings();
                     auth.UserName = Criptex.Cript(tbLogin.Text.Trim());
 
-                    using (FileStream fs = new FileStream(ConnectSetting.WorkFolder + "settings.plg", FileMode.Create))
+                    using (FileStream fs = new FileStream(ProgramSettings.WorkFolder + "settings.plg", FileMode.Create))
                     {
                         BinaryFormatter serializer = new BinaryFormatter();
                         serializer.Serialize(fs, auth);

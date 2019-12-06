@@ -213,6 +213,14 @@ namespace GreenLeaf.Windows.InvoiceView
         }
 
         /// <summary>
+        /// Попытка ввода текста в количество
+        /// </summary>
+        private void TextBlock_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            e.Handled = NumericTextBoxMethods.DoubleTextBox_PreviewKeyDown(tbCount.Text, e);
+        }
+
+        /// <summary>
         /// Ввод текста в количество
         /// </summary>
         private void TextBlock_KeyDown(object sender, KeyEventArgs e)
@@ -264,7 +272,7 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         private void DoIssueInvoice_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (CurrentInvoice != null && !CurrentInvoice.IsLocked && CurrentInvoice.ID_Counterparty != 0 && CurrentInvoice.Items != null && CurrentInvoice.Items.Count > 0 && (!CurrentInvoice.IsIssued || (CurrentInvoice.IsPurchase && ConnectSetting.CurrentUser.ReportsData.ReportUnIssuePurchaseInvoice) || (!CurrentInvoice.IsPurchase && ConnectSetting.CurrentUser.ReportsData.ReportUnIssueSalesInvoice))) ? true : false;
+            e.CanExecute = (CurrentInvoice != null && !CurrentInvoice.IsLocked && CurrentInvoice.ID_Counterparty != 0 && CurrentInvoice.Items != null && CurrentInvoice.Items.Count > 0 && (!CurrentInvoice.IsIssued || (CurrentInvoice.IsPurchase && ProgramSettings.CurrentUser.ReportsData.ReportUnIssuePurchaseInvoice) || (!CurrentInvoice.IsPurchase && ProgramSettings.CurrentUser.ReportsData.ReportUnIssueSalesInvoice))) ? true : false;
         }
 
         /// <summary>
@@ -504,21 +512,54 @@ namespace GreenLeaf.Windows.InvoiceView
                 return;
             }
 
+            Mouse.OverrideCursor = Cursors.Wait;
+
             try
             {
-                SaveFileDialog saveDialog = new SaveFileDialog();
+                bool doLoadInvoice = true; // признак необходимости выгрузки накладной
 
-                saveDialog.Filter = "Файлы Excel|*.xls";
-                saveDialog.FilterIndex = 0;
-                saveDialog.FileName = "";
-                saveDialog.CheckPathExists = true;
-                saveDialog.CheckFileExists = false;
+                string fileName = string.Empty;
 
-                if ((bool)saveDialog.ShowDialog())
+                if (CurrentInvoice.IsPurchase && ProgramSettings.Settings[SettingsNames.PurchaseInvoicesPath] != "")
+                    fileName = ProgramSettings.Settings[SettingsNames.PurchaseInvoicesPath];
+                else if (!CurrentInvoice.IsPurchase && ProgramSettings.Settings[SettingsNames.SalesInvoicesPath] != "")
+                    fileName = ProgramSettings.Settings[SettingsNames.SalesInvoicesPath];
+
+                CurrentInvoice.GetUsers();
+
+                if (fileName != string.Empty && Directory.Exists(fileName))
+                {
+                    DateTime dt = DateTime.Today;
+                    if (fileName[fileName.Length - 1] != '\\')
+                        fileName += @"\";
+                    fileName += String.Format("{0}.{1}.{2}", dt.Year, dt.Month, dt.Day);
+
+                    if (CurrentInvoice.CounterpartyUser != null)
+                        fileName += " " + CurrentInvoice.CounterpartyUser.VisibleName + ".xls";
+                    else
+                        fileName += ".xls";
+                }
+                else
+                {
+                    SaveFileDialog saveDialog = new SaveFileDialog();
+
+                    saveDialog.Filter = "Файлы Excel|*.xls";
+                    saveDialog.FilterIndex = 0;
+                    saveDialog.FileName = "";
+                    saveDialog.CheckPathExists = true;
+                    saveDialog.CheckFileExists = false;
+
+                    Mouse.OverrideCursor = null;
+
+                    doLoadInvoice = (bool)saveDialog.ShowDialog();
+                    if(doLoadInvoice)
+                        fileName = saveDialog.FileName;
+                }
+
+                if (doLoadInvoice)
                 {
                     Mouse.OverrideCursor = Cursors.Wait;
-
-                    string fileName = saveDialog.FileName;
+                    
                     if (!fileName.Contains(".xls"))
                         fileName += ".xls";
 
@@ -554,20 +595,46 @@ namespace GreenLeaf.Windows.InvoiceView
                     if (CurrentInvoice.ID_Counterparty != 0)
                     {
                         // Получение контрагента
-                        Counterparty counterparty = Counterparty.GetCounterpartyByID(CurrentInvoice.ID_Counterparty);
+                        string counterpartyName = "";                        
+                        if (CurrentInvoice.CounterpartyUser != null && CurrentInvoice.CounterpartyUser.Surname != "")
+                        {
+                            counterpartyName = CurrentInvoice.CounterpartyUser.Surname;
+
+                            if (CurrentInvoice.CounterpartyUser.Name != "")
+                            {
+                                counterpartyName += " " + CurrentInvoice.CounterpartyUser.Name[0] + ".";
+
+                                if (CurrentInvoice.CounterpartyUser.Patronymic != "")
+                                    counterpartyName += CurrentInvoice.CounterpartyUser.Patronymic[0] + ".";
+                            }
+                        }
 
                         // Заполнение ячеек "Отправитель" и "Получатель"
                         if (CurrentInvoice.IsPurchase)
                         {
-                            worksheet.Cells[1, 3] = counterparty.VisibleName;
-                            worksheet.Cells[1, 11] = counterparty.Code;
-                            worksheet.Cells[2, 3] = ConnectSetting.ProgramSettings[SettingsNames.CompanyNameForInvoice];
+                            if (CurrentInvoice.CounterpartyUser != null)
+                            {
+                                worksheet.Cells[1, 3] = CurrentInvoice.CounterpartyUser.VisibleName;
+                                worksheet.Cells[1, 11] = CurrentInvoice.CounterpartyUser.Code;
+                                worksheet.Cells[14, 4] = counterpartyName;
+                            }
+
+                            worksheet.Cells[2, 3] = ProgramSettings.Settings[SettingsNames.CompanyNameForInvoice] + "   " + ProgramSettings.Settings[SettingsNames.ServiceCodeForInvoice];
+                            worksheet.Cells[2, 11] = ProgramSettings.Settings[SettingsNames.RUCodeForInvoice];
+                            worksheet.Cells[16, 4] = CurrentInvoice.AccountUser.PersonalData.VisibleName;
                         }
                         else
                         {
-                            worksheet.Cells[1, 3] = ConnectSetting.ProgramSettings[SettingsNames.CompanyNameForInvoice];
-                            worksheet.Cells[2, 3] = counterparty.VisibleName;
-                            worksheet.Cells[2, 11] = counterparty.Code;
+                            worksheet.Cells[1, 3] = ProgramSettings.Settings[SettingsNames.CompanyNameForInvoice] + "   " + ProgramSettings.Settings[SettingsNames.ServiceCodeForInvoice];
+                            worksheet.Cells[1, 11] = ProgramSettings.Settings[SettingsNames.RUCodeForInvoice];
+                            worksheet.Cells[14, 4] = CurrentInvoice.AccountUser.PersonalData.VisibleName;
+
+                            if (CurrentInvoice.CounterpartyUser != null)
+                            {
+                                worksheet.Cells[2, 3] = CurrentInvoice.CounterpartyUser.VisibleName;
+                                worksheet.Cells[2, 11] = CurrentInvoice.CounterpartyUser.Code;
+                                worksheet.Cells[16, 4] = counterpartyName;
+                            }
                         }
                     }
 
@@ -746,6 +813,6 @@ namespace GreenLeaf.Windows.InvoiceView
             GetFreeProductList();
 
             Mouse.OverrideCursor = null;
-        }
+        } 
     }
 }

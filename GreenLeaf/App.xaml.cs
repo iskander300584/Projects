@@ -32,13 +32,13 @@ namespace GreenLeaf
             DateTime dtStartSplash = DateTime.Now;
 
             // Проверка наличия рабочей директории
-            if(!Directory.Exists(ConnectSetting.WorkFolder))
+            if(!Directory.Exists(ProgramSettings.WorkFolder))
             {
-                Directory.CreateDirectory(ConnectSetting.WorkFolder);
+                Directory.CreateDirectory(ProgramSettings.WorkFolder);
             }
 
             // Вызов окна настроек подключения
-            if(!File.Exists(ConnectSetting.WorkFolder + "conncfg.plg"))
+            if(!File.Exists(ProgramSettings.WorkFolder + "conncfg.plg"))
             {
                 ConnectWindow connWindow = new ConnectWindow();
                 if(!(bool)connWindow.ShowDialog())
@@ -54,17 +54,17 @@ namespace GreenLeaf
             {
                 try
                 {
-                    using (FileStream fs = new FileStream(ConnectSetting.WorkFolder + "conncfg.plg", FileMode.Open))
+                    using (FileStream fs = new FileStream(ProgramSettings.WorkFolder + "conncfg.plg", FileMode.Open))
                     {
                         BinaryFormatter serializer = new BinaryFormatter();
                         SaveConnectionData saveData = (SaveConnectionData)serializer.Deserialize(fs);
-                        ConnectSetting.Server = Criptex.UnCript(saveData.Server);
-                        ConnectSetting.DB = Criptex.UnCript(saveData.DB);
-                        ConnectSetting.AdminLogin = Criptex.UnCript(saveData.AdminLogin);
-                        ConnectSetting.AdminPassword = saveData.AdminPassword;
+                        ProgramSettings.Server = Criptex.UnCript(saveData.Server);
+                        ProgramSettings.DB = Criptex.UnCript(saveData.DB);
+                        ProgramSettings.AdminLogin = Criptex.UnCript(saveData.AdminLogin);
+                        ProgramSettings.AdminPassword = saveData.AdminPassword;
                     }
 
-                    MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString));
+                    MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString));
                     connection.Open();
                     connection.Close();
                     connection.Dispose();
@@ -93,11 +93,11 @@ namespace GreenLeaf
                 return;
             }
 
-            ConnectSetting.CurrentUser.Login = authWindow.UserName;
+            ProgramSettings.CurrentUser.Login = authWindow.UserName;
             authWindow.Close();
 
-            ConnectSetting.CurrentUser.GetBaseDataByLogin();
-            ConnectSetting.CurrentUser.GetPublicDataByID();
+            ProgramSettings.CurrentUser.GetBaseDataByLogin();
+            ProgramSettings.CurrentUser.GetPublicDataByID();
 
             GetSettings();
 
@@ -112,7 +112,7 @@ namespace GreenLeaf
         /// </summary>
         private static void GetSettings()
         {
-            using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString)))
+            using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
             {
                 string sql = @"SELECT * FROM `SETTINGS`";
 
@@ -147,7 +147,7 @@ namespace GreenLeaf
 
                             if(nomination != "")
                             {
-                                ConnectSetting.ProgramSettings.Add(nomination, value);
+                                ProgramSettings.Settings.Add(nomination, value);
                             }
                         }
                     }

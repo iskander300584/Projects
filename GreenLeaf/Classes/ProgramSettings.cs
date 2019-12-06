@@ -6,7 +6,7 @@ namespace GreenLeaf.Classes
     /// <summary>
     /// Настройки подключения
     /// </summary>
-    public static class ConnectSetting
+    public static class ProgramSettings
     {
         /// <summary>
         /// Путь к рабочей папке
@@ -98,7 +98,7 @@ namespace GreenLeaf.Classes
         /// <summary>
         /// Коллекция настроек
         /// </summary>
-        public static IDictionary<string, string> ProgramSettings = new Dictionary<string, string>();
+        public static IDictionary<string, string> Settings = new Dictionary<string, string>();
 
         /// <summary>
         /// Построение строки подключения

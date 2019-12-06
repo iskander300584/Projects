@@ -143,7 +143,7 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Classes\AuthentificateSettings.cs" />
-    <Compile Include="Classes\ConnectSetting.cs" />
+    <Compile Include="Classes\ProgramSettings.cs" />
     <Compile Include="Classes\Criptex.cs" />
     <Compile Include="Classes\Dialog.cs" />
     <Compile Include="Classes\SaveConnectionData.cs" />

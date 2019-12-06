@@ -31,14 +31,14 @@ namespace GreenLeaf.Windows.Authentificate
         private void btnConnect_Click(object sender, RoutedEventArgs e)
         {
             // Получение настроек подключения
-            ConnectSetting.Server = tbServer.Text;
-            ConnectSetting.DB = tbDB.Text;
-            ConnectSetting.AdminLogin = tbLogin.Text;
+            ProgramSettings.Server = tbServer.Text;
+            ProgramSettings.DB = tbDB.Text;
+            ProgramSettings.AdminLogin = tbLogin.Text;
 
-            ConnectSetting.AdminPassword = Criptex.Cript(pbPassword.Password);
+            ProgramSettings.AdminPassword = Criptex.Cript(pbPassword.Password);
 
             // Проверка подключения
-            MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ConnectSetting.ConnectionString));
+            MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString));
 
             bool connected = true;
 
@@ -64,12 +64,12 @@ namespace GreenLeaf.Windows.Authentificate
             try
             {
                 SaveConnectionData saveData = new SaveConnectionData();
-                saveData.Server = Criptex.Cript(ConnectSetting.Server);
-                saveData.DB = Criptex.Cript(ConnectSetting.DB);
-                saveData.AdminLogin = Criptex.Cript(ConnectSetting.AdminLogin);
-                saveData.AdminPassword = ConnectSetting.AdminPassword;
+                saveData.Server = Criptex.Cript(ProgramSettings.Server);
+                saveData.DB = Criptex.Cript(ProgramSettings.DB);
+                saveData.AdminLogin = Criptex.Cript(ProgramSettings.AdminLogin);
+                saveData.AdminPassword = ProgramSettings.AdminPassword;
 
-                using (FileStream fs = new FileStream(ConnectSetting.WorkFolder + "conncfg.plg", FileMode.Create))
+                using (FileStream fs = new FileStream(ProgramSettings.WorkFolder + "conncfg.plg", FileMode.Create))
                 {
                     BinaryFormatter serializer = new BinaryFormatter();
                     serializer.Serialize(fs, saveData);
