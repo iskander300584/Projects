@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+  <!-- Константы -->
+  <?define Version = "1.0.0" ?>
+  <?define Product = "GreenLeaf"?>
+  <?define Manufacturer = "Ряполов А.Н."?>
+  <?define Title = "GreenLeaf складской учет"?>
+  <?define UpgradeCode = "7d7e6a51-57b0-4ec4-bfe7-197dd76ee68f"?>
+
+  <!-- Пути для установки -->
+  <?define InstallPath = "GreenLeaf"?>
+  <?define InstallImagesPath = "Images"?>
+
+  <!-- Пути для получения файлов -->
+  <?define MainData = "..\GreenLeaf\Bin\Debug"?>
+  <?define ImagesData = "..\GreenLeaf\Images"?>
+
+  <Product Id="*" Name="$(var.Title) $(var.Version) beta" Language="1049" Codepage="1251" Version="$(var.Version)"
+           Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
+    
+    <Package InstallerVersion="200" Compressed="yes" Languages="1049" InstallScope="perMachine" />
+    
+    <Property Id="ARPCOMMENTS">Программа для складского учета СЦ GreenLeaf</Property>
+    <Property Id="ARPHELPTELEPHONE">+7 (927) 023-69-50</Property>
+    <Property Id="ARPCONTACT">Ряполов А.Н.</Property>
+    
+    <MajorUpgrade DowngradeErrorMessage="На компьютере установлена более новая версия программы. Установка отменена." />
+
+    <Media Id="1" Cabinet="GreenLeaf.cab" EmbedCab="yes" />
+    
+    <!-- Проверка установки .NET Framework -->
+    <PropertyRef Id="NETFRAMEWORK45"/>
+    <Condition Message="Для работы приложения требуется .NET Framework версии 4.5.2 или выше. Пожалуйста, установите .NET Framework и затем повторно запустите установку">
+      <![CDATA[Installed OR (NETFRAMEWORK45 >= "#379893")]]>
+    </Condition>
+    
+    <!-- Пиктограмма установочного пакета -->
+    <Icon Id="greenleaf.ico" SourceFile="greenleaf.ico"/>
+    
+    <!-- Пути для установки -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="$(var.InstallPath)">             <!-- Установка exe, dll -->
+         <Directory Id="ImagesFolder" Name="$(var.InstallImagesPath)" />     <!-- пиктограммы -->       
+       </Directory>
+      </Directory>
+
+      <Directory Id="CommonAppDataFolder">
+        <Directory Id="SettingsDataFolder" Name="$(var.InstallPath)" />      <!-- настройки программы -->
+      </Directory>
+    
+      <Directory Id="DesktopFolder" Name="Desktop" />                        <!-- рабочий стол -->
+    </Directory>
+    
+    <!-- Ярлык на рабочий стол -->
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="ApplicationShortcut" Guid="ccdaaa9a-93a8-4808-acef-c7c6752d7acd">
+        <Shortcut Id="ApplicationStartMenuShortcut" Name="$(var.Product)" Description="$(var.Title)" Target="[$(var.Product)].exe" WorkingDirectory="$(var.Product)"/>
+        <RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.Product)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+    
+    <!-- Файлы в основной директории -->
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="ProductComponent" Guid="bc481b6d-4fe1-45e0-b8f5-5faf2b023092">
+        
+        <!-- EXE -->
+        <File Id="GreenLeaf" KeyPath="no" Name="GreenLeaf.exe" Checksum="yes" Vital="yes" Source="$(var.MainData)\GreenLeaf.exe" />
+        
+        <!-- DLL -->
+        <File Id="BouncyCastle.Crypto" KeyPath="no" Name="BouncyCastle.Crypto.dll" Checksum="yes" Vital="yes" Source="$(var.MainData)\BouncyCastle.Crypto.dll" />
+        <File Id="Google.Protobuf" KeyPath="no" Name="Google.Protobuf.dll" Checksum="yes" Vital="yes" Source="$(var.MainData)\Google.Protobuf.dll" />
+        <File Id="MySql.Data" KeyPath="no" Name="MySql.Data.dll" Checksum="yes" Vital="yes" Source="$(var.MainData)\MySql.Data.dll" />
+        <File Id="Renci.SshNet" KeyPath="no" Name="Renci.SshNet.dll" Checksum="yes" Vital="yes" Source="$(var.MainData)\Renci.SshNet.dll" />
+        
+        <!-- XLS -->
+        <File Id="InvoiceTemplate" KeyPath="no" Name="шаблон накладной.xls" Checksum="yes" Vital="yes" Source="$(var.MainData)\шаблон накладной.xls" />
+        
+      </Component>
+    </ComponentGroup>  
+    
+    <!-- Файлы изображений -->
+    <ComponentGroup Id="ImagesComponents" Directory="ImagesFolder">
+      <Component Id="ImagesComponent" Guid="78212dec-134e-4b21-894c-0095c5280c64">
+
+        <File Id="cancel" KeyPath="no" Name="cancel.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\cancel.png" />
+        <File Id="cancel_gray" KeyPath="no" Name="cancel_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\cancel_gray.png" />
+        <File Id="count" KeyPath="no" Name="count.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\count.png" />
+        <File Id="count_gray" KeyPath="no" Name="count_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\count_gray.png" />
+        <File Id="counterparty" KeyPath="no" Name="counterparty.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\counterparty.png" />
+        <File Id="counterparty_gray" KeyPath="no" Name="counterparty_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\counterparty_gray.png" />
+        <File Id="edit" KeyPath="no" Name="edit.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\edit.png" />
+        <File Id="edit_gray" KeyPath="no" Name="edit_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\edit_gray.png" />
+        <File Id="error" KeyPath="no" Name="error.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\error.png" />
+        <File Id="excel" KeyPath="no" Name="excel.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\excel.png" />
+        <File Id="excel_gray" KeyPath="no" Name="excel_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\excel_gray.png" />
+        <File Id="greenleaf" KeyPath="no" Name="greenleaf.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\greenleaf.png" />
+        <File Id="info" KeyPath="no" Name="info.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\info.png" />
+        <File Id="invoice" KeyPath="no" Name="invoice.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\invoice.png" />
+        <File Id="invoice_gray" KeyPath="no" Name="invoice_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\invoice_gray.png" />
+        <File Id="lock" KeyPath="no" Name="lock.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\lock.png" />
+        <File Id="lock_gray" KeyPath="no" Name="lock_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\lock_gray.png" />
+        <File Id="minus" KeyPath="no" Name="minus.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\minus.png" />
+        <File Id="minus_gray" KeyPath="no" Name="minus_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\minus_gray.png" />
+        <File Id="ok" KeyPath="no" Name="ok.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\ok.png" />
+        <File Id="plus" KeyPath="no" Name="plus.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\plus.png" />
+        <File Id="plus_gray" KeyPath="no" Name="plus_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\plus_gray.png" />
+        <File Id="product" KeyPath="no" Name="product.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\product.png" />
+        <File Id="product_gray" KeyPath="no" Name="product_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\product_gray.png" />
+        <File Id="question" KeyPath="no" Name="question.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\question.png" />
+        <File Id="refresh" KeyPath="no" Name="refresh.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\refresh.png" />
+        <File Id="report" KeyPath="no" Name="report.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\report.png" />
+        <File Id="report_gray" KeyPath="no" Name="report_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\report_gray.png" />
+        <File Id="return" KeyPath="no" Name="return.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\return.png" />
+        <File Id="return_gray" KeyPath="no" Name="return_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\return_gray.png" />
+        <File Id="save" KeyPath="no" Name="save.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\save.png" />
+        <File Id="search_gray" KeyPath="no" Name="search_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\search_gray.png" />
+        <File Id="settings" KeyPath="no" Name="settings.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\settings.png" />
+        <File Id="settings_gray" KeyPath="no" Name="settings_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\settings_gray.png" />
+        <File Id="stamp" KeyPath="no" Name="stamp.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\stamp.png" />
+        <File Id="stamp_gray" KeyPath="no" Name="stamp_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\stamp_gray.png" />
+        <File Id="triangle_down" KeyPath="no" Name="triangle_down.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\triangle_down.png" />
+        <File Id="triangle_up" KeyPath="no" Name="triangle_up.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\triangle_up.png" />
+        <File Id="unlock" KeyPath="no" Name="unlock.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\unlock.png" />
+        <File Id="unlock_gray" KeyPath="no" Name="unlock_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\unlock_gray.png" />
+        <File Id="unstamp" KeyPath="no" Name="unstamp.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\unstamp.png" />
+        <File Id="unstamp_gray" KeyPath="no" Name="unstamp_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\unstamp_gray.png" />
+        <File Id="warehouse" KeyPath="no" Name="warehouse.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\warehouse.png" />
+        <File Id="warehouse_gray" KeyPath="no" Name="warehouse_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\warehouse_gray.png" />
+        <File Id="warning" KeyPath="no" Name="warning.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\warning.png" />
+        
+      </Component>
+    </ComponentGroup>
+    
+    <!-- Папка настроек программы -->
+    <ComponentGroup Id="SettingFolderCreator" Directory="SettingsDataFolder" >
+      <Component Id="SettingsFolderComponent" Guid="dab59883-239c-430d-a342-adbe061e3eaa">
+
+        <!-- Пустой файл для создания папки настроек -->
+        <File Id="blanc" KeyPath="no" Name="blanc.txt" Checksum="yes" Vital="yes" Source="$(var.MainData)\blanc.txt" />
+
+      </Component>
+    </ComponentGroup>
+    
+    <!-- Регистрация компонент -->
+		<Feature Id="ProductFeature" Title="$(var.Title)" Level="1">
+			<ComponentRef Id="ProductComponent" />
+      <ComponentRef Id="ImagesComponent"/>
+      <ComponentRef Id="SettingsFolderComponent"/>
+      <ComponentRef Id="ApplicationShortcut"/>
+		</Feature>
+
+  </Product>
+</Wix>
