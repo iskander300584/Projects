@@ -6,6 +6,7 @@
         xmlns:conv="clr-namespace:GreenLeaf.Converters"
         xmlns:win="clr-namespace:GreenLeaf.Windows.InvoiceView"
         mc:Ignorable="d"
+        Icon="..\..\Images\greenleaf.png"
         Title="Накладная" Style="{StaticResource ModalWindow}" SizeToContent="Manual" ResizeMode="CanResizeWithGrip" WindowState="Maximized" >
 
     <!-- Объявление команд -->
@@ -663,6 +664,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
+        <!-- ИТОГО -->
         <DockPanel Grid.Row="8" Style="{StaticResource DockPanelOKStyle}" >
             <TextBlock Text="ИТОГО" Style="{StaticResource TextBlockStyle}" DockPanel.Dock="Left" Margin="0,5,0,0" />
             <TextBlock x:Name="tbTotalCoupon" Text="{Binding Coupon, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource DoubleToSumm}}" Style="{DynamicResource TextBlockGridStyle}" FontWeight="Bold" Margin="0,5,0,0" DockPanel.Dock="Right" />
