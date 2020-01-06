@@ -4,10 +4,10 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>3.10</ProductVersion>
-    <ProjectGuid>a8a12b5a-3482-4c3e-ab2c-338f1eaeace5</ProjectGuid>
+    <ProjectGuid>3d129263-cef5-42c1-9bbc-eb4dcd1945ee</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>GreenLeaf управление складом 1.0.1</OutputName>
-    <OutputType>Library</OutputType>
+    <OutputName>GreenLeaf управление складом %281.0.1%29</OutputName>
+    <OutputType>Package</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
@@ -19,10 +19,10 @@
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Library.wxs" />
+    <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="greenleaf.ico" />
+    <EmbeddedResource Include="WixUI_ru-ru.wxl" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />

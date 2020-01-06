@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using GreenLeaf.ViewModel;
 
-namespace GreenLeaf.Windows.Counterparty
+namespace GreenLeaf.Windows.CounterpartyView
 {
     /// <summary>
     /// Список контрагентов
@@ -55,6 +55,12 @@ namespace GreenLeaf.Windows.Counterparty
             // TODO
 
             dataGrid.ItemsSource = CounterpartyList;
+        }
+
+        //TODO
+        private void SearchText_KeyDown(object sender, KeyEventArgs e)
+        {
+
         }
     }
 }

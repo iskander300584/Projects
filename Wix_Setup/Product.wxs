@@ -18,41 +18,45 @@
 
   <Product Id="*" Name="$(var.Title) $(var.Version) beta" Language="1049" Codepage="1251" Version="$(var.Version)"
            Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
-    
+
     <Package InstallerVersion="200" Compressed="yes" Languages="1049" InstallScope="perMachine" />
-    
+
     <Property Id="ARPCOMMENTS">Программа для складского учета СЦ GreenLeaf</Property>
     <Property Id="ARPHELPTELEPHONE">+7 (927) 023-69-50</Property>
     <Property Id="ARPCONTACT">Ряполов А.Н.</Property>
-    
+
     <MajorUpgrade DowngradeErrorMessage="На компьютере установлена более новая версия программы. Установка отменена." />
 
     <Media Id="1" Cabinet="GreenLeaf.cab" EmbedCab="yes" />
-    
+
     <!-- Проверка установки .NET Framework -->
     <PropertyRef Id="NETFRAMEWORK45"/>
     <Condition Message="Для работы приложения требуется .NET Framework версии 4.5.2 или выше. Пожалуйста, установите .NET Framework и затем повторно запустите установку">
       <![CDATA[Installed OR (NETFRAMEWORK45 >= "#379893")]]>
     </Condition>
-    
+
     <!-- Пиктограмма установочного пакета -->
     <Icon Id="greenleaf.ico" SourceFile="greenleaf.ico"/>
-    
+
     <!-- Пути для установки -->
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder">
-        <Directory Id="INSTALLFOLDER" Name="$(var.InstallPath)">             <!-- Установка exe, dll -->
-         <Directory Id="ImagesFolder" Name="$(var.InstallImagesPath)" />     <!-- пиктограммы -->       
-       </Directory>
+        <Directory Id="INSTALLFOLDER" Name="$(var.InstallPath)">
+          <!-- Установка exe, dll -->
+          <Directory Id="ImagesFolder" Name="$(var.InstallImagesPath)" />
+          <!-- пиктограммы -->
+        </Directory>
       </Directory>
 
       <Directory Id="CommonAppDataFolder">
-        <Directory Id="SettingsDataFolder" Name="$(var.InstallPath)" />      <!-- настройки программы -->
+        <Directory Id="SettingsDataFolder" Name="$(var.InstallPath)" />
+        <!-- настройки программы -->
       </Directory>
-    
-      <Directory Id="DesktopFolder" Name="Desktop" />                        <!-- рабочий стол -->
+
+      <Directory Id="DesktopFolder" Name="Desktop" />
+      <!-- рабочий стол -->
     </Directory>
-    
+
     <!-- Ярлык на рабочий стол -->
     <DirectoryRef Id="DesktopFolder">
       <Component Id="ApplicationShortcut" Guid="ccdaaa9a-93a8-4808-acef-c7c6752d7acd">
@@ -60,26 +64,26 @@
         <RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.Product)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
       </Component>
     </DirectoryRef>
-    
+
     <!-- Файлы в основной директории -->
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
       <Component Id="ProductComponent" Guid="bc481b6d-4fe1-45e0-b8f5-5faf2b023092">
-        
+
         <!-- EXE -->
         <File Id="GreenLeaf" KeyPath="no" Name="GreenLeaf.exe" Checksum="yes" Vital="yes" Source="$(var.MainData)\GreenLeaf.exe" />
-        
+
         <!-- DLL -->
         <File Id="BouncyCastle.Crypto" KeyPath="no" Name="BouncyCastle.Crypto.dll" Checksum="yes" Vital="yes" Source="$(var.MainData)\BouncyCastle.Crypto.dll" />
         <File Id="Google.Protobuf" KeyPath="no" Name="Google.Protobuf.dll" Checksum="yes" Vital="yes" Source="$(var.MainData)\Google.Protobuf.dll" />
         <File Id="MySql.Data" KeyPath="no" Name="MySql.Data.dll" Checksum="yes" Vital="yes" Source="$(var.MainData)\MySql.Data.dll" />
         <File Id="Renci.SshNet" KeyPath="no" Name="Renci.SshNet.dll" Checksum="yes" Vital="yes" Source="$(var.MainData)\Renci.SshNet.dll" />
-        
+
         <!-- XLS -->
         <File Id="InvoiceTemplate" KeyPath="no" Name="шаблон накладной.xls" Checksum="yes" Vital="yes" Source="$(var.MainData)\шаблон накладной.xls" />
-        
+
       </Component>
-    </ComponentGroup>  
-    
+    </ComponentGroup>
+
     <!-- Файлы изображений -->
     <ComponentGroup Id="ImagesComponents" Directory="ImagesFolder">
       <Component Id="ImagesComponent" Guid="78212dec-134e-4b21-894c-0095c5280c64">
@@ -129,10 +133,10 @@
         <File Id="warehouse" KeyPath="no" Name="warehouse.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\warehouse.png" />
         <File Id="warehouse_gray" KeyPath="no" Name="warehouse_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\warehouse_gray.png" />
         <File Id="warning" KeyPath="no" Name="warning.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\warning.png" />
-        
+
       </Component>
     </ComponentGroup>
-    
+
     <!-- Папка настроек программы -->
     <ComponentGroup Id="SettingFolderCreator" Directory="SettingsDataFolder" >
       <Component Id="SettingsFolderComponent" Guid="dab59883-239c-430d-a342-adbe061e3eaa">
@@ -142,14 +146,14 @@
 
       </Component>
     </ComponentGroup>
-    
+
     <!-- Регистрация компонент -->
-		<Feature Id="ProductFeature" Title="$(var.Title)" Level="1">
-			<ComponentRef Id="ProductComponent" />
+    <Feature Id="ProductFeature" Title="$(var.Title)" Level="1">
+      <ComponentRef Id="ProductComponent" />
       <ComponentRef Id="ImagesComponent"/>
       <ComponentRef Id="SettingsFolderComponent"/>
       <ComponentRef Id="ApplicationShortcut"/>
-		</Feature>
+    </Feature>
 
   </Product>
 </Wix>
