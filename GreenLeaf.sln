@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreenLeaf", "GreenLeaf\Gree
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PasswordCriptor", "PasswordCriptor\PasswordCriptor.csproj", "{88207618-8062-4F2E-AE3D-C22CD427A760}"
 EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "WixSetup", "WixSetup\WixSetup.wixproj", "{A8A12B5A-3482-4C3E-AB2C-338F1EAEACE5}"
-EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Wix_Setup", "Wix_Setup\Wix_Setup.wixproj", "{3D129263-CEF5-42C1-9BBC-EB4DCD1945EE}"
 EndProject
 Global
@@ -35,12 +33,6 @@ Global
 		{88207618-8062-4F2E-AE3D-C22CD427A760}.Release|Any CPU.Build.0 = Release|Any CPU
 		{88207618-8062-4F2E-AE3D-C22CD427A760}.Release|x86.ActiveCfg = Release|Any CPU
 		{88207618-8062-4F2E-AE3D-C22CD427A760}.Release|x86.Build.0 = Release|Any CPU
-		{A8A12B5A-3482-4C3E-AB2C-338F1EAEACE5}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{A8A12B5A-3482-4C3E-AB2C-338F1EAEACE5}.Debug|x86.ActiveCfg = Debug|x86
-		{A8A12B5A-3482-4C3E-AB2C-338F1EAEACE5}.Debug|x86.Build.0 = Debug|x86
-		{A8A12B5A-3482-4C3E-AB2C-338F1EAEACE5}.Release|Any CPU.ActiveCfg = Release|x86
-		{A8A12B5A-3482-4C3E-AB2C-338F1EAEACE5}.Release|x86.ActiveCfg = Release|x86
-		{A8A12B5A-3482-4C3E-AB2C-338F1EAEACE5}.Release|x86.Build.0 = Release|x86
 		{3D129263-CEF5-42C1-9BBC-EB4DCD1945EE}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{3D129263-CEF5-42C1-9BBC-EB4DCD1945EE}.Debug|x86.ActiveCfg = Debug|x86
 		{3D129263-CEF5-42C1-9BBC-EB4DCD1945EE}.Debug|x86.Build.0 = Debug|x86

@@ -8,6 +8,22 @@
         Icon="..\..\Images\greenleaf.png"
         Title="Список контрагентов" SizeToContent="Manual" ResizeMode="CanResizeWithGrip" WindowState="Maximized">
 
+    <Window.CommandBindings>
+        <!-- Обновить -->
+        <CommandBinding Command="local:CounterpartyListWindow.Refresh" Executed="Refresh_Execute" />
+
+        <!-- Открыть карточку -->
+        <CommandBinding Command="local:CounterpartyListWindow.OpenCard" Executed="Open_Execute" CanExecute="Open_CanExecute" />
+
+        <!-- Редактировать контрагента -->
+        <CommandBinding Command="local:CounterpartyListWindow.EditCounterparty" Executed="EditCounterparty_Execute" CanExecute="EditCounterparty_CanExecute" />
+
+        <!-- Аннулировать контрагента -->
+        <CommandBinding Command="local:CounterpartyListWindow.AnnulateCounterparty" Executed="AnnulateCounterparty_Execute" CanExecute="AnnulateCounterparty_CanExecute" />
+
+        <!-- Сброс фильтров -->
+        <CommandBinding Command="local:CounterpartyListWindow.ResetFilter" Executed="ResetFilter_Execute" CanExecute="ResetFilter_CanExecute" />
+    </Window.CommandBindings>
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -21,7 +37,7 @@
         <DockPanel Style="{StaticResource DockPanelOKStyle}">
 
             <!-- Кнопка "Обновить данные" -->
-            <Button x:Name="btnRefreshList" DockPanel.Dock="Left" Style="{StaticResource MainMenuButtonStyle}" >
+            <Button x:Name="btnRefreshList" DockPanel.Dock="Left" Style="{StaticResource MainMenuButtonStyle}" Command="local:CounterpartyListWindow.Refresh" >
                 <Button.Content>
                     <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                         <Image Source="..\..\Images\refresh.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
@@ -34,7 +50,7 @@
             </Button>
 
             <!-- Кнопка "Открыть карточку" -->
-            <Button x:Name="btnOpenCounterparty" DockPanel.Dock="Left"  >
+            <Button x:Name="btnOpenCounterparty" DockPanel.Dock="Left" Command="local:CounterpartyListWindow.OpenCard" >
                 <Button.Style>
                     <Style BasedOn="{StaticResource MainMenuButtonStyle}">
                         <Style.Triggers>
@@ -74,7 +90,7 @@
             </Button>
 
             <!-- Кнопка "Аннулировать контрагента" -->
-            <Button x:Name="btnAnnulateCounterparty" Margin="0" DockPanel.Dock="Right"  >
+            <Button x:Name="btnAnnulateCounterparty" Margin="0" DockPanel.Dock="Right" Command="local:CounterpartyListWindow.AnnulateCounterparty" >
                 <Button.Style>
                     <Style BasedOn="{StaticResource MainMenuButtonStyle}">
                         <Style.Triggers>
@@ -114,7 +130,7 @@
             </Button>
 
             <!-- Кнопка "Редактировать контрагента" -->
-            <Button x:Name="btnEditCounterparty" DockPanel.Dock="Right"  >
+            <Button x:Name="btnEditCounterparty" DockPanel.Dock="Right" Command="local:CounterpartyListWindow.EditCounterparty" >
                 <Button.Style>
                     <Style BasedOn="{StaticResource MainMenuButtonStyle}">
                         <Style.Triggers>
@@ -155,7 +171,7 @@
             </Button>
 
             <!-- Кнопка "Добавить контрагента" -->
-            <Button x:Name="btnAddCounterparty" DockPanel.Dock="Right"  >
+            <Button x:Name="btnAddCounterparty" DockPanel.Dock="Right" Click="AddCounterparty_Click" >
                 <Button.Style>
                     <Style BasedOn="{StaticResource MainMenuButtonStyle}">
                         <Style.Triggers>
@@ -205,54 +221,57 @@
             <!-- Код товара -->
             <TextBlock Text="Код" DockPanel.Dock="Left" Style="{StaticResource TextBlockGridStyle}" Margin="30,2,5,2" />
             <TextBox x:Name="tbSearchCode" Style="{StaticResource TextBoxStyle}" DockPanel.Dock="Left" Width="150"
-                     PreviewKeyDown="SearchText_KeyDown" />
+                     KeyDown="SearchText_KeyDown" TextChanged="SearchText_Changed" />
 
             <!-- Наименование товара -->
             <TextBlock Text="Наименование / ФИО" DockPanel.Dock="Left" Style="{StaticResource TextBlockGridStyle}" Margin="30,2,5,2" />
             <TextBox x:Name="tbSearchNomination" Style="{StaticResource TextBoxStyle}" DockPanel.Dock="Left" Width="300" 
-                     PreviewKeyDown="SearchText_KeyDown" />
-
-            <!-- Кнопка поиск по фильтрам -->
-            <Button DockPanel.Dock="Left" Style="{StaticResource SearchButtonStyle}" />
+                     KeyDown="SearchText_KeyDown" TextChanged="SearchText_Changed" />
 
             <!-- Кнопка сбросить фильтры -->
-            <Button DockPanel.Dock="Left" Style="{StaticResource ResetSearchButtonStyle}" />
+            <Button DockPanel.Dock="Left" Style="{StaticResource ResetSearchButtonStyle}" Command="local:CounterpartyListWindow.ResetFilter" />
         </DockPanel>
 
         <!-- Список контрагентов -->
         <DataGrid x:Name="dataGrid" Grid.Row="3" Style="{StaticResource DataGridStyle}" SelectionMode="Single" >
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <EventSetter Event="MouseDoubleClick" Handler="dgCounterparties_DoubleClick" />
+                </Style>
+            </DataGrid.RowStyle>
+            
             <DataGrid.Columns>
 
                 <!-- Код -->
-                <DataGridTextColumn Width="100" Binding="{Binding Path=Code}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="200" Binding="{Binding Path=Code}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Код" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Наименование -->
-                <DataGridTextColumn Width="*" Binding="{Binding Path=Nomination}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="1.5*" Binding="{Binding Path=Nomination}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Наименование" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Фамилия -->
-                <DataGridTextColumn Width="150" Binding="{Binding Path=Surname}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="*" Binding="{Binding Path=Surname}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Фамилия" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Имя -->
-                <DataGridTextColumn Width="150" Binding="{Binding Path=Name}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="*" Binding="{Binding Path=Name}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Имя" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
                 <!-- Отчество -->
-                <DataGridTextColumn Width="150" Binding="{Binding Path=Patronymic}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
+                <DataGridTextColumn Width="*" Binding="{Binding Path=Patronymic}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
                     <DataGridTextColumn.Header>
                         <TextBlock Text="Отчество" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>

@@ -136,6 +136,28 @@ namespace GreenLeaf.Classes
         }
 
         /// <summary>
+        /// Преобразование в зашифрованную строку
+        /// </summary>
+        /// <param name="value">расшифрованная строка</param>
+        /// <returns>возвращает зашифрованную строку, или пустую строку, если преобразование не удалось</returns>
+        public static string ToCriptString(string value)
+        {
+            string temp = string.Empty;
+
+            if (value != "")
+                try
+                {
+                    temp = Criptex.Cript(value);
+                }
+                catch
+                {
+                    temp = string.Empty;
+                }
+
+            return temp;
+        }
+
+        /// <summary>
         /// Преобразование в денежное представление
         /// </summary>
         /// <param name="value">значение</param>

@@ -50,6 +50,12 @@ namespace GreenLeaf.Windows
 
         #endregion
 
+        #region Контрагенты
+
+        public static RoutedUICommand CounterpartyPopup = new RoutedUICommand("Контрагенты", "CounterpartyPopup", typeof(MainWindow));
+
+        #endregion
+
         #region Поиск
 
         // Поиск
@@ -91,7 +97,7 @@ namespace GreenLeaf.Windows
         /// </summary>
         /// <param name="splash">окно загрузки</param>
         /// <param name="dtStart">время запуска программы</param>
-        public MainWindow(Windows.Authentificate.SplashWindow splash, DateTime dtStart)
+        public MainWindow(Authentificate.SplashWindow splash, DateTime dtStart)
         {
             InitializeComponent();
 
@@ -150,6 +156,12 @@ namespace GreenLeaf.Windows
             // контрагенты
             this.btnCounterparty.Visibility = (ProgramSettings.CurrentUser.CounterpartyData.Counterparty) ? Visibility.Visible : Visibility.Collapsed;
 
+            // список поставщиков
+            this.btnReportsProviders.IsEnabled = ProgramSettings.CurrentUser.CounterpartyData.CounterpartyProvider;
+
+            // список покупателей
+            this.btnReportsClients.IsEnabled = ProgramSettings.CurrentUser.CounterpartyData.CounterpartyCustomer;
+
             #region Управление складом
 
             // управление складом
@@ -162,6 +174,19 @@ namespace GreenLeaf.Windows
 
             // панель управления
             this.btnAdminPanel.Visibility = (ProgramSettings.CurrentUser.AdminPanelData.AdminPanel) ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        #endregion
+
+        #region Общие методы
+
+        /// <summary>
+        /// Скрыть всплывающие меню кнопок
+        /// </summary>
+        private void HidePopups()
+        {
+            ReportsPopup.IsOpen = false;
+            CounterpartiesPopup.IsOpen = false;
         }
 
         #endregion
@@ -230,6 +255,8 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void RefreshData_Execute(object sender, ExecutedRoutedEventArgs e)
         {
+            HidePopups();
+
             LoadData();
         }
 
@@ -238,6 +265,8 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void Search_Execute(object sender, ExecutedRoutedEventArgs e)
         {
+            HidePopups();
+
             LoadData();
         }
 
@@ -246,6 +275,8 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void ResetSearch_Execute(object sender, ExecutedRoutedEventArgs e)
         {
+            HidePopups();
+
             tbSearchProductCode.Text = "";
             tbSearchNomination.Text = "";
 
@@ -265,6 +296,8 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void HideEmpty_Change(object sender, RoutedEventArgs e)
         {
+            HidePopups();
+
             LoadData();
         }
 
@@ -273,6 +306,8 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void cbSortField_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            HidePopups();
+
             SortData();
         }
 
@@ -281,6 +316,8 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void btnSortDirection_Click(object sender, RoutedEventArgs e)
         {
+            HidePopups();
+
             btnSortDirection.Tag = (btnSortDirection.Tag.ToString() == "ascending") ? "descending" : "ascending";
 
             SortData();
@@ -291,6 +328,8 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void Search_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            HidePopups();
+
             if (e.Key == Key.Enter)
                 LoadData();
         }
@@ -305,6 +344,8 @@ namespace GreenLeaf.Windows
         private void WarehouseManagement_Execute(object sender, ExecutedRoutedEventArgs e)
         {
             stackWarehouseManagement.Visibility = (stackWarehouseManagement.Visibility == Visibility.Visible) ? Visibility.Collapsed : Visibility.Visible;
+
+            HidePopups();
         }
 
         /// <summary>
@@ -320,6 +361,8 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void WarehouseAddProduct_Execute(object sender, ExecutedRoutedEventArgs e)
         {
+            HidePopups();
+
             Warehouse.AddProductWindow view = new Warehouse.AddProductWindow();
 
             view.Owner = this;
@@ -350,6 +393,8 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void WarehouseEditProduct_Execute(object sender, ExecutedRoutedEventArgs e)
         {
+            HidePopups();
+
             if (dataGrid.SelectedItem == null)
             {
                 Dialog.WarningMessage(this, "Не выбран товар");
@@ -393,7 +438,9 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void WarehouseAnnulateProduct_Execute(object sender, ExecutedRoutedEventArgs e)
         {
-            if(dataGrid.SelectedItem == null)
+            HidePopups();
+
+            if (dataGrid.SelectedItem == null)
             {
                 Dialog.WarningMessage(this, "Не выбран товар");
                 return;
@@ -432,6 +479,8 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void WarehouseUnAnnulateProduct_Execute(object sender, ExecutedRoutedEventArgs e)
         {
+            HidePopups();
+
             if (dataGrid.SelectedItem == null)
             {
                 Dialog.WarningMessage(this, "Не выбран товар");
@@ -463,6 +512,8 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void HideAnnuled_Checked(object sender, RoutedEventArgs e)
         {
+            HidePopups();
+
             AnnuledColumn.Visibility = Visibility.Collapsed;
             LoadData();
         }
@@ -472,6 +523,8 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void HideAnnuled_UnChecked(object sender, RoutedEventArgs e)
         {
+            HidePopups();
+
             AnnuledColumn.Visibility = Visibility.Visible;
             LoadData();
         }
@@ -489,6 +542,8 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void WarehouseEditCount_Execute(object sender, ExecutedRoutedEventArgs e)
         {
+            HidePopups();
+
             if (dataGrid.SelectedItem == null)
             {
                 Dialog.WarningMessage(this, "Не выбран товар");
@@ -533,6 +588,8 @@ namespace GreenLeaf.Windows
         {
             Mouse.OverrideCursor = Cursors.Wait;
 
+            HidePopups();
+
             InvoiceView.InvoiceWindow view = new InvoiceView.InvoiceWindow(true);
             view.Owner = this;
 
@@ -549,6 +606,8 @@ namespace GreenLeaf.Windows
         private void CreateSalesInvoice_Execute(object sender, ExecutedRoutedEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.Wait;
+
+            HidePopups();
 
             InvoiceView.InvoiceWindow view = new InvoiceView.InvoiceWindow(false);
             view.Owner = this;
@@ -569,6 +628,8 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void ReportPopup_Execute(object sender, ExecutedRoutedEventArgs e)
         {
+            CounterpartiesPopup.IsOpen = false;
+
             ReportsPopup.IsOpen = !ReportsPopup.IsOpen;
         }
 
@@ -579,7 +640,7 @@ namespace GreenLeaf.Windows
         {
             Mouse.OverrideCursor = Cursors.Wait;
 
-            ReportsPopup.IsOpen = false;
+            HidePopups();
 
             InvoiceView.InvoiceListWindow view = new InvoiceView.InvoiceListWindow(true);
             view.Owner = this;
@@ -598,7 +659,7 @@ namespace GreenLeaf.Windows
         {
             Mouse.OverrideCursor = Cursors.Wait;
 
-            ReportsPopup.IsOpen = false;
+            HidePopups();
 
             InvoiceView.InvoiceListWindow view = new InvoiceView.InvoiceListWindow(false);
             view.Owner = this;
@@ -610,9 +671,56 @@ namespace GreenLeaf.Windows
             LoadData();
         }
 
-
         #endregion
 
-        
+        #region Контрагенты
+
+        /// <summary>
+        /// Контрагенты
+        /// </summary>
+        private void CounterpartyPopup_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            ReportsPopup.IsOpen = false;
+
+            CounterpartiesPopup.IsOpen = !CounterpartiesPopup.IsOpen;
+        }
+
+        /// <summary>
+        /// Список поставщиков
+        /// </summary>
+        private void btnReportsProviders_Click(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            HidePopups();
+
+            CounterpartyView.CounterpartyListWindow view = new CounterpartyView.CounterpartyListWindow(true);
+            view.Owner = this;
+
+            Mouse.OverrideCursor = null;
+
+            view.ShowDialog();
+            view.Close();
+        }
+
+        /// <summary>
+        /// Список клиентов
+        /// </summary>
+        private void btnReportsClients_Click(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            HidePopups();
+
+            CounterpartyView.CounterpartyListWindow view = new CounterpartyView.CounterpartyListWindow(false);
+            view.Owner = this;
+
+            Mouse.OverrideCursor = null;
+
+            view.ShowDialog();
+            view.Close();
+        }
+
+        #endregion
     }
 }

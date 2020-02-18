@@ -46,6 +46,9 @@
 
         <!-- Отчеты -->
         <CommandBinding Command="win:MainWindow.ReportPopup" Executed="ReportPopup_Execute" />
+
+        <!-- Контрагенты -->
+        <CommandBinding Command="win:MainWindow.CounterpartyPopup" Executed="CounterpartyPopup_Execute" />
     </Window.CommandBindings>
     
     <Window.Resources>
@@ -158,7 +161,7 @@
             </Popup>
 
             <!-- Кнопка "Контрагенты" -->
-            <Button x:Name="btnCounterparty" Style="{StaticResource MainMenuButtonStyle}" >
+            <Button x:Name="btnCounterparty" Style="{StaticResource MainMenuButtonStyle}" Command="win:MainWindow.CounterpartyPopup" >
                 <Button.Content>
                     <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Image Source="..\Images\counterparty.png" DockPanel.Dock="Top"  Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
@@ -168,6 +171,18 @@
                     </DockPanel>
                 </Button.Content>
             </Button>
+
+            <!-- Панель контрагентов -->
+            <Popup x:Name="CounterpartiesPopup" IsOpen="False" PlacementTarget="{Binding ElementName=btnCounterparty}" Placement="Bottom" 
+               Width="Auto" Height="Auto" >
+                <StackPanel Orientation="Vertical" Background="White">
+                    <Button x:Name="btnReportsProviders" Style="{StaticResource PopupButtonStyle}" Content="Поставщики"
+                        Click="btnReportsProviders_Click"/>
+
+                    <Button x:Name="btnReportsClients" Style="{StaticResource PopupButtonStyle}" Content="Клиенты"
+                        Click="btnReportsClients_Click"/>
+                </StackPanel>
+            </Popup>
 
             <!-- Кнопка "Управление складом" -->
             <Button x:Name="btnWarehouseManagement" Style="{StaticResource MainMenuButtonStyle}"

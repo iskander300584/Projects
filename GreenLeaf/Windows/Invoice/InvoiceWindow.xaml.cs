@@ -98,12 +98,12 @@ namespace GreenLeaf.Windows.InvoiceView
             if(id == 0)
             {
                 // Создание накладной
-                CurrentInvoice = ViewModel.Invoice.CreateInvoice(isPurchase);
+                CurrentInvoice = Invoice.CreateInvoice(isPurchase);
             }
             else
             {
                 // Загрузка накладной
-                CurrentInvoice = ViewModel.Invoice.GetInvoiceByID(isPurchase, id);
+                CurrentInvoice = Invoice.GetInvoiceByID(isPurchase, id);
             }
 
             // Загрузка контрагентов
@@ -122,7 +122,17 @@ namespace GreenLeaf.Windows.InvoiceView
                 if (currCounterparty != null)
                     cbCounterparty.SelectedItem = currCounterparty.VisibleName;
                 else
-                    cbCounterparty.SelectedIndex = 0;
+                {
+                    CurrentInvoice.GetUsers();
+
+                    if (CurrentInvoice.CounterpartyUser != null)
+                    {
+                        cbCounterparty.Items.Add(CurrentInvoice.CounterpartyUser.VisibleName);
+                        cbCounterparty.SelectedItem = currCounterparty.VisibleName;
+                    }
+                    else
+                        cbCounterparty.SelectedIndex = 0;
+                }
             }
 
             // Загрузка списка товара

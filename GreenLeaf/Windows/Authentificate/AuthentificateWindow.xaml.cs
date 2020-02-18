@@ -48,10 +48,20 @@ namespace GreenLeaf.Windows.Authentificate
         }
 
         /// <summary>
+        /// Загрузка окна
+        /// </summary>
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+#if (DEBUG)
+            tbLogin.Text = "admin";
+            pbPassword.Password = "Pa$$w0rD";
+            btnApply_Click(null, null);
+#endif
+        }
+
+        /// <summary>
         /// Кнопка Применить
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void btnApply_Click(object sender, RoutedEventArgs e)
         {
             if(tbLogin.Text.Trim() == "")

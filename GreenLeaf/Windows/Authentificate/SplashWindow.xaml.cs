@@ -24,7 +24,7 @@ namespace GreenLeaf.Windows.Authentificate
             tbDepartment.Text = department;
             tbDeveloper.Text = developer;
             AssemblyName asmName = assembly.GetName();
-            tbVersion.Text = asmName.Version.Major + "." + asmName.Version.Minor + "." + asmName.Version.Revision;
+            tbVersion.Text = asmName.Version.Major + "." + asmName.Version.Minor + "." + asmName.Version.Build;
             DateTime? dt = GetBuildDateTime(assembly);
             if (dt != null)
                 tbDate.Text = ((DateTime)dt).Date.ToLongDateString();

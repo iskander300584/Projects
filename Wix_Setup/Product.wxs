@@ -13,7 +13,7 @@
   <?define InstallImagesPath = "Images"?>
 
   <!-- Пути для получения файлов -->
-  <?define MainData = "..\GreenLeaf\Bin\Debug"?>
+  <?define MainData = "..\GreenLeaf\Bin\Release"?>
   <?define ImagesData = "..\GreenLeaf\Images"?>
 
   <Product Id="*" Name="$(var.Title) $(var.Version) beta" Language="1049" Codepage="1251" Version="$(var.Version)"
@@ -36,7 +36,7 @@
     </Condition>
 
     <!-- Пиктограмма установочного пакета -->
-    <Icon Id="greenleaf.ico" SourceFile="greenleaf.ico"/>
+    <!--<Icon Id="greenleaf.ico" SourceFile="greenleaf.ico"/>-->
 
     <!-- Пути для установки -->
     <Directory Id="TARGETDIR" Name="SourceDir">
@@ -77,6 +77,9 @@
         <File Id="Google.Protobuf" KeyPath="no" Name="Google.Protobuf.dll" Checksum="yes" Vital="yes" Source="$(var.MainData)\Google.Protobuf.dll" />
         <File Id="MySql.Data" KeyPath="no" Name="MySql.Data.dll" Checksum="yes" Vital="yes" Source="$(var.MainData)\MySql.Data.dll" />
         <File Id="Renci.SshNet" KeyPath="no" Name="Renci.SshNet.dll" Checksum="yes" Vital="yes" Source="$(var.MainData)\Renci.SshNet.dll" />
+        <File Id="System.Buffers" KeyPath="no" Name="System.Buffers.dll" Checksum="yes" Vital="yes" Source="$(var.MainData)\System.Buffers.dll" />
+        <File Id="System.Memory" KeyPath="no" Name="System.Memory.dll" Checksum="yes" Vital="yes" Source="$(var.MainData)\System.Memory.dll" />
+        <File Id="System.Runtime.CompilerServices.Unsafe" KeyPath="no" Name="System.Runtime.CompilerServices.Unsafe.dll" Checksum="yes" Vital="yes" Source="$(var.MainData)\System.Runtime.CompilerServices.Unsafe.dll" />
 
         <!-- XLS -->
         <File Id="InvoiceTemplate" KeyPath="no" Name="шаблон накладной.xls" Checksum="yes" Vital="yes" Source="$(var.MainData)\шаблон накладной.xls" />
@@ -99,7 +102,7 @@
         <File Id="error" KeyPath="no" Name="error.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\error.png" />
         <File Id="excel" KeyPath="no" Name="excel.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\excel.png" />
         <File Id="excel_gray" KeyPath="no" Name="excel_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\excel_gray.png" />
-        <File Id="greenleaf" KeyPath="no" Name="greenleaf.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\greenleaf.png" />
+        <File Id="greenleaf.ic" KeyPath="no" Name="greenleaf.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\greenleaf.png" />
         <File Id="info" KeyPath="no" Name="info.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\info.png" />
         <File Id="invoice" KeyPath="no" Name="invoice.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\invoice.png" />
         <File Id="invoice_gray" KeyPath="no" Name="invoice_gray.png" Checksum="yes" Vital="yes" Source="$(var.ImagesData)\invoice_gray.png" />

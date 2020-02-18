@@ -199,6 +199,15 @@ namespace GreenLeaf.ViewModel
             get { return _visibleName; }
         }
 
+        private string _fullVisibleName = string.Empty;
+        /// <summary>
+        /// Полное отображаемое имя
+        /// </summary>
+        public string FullVisibleName
+        {
+            get { return _fullVisibleName; }
+        }
+
         // Изменение свойств объекта
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName]string prop = "")
@@ -221,7 +230,7 @@ namespace GreenLeaf.ViewModel
                 {
                     connection.Open();
 
-                    string sql = String.Format(@"INSERT INTO `COUNTERPARTY` (`SURNAME`, `NAME`, `PATRONYMIC`, `ADRESS`, `PHONE`, `NOMINATION`, `IS_PROVIDER`, `IS_ANNULATED`, `CODE`)  VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')", Surname, Name, Patronymic, Adress, Phone, Nomination, Conversion.ToString(IsProvider), 0, Code);
+                    string sql = String.Format(@"INSERT INTO `COUNTERPARTY` (`SURNAME`, `NAME`, `PATRONYMIC`, `ADRESS`, `PHONE`, `NOMINATION`, `IS_PROVIDER`, `IS_ANNULATED`, `CODE`)  VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')", Surname, Name, Patronymic, Conversion.ToCriptString(Adress), Conversion.ToCriptString(Phone), Nomination, Conversion.ToString(IsProvider), 0, Code);
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
                     {
@@ -397,17 +406,25 @@ namespace GreenLeaf.ViewModel
         private void GetVisibleName()
         {
             if (_nomination.Trim() != "")
+            {
                 _visibleName = _nomination;
+                _fullVisibleName = _nomination;
+            }
             else if (_surname.Trim() != "")
             {
                 _visibleName = _surname;
+                _fullVisibleName = _surname;
 
                 if (_name.Trim() != "")
                 {
                     _visibleName += " " + _name[0] + ".";
+                    _fullVisibleName += " " + _name;
 
                     if (_patronymic.Trim() != "")
+                    {
                         _visibleName += _patronymic[0] + ".";
+                        _fullVisibleName += " " + _patronymic;
+                    }
                 }
             }
             else if (_name.Trim() != "")
@@ -416,9 +433,12 @@ namespace GreenLeaf.ViewModel
 
                 if (_patronymic.Trim() != string.Empty)
                     _visibleName += " " + _patronymic;
+
+                _fullVisibleName = _visibleName;
             }
 
             OnPropertyChanged("VisibleName");
+            OnPropertyChanged("FullVisibleName");
         }
 
         #endregion
@@ -488,7 +508,7 @@ namespace GreenLeaf.ViewModel
                     {
                         connection.Open();
 
-                        string sql = String.Format(@"UPDATE `COUNTERPARTY` SET `SURNAME` = '{0}', `NAME` = '{1}', `PATRONYMIC` = '{2}', `ADRESS` = '{3}', `PHONE` = '{4}', `NOMINATION` = '{5}', `IS_PROVIDER` = '{6}', `CODE` = '{7}' WHERE `COUNTERPARTY`.`ID` = {8}", Surname, Name, Patronymic, Adress, Phone, Nomination, Conversion.ToString(IsProvider), Code, ID);
+                        string sql = String.Format(@"UPDATE `COUNTERPARTY` SET `SURNAME` = '{0}', `NAME` = '{1}', `PATRONYMIC` = '{2}', `ADRESS` = '{3}', `PHONE` = '{4}', `NOMINATION` = '{5}', `IS_PROVIDER` = '{6}', `CODE` = '{7}' WHERE `COUNTERPARTY`.`ID` = {8}", Surname, Name, Patronymic, Conversion.ToCriptString(Adress), Conversion.ToCriptString(Phone), Nomination, Conversion.ToString(IsProvider), Code, ID);
 
                         using (MySqlCommand command = new MySqlCommand(sql, connection))
                         {
@@ -549,7 +569,7 @@ namespace GreenLeaf.ViewModel
                                 item.ID = Conversion.ToInt(reader["ID"].ToString());
                                 item.Code = reader["CODE"].ToString();
                                 item.Surname = reader["SURNAME"].ToString();
-                                item.Name = reader["SURNAME"].ToString();
+                                item.Name = reader["NAME"].ToString();
                                 item.Patronymic = reader["PATRONYMIC"].ToString();
                                 item.Nomination = reader["NOMINATION"].ToString();
 

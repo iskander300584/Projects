@@ -8,12 +8,12 @@ using System.Windows;
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("Green Leaf")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Управление складом СЦ GreenLeaf")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Ряполов А.Н.")]
 [assembly: AssemblyProduct("Green Leaf")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyTrademark("RiapolovAN ℠")]
 [assembly: AssemblyCulture("")]
 
 // Параметр ComVisible со значением FALSE делает типы в сборке невидимыми 
