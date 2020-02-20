@@ -199,15 +199,6 @@ namespace GreenLeaf.ViewModel
             get { return _visibleName; }
         }
 
-        private string _fullVisibleName = string.Empty;
-        /// <summary>
-        /// Полное отображаемое имя
-        /// </summary>
-        public string FullVisibleName
-        {
-            get { return _fullVisibleName; }
-        }
-
         // Изменение свойств объекта
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName]string prop = "")
@@ -408,22 +399,18 @@ namespace GreenLeaf.ViewModel
             if (_nomination.Trim() != "")
             {
                 _visibleName = _nomination;
-                _fullVisibleName = _nomination;
             }
             else if (_surname.Trim() != "")
             {
                 _visibleName = _surname;
-                _fullVisibleName = _surname;
 
                 if (_name.Trim() != "")
                 {
                     _visibleName += " " + _name[0] + ".";
-                    _fullVisibleName += " " + _name;
 
                     if (_patronymic.Trim() != "")
                     {
                         _visibleName += _patronymic[0] + ".";
-                        _fullVisibleName += " " + _patronymic;
                     }
                 }
             }
@@ -433,8 +420,6 @@ namespace GreenLeaf.ViewModel
 
                 if (_patronymic.Trim() != string.Empty)
                     _visibleName += " " + _patronymic;
-
-                _fullVisibleName = _visibleName;
             }
 
             OnPropertyChanged("VisibleName");

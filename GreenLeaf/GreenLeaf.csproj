@@ -148,6 +148,9 @@
     <Compile Include="Windows\Invoice\EditItemCountWindow.xaml.cs">
       <DependentUpon>EditItemCountWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\Reports\ReportIncomeWindow.xaml.cs">
+      <DependentUpon>ReportIncomeWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\Warehouse\AddProductWindow.xaml.cs">
       <DependentUpon>AddProductWindow.xaml</DependentUpon>
     </Compile>
@@ -252,6 +255,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\Authentificate\SplashWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Reports\ReportIncomeWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

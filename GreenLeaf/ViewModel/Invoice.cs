@@ -84,7 +84,7 @@ namespace GreenLeaf.ViewModel
 
         private DateTime _date = DateTime.MinValue;
         /// <summary>
-        /// Дата накладной
+        /// Дата проведения накладной
         /// </summary>
         public DateTime Date
         {

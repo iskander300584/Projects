@@ -671,6 +671,24 @@ namespace GreenLeaf.Windows
             LoadData();
         }
 
+        /// <summary>
+        /// Отчет приход / расход
+        /// </summary>
+        private void btnReportsIncome_Click(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            HidePopups();
+
+            Reports.ReportIncomeWindow view = new Reports.ReportIncomeWindow();
+            view.Owner = this;
+
+            Mouse.OverrideCursor = null;
+
+            view.ShowDialog();
+            view.Close();
+        }
+
         #endregion
 
         #region Контрагенты
