@@ -31,7 +31,7 @@ namespace GreenLeaf.Windows.CounterpartyView
 
             this.CurrentCounterparty = new Counterparty();
 
-            this.CurrentCounterparty.IsProvider = this.CurrentCounterparty.IsProvider;
+            this.CurrentCounterparty.IsProvider = isProvider;
 
             this.Title = (this.CurrentCounterparty.IsProvider) ? "Создание поставщика" : "Создание клиента";
 

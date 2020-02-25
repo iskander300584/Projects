@@ -392,7 +392,9 @@
     <Resource Include="Images\excel_gray.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DB\backUp_25_02_2020.sql" />
     <Content Include="DB\configDB.sql" />
+    <Content Include="DB\БД_структура.sql" />
     <Resource Include="DB\GreenLeaf DB.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -48,6 +48,15 @@ namespace GreenLeaf
                     return;
                 }
                 connWindow.Close();
+
+// Подключение к тестовой БД
+#if (DEBUG)
+ProgramSettings.Server = "remotemysql.com";
+ProgramSettings.DB = "ZxIqMwxdJi";
+ProgramSettings.AdminLogin = "ZxIqMwxdJi";
+ProgramSettings.AdminPassword = Criptex.Cript("kmO45otLo8");
+#endif
+
             }
             // Получение настроек подключения
             else
@@ -63,6 +72,14 @@ namespace GreenLeaf
                         ProgramSettings.AdminLogin = Criptex.UnCript(saveData.AdminLogin);
                         ProgramSettings.AdminPassword = saveData.AdminPassword;
                     }
+
+// Подключение к тестовой БД
+#if (DEBUG)
+                    ProgramSettings.Server = "remotemysql.com";
+                    ProgramSettings.DB = "ZxIqMwxdJi";
+                    ProgramSettings.AdminLogin = "ZxIqMwxdJi";
+                    ProgramSettings.AdminPassword = Criptex.Cript("kmO45otLo8");
+#endif
 
                     MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString));
                     connection.Open();

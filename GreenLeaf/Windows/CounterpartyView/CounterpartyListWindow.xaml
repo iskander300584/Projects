@@ -233,7 +233,7 @@
         </DockPanel>
 
         <!-- Список контрагентов -->
-        <DataGrid x:Name="dataGrid" Grid.Row="3" Style="{StaticResource DataGridStyle}" SelectionMode="Single" >
+        <DataGrid x:Name="dataGrid" Grid.Row="3" Style="{StaticResource DataGridStyle}" >
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <EventSetter Event="MouseDoubleClick" Handler="dgCounterparties_DoubleClick" />

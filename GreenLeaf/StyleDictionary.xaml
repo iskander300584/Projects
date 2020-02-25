@@ -39,6 +39,7 @@
         <Setter Property="DataGrid.VerticalGridLinesBrush" Value="Gray" />
         <Setter Property="DataGrid.HorizontalGridLinesBrush" Value="Gray" />
         <Setter Property="DataGrid.SelectionMode" Value="Single" />
+        <Setter Property="DataGrid.BorderBrush" Value="Transparent" />
     </Style>
     
     <!--#endregion-->
