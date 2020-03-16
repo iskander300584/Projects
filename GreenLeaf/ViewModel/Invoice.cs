@@ -246,6 +246,14 @@ namespace GreenLeaf.ViewModel
         public Account AccountUser
         {
             get { return _account; }
+            set
+            {
+                if(_account != value)
+                {
+                    _account = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         private Counterparty _counterparty = null;
@@ -255,6 +263,14 @@ namespace GreenLeaf.ViewModel
         public Counterparty CounterpartyUser
         {
             get { return _counterparty; }
+            set
+            {
+                if(_counterparty != value)
+                {
+                    _counterparty = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         private List<InvoiceItem> _items = new List<InvoiceItem>();
@@ -1003,30 +1019,55 @@ namespace GreenLeaf.ViewModel
 
                     string table = (isPurchase) ? "PURCHASE_INVOICE" : "SALES_INVOICE";
 
-                    string sql = "SELECT * FROM `" + table + "`";
+                    string sql = String.Format("SELECT `INV`.`ID`, `INV`.`NUMBER`, `INV`.`ID_ACCOUNT`, `INV`.`ID_COUNTERPARTY`, `INV`.`DATE`, `INV`.`CREATE_DATE`, `INV`.`COST`, `INV`.`COUPON`, `INV`.`IS_ISSUED`, `INV`.`IS_LOCKED`, `ACC`.`NAME`, `ACC`.`SURNAME`,  `ACC`.`PATRONYMIC`, `COU`.`NAME` AS `COU_NAME`, `COU`.`SURNAME` AS `COU_SURNAME`, `COU`.`PATRONYMIC` AS `COU_PATRONYMIC`, `COU`.`NOMINATION` AS `COU_NOMINATION` FROM `{0}` AS `INV` LEFT JOIN `ACCOUNT` AS `ACC` ON `ACC`.`ID` = `INV`.`ID_ACCOUNT` LEFT JOIN `COUNTERPARTY` AS `COU` ON `COU`.`ID` = `INV`.`ID_COUNTERPARTY`", table);
+
+                    //string sql = "SELECT * FROM `" + table + "`";
+
+                    //if (from != null && to != null)
+                    //{
+                    //    string fromDate = String.Format(@"'{0}-{1}-{2}T00:00:00.000'", ((DateTime)from).Year, ((DateTime)from).Month, ((DateTime)from).Day);
+                    //    string toDate = String.Format(@"'{0}-{1}-{2}T23:59:59.000'", ((DateTime)to).Year, ((DateTime)to).Month, ((DateTime)to).Day);
+
+                    //    sql += " WHERE `" + table + "`.`CREATE_DATE` >= " + fromDate + " AND `" + table + "`.`CREATE_DATE` <= " + toDate;
+
+                    //    if (idAccount != null && idAccount != 0)
+                    //        sql += " AND `" + table + "`.`ID_ACCOUNT` = " + (int)idAccount;
+
+                    //    if (idCounterparty != null && idCounterparty != 0)
+                    //        sql += " AND `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
+                    //}
+                    //else if (idAccount != null && idAccount != 0)
+                    //{
+                    //    sql += " WHERE `" + table + "`.`ID_ACCOUNT` = " + (int)idAccount;
+
+                    //    if (idCounterparty != null && idCounterparty != 0)
+                    //        sql += " AND `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
+                    //}
+                    //else if (idCounterparty != null && idCounterparty != 0)
+                    //    sql += " WHERE `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
 
                     if (from != null && to != null)
                     {
                         string fromDate = String.Format(@"'{0}-{1}-{2}T00:00:00.000'", ((DateTime)from).Year, ((DateTime)from).Month, ((DateTime)from).Day);
                         string toDate = String.Format(@"'{0}-{1}-{2}T23:59:59.000'", ((DateTime)to).Year, ((DateTime)to).Month, ((DateTime)to).Day);
 
-                        sql += " WHERE `" + table + "`.`CREATE_DATE` >= " + fromDate + " AND `" + table + "`.`CREATE_DATE` <= " + toDate;
+                        sql += " WHERE `INV`.`CREATE_DATE` >= " + fromDate + " AND `INV`.`CREATE_DATE` <= " + toDate;
 
                         if (idAccount != null && idAccount != 0)
-                            sql += " AND `" + table + "`.`ID_ACCOUNT` = " + (int)idAccount;
+                            sql += " AND `INV`.`ID_ACCOUNT` = " + (int)idAccount;
 
                         if (idCounterparty != null && idCounterparty != 0)
-                            sql += " AND `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
+                            sql += " AND `INV`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
                     }
                     else if (idAccount != null && idAccount != 0)
                     {
-                        sql += " WHERE `" + table + "`.`ID_ACCOUNT` = " + (int)idAccount;
+                        sql += " WHERE `INV`.`ID_ACCOUNT` = " + (int)idAccount;
 
                         if (idCounterparty != null && idCounterparty != 0)
-                            sql += " AND `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
+                            sql += " AND `INV`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
                     }
                     else if (idCounterparty != null && idCounterparty != 0)
-                        sql += " WHERE `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
+                        sql += " WHERE `INV`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
 
                     MySqlCommand command = new MySqlCommand(sql, connection);
 
@@ -1046,6 +1087,40 @@ namespace GreenLeaf.ViewModel
                             invoice.Coupon = Conversion.ToDouble(reader["COUPON"].ToString());
                             invoice.IsIssued = Conversion.ToBool(reader["IS_ISSUED"].ToString());
                             invoice.IsLocked = Conversion.ToBool(reader["IS_LOCKED"].ToString());
+
+                            if(invoice.ID_Account != 0)
+                            {
+                                string accName = reader["NAME"].ToString();
+                                string accSurname = reader["SURNAME"].ToString();
+                                string accPatronymic = reader["PATRONYMIC"].ToString();
+
+                                invoice.AccountUser = new Account
+                                {
+                                    ID = invoice.ID_Account
+                                };
+
+                                invoice.AccountUser.PersonalData.Name = accName;
+                                invoice.AccountUser.PersonalData.Surname = accSurname;
+                                invoice.AccountUser.PersonalData.Patronymic = accPatronymic;
+                            }
+
+                            if(invoice.ID_Counterparty != 0)
+                            {
+                                string couName = reader["COU_NAME"].ToString();
+                                string couSurname = reader["COU_SURNAME"].ToString();
+                                string couPatronymic = reader["COU_PATRONYMIC"].ToString();
+                                string couNomination = reader["COU_NOMINATION"].ToString();
+
+                                invoice.CounterpartyUser = new Counterparty
+                                {
+                                    ID = invoice.ID_Counterparty
+                                };
+
+                                invoice.CounterpartyUser.Name = couName;
+                                invoice.CounterpartyUser.Surname = couSurname;
+                                invoice.CounterpartyUser.Patronymic = couPatronymic;
+                                invoice.CounterpartyUser.Nomination = couNomination;
+                            }
 
                             invoice.IsPurchase = isPurchase;
 

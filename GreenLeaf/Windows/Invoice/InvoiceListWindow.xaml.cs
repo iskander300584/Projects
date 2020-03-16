@@ -152,7 +152,7 @@ namespace GreenLeaf.Windows.InvoiceView
 
             foreach (Invoice inv in InvoiceList)
             {
-                inv.GetUsers();
+                //inv.GetUsers();
                 summ += inv.Cost;
                 coupon += inv.Coupon;
             }
