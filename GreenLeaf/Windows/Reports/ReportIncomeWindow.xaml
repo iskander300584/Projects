@@ -53,7 +53,7 @@
             </Grid>
             
             <!-- Кнопка "Поиск" -->
-            <Button x:Name="btnSearch" DockPanel.Dock="Left" Style="{StaticResource MainMenuButtonStyle}" Height="60" Width="60" Margin="5" >
+            <Button x:Name="btnSearch" DockPanel.Dock="Left" Style="{StaticResource MainMenuButtonStyle}" Height="60" Width="60" Margin="5" Click="ButtonSearch_Click" >
                 <Button.Content>
                     <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                         <Image Source="..\..\Images\search.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />

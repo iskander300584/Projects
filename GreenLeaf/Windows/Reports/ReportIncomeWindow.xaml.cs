@@ -45,6 +45,8 @@ namespace GreenLeaf.Windows.Reports
         /// </summary>
         private void GetData()
         {
+            Mouse.OverrideCursor = Cursors.Wait;
+
             dgInvoices.ItemsSource = null;
 
             InvoiceList.Clear();
@@ -57,7 +59,7 @@ namespace GreenLeaf.Windows.Reports
 
             foreach(Invoice inv in temp)
             {
-                inv.GetUsers();
+                //inv.GetUsers();
 
                 summPurchase += inv.Cost;
                 couponPurchase += inv.Coupon;
@@ -76,7 +78,7 @@ namespace GreenLeaf.Windows.Reports
 
             foreach (Invoice inv in temp)
             {
-                inv.GetUsers();
+                //inv.GetUsers();
 
                 summSales += inv.Cost;
                 couponSales += inv.Coupon;
@@ -113,6 +115,8 @@ namespace GreenLeaf.Windows.Reports
             InvoiceList = InvoiceList.OrderBy(i => i.Date).ToList();
 
             dgInvoices.ItemsSource = InvoiceList;
+
+            Mouse.OverrideCursor = null;
         }
 
         /// <summary>
@@ -141,6 +145,14 @@ namespace GreenLeaf.Windows.Reports
 
                 Mouse.OverrideCursor = null;
             }
+        }
+
+        /// <summary>
+        /// Кнопка Поиск
+        /// </summary>
+        private void ButtonSearch_Click(object sender, RoutedEventArgs e)
+        {
+            GetData();
         }
     }
 }
