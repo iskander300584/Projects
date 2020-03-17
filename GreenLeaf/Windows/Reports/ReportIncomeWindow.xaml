@@ -10,6 +10,13 @@
         Icon="..\..\Images\greenleaf.png"
         Title="Отчет приход / расход" SizeToContent="Manual" WindowState="Maximized">
 
+    <Window.CommandBindings>
+        
+        <!-- Открыть -->
+        <CommandBinding Command="local:ReportIncomeWindow.OpenCommand" CanExecute="Open_CanExecute" Executed="Open_Execute" />
+        
+    </Window.CommandBindings>
+    
     <Window.Resources>
         <!-- Преобразование в дату -->
         <conv:Date_To_String_Converter x:Key="DateToString" />
@@ -57,11 +64,47 @@
                 <Button.Content>
                     <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                         <Image Source="..\..\Images\search.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
-                        <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" Margin="0" >
+                        <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" Margin="0" FontSize="13" >
                             <Run>Поиск</Run>
                         </TextBlock>
                     </DockPanel>
                 </Button.Content>
+            </Button>
+
+            <!-- Кнопка "Открыть" -->
+            <Button x:Name="btnOpen" DockPanel.Dock="Left" Height="60" Width="60" Margin="5"
+                    Command="local:ReportIncomeWindow.OpenCommand" >
+                <Button.Style>
+                    <Style BasedOn="{StaticResource MainMenuButtonStyle}">
+                        <Style.Triggers>
+                            <Trigger Property="Button.IsEnabled" Value="True">
+                                <Setter Property="Button.Content">
+                                    <Setter.Value>
+                                        <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                            <Image Source="..\..\Images\invoice.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                            <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" Margin="0" FontSize="13" >
+                                                <Run>Открыть</Run>
+                                            </TextBlock>
+                                        </DockPanel>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+
+                            <Trigger Property="Button.IsEnabled" Value="False">
+                                <Setter Property="Button.Content">
+                                    <Setter.Value>
+                                        <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                            <Image Source="..\..\Images\invoice_gray.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                            <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" Margin="0" FontSize="13" Foreground="Gray" >
+                                                <Run>Открыть</Run>
+                                            </TextBlock>
+                                        </DockPanel>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
             </Button>
 
             <!-- Кнопка "Выгрузить в Excel" -->
@@ -116,13 +159,6 @@
                         <TextBlock Text="Контрагент" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-
-                <!-- Дата создания -->
-                <!--<DataGridTextColumn Width="150" Binding="{Binding Path=CreateDate, Converter={StaticResource DateToString}}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
-                    <DataGridTextColumn.Header>
-                        <TextBlock Text="Дата создания" Style="{DynamicResource TextBlockGridStyle}" FontWeight="SemiBold" />
-                    </DataGridTextColumn.Header>
-                </DataGridTextColumn>-->
 
                 <!-- Дата проведения -->
                 <DataGridTextColumn Width="150" Binding="{Binding Path=Date, Converter={StaticResource DateToString}}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >

@@ -22,10 +22,53 @@ namespace GreenLeaf.Windows.Reports
     /// </summary>
     public partial class ReportIncomeWindow : Window
     {
+        #region Объявление команд
+
+        /// <summary>
+        /// Команда Открыть
+        /// </summary>
+        public static RoutedUICommand OpenCommand = new RoutedUICommand("Открыть", "OpenCommand", typeof(ReportIncomeWindow));
+
+        #endregion
+
+        #region Поля класса
+
         /// <summary>
         /// Список отображаемых накладных
         /// </summary>
         private List<Invoice> InvoiceList = new List<Invoice>();
+
+        /// <summary>
+        /// Сумма по приходным накладным
+        /// </summary>
+        private double SummPurchase = 0;
+
+        /// <summary>
+        /// Купон по приходным накладным
+        /// </summary>
+        private double CouponPurchase = 0;
+
+        /// <summary>
+        /// Сумма по расходным накладным
+        /// </summary>
+        private double SummSales = 0;
+
+        /// <summary>
+        /// Купон по расходным накладным
+        /// </summary>
+        private double CouponSales = 0;
+
+        /// <summary>
+        /// Сумма по балансу
+        /// </summary>
+        private double SummBalance = 0;
+
+        /// <summary>
+        /// Купон по балансу
+        /// </summary>
+        private double CouponBalance = 0;
+
+        #endregion
 
         /// <summary>
         /// Окно отчета прихода / расхода
@@ -39,6 +82,8 @@ namespace GreenLeaf.Windows.Reports
 
             GetData();
         }
+
+        #region Получение данных
 
         /// <summary>
         /// Получение данных
@@ -54,59 +99,55 @@ namespace GreenLeaf.Windows.Reports
             // Получение списка приходных накладных
             List<Invoice> temp = Invoice.GetPurchaseInvoices((DateTime)dpFromDate.SelectedDate, (DateTime)dpTillDate.SelectedDate).Where(i => i.IsIssued).ToList();
 
-            double summPurchase = 0;
-            double couponPurchase = 0;
+            SummPurchase = 0;
+            CouponPurchase = 0;
 
             foreach(Invoice inv in temp)
             {
-                //inv.GetUsers();
-
-                summPurchase += inv.Cost;
-                couponPurchase += inv.Coupon;
+                SummPurchase += inv.Cost;
+                CouponPurchase += inv.Coupon;
 
                 InvoiceList.Add(inv);
             }
 
-            tbConsumption.Text = Conversion.ToFinance(summPurchase);
-            tbConsumptionCoupon.Text = Conversion.ToFinance(couponPurchase);
+            tbConsumption.Text = Conversion.ToFinance(SummPurchase);
+            tbConsumptionCoupon.Text = Conversion.ToFinance(CouponPurchase);
 
             // Получение списка расходных накладных
             temp = Invoice.GetSalesInvoices((DateTime)dpFromDate.SelectedDate, (DateTime)dpTillDate.SelectedDate).Where(i => i.IsIssued).ToList();
 
-            double summSales = 0;
-            double couponSales = 0;
+            SummSales = 0;
+            CouponSales = 0;
 
             foreach (Invoice inv in temp)
             {
-                //inv.GetUsers();
-
-                summSales += inv.Cost;
-                couponSales += inv.Coupon;
+                SummSales += inv.Cost;
+                CouponSales += inv.Coupon;
 
                 InvoiceList.Add(inv);
             }
 
-            tbIncome.Text = Conversion.ToFinance(summSales);
-            tbIncomeCoupon.Text = Conversion.ToFinance(couponSales);
+            tbIncome.Text = Conversion.ToFinance(SummSales);
+            tbIncomeCoupon.Text = Conversion.ToFinance(CouponSales);
 
             // Вычисление баланса
-            double summBalance = summSales - summPurchase;
-            double couponBalance = couponSales - couponPurchase;
+            SummBalance = SummSales - SummPurchase;
+            CouponBalance = CouponSales - CouponPurchase;
 
-            tbBalance.Text = Conversion.ToFinance(summBalance);
-            tbBalanceCoupon.Text = Conversion.ToFinance(couponBalance);
+            tbBalance.Text = Conversion.ToFinance(SummBalance);
+            tbBalanceCoupon.Text = Conversion.ToFinance(CouponBalance);
 
             // Настройка цвета баланса
-            if (summBalance == 0)
+            if (SummBalance == 0)
                 tbBalance.Foreground = Brushes.Black;
-            else if (summBalance > 0)
+            else if (SummBalance > 0)
                 tbBalance.Foreground = Brushes.DarkGreen;
             else
                 tbBalance.Foreground = Brushes.Red;
 
-            if (couponBalance == 0)
+            if (CouponBalance == 0)
                 tbBalanceCoupon.Foreground = Brushes.Black;
-            else if (couponBalance > 0)
+            else if (CouponBalance > 0)
                 tbBalanceCoupon.Foreground = Brushes.DarkGreen;
             else
                 tbBalanceCoupon.Foreground = Brushes.Red;
@@ -120,39 +161,65 @@ namespace GreenLeaf.Windows.Reports
         }
 
         /// <summary>
-        /// Двойной щелчок по накладной
-        /// </summary>
-        private void dgInvoices_DoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if(dgInvoices.SelectedItem != null)
-            {
-                Mouse.OverrideCursor = Cursors.Wait;
-
-                Invoice invoice = dgInvoices.SelectedItem as Invoice;
-
-                InvoiceWindow view = new InvoiceWindow(invoice.IsPurchase, invoice.ID);
-                view.Owner = this;
-
-                Mouse.OverrideCursor = null;
-
-                view.ShowDialog();
-
-                Mouse.OverrideCursor = Cursors.Wait;
-
-                view.Close();
-
-                GetData();
-
-                Mouse.OverrideCursor = null;
-            }
-        }
-
-        /// <summary>
         /// Кнопка Поиск
         /// </summary>
         private void ButtonSearch_Click(object sender, RoutedEventArgs e)
         {
             GetData();
         }
+
+        #endregion
+
+        #region Открытие накладной
+
+        /// <summary>
+        /// Проверка возможности нажатия кнопки Открыть
+        /// </summary>
+        private void Open_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (dgInvoices != null && dgInvoices.SelectedItem != null) ? true : false;
+        }
+
+        /// <summary>
+        /// Нажатие кнопки Открыть
+        /// </summary>
+        private void Open_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            Open();
+        }
+
+        /// <summary>
+        /// Двойной щелчок по накладной
+        /// </summary>
+        private void dgInvoices_DoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dgInvoices.SelectedItem != null)
+            {
+                Open();
+            }
+        }
+
+        /// <summary>
+        /// Открыть накладную
+        /// </summary>
+        private void Open()
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            Invoice invoice = dgInvoices.SelectedItem as Invoice;
+
+            InvoiceWindow view = new InvoiceWindow(invoice.IsPurchase, invoice.ID);
+            view.Owner = this;
+
+            Mouse.OverrideCursor = null;
+
+            view.ShowDialog();
+
+            view.Close();
+
+            GetData();
+        }
+
+        #endregion
     }
 }
