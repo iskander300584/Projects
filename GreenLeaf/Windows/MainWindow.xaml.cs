@@ -88,6 +88,12 @@ namespace GreenLeaf.Windows
 
         #endregion
 
+        #region Панель администратора
+
+        public static RoutedUICommand AdminPopupCommand = new RoutedUICommand("Панель администратора", "AdminPopupCommand", typeof(MainWindow));
+
+        #endregion
+
         #endregion
 
         #region Загрузка программы
@@ -174,6 +180,15 @@ namespace GreenLeaf.Windows
 
             // панель управления
             this.btnAdminPanel.Visibility = (ProgramSettings.CurrentUser.AdminPanelData.AdminPanel) ? Visibility.Visible : Visibility.Collapsed;
+
+            // управление списком пользователей
+            this.btnAdminUser.IsEnabled = (ProgramSettings.CurrentUser.AdminPanelData.AdminPanelAddAccount || ProgramSettings.CurrentUser.AdminPanelData.AdminPanelEditAccount || ProgramSettings.CurrentUser.AdminPanelData.AdminPanelDeleteAccount);
+
+            // настройки программы
+            this.btnAdminSettings.IsEnabled = ProgramSettings.CurrentUser.AdminPanelData.AdminPanelSetNumerator;
+
+            // журнал событий
+            this.btnAdminJournal.IsEnabled = ProgramSettings.CurrentUser.AdminPanelData.AdminPanelJournal;
         }
 
         #endregion
@@ -187,6 +202,7 @@ namespace GreenLeaf.Windows
         {
             ReportsPopup.IsOpen = false;
             CounterpartiesPopup.IsOpen = false;
+            AdminPopup.IsOpen = false;
         }
 
         #endregion
@@ -629,6 +645,7 @@ namespace GreenLeaf.Windows
         private void ReportPopup_Execute(object sender, ExecutedRoutedEventArgs e)
         {
             CounterpartiesPopup.IsOpen = false;
+            AdminPopup.IsOpen = false;
 
             ReportsPopup.IsOpen = !ReportsPopup.IsOpen;
         }
@@ -717,6 +734,7 @@ namespace GreenLeaf.Windows
         private void CounterpartyPopup_Execute(object sender, ExecutedRoutedEventArgs e)
         {
             ReportsPopup.IsOpen = false;
+            AdminPopup.IsOpen = false;
 
             CounterpartiesPopup.IsOpen = !CounterpartiesPopup.IsOpen;
         }
@@ -755,6 +773,21 @@ namespace GreenLeaf.Windows
 
             view.ShowDialog();
             view.Close();
+        }
+
+        #endregion
+
+        #region Панель администратора
+
+        /// <summary>
+        /// Панель администратора
+        /// </summary>
+        private void AdminPopupCommand_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            CounterpartiesPopup.IsOpen = false;
+            ReportsPopup.IsOpen = false;
+
+            AdminPopup.IsOpen = !AdminPopup.IsOpen;
         }
 
         #endregion

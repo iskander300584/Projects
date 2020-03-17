@@ -49,6 +49,9 @@
 
         <!-- Контрагенты -->
         <CommandBinding Command="win:MainWindow.CounterpartyPopup" Executed="CounterpartyPopup_Execute" />
+
+        <!-- Панель администратора -->
+        <CommandBinding Command="win:MainWindow.AdminPopupCommand" Executed="AdminPopupCommand_Execute" />
     </Window.CommandBindings>
     
     <Window.Resources>
@@ -148,15 +151,19 @@
             <Popup x:Name="ReportsPopup" IsOpen="False" PlacementTarget="{Binding ElementName=btnReports}" Placement="Bottom" 
                Width="Auto" Height="Auto" >
                 <StackPanel Orientation="Vertical" Background="White">
+                    <!-- Список приходных накладных -->
                     <Button x:Name="btnReportsPurchaseInvoice" Style="{StaticResource PopupButtonStyle}" Content="Приходные накладные"
                         Click="btnReportsPurchaseInvoice_Click"/>
 
+                    <!-- Список расходных накладных -->
                     <Button x:Name="btnReportsSalesInvoice" Style="{StaticResource PopupButtonStyle}" Content="Расходные накладные"
                         Click="btnReportsSalesInvoice_Click"/>
 
+                    <!-- Отчет по балансу -->
                     <Button x:Name="btnReportsIncome" Style="{StaticResource PopupButtonStyle}" Content="Баланс"
                             Click="btnReportsIncome_Click"/>
 
+                    <!-- Отчет по остаткам на складе -->
                     <Button x:Name="btnReportsWarehouse" Style="{StaticResource PopupButtonStyle}" Content="Остатки на складе" 
                             Click="btnReportsWarehouse_Click" />
                 </StackPanel>
@@ -178,9 +185,11 @@
             <Popup x:Name="CounterpartiesPopup" IsOpen="False" PlacementTarget="{Binding ElementName=btnCounterparty}" Placement="Bottom" 
                Width="Auto" Height="Auto" >
                 <StackPanel Orientation="Vertical" Background="White">
+                    <!-- Список поставщиков -->
                     <Button x:Name="btnReportsProviders" Style="{StaticResource PopupButtonStyle}" Content="Поставщики"
                         Click="btnReportsProviders_Click"/>
 
+                    <!-- Список клиентов -->
                     <Button x:Name="btnReportsClients" Style="{StaticResource PopupButtonStyle}" Content="Клиенты"
                         Click="btnReportsClients_Click"/>
                 </StackPanel>
@@ -201,7 +210,8 @@
             </Button>
 
             <!-- Кнопка "Панель управления" -->
-            <Button x:Name="btnAdminPanel" Style="{StaticResource MainMenuButtonStyle}" >
+            <Button x:Name="btnAdminPanel" Style="{StaticResource MainMenuButtonStyle}" 
+                    Command="win:MainWindow.AdminPopupCommand" >
                 <Button.Content>
                     <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                         <Image Source="..\Images\settings.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
@@ -212,6 +222,24 @@
                     </DockPanel>
                 </Button.Content>
             </Button>
+
+            <!-- Панель контрагентов -->
+            <Popup x:Name="AdminPopup" IsOpen="False" PlacementTarget="{Binding ElementName=btnAdminPanel}" Placement="Bottom" 
+               Width="Auto" Height="Auto" >
+                <StackPanel Orientation="Vertical" Background="White">
+                    <!-- Список пользователей -->
+                    <Button x:Name="btnAdminUser" Style="{StaticResource PopupButtonStyle}" Content="Пользователи"
+                        />
+
+                    <!-- Настройки программы -->
+                    <Button x:Name="btnAdminSettings" Style="{StaticResource PopupButtonStyle}" Content="Настройки"
+                        />
+
+                    <!-- Журнал событий -->
+                    <Button x:Name="btnAdminJournal" Style="{StaticResource PopupButtonStyle}" Content="Журнал событий"
+                        />
+                </StackPanel>
+            </Popup>
         </StackPanel>
 
         <!-- Разделитель -->
