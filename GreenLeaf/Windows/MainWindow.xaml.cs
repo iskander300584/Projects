@@ -672,7 +672,7 @@ namespace GreenLeaf.Windows
         }
 
         /// <summary>
-        /// Отчет приход / расход
+        /// Отчет по балансу
         /// </summary>
         private void btnReportsIncome_Click(object sender, RoutedEventArgs e)
         {
@@ -681,6 +681,24 @@ namespace GreenLeaf.Windows
             HidePopups();
 
             Reports.ReportIncomeWindow view = new Reports.ReportIncomeWindow();
+            view.Owner = this;
+
+            Mouse.OverrideCursor = null;
+
+            view.ShowDialog();
+            view.Close();
+        }
+
+        /// <summary>
+        /// Отчет по остаткам на складе
+        /// </summary>
+        private void btnReportsWarehouse_Click(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            HidePopups();
+
+            Reports.ReportWarehouseWindow view = new Reports.ReportWarehouseWindow();
             view.Owner = this;
 
             Mouse.OverrideCursor = null;

@@ -271,7 +271,6 @@ namespace GreenLeaf.Windows.Reports
 
             try
             {
-
                 // Копирование шаблона отчета
                 FileInfo template = new FileInfo(AppDomain.CurrentDomain.BaseDirectory + FileNames.ReportBalanceTemplate);
                 FileInfo report = template.CopyTo(fileName, true);

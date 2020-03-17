@@ -157,7 +157,8 @@
                     <Button x:Name="btnReportsIncome" Style="{StaticResource PopupButtonStyle}" Content="Баланс"
                             Click="btnReportsIncome_Click"/>
 
-                    <Button x:Name="btnReportsWarehouse" Style="{StaticResource PopupButtonStyle}" Content="Остатки на складе" />
+                    <Button x:Name="btnReportsWarehouse" Style="{StaticResource PopupButtonStyle}" Content="Остатки на складе" 
+                            Click="btnReportsWarehouse_Click" />
                 </StackPanel>
             </Popup>
 
@@ -324,13 +325,6 @@
                         <TextBlock Text="Доступно" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
-
-                <!-- Единица измерения -->
-                <!--<DataGridTextColumn Width="100" Binding="{Binding Path=UnitNomination}" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >
-                    <DataGridTextColumn.Header>
-                        <TextBlock Text="Единица" Style="{StaticResource TextBlockGridStyle}" FontWeight="SemiBold" />
-                    </DataGridTextColumn.Header>
-                </DataGridTextColumn>-->
 
                 <!-- Аннулирован -->
                 <DataGridTextColumn x:Name="AnnuledColumn" Width="100" Binding="{Binding Path=IsAnnulated, Converter={StaticResource BoolToYesNo}}" Visibility="Collapsed" FontFamily="Yu Gothic UI Semilight" FontSize="16" IsReadOnly="True" >

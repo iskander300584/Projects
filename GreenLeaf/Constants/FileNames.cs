@@ -15,5 +15,10 @@ namespace GreenLeaf.Constants
         /// Имя файла "шаблон отчета по балансу.xls"
         /// </summary>
         public const string ReportBalanceTemplate = "шаблон отчета по балансу.xls";
+
+        /// <summary>
+        /// Имя файла "шаблон отчета по остаткам.xls"
+        /// </summary>
+        public const string ReportWarehouseTemplate = "шаблон отчета по остаткам.xls";
     }
 }

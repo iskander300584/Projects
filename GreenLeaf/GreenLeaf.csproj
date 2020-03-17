@@ -158,6 +158,9 @@
     <Compile Include="Windows\Warehouse\EditCountWindow.xaml.cs">
       <DependentUpon>EditCountWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\Reports\ReportWarehouseWindow.xaml.cs">
+      <DependentUpon>ReportWarehouseWindow.xaml</DependentUpon>
+    </Compile>
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -176,6 +179,10 @@
     <Compile Include="Windows\Authentificate\SplashWindow.xaml.cs">
       <DependentUpon>SplashWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Windows\Reports\ReportWarehouseWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Resource Include="StyleDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -300,6 +307,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="шаблон отчета по балансу.xls">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="шаблон отчета по остаткам.xls">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
