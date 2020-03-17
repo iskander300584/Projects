@@ -8,13 +8,16 @@
         xmlns:win="clr-namespace:GreenLeaf.Windows.InvoiceView"
         mc:Ignorable="d"
         Icon="..\..\Images\greenleaf.png"
-        Title="Отчет приход / расход" SizeToContent="Manual" WindowState="Maximized">
+        Title="Отчет по балансу" SizeToContent="Manual" WindowState="Maximized">
 
     <Window.CommandBindings>
         
         <!-- Открыть -->
         <CommandBinding Command="local:ReportIncomeWindow.OpenCommand" CanExecute="Open_CanExecute" Executed="Open_Execute" />
-        
+
+        <!-- Выгрузить в Excel -->
+        <CommandBinding Command="local:ReportIncomeWindow.ExportExcel" CanExecute="ExportExcel_CanExecute" Executed="ExportExcel_Execute" />
+
     </Window.CommandBindings>
     
     <Window.Resources>
@@ -108,11 +111,39 @@
             </Button>
 
             <!-- Кнопка "Выгрузить в Excel" -->
-            <Button x:Name="btnExcel" DockPanel.Dock="Right" Style="{StaticResource MainMenuButtonStyle}" Height="60" Width="60" Margin="5" 
-                    ToolTip="Выгрузить в Excel">
-                <Button.Content>
-                    <Image Source="..\..\Images\excel.png" DockPanel.Dock="Top" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                </Button.Content>
+            <Button x:Name="btnExcel" DockPanel.Dock="Right" Height="60" Width="60" Margin="5" 
+                   Command="local:ReportIncomeWindow.ExportExcel" >
+                <Button.Style>
+                    <Style BasedOn="{StaticResource MainMenuButtonStyle}">
+                        <Style.Triggers>
+                            <Trigger Property="Button.IsEnabled" Value="True">
+                                <Setter Property="Button.Content">
+                                    <Setter.Value>
+                                        <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                            <Image Source="..\..\Images\excel.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                            <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" Margin="0" FontSize="13" >
+                                                <Run>Экспорт</Run>
+                                            </TextBlock>
+                                        </DockPanel>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+
+                            <Trigger Property="Button.IsEnabled" Value="False">
+                                <Setter Property="Button.Content">
+                                    <Setter.Value>
+                                        <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                                            <Image Source="..\..\Images\excel_gray.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                            <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" Margin="0" FontSize="13" Foreground="Gray" >
+                                                <Run>Экспорт</Run>
+                                            </TextBlock>
+                                        </DockPanel>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
             </Button>
         </DockPanel>
 

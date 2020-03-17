@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using GreenLeaf.ViewModel;
 using GreenLeaf.Classes;
 using GreenLeaf.Windows.InvoiceView;
@@ -33,6 +26,11 @@ namespace GreenLeaf.Windows.Reports
         /// Команда Открыть
         /// </summary>
         public static RoutedUICommand OpenCommand = new RoutedUICommand("Открыть", "OpenCommand", typeof(ReportIncomeWindow));
+
+        /// <summary>
+        /// Команда Выгрузить в Excel
+        /// </summary>
+        public static RoutedUICommand ExportExcel = new RoutedUICommand("Экспорт", "ExportExcel", typeof(ReportIncomeWindow));
 
         #endregion
 
@@ -223,6 +221,171 @@ namespace GreenLeaf.Windows.Reports
             view.Close();
 
             GetData();
+        }
+
+        #endregion
+
+        #region Экспорт в Excel
+
+        /// <summary>
+        /// Проверка возможности экспорта данных в Excel
+        /// </summary>
+        private void ExportExcel_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = (InvoiceList.Count > 0) ? true : false;
+        }
+
+        /// <summary>
+        /// Экспорт данных в Excel
+        /// </summary>
+        private void ExportExcel_Execute(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + FileNames.ReportBalanceTemplate))
+            {
+                Dialog.ErrorMessage(this, "Шаблон отчета не найден. Обратитесь к администратору");
+                return;
+            }
+
+            SaveFileDialog saveDialog = new SaveFileDialog();
+
+            saveDialog.Filter = "Файлы Excel|*.xls";
+            saveDialog.FilterIndex = 0;
+            saveDialog.FileName = "";
+            saveDialog.CheckPathExists = true;
+            saveDialog.CheckFileExists = false;
+
+            Mouse.OverrideCursor = null;
+
+            if (!(bool)saveDialog.ShowDialog())
+                return;
+
+            string fileName = saveDialog.FileName;
+
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            if (!fileName.Contains(".xls"))
+                fileName += ".xls";
+
+            Excel.Application excellApp = null;
+            Excel.Workbook workbook = null;
+
+            try
+            {
+
+                // Копирование шаблона отчета
+                FileInfo template = new FileInfo(AppDomain.CurrentDomain.BaseDirectory + FileNames.ReportBalanceTemplate);
+                FileInfo report = template.CopyTo(fileName, true);
+
+                excellApp = new Excel.Application(); // открываем Excel
+                excellApp.Visible = false;
+                excellApp.DisplayAlerts = false;
+
+                workbook = excellApp.Workbooks.Open(report.FullName);
+                workbook.DisplayInkComments = false;
+
+                Excel.Worksheet worksheet = workbook.Worksheets.get_Item(1);
+
+                // Заполнение периода
+                worksheet.Cells[3, "D"] = ((DateTime)dpFromDate.SelectedDate).ToShortDateString();
+                worksheet.Cells[3, "E"] = ((DateTime)dpTillDate.SelectedDate).ToShortDateString();
+
+                // Заполнение итога
+                worksheet.Cells[8, "G"] = SummSales.ToString().Replace(',','.');
+                worksheet.Cells[8, "H"] = CouponSales.ToString().Replace(',', '.');
+                worksheet.Cells[9, "G"] = SummPurchase.ToString().Replace(',', '.');
+                worksheet.Cells[9, "H"] = CouponPurchase.ToString().Replace(',', '.');
+                worksheet.Cells[10, "G"] = SummBalance.ToString().Replace(',', '.');
+                worksheet.Cells[10, "H"] = CouponBalance.ToString().Replace(',', '.');
+
+                // Заполнение накладных
+                int i = 1;
+                int currRow = 7;
+                foreach(Invoice invoice in InvoiceList)
+                {
+                    // Добавление пустой строки
+                    Excel.Range cellRange = (Excel.Range)worksheet.Cells[currRow, 1];
+                    Excel.Range rowRange = cellRange.EntireRow;
+                    rowRange.Insert(Excel.XlInsertShiftDirection.xlShiftDown, false);
+
+                    // "№ п/п"
+                    worksheet.Cells[currRow, "A"] = i++.ToString();
+
+                    // Номер накладной
+                    worksheet.Cells[currRow, "B"] = invoice.Number.ToString();
+
+                    // Пользователь
+                    worksheet.Cells[currRow, "D"] = invoice.AccountUser.PersonalData.VisibleName;
+
+                    // Контрагент
+                    worksheet.Cells[currRow, "E"] = invoice.CounterpartyUser.VisibleName;
+
+                    // Дата проведения
+                    worksheet.Cells[currRow, "F"] = invoice.Date.ToShortDateString();
+
+                    if(invoice.IsPurchase)
+                    {
+                        // Тип накладной
+                        worksheet.Cells[currRow, "C"] = "приходная".ToString();
+
+                        // Сумма
+                        worksheet.Cells[currRow, "G"] = (invoice.Cost * -1).ToString().Replace(',', '.');
+
+                        // Купон
+                        worksheet.Cells[currRow, "H"] = (invoice.Coupon * -1).ToString().Replace(',', '.');
+                    }
+                    else
+                    {
+                        // Тип накладной
+                        worksheet.Cells[currRow, "C"] = "расходная".ToString();
+
+                        // Сумма
+                        worksheet.Cells[currRow, "G"] = invoice.Cost.ToString().Replace(',', '.');
+
+                        // Купон
+                        worksheet.Cells[currRow, "H"] = invoice.Coupon.ToString().Replace(',', '.');
+                    }
+
+                    currRow++;
+                }
+
+                // Удаление пустых строк
+                Excel.Range cRange = (Excel.Range)worksheet.Cells[currRow, 1];
+                Excel.Range rRange = cRange.EntireRow;
+                rRange.Delete(Excel.XlDeleteShiftDirection.xlShiftUp);
+                cRange = (Excel.Range)worksheet.Cells[6, 1];
+                rRange = cRange.EntireRow;
+                rRange.Delete(Excel.XlDeleteShiftDirection.xlShiftUp);
+
+                // сохранение отчета
+                workbook.Save();
+
+                // Закрытие Excel
+                workbook.Close(false);
+                excellApp.Quit();
+
+                workbook = null;
+                excellApp = null;
+
+                // Запуск отчета
+                Process.Start(report.FullName);
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(this, "Ошибка выгрузки отчета в Excel", ex.Message);
+
+                try
+                {
+                    // Закрытие Excel
+                    workbook.Close(false);
+                    excellApp.Quit();
+
+                    workbook = null;
+                    excellApp = null;
+                }
+                catch { }
+            }
+
+            Mouse.OverrideCursor = null;
         }
 
         #endregion

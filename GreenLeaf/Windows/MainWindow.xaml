@@ -154,10 +154,10 @@
                     <Button x:Name="btnReportsSalesInvoice" Style="{StaticResource PopupButtonStyle}" Content="Расходные накладные"
                         Click="btnReportsSalesInvoice_Click"/>
 
-                    <Button x:Name="btnReportsIncome" Style="{StaticResource PopupButtonStyle}" Content="Приход / расход"
+                    <Button x:Name="btnReportsIncome" Style="{StaticResource PopupButtonStyle}" Content="Баланс"
                             Click="btnReportsIncome_Click"/>
 
-                    <Button x:Name="btnReportsWarehouse" Style="{StaticResource PopupButtonStyle}" Content="Остаток на складе" />
+                    <Button x:Name="btnReportsWarehouse" Style="{StaticResource PopupButtonStyle}" Content="Остатки на складе" />
                 </StackPanel>
             </Popup>
 
