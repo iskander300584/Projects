@@ -23,7 +23,8 @@
     <Package InstallerVersion="200" Compressed="yes" Languages="1049" InstallScope="perMachine" />
 
     <Property Id="ARPCOMMENTS">Программа для складского учета СЦ GreenLeaf</Property>
-    <Property Id="ARPHELPTELEPHONE">+7 (927) 023-69-50</Property>
+    <Property Id="ARPHELPTELEPHONE">+7 (927) 023-67-90</Property>
+    <Property Id='ARPHELPLINK'>aldr046@mail.ru</Property>
     <Property Id="ARPCONTACT">Ряполов А.Н.</Property>
 
     <MajorUpgrade DowngradeErrorMessage="На компьютере установлена более новая версия программы. Установка отменена." />
