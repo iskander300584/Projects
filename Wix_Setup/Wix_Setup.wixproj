@@ -6,7 +6,7 @@
     <ProductVersion>3.10</ProductVersion>
     <ProjectGuid>3d129263-cef5-42c1-9bbc-eb4dcd1945ee</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>GreenLeaf управление складом %281.0.1%29</OutputName>
+    <OutputName>GreenLeaf управление складом %281.0.2%29</OutputName>
     <OutputType>Package</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -37,6 +37,9 @@
       <HintPath>$(WixExtDir)\WixComPlusExtension.dll</HintPath>
       <Name>WixComPlusExtension</Name>
     </WixExtension>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="greenleaf.ico" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />

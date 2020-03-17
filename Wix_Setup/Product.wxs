@@ -2,9 +2,10 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
 
   <!-- Константы -->
-  <?define Version = "1.0.1" ?>
+  <?define Version = "1.0.2" ?>
   <?define Product = "GreenLeaf"?>
   <?define Manufacturer = "Ряполов А.Н."?>
+  <?define Manufact = "RYAPOLOV"?>
   <?define Title = "GreenLeaf управление складом"?>
   <?define UpgradeCode = "7d7e6a51-57b0-4ec4-bfe7-197dd76ee68f"?>
 
@@ -16,7 +17,7 @@
   <?define MainData = "..\GreenLeaf\Bin\Release"?>
   <?define ImagesData = "..\GreenLeaf\Images"?>
 
-  <Product Id="*" Name="$(var.Title) $(var.Version) beta" Language="1049" Codepage="1251" Version="$(var.Version)"
+  <Product Id="*" Name="$(var.Title) $(var.Version)" Language="1049" Codepage="1251" Version="$(var.Version)"
            Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
 
     <Package InstallerVersion="200" Compressed="yes" Languages="1049" InstallScope="perMachine" />
@@ -36,7 +37,8 @@
     </Condition>
 
     <!-- Пиктограмма установочного пакета -->
-    <!--<Icon Id="greenleaf.ico" SourceFile="greenleaf.ico"/>-->
+    <Property Id="ARPPRODUCTICON" Value="greenleaf.ico" />
+    <Icon Id="greenleaf.ico" SourceFile="greenleaf.ico"/>
 
     <!-- Пути для установки -->
     <Directory Id="TARGETDIR" Name="SourceDir">
@@ -60,8 +62,8 @@
     <!-- Ярлык на рабочий стол -->
     <DirectoryRef Id="DesktopFolder">
       <Component Id="ApplicationShortcut" Guid="ccdaaa9a-93a8-4808-acef-c7c6752d7acd">
-        <Shortcut Id="ApplicationStartMenuShortcut" Name="$(var.Product)" Description="$(var.Title)" Target="[$(var.Product)].exe" WorkingDirectory="$(var.Product)"/>
-        <RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.Product)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+        <Shortcut Id="ApplicationStartMenuShortcut" Name="$(var.Product)" Description="$(var.Title)" Target="[INSTALLFOLDER]$(var.Product).exe" WorkingDirectory="INSTALLFOLDER"/>
+        <RegistryValue Root="HKCU" Key="Software\$(var.Manufact)\$(var.Product)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
       </Component>
     </DirectoryRef>
 
