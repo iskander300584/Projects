@@ -151,7 +151,7 @@ namespace GreenLeaf.Windows.CounterpartyView
         /// </summary>
         private void ResetFilter_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (tbSearchCode != null && tbSearchNomination != null && tbSearchCode.Text != "" && tbSearchNomination.Text != "") ? true : false;
+            e.CanExecute = (tbSearchCode != null && tbSearchNomination != null && (tbSearchCode.Text != "" || tbSearchNomination.Text != "")) ? true : false;
         }
 
         /// <summary>
