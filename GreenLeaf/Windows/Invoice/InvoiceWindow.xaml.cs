@@ -516,7 +516,7 @@ namespace GreenLeaf.Windows.InvoiceView
         /// </summary>
         private void DoExcelOutput_Execute(object sender, ExecutedRoutedEventArgs e)
         {
-            if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "шаблон накладной.xls"))
+            if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory + FileNames.InvoiceTemplate))
             {
                 Dialog.ErrorMessage(this, "Шаблон накладной не найден. Обратитесь к администратору");
                 return;
@@ -574,7 +574,7 @@ namespace GreenLeaf.Windows.InvoiceView
                         fileName += ".xls";
 
                     // Копирование шаблона накладной
-                    FileInfo template = new FileInfo(AppDomain.CurrentDomain.BaseDirectory + "шаблон накладной.xls");
+                    FileInfo template = new FileInfo(AppDomain.CurrentDomain.BaseDirectory + FileNames.InvoiceTemplate);
                     FileInfo report = template.CopyTo(fileName, true);
 
                     Excel.Application excellApp = new Excel.Application(); // открываем Excel

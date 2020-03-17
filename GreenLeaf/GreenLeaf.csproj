@@ -115,6 +115,7 @@
     <Compile Include="Classes\Conversion.cs" />
     <Compile Include="Classes\Enums.cs" />
     <Compile Include="Classes\MeasureUnit.cs" />
+    <Compile Include="Constants\FileNames.cs" />
     <Compile Include="Constants\NumeratorNames.cs" />
     <Compile Include="Classes\NumericTextBoxMethods.cs" />
     <Compile Include="Constants\SettingsNames.cs" />
