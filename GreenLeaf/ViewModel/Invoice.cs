@@ -1021,31 +1021,6 @@ namespace GreenLeaf.ViewModel
 
                     string sql = String.Format("SELECT `INV`.`ID`, `INV`.`NUMBER`, `INV`.`ID_ACCOUNT`, `INV`.`ID_COUNTERPARTY`, `INV`.`DATE`, `INV`.`CREATE_DATE`, `INV`.`COST`, `INV`.`COUPON`, `INV`.`IS_ISSUED`, `INV`.`IS_LOCKED`, `ACC`.`NAME`, `ACC`.`SURNAME`,  `ACC`.`PATRONYMIC`, `COU`.`NAME` AS `COU_NAME`, `COU`.`SURNAME` AS `COU_SURNAME`, `COU`.`PATRONYMIC` AS `COU_PATRONYMIC`, `COU`.`NOMINATION` AS `COU_NOMINATION` FROM `{0}` AS `INV` LEFT JOIN `ACCOUNT` AS `ACC` ON `ACC`.`ID` = `INV`.`ID_ACCOUNT` LEFT JOIN `COUNTERPARTY` AS `COU` ON `COU`.`ID` = `INV`.`ID_COUNTERPARTY`", table);
 
-                    //string sql = "SELECT * FROM `" + table + "`";
-
-                    //if (from != null && to != null)
-                    //{
-                    //    string fromDate = String.Format(@"'{0}-{1}-{2}T00:00:00.000'", ((DateTime)from).Year, ((DateTime)from).Month, ((DateTime)from).Day);
-                    //    string toDate = String.Format(@"'{0}-{1}-{2}T23:59:59.000'", ((DateTime)to).Year, ((DateTime)to).Month, ((DateTime)to).Day);
-
-                    //    sql += " WHERE `" + table + "`.`CREATE_DATE` >= " + fromDate + " AND `" + table + "`.`CREATE_DATE` <= " + toDate;
-
-                    //    if (idAccount != null && idAccount != 0)
-                    //        sql += " AND `" + table + "`.`ID_ACCOUNT` = " + (int)idAccount;
-
-                    //    if (idCounterparty != null && idCounterparty != 0)
-                    //        sql += " AND `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
-                    //}
-                    //else if (idAccount != null && idAccount != 0)
-                    //{
-                    //    sql += " WHERE `" + table + "`.`ID_ACCOUNT` = " + (int)idAccount;
-
-                    //    if (idCounterparty != null && idCounterparty != 0)
-                    //        sql += " AND `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
-                    //}
-                    //else if (idCounterparty != null && idCounterparty != 0)
-                    //    sql += " WHERE `" + table + "`.`ID_COUNTERPARTY` = " + (int)idCounterparty;
-
                     if (from != null && to != null)
                     {
                         string fromDate = String.Format(@"'{0}-{1}-{2}T00:00:00.000'", ((DateTime)from).Year, ((DateTime)from).Month, ((DateTime)from).Day);
