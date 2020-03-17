@@ -310,6 +310,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="шаблон журнала событий.xls">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="шаблон накладной.xls">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

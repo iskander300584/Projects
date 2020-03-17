@@ -88,6 +88,7 @@
         <File Id="InvoiceTemplate" KeyPath="no" Name="шаблон накладной.xls" Checksum="yes" Vital="yes" Source="$(var.MainData)\шаблон накладной.xls" />
         <File Id="BalanceTemplate" KeyPath="no" Name="шаблон отчета по балансу.xls" Checksum="yes" Vital="yes" Source="$(var.MainData)\шаблон отчета по балансу.xls" />
         <File Id="WarehouseTemplate" KeyPath="no" Name="шаблон отчета по остаткам.xls" Checksum="yes" Vital="yes" Source="$(var.MainData)\шаблон отчета по остаткам.xls" />
+        <File Id="JournalTemplate" KeyPath="no" Name="шаблон журнала событий.xls" Checksum="yes" Vital="yes" Source="$(var.MainData)\шаблон журнала событий.xls" />
 
       </Component>
     </ComponentGroup>
