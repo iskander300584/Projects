@@ -641,6 +641,53 @@ namespace GreenLeaf.ViewModel
         #region Статические методы
 
         /// <summary>
+        /// Получить список всех аккаунтов с незащищенными персональными данными
+        /// </summary>
+        public static List<Account> GetAllAccountsPersonalData()
+        {
+            List<Account> result = new List<Account>();
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
+                {
+                    connection.Open();
+
+                    string sql = @"SELECT `ID`, `LOGIN`, `CODE`, `SURNAME`, `NAME`, `PATRONYMIC` FROM `ACCOUNT`";
+
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Account account = new Account();
+
+                                account.ID = Conversion.ToInt(reader["ID"].ToString());
+
+                                account.Login = reader["LOGIN"].ToString();
+                                account.PersonalData.Code = reader["CODE"].ToString();
+                                account.PersonalData.Surname = reader["SURNAME"].ToString();
+                                account.PersonalData.Name = reader["NAME"].ToString();
+                                account.PersonalData.Patronymic = reader["PATRONYMIC"].ToString();
+
+                                result.Add(account);
+                            }
+                        }
+                    }
+
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка получения списка пользователей", ex.Message);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Получить список не аннулированных аккаунтов с незащищенными персональными данными
         /// </summary>
         public static List<Account> GetNotAnnuledAccountsPersonalData()

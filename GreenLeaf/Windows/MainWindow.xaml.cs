@@ -790,6 +790,24 @@ namespace GreenLeaf.Windows
             AdminPopup.IsOpen = !AdminPopup.IsOpen;
         }
 
+        /// <summary>
+        /// Журнал событий
+        /// </summary>
+        private void AdminJournal_Click(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            HidePopups();
+
+            AdminPanel.AdminJournalWindow view = new AdminPanel.AdminJournalWindow();
+            view.Owner = this;
+
+            Mouse.OverrideCursor = null;
+
+            view.ShowDialog();
+            view.Close();
+        }
+
         #endregion
     }
 }

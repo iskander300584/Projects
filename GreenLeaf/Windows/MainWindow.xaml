@@ -237,7 +237,7 @@
 
                     <!-- Журнал событий -->
                     <Button x:Name="btnAdminJournal" Style="{StaticResource PopupButtonStyle}" Content="Журнал событий"
-                        />
+                        Click="AdminJournal_Click" />
                 </StackPanel>
             </Popup>
         </StackPanel>
