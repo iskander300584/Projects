@@ -385,7 +385,7 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void WarehouseEditProduct_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (ProgramSettings.CurrentUser.WarehouseData.Warehouse && ProgramSettings.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null) ? true : false;
+            e.CanExecute = (ProgramSettings.CurrentUser.WarehouseData.Warehouse && ProgramSettings.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null && !((Product)dataGrid.SelectedItem).IsAnnulated) ? true : false;
         }
 
         /// <summary>
@@ -430,7 +430,7 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void WarehouseAnnulateProduct_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (ProgramSettings.CurrentUser.WarehouseData.Warehouse && ProgramSettings.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null && !((Product)dataGrid.SelectedItem).IsAnnulated ) ? true : false;
+            e.CanExecute = (ProgramSettings.CurrentUser.WarehouseData.Warehouse && ProgramSettings.CurrentUser.WarehouseData.WarehouseAnnulateProduct && dataGrid.SelectedItem != null && !((Product)dataGrid.SelectedItem).IsAnnulated ) ? true : false;
         }
 
         /// <summary>
@@ -471,7 +471,7 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void WarehouseUnAnnulateProduct_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (ProgramSettings.CurrentUser.WarehouseData.Warehouse && ProgramSettings.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null && ((Product)dataGrid.SelectedItem).IsAnnulated) ? true : false;
+            e.CanExecute = (ProgramSettings.CurrentUser.WarehouseData.Warehouse && ProgramSettings.CurrentUser.WarehouseData.WarehouseAnnulateProduct && dataGrid.SelectedItem != null && ((Product)dataGrid.SelectedItem).IsAnnulated) ? true : false;
         }
 
         /// <summary>
@@ -534,7 +534,7 @@ namespace GreenLeaf.Windows
         /// </summary>
         private void WarehouseEditCount_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = (ProgramSettings.CurrentUser.WarehouseData.Warehouse && ProgramSettings.CurrentUser.WarehouseData.WarehouseEditProduct && dataGrid.SelectedItem != null) ? true : false;
+            e.CanExecute = (ProgramSettings.CurrentUser.WarehouseData.Warehouse && ProgramSettings.CurrentUser.WarehouseData.WarehouseEditCount && dataGrid.SelectedItem != null && !((Product)dataGrid.SelectedItem).IsAnnulated) ? true : false;
         }
 
         /// <summary>
