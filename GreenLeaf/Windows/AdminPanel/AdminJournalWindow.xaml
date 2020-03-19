@@ -14,10 +14,10 @@
         <conv:Date_To_String_Converter x:Key="DateToString" />
 
         <!-- Преобразование в номер -->
-        <conv:Invoice_Number_To_String_Converter x:Key="NumberToString" />
+        <!--<conv:Invoice_Number_To_String_Converter x:Key="NumberToString" />-->
 
         <!-- Преобразование в сумму -->
-        <conv:Double_To_Summ_String_Converter x:Key="DoubleToSumm" />
+        <!--<conv:Double_To_Summ_String_Converter x:Key="DoubleToSumm" />-->
     </Window.Resources>
 
     <Grid>
@@ -69,7 +69,7 @@
 
             <!-- Кнопка "Выгрузить в Excel" -->
             <Button x:Name="btnExcel" DockPanel.Dock="Right" Height="60" Width="60" Margin="5" 
-                    >
+                   Click="Excel_Click" >
                 <Button.Style>
                     <Style BasedOn="{StaticResource MainMenuButtonStyle}">
                         <Style.Triggers>

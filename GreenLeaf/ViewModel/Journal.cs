@@ -60,6 +60,23 @@ namespace GreenLeaf.ViewModel
             }
         }
 
+        private Account _account = null;
+        /// <summary>
+        /// Пользователь
+        /// </summary>
+        public Account Account
+        {
+            get { return _account; }
+            set
+            {
+                if(_account != value)
+                {
+                    _account = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private string _act = string.Empty;
         /// <summary>
         /// Событие
@@ -200,20 +217,20 @@ namespace GreenLeaf.ViewModel
                         toDate = String.Format(@"'{0}-{1}-{2}T23:59:59.000'", ((DateTime)to).Year, ((DateTime)to).Month, ((DateTime)to).Day);
                     }
 
-                    string sql = String.Format(@"SELECT * FROM `JOURNAL`");
+                    string sql = String.Format(@"SELECT `JOU`.`ID`, `JOU`.`DATE`, `JOU`.`ID_ACCOUNT`, `JOU`.`ACT`, `ACC`.`NAME`, `ACC`.`SURNAME`,  `ACC`.`PATRONYMIC` FROM `JOURNAL` AS `JOU` LEFT JOIN `ACCOUNT` AS `ACC` ON `ACC`.`ID` = `JOU`.`ID_ACCOUNT`");
 
                     if(idAccount != null)
                     {
-                        sql += " WHERE `JOURNAL`.`ID_ACCOUNT` = " + (int)idAccount;
+                        sql += " WHERE `JOU`.`ID_ACCOUNT` = " + (int)idAccount;
 
                         if(from != null && to != null)
                         {
-                            sql += " AND `JOURNAL`.`DATE` >= " + fromDate + " AND `JOURNAL`.`DATE` <= " + toDate;
+                            sql += " AND `JOU`.`DATE` >= " + fromDate + " AND `JOU`.`DATE` <= " + toDate;
                         }
                     }
                     else if(from != null && to != null)
                     {
-                        sql += " WHERE `JOURNAL`.`DATE` >= " + fromDate + " AND `JOURNAL`.`DATE` <= " + toDate;
+                        sql += " WHERE `JOU`.`DATE` >= " + fromDate + " AND `JOU`.`DATE` <= " + toDate;
                     }
 
                     using (MySqlCommand command = new MySqlCommand(sql, connection))
@@ -228,6 +245,22 @@ namespace GreenLeaf.ViewModel
                                 journal.Date = Conversion.ToDateTime(reader["DATE"].ToString());
                                 journal.ID_Account = Conversion.ToInt(reader["ID_ACCOUNT"].ToString());
                                 journal.Act = reader["ACT"].ToString();
+
+                                if (journal.ID_Account != 0)
+                                {
+                                    string accName = reader["NAME"].ToString();
+                                    string accSurname = reader["SURNAME"].ToString();
+                                    string accPatronymic = reader["PATRONYMIC"].ToString();
+
+                                    journal.Account = new Account
+                                    {
+                                        ID = journal.ID_Account
+                                    };
+
+                                    journal.Account.PersonalData.Name = accName;
+                                    journal.Account.PersonalData.Surname = accSurname;
+                                    journal.Account.PersonalData.Patronymic = accPatronymic;
+                                }
 
                                 list.Add(journal);
                             }
