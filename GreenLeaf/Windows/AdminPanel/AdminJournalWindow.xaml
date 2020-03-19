@@ -12,12 +12,6 @@
     <Window.Resources>
         <!-- Преобразование в дату -->
         <conv:Date_To_String_Converter x:Key="DateToString" />
-
-        <!-- Преобразование в номер -->
-        <!--<conv:Invoice_Number_To_String_Converter x:Key="NumberToString" />-->
-
-        <!-- Преобразование в сумму -->
-        <!--<conv:Double_To_Summ_String_Converter x:Key="DoubleToSumm" />-->
     </Window.Resources>
 
     <Grid>

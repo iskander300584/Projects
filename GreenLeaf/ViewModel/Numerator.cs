@@ -194,6 +194,44 @@ namespace GreenLeaf.ViewModel
         }
 
         /// <summary>
+        /// Установить значение нумератора
+        /// </summary>
+        /// <param name="value">значение</param>
+        /// <param name="id">ID нумератора</param>
+        /// <returns>возвращает TRUE, если значение нумератора изменено успешно</returns>
+        public static bool SetNumeratorValue(int value, int id)
+        {
+            bool result = false;
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
+                {
+                    connection.Open();
+
+                    string sql = String.Format(@"UPDATE `NUMERATOR` SET `VALUE` = '{0}' WHERE `NUMERATOR`.`ID` = {1}", value, id);
+
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+
+                    Journal.CreateJournal("переустановил", "значение нумератора ID = " + id.ToString(), connection);
+
+                    connection.Close();
+                }
+
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка изменения значения нумератора", ex.Message);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Получение списка нумераторов
         /// </summary>
         public static List<Numerator> GetNumerators()

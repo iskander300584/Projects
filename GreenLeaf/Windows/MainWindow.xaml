@@ -233,7 +233,7 @@
 
                     <!-- Настройки программы -->
                     <Button x:Name="btnAdminSettings" Style="{StaticResource PopupButtonStyle}" Content="Настройки"
-                        />
+                        Click="AdminSettings_Click" />
 
                     <!-- Журнал событий -->
                     <Button x:Name="btnAdminJournal" Style="{StaticResource PopupButtonStyle}" Content="Журнал событий"

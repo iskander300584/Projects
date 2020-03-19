@@ -791,6 +791,24 @@ namespace GreenLeaf.Windows
         }
 
         /// <summary>
+        /// Настройки
+        /// </summary>
+        private void AdminSettings_Click(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            HidePopups();
+
+            AdminPanel.AdminSettingsWindow view = new AdminPanel.AdminSettingsWindow();
+            view.Owner = this;
+
+            Mouse.OverrideCursor = null;
+
+            view.ShowDialog();
+            view.Close();
+        }
+
+        /// <summary>
         /// Журнал событий
         /// </summary>
         private void AdminJournal_Click(object sender, RoutedEventArgs e)
