@@ -735,6 +735,57 @@ namespace GreenLeaf.ViewModel
         }
 
         /// <summary>
+        /// Получить список аккаунтов с минимальными данными согласно контексту поиска
+        /// </summary>
+        /// <param name="search">контекст поиска по логину, коду, фамилии, имени, отчеству</param>
+        public static List<Account> GetActualAccountList(string search = "")
+        {
+            List<Account> result = new List<Account>();
+
+            try
+            {
+                using (MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString)))
+                {
+                    connection.Open();
+
+                    string sql = String.Format(@"SELECT `ID`, `LOGIN`, `CODE`, `SURNAME`, `NAME`, `PATRONYMIC` FROM `ACCOUNT` WHERE `ACCOUNT`.`IS_ANNULATED` = '0' AND `ACCOUNT`.`LOGIN` <> 'admin'");
+
+                    if (search != "")
+                        sql += String.Format(@" AND (`ACCOUNT`.`LOGIN` LIKE '%{0}%' OR `ACCOUNT`.`CODE` LIKE '%{0}%' OR `ACCOUNT`.`SURNAME` LIKE '%{0}%' OR `ACCOUNT`.`NAME` LIKE '%{0}%' OR `ACCOUNT`.`PATRONYMIC` LIKE '%{0}%')", search);
+
+                    using (MySqlCommand command = new MySqlCommand(sql, connection))
+                    {
+                        using (MySqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Account account = new Account();
+
+                                account.ID = Conversion.ToInt(reader["ID"].ToString());
+
+                                account.Login = reader["LOGIN"].ToString();
+                                account.PersonalData.Code = reader["CODE"].ToString();
+                                account.PersonalData.Surname = reader["SURNAME"].ToString();
+                                account.PersonalData.Name = reader["NAME"].ToString();
+                                account.PersonalData.Patronymic = reader["PATRONYMIC"].ToString();
+
+                                result.Add(account);
+                            }
+                        }
+                    }
+
+                    connection.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Dialog.ErrorMessage(null, "Ошибка получения списка пользователей", ex.Message);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Получить аккаунт с незащищенными данными по ID
         /// </summary>
         /// <param name="id">ID</param>

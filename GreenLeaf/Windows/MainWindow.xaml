@@ -229,7 +229,7 @@
                 <StackPanel Orientation="Vertical" Background="White">
                     <!-- Список пользователей -->
                     <Button x:Name="btnAdminUser" Style="{StaticResource PopupButtonStyle}" Content="Пользователи"
-                        />
+                        Click="AdminUsers_Click" />
 
                     <!-- Настройки программы -->
                     <Button x:Name="btnAdminSettings" Style="{StaticResource PopupButtonStyle}" Content="Настройки"

@@ -791,6 +791,24 @@ namespace GreenLeaf.Windows
         }
 
         /// <summary>
+        /// Пользователи
+        /// </summary>
+        private void AdminUsers_Click(object sender, RoutedEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            HidePopups();
+
+            AdminPanel.AdminAccountListWindow view = new AdminPanel.AdminAccountListWindow();
+            view.Owner = this;
+
+            Mouse.OverrideCursor = null;
+
+            view.ShowDialog();
+            view.Close();
+        }
+
+        /// <summary>
         /// Настройки
         /// </summary>
         private void AdminSettings_Click(object sender, RoutedEventArgs e)

@@ -119,6 +119,7 @@
     <Compile Include="Constants\NumeratorNames.cs" />
     <Compile Include="Classes\NumericTextBoxMethods.cs" />
     <Compile Include="Constants\SettingsNames.cs" />
+    <Compile Include="Converters\Bool_to_Digit_Converter.cs" />
     <Compile Include="Converters\Bool_to_UnVisibility_Converter.cs" />
     <Compile Include="Converters\Bool_to_Visibility_Converter.cs" />
     <Compile Include="Converters\Bool_to_YesNo_Converter.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Converters\Invoice_Number_To_String_Converter.cs" />
     <Compile Include="Converters\Null_to_False_Converter.cs" />
     <Compile Include="ViewModel\Account.cs" />
+    <Compile Include="ViewModel\AdminContext.cs" />
     <Compile Include="ViewModel\Counterparty.cs" />
     <Compile Include="ViewModel\Invoice.cs" />
     <Compile Include="ViewModel\InvoiceItem.cs" />
@@ -135,6 +137,12 @@
     <Compile Include="ViewModel\Product.cs" />
     <Compile Include="ViewModel\SettingsContext.cs" />
     <Compile Include="ViewModel\Unit.cs" />
+    <Compile Include="Windows\AdminPanel\AdminAccountListWindow.xaml.cs">
+      <DependentUpon>AdminAccountListWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\AdminPanel\AdminAccountWindow.xaml.cs">
+      <DependentUpon>AdminAccountWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\AdminPanel\AdminJournalWindow.xaml.cs">
       <DependentUpon>AdminJournalWindow.xaml</DependentUpon>
     </Compile>
@@ -189,6 +197,14 @@
     <Compile Include="Windows\Authentificate\SplashWindow.xaml.cs">
       <DependentUpon>SplashWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="Windows\AdminPanel\AdminAccountListWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\AdminPanel\AdminAccountWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows\AdminPanel\AdminJournalWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -434,6 +450,7 @@
     <Content Include="DB\backUp_25_02_2020.sql" />
     <Content Include="DB\configDB.sql" />
     <Content Include="DB\БД_структура.sql" />
+    <Resource Include="Images\info_gray.png" />
     <Resource Include="DB\GreenLeaf DB.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
