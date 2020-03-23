@@ -9,6 +9,19 @@
         Icon="..\..\Images\greenleaf.png"
         Title="Информация о пользователе" Width="800" SizeToContent="Height" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" x:Name="thisWindow" >
 
+    <Window.CommandBindings>
+
+        <!-- Редактировать -->
+        <CommandBinding Command="local:AdminAccountWindow.EditCommand" CanExecute="Edit_CanExecute" Executed="Edit_Execute" />
+
+        <!-- Аннулировать -->
+        <CommandBinding Command="local:AdminAccountWindow.AnnulateCommand" CanExecute="Annulate_CanExecute" Executed="Annulate_Execute" />
+
+        <!-- Сбросить пароль -->
+        <CommandBinding Command="local:AdminAccountWindow.ResetPasswordCommand" CanExecute="ResetPassword_CanExecute" Executed="ResetPassword_Execute" />
+
+    </Window.CommandBindings>
+    
     <Window.Resources>
         <!-- Преобразование "TRUE" в "1", "FALSE" в "0" -->
         <conv:Bool_to_Digit_Converter x:Key="BoolToDigit" />
@@ -30,7 +43,7 @@
         <!-- Данные пользователя -->
         <GroupBox Grid.ColumnSpan="2" Margin="5" >
             <GroupBox.Header>
-                <TextBlock Text="Данные пользователя" Style="{StaticResource TextBlockStyle}" />
+                <TextBlock Text=" Данные пользователя " Style="{StaticResource TextBlockStyle}" Background="{Binding ElementName=thisWindow, Path=Background}" />
             </GroupBox.Header>
 
             <Grid>
@@ -59,9 +72,10 @@
                 <TextBlock Text="Логин" Grid.Column="2" Style="{StaticResource TextBlockGridStyle}" Foreground="Black" VerticalAlignment="Center" />
                 <DockPanel Grid.Column="3" >
                     <!-- Кнопка сбросить пароль -->
-                    <Button DockPanel.Dock="Right" Style="{StaticResource ResetSearchButtonStyle}" ToolTip="Сбросить пароль" Height="25" Width="25" />
+                    <Button DockPanel.Dock="Right" Style="{StaticResource ResetSearchButtonStyle}" ToolTip="Сбросить пароль" Height="25" Width="25"
+                            Command="local:AdminAccountWindow.ResetPasswordCommand" />
                     <TextBox Style="{StaticResource TextBoxStyle}" VerticalAlignment="Center" DockPanel.Dock="Left"
-                         Text="{Binding CurrentAccount.PersonalData.Login, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         Text="{Binding CurrentAccount.Login, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                              IsReadOnly="{Binding IsReadOnly, UpdateSourceTrigger=PropertyChanged}" />
                 </DockPanel>
 
@@ -109,7 +123,7 @@
         <!-- Накладные -->
         <GroupBox Grid.Row="1" Margin="5" Padding="5" >
             <GroupBox.Header>
-                <TextBlock Text="Накладные" Style="{StaticResource TextBlockStyle}" />
+                <TextBlock Text=" Накладные " Style="{StaticResource TextBlockStyle}" Background="{Binding ElementName=thisWindow, Path=Background}" />
             </GroupBox.Header>
 
             <DockPanel LastChildFill="False" >
@@ -140,42 +154,48 @@
         <!-- Контрагенты -->
         <GroupBox Grid.Row="1" Grid.Column="1" Margin="5" Padding="5" >
             <GroupBox.Header>
-                <TextBlock Text="Контрагенты" Style="{StaticResource TextBlockStyle}" />
+                <TextBlock Text=" Контрагенты " Style="{StaticResource TextBlockStyle}" Background="{Binding ElementName=thisWindow, Path=Background}" />
             </GroupBox.Header>
 
             <DockPanel LastChildFill="False" >
 
-                <CheckBox Content="Доступ к списку поставщиков" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top"
+                <CheckBox x:Name="cbMasterProvider" Content="Доступ к списку поставщиков" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top"
                           IsChecked="{Binding CurrentAccount.CounterpartyData.CounterpartyProvider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                          IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" 
+                          Unchecked="CheckBox_MasterProvider_Changed" />
 
-                <CheckBox Content="Добавление поставщиков" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top" Margin="25,5,5,5"
+                <CheckBox x:Name="cbSlaveProvider_Add" Content="Добавление поставщиков" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top" Margin="25,5,5,5"
                           IsChecked="{Binding CurrentAccount.CounterpartyData.CounterpartyProviderAdd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                          IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}"
+                          Checked="CheckBox_SlaveProvider_Changed" />
 
-                <CheckBox Content="Редактирование поставщиков" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top" Margin="25,5,5,5"
+                <CheckBox x:Name="cbSlaveProvider_Edit" Content="Редактирование поставщиков" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top" Margin="25,5,5,5"
                           IsChecked="{Binding CurrentAccount.CounterpartyData.CounterpartyProviderEdit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" />
 
-                <CheckBox Content="Аннулирование поставщиков" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top" Margin="25,5,5,5"
+                <CheckBox x:Name="cbSlaveProvider_Annulate" Content="Аннулирование поставщиков" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top" Margin="25,5,5,5"
                           IsChecked="{Binding CurrentAccount.CounterpartyData.CounterpartyProviderDelete, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" />
 
-                <CheckBox Content="Доступ к списку клиентов" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top"
+                <CheckBox x:Name="cbMasterCustomer" Content="Доступ к списку клиентов" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top"
                           IsChecked="{Binding CurrentAccount.CounterpartyData.CounterpartyCustomer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                          IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" 
+                          Unchecked="CheckBox_MasterCustomer_Changed" />
 
-                <CheckBox Content="Добавление клиентов" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top" Margin="25,5,5,5"
+                <CheckBox x:Name="cbSlaveCustomer_Add" Content="Добавление клиентов" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top" Margin="25,5,5,5"
                           IsChecked="{Binding CurrentAccount.CounterpartyData.CounterpartyCustomerAdd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                          IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" 
+                          Checked="CheckBox_SlaveCustomer_Changed" />
 
-                <CheckBox Content="Редактирование клиентов" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top" Margin="25,5,5,5"
+                <CheckBox x:Name="cbSlaveCustomer_Edit" Content="Редактирование клиентов" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top" Margin="25,5,5,5"
                           IsChecked="{Binding CurrentAccount.CounterpartyData.CounterpartyCustomerEdit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                          IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" 
+                          Checked="CheckBox_SlaveCustomer_Changed" />
 
-                <CheckBox Content="Аннулирование клиентов" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top" Margin="25,5,5,5"
+                <CheckBox x:Name="cbSlaveCustomer_Annulate" Content="Аннулирование клиентов" Style="{StaticResource CheckBoxStyle}" DockPanel.Dock="Top" Margin="25,5,5,5"
                           IsChecked="{Binding CurrentAccount.CounterpartyData.CounterpartyCustomerDelete, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                          IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                          IsEnabled="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" 
+                          Checked="CheckBox_SlaveCustomer_Changed" />
 
             </DockPanel>
         </GroupBox>
@@ -183,7 +203,7 @@
         <!-- Склад -->
         <GroupBox Grid.Row="2" Margin="5" Padding="5" >
             <GroupBox.Header>
-                <TextBlock Text="Склад" Style="{StaticResource TextBlockStyle}" />
+                <TextBlock Text=" Склад " Style="{StaticResource TextBlockStyle}" Background="{Binding ElementName=thisWindow, Path=Background}" />
             </GroupBox.Header>
 
             <DockPanel LastChildFill="False" >
@@ -210,7 +230,7 @@
         <!-- Администрирование -->
         <GroupBox Grid.Row="2" Grid.Column="1" Margin="5" Padding="5" >
             <GroupBox.Header>
-                <TextBlock Text="Администрирование" Style="{StaticResource TextBlockStyle}" Background="{Binding ElementName=thisWindow, Path=Background}" />
+                <TextBlock Text=" Администрирование " Style="{StaticResource TextBlockStyle}" Background="{Binding ElementName=thisWindow, Path=Background}" />
             </GroupBox.Header>
 
             <DockPanel LastChildFill="False" >
@@ -242,7 +262,8 @@
         <DockPanel Grid.Row="3" Grid.ColumnSpan="2" Style="{StaticResource DockPanelOKStyle}" Margin="5,10,0,5" >
             <!-- Кнопка Отмена -->
             <Button x:Name="btnCancel" DockPanel.Dock="Right" Width="140" Style="{DynamicResource ButtonOKStyle}" 
-                    Visibility="{Binding CancelVisibility, UpdateSourceTrigger=PropertyChanged}" >
+                    Visibility="{Binding CancelVisibility, UpdateSourceTrigger=PropertyChanged}" 
+                    Click="Cancel_Click" >
                 <Button.Content>
                     <DockPanel Style="{StaticResource DockPanelOKStyle}" >
                         <Image Source="..\..\Images\cancel.png" Style="{DynamicResource ImageOKStyle}" />
@@ -253,7 +274,8 @@
 
             <!-- Кнопка Применить -->
             <Button x:Name="btnApply" IsDefault="True" Style="{DynamicResource ButtonOKStyle}" Width="140" 
-                    Visibility="{Binding ApplyVisibility, UpdateSourceTrigger=PropertyChanged}" >
+                    Visibility="{Binding ApplyVisibility, UpdateSourceTrigger=PropertyChanged}" 
+                    Click="Apply_Click" >
                 <Button.Content>
                     <DockPanel Style="{StaticResource DockPanelOKStyle}" >
                         <Image Source="..\..\Images\ok.png" Style="{DynamicResource ImageOKStyle}" />
@@ -264,7 +286,8 @@
 
             <!-- Кнопка Аннулировать -->
             <Button x:Name="btnAnnulate" Width="160" 
-                    Visibility="{Binding AnnulateVisibility, UpdateSourceTrigger=PropertyChanged}" >
+                    Visibility="{Binding AnnulateVisibility, UpdateSourceTrigger=PropertyChanged}" 
+                    Command="local:AdminAccountWindow.AnnulateCommand" >
                 <Button.Style>
                     <Style BasedOn="{StaticResource ButtonOKStyle}" >
                         <Style.Triggers>
@@ -297,7 +320,8 @@
 
             <!-- Кнопка Редактировать -->
             <Button x:Name="btnEdit" Width="160" 
-                    Visibility="{Binding EditVisibility, UpdateSourceTrigger=PropertyChanged}" >
+                    Visibility="{Binding EditVisibility, UpdateSourceTrigger=PropertyChanged}"
+                    Command="local:AdminAccountWindow.EditCommand" >
                 <Button.Style>
                     <Style BasedOn="{StaticResource ButtonOKStyle}" >
                         <Style.Triggers>

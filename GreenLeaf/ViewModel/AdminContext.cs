@@ -5,6 +5,9 @@ using System.Windows;
 
 namespace GreenLeaf.ViewModel
 {
+    /// <summary>
+    /// Контекст данных окна администрирования пользователя
+    /// </summary>
     public class AdminContext : INotifyPropertyChanged
     {
         private Account _currentAccount;
