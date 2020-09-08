@@ -1,0 +1,33 @@
+﻿<Window x:Class="GreenLeaf.Windows.Authentificate.AddConnectionKeyWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GreenLeaf.Windows.Authentificate"
+        mc:Ignorable="d"
+        Icon="..\..\Images\greenleaf.png"
+        Title="Выбор файла подключения" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" ResizeMode="NoResize" >
+    <Grid>
+        <Grid.RowDefinitions >
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="Путь к файлу" Style="{DynamicResource TextBlockGridStyle}" />
+        <TextBox x:Name="tbPath" Grid.Column="1" Style="{DynamicResource TextBoxStyle}" IsReadOnly="True" Width="450" />
+
+        <!-- Кнопка Соединение -->
+        <Button x:Name="btnSelect" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" IsDefault="True" Style="{DynamicResource ButtonOKStyle}" Margin="0,10,5,5" Click="btnSelect_Click">
+            <Button.Content>
+                <DockPanel Style="{DynamicResource DockPanelOKStyle}" >
+                    <Image Source="..\..\Images\open.png" Style="{DynamicResource ImageOKStyle}" />
+                    <TextBlock Text="Выбрать" Style="{DynamicResource TextBlockOKStyle}" />
+                </DockPanel>
+            </Button.Content>
+        </Button>
+    </Grid>
+</Window>

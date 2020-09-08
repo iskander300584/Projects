@@ -1,0 +1,59 @@
+﻿<Window x:Class="KeyGenerator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:KeyGenerator"
+        mc:Ignorable="d"
+        Title="Генератор файла подключения" SizeToContent="WidthAndHeight">
+
+    <Window.CommandBindings>
+        <CommandBinding Command="local:MainWindow.Verify" CanExecute="Verify_CanExecute" Executed="Verify_Execute" />
+
+        <CommandBinding Command="local:MainWindow.Generate" CanExecute="Generate_CanExecute" Executed="Generate_Execute" />
+    </Window.CommandBindings>
+    
+    <Grid>
+        <Grid.RowDefinitions >
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions >
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Сервер -->
+        <TextBlock Text="Сервер" FontSize="13" FontFamily="Tahoma" Margin="5" />
+        <TextBox Grid.Column="1" FontFamily="Tahoma" Margin="5" FontSize="13" Width="250" 
+                 Text="{Binding Server, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!-- БД/Логин -->
+        <TextBlock Grid.Row="1" Text="БД/Логин" FontSize="13" FontFamily="Tahoma" Margin="5" />
+        <TextBox Grid.Row="1" Grid.Column="1" FontFamily="Tahoma" Margin="5" FontSize="13" Width="250"
+                 Text="{Binding DB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!-- Пароль -->
+        <TextBlock Grid.Row="2" Text="Пароль" FontSize="13" FontFamily="Tahoma" Margin="5" />
+        <TextBox Grid.Row="2" Grid.Column="1" FontFamily="Tahoma" Margin="5" FontSize="13" Width="250" 
+                 Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!-- Владелец -->
+        <TextBlock Grid.Row="3" Text="Владелец" FontSize="13" FontFamily="Tahoma" Margin="5" />
+        <TextBox Grid.Row="3" Grid.Column="1" FontFamily="Tahoma" Margin="5" FontSize="13" Width="250" 
+                 Text="{Binding Owner, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        <!-- Панель кнопок -->
+        <DockPanel LastChildFill="False" HorizontalAlignment="Stretch" Grid.Row="4" Grid.ColumnSpan="2" >
+            <Button Content="Генерировать" FontFamily="Tahoma" FontSize="13" Width="100" Height="25" Background="GhostWhite" DockPanel.Dock="Right" Margin="5" 
+                    Command="local:MainWindow.Generate"/>
+            
+            <Button Content="Проверить" FontFamily="Tahoma" FontSize="13" Width="100" Height="25" Background="GhostWhite" DockPanel.Dock="Right" Margin="5" 
+                    Command="local:MainWindow.Verify" />
+        </DockPanel>
+    </Grid>
+</Window>

@@ -112,6 +112,7 @@
     <Compile Include="Classes\AccountData\PersonalData.cs" />
     <Compile Include="Classes\AccountData\ReportsData.cs" />
     <Compile Include="Classes\AccountData\WarehouseData.cs" />
+    <Compile Include="Classes\ConnectionKey.cs" />
     <Compile Include="Classes\Conversion.cs" />
     <Compile Include="Classes\Enums.cs" />
     <Compile Include="Classes\MeasureUnit.cs" />
@@ -151,6 +152,9 @@
     </Compile>
     <Compile Include="Windows\AdminPanel\AdminSettingsWindow.xaml.cs">
       <DependentUpon>AdminSettingsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Authentificate\AddConnectionKeyWindow.xaml.cs">
+      <DependentUpon>AddConnectionKeyWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\CounterpartyView\CounterpartyListWindow.xaml.cs">
       <DependentUpon>CounterpartyListWindow.xaml</DependentUpon>
@@ -214,6 +218,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\AdminPanel\AdminSettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Authentificate\AddConnectionKeyWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -450,6 +458,7 @@
     <Content Include="DB\backUp_25_02_2020.sql" />
     <Content Include="DB\configDB.sql" />
     <Content Include="DB\БД_структура.sql" />
+    <Resource Include="Images\open.png" />
     <Resource Include="Images\info_gray.png" />
     <Resource Include="DB\GreenLeaf DB.png" />
   </ItemGroup>

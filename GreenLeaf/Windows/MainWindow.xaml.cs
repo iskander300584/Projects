@@ -10,9 +10,9 @@ using GreenLeaf.ViewModel;
 //ConnectSetting.Server = "remotemysql.com";
 //ServerAccount = aldr046@mail.ru
 //ServerPassword = Password_1
-//ConnectSetting.DB = "wLhC3u9El4";
-//ConnectSetting.AdminLogin = "wLhC3u9El4";
-//ConnectSetting.AdminPassword = "briyOnlYc8";
+//ConnectSetting.DB = "wYOq2RAf6y";
+//ConnectSetting.AdminLogin = "wYOq2RAf6y";
+//ConnectSetting.AdminPassword = "YA109CCuPp";
 
 namespace GreenLeaf.Windows
 {

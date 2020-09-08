@@ -40,22 +40,31 @@ namespace GreenLeaf
             // Вызов окна настроек подключения
             if(!File.Exists(ProgramSettings.WorkFolder + "conncfg.plg"))
             {
-                ConnectWindow connWindow = new ConnectWindow();
-                if(!(bool)connWindow.ShowDialog())
+                //ConnectWindow connWindow = new ConnectWindow();
+                //if(!(bool)connWindow.ShowDialog())
+                //{
+                //    connWindow.Close();
+                //    Environment.Exit(0);
+                //    return;
+                //}
+                //connWindow.Close();
+
+                AddConnectionKeyWindow keyWindow = new AddConnectionKeyWindow();
+                if (!(bool)keyWindow.ShowDialog())
                 {
-                    connWindow.Close();
+                    keyWindow.Close();
                     Environment.Exit(0);
                     return;
                 }
-                connWindow.Close();
+                keyWindow.Close();
 
-// Подключение к тестовой БД
-#if (DEBUG)
-ProgramSettings.Server = "remotemysql.com";
-ProgramSettings.DB = "ZxIqMwxdJi";
-ProgramSettings.AdminLogin = "ZxIqMwxdJi";
-ProgramSettings.AdminPassword = Criptex.Cript("kmO45otLo8");
-#endif
+                // Подключение к тестовой БД
+                //#if (DEBUG)
+                //ProgramSettings.Server = "remotemysql.com";
+                //ProgramSettings.DB = "ZxIqMwxdJi";
+                //ProgramSettings.AdminLogin = "ZxIqMwxdJi";
+                //ProgramSettings.AdminPassword = Criptex.Cript("kmO45otLo8");
+                //#endif
 
             }
             // Получение настроек подключения
@@ -67,19 +76,20 @@ ProgramSettings.AdminPassword = Criptex.Cript("kmO45otLo8");
                     {
                         BinaryFormatter serializer = new BinaryFormatter();
                         SaveConnectionData saveData = (SaveConnectionData)serializer.Deserialize(fs);
-                        ProgramSettings.Server = Criptex.UnCript(saveData.Server);
-                        ProgramSettings.DB = Criptex.UnCript(saveData.DB);
-                        ProgramSettings.AdminLogin = Criptex.UnCript(saveData.AdminLogin);
-                        ProgramSettings.AdminPassword = saveData.AdminPassword;
+                        ProgramSettings.ConnectionString = saveData.ConnectionString;
+                        //ProgramSettings.Server = Criptex.UnCript(saveData.Server);
+                        //ProgramSettings.DB = Criptex.UnCript(saveData.DB);
+                        //ProgramSettings.AdminLogin = Criptex.UnCript(saveData.AdminLogin);
+                        //ProgramSettings.AdminPassword = saveData.AdminPassword;
                     }
 
-// Подключение к тестовой БД
-#if (DEBUG)
-                    ProgramSettings.Server = "remotemysql.com";
-                    ProgramSettings.DB = "ZxIqMwxdJi";
-                    ProgramSettings.AdminLogin = "ZxIqMwxdJi";
-                    ProgramSettings.AdminPassword = Criptex.Cript("kmO45otLo8");
-#endif
+//// Подключение к тестовой БД
+//#if (DEBUG)
+//                    ProgramSettings.Server = "remotemysql.com";
+//                    ProgramSettings.DB = "ZxIqMwxdJi";
+//                    ProgramSettings.AdminLogin = "ZxIqMwxdJi";
+//                    ProgramSettings.AdminPassword = Criptex.Cript("kmO45otLo8");
+//#endif
 
                     MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString));
                     connection.Open();
@@ -90,14 +100,23 @@ ProgramSettings.AdminPassword = Criptex.Cript("kmO45otLo8");
                 catch
                 {
                     // Запрос настроек подключения
-                    ConnectWindow connWindow = new ConnectWindow();
-                    if (!(bool)connWindow.ShowDialog())
+                    //ConnectWindow connWindow = new ConnectWindow();
+                    //if (!(bool)connWindow.ShowDialog())
+                    //{
+                    //    connWindow.Close();
+                    //    Environment.Exit(0);
+                    //    return;
+                    //}
+                    //connWindow.Close();
+
+                    AddConnectionKeyWindow keyWindow = new AddConnectionKeyWindow();
+                    if(!(bool)keyWindow.ShowDialog())
                     {
-                        connWindow.Close();
+                        keyWindow.Close();
                         Environment.Exit(0);
                         return;
                     }
-                    connWindow.Close();
+                    keyWindow.Close();
                 }
             }
 

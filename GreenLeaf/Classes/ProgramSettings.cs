@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Google.Protobuf.Reflection;
 using GreenLeaf.ViewModel;
 
 namespace GreenLeaf.Classes
@@ -13,39 +14,39 @@ namespace GreenLeaf.Classes
         /// </summary>
         public const string WorkFolder = @"C:\ProgramData\GreenLeaf\";
 
-        private static string _server = string.Empty;
-        /// <summary>
-        /// Имя сервера
-        /// </summary>
-        public static string Server
-        {
-            get { return _server; }
-            set
-            {
-                if(_server != value)
-                {
-                    _server = value;
-                    BuildConnectionString();
-                }
-            }
-        }
+        //private static string _server = string.Empty;
+        ///// <summary>
+        ///// Имя сервера
+        ///// </summary>
+        //public static string Server
+        //{
+        //    get { return _server; }
+        //    set
+        //    {
+        //        if(_server != value)
+        //        {
+        //            _server = value;
+        //            BuildConnectionString();
+        //        }
+        //    }
+        //}
 
-        private static string _db = string.Empty;
-        /// <summary>
-        /// Имя базы данных
-        /// </summary>
-        public static string DB
-        {
-            get { return _db; }
-            set
-            {
-                if(_db != value)
-                {
-                    _db = value;
-                    BuildConnectionString();
-                }
-            }
-        }
+        //private static string _db = string.Empty;
+        ///// <summary>
+        ///// Имя базы данных
+        ///// </summary>
+        //public static string DB
+        //{
+        //    get { return _db; }
+        //    set
+        //    {
+        //        if(_db != value)
+        //        {
+        //            _db = value;
+        //            BuildConnectionString();
+        //        }
+        //    }
+        //}
 
         private static string _connectionString = string.Empty;
         /// <summary>
@@ -54,41 +55,48 @@ namespace GreenLeaf.Classes
         public static string ConnectionString
         {
             get { return _connectionString; }
-        }
-
-        private static string _adminLogin = string.Empty;
-        /// <summary>
-        /// Имя учетной записи администратора
-        /// </summary>
-        public static string AdminLogin
-        {
-            get { return _adminLogin; }
             set
             {
-                if(_adminLogin != value)
+                if(_connectionString != value)
                 {
-                    _adminLogin = value;
-                    BuildConnectionString();
+                    _connectionString = value;
                 }
             }
         }
 
-        private static string _adminPassword = string.Empty;
-        /// <summary>
-        /// Пароль учетной записи администратора
-        /// </summary>
-        public static string AdminPassword
-        {
-            get { return _adminPassword; }
-            set
-            {
-                if (_adminPassword != value)
-                {
-                    _adminPassword = value;
-                    BuildConnectionString();
-                }
-            }
-        }
+        //private static string _adminLogin = string.Empty;
+        ///// <summary>
+        ///// Имя учетной записи администратора
+        ///// </summary>
+        //public static string AdminLogin
+        //{
+        //    get { return _adminLogin; }
+        //    set
+        //    {
+        //        if(_adminLogin != value)
+        //        {
+        //            _adminLogin = value;
+        //            BuildConnectionString();
+        //        }
+        //    }
+        //}
+
+        //private static string _adminPassword = string.Empty;
+        ///// <summary>
+        ///// Пароль учетной записи администратора
+        ///// </summary>
+        //public static string AdminPassword
+        //{
+        //    get { return _adminPassword; }
+        //    set
+        //    {
+        //        if (_adminPassword != value)
+        //        {
+        //            _adminPassword = value;
+        //            BuildConnectionString();
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// Подключенный пользователь
@@ -100,22 +108,22 @@ namespace GreenLeaf.Classes
         /// </summary>
         public static IDictionary<string, string> Settings = new Dictionary<string, string>();
 
-        /// <summary>
-        /// Построение строки подключения
-        /// </summary>
-        private static void BuildConnectionString()
-        {
-            if (AdminPassword != string.Empty)
-            {
-                try
-                {
-                    _connectionString = Criptex.Cript("SERVER=" + Server + ";" +
-                                            "DATABASE=" + DB + ";" +
-                                            "UID=" + AdminLogin + ";" +
-                                            "Pwd=" + Criptex.UnCript(AdminPassword) + ";");
-                }
-                catch { }
-            }
-        }
+        ///// <summary>
+        ///// Построение строки подключения
+        ///// </summary>
+        //private static void BuildConnectionString()
+        //{
+        //    if (AdminPassword != string.Empty)
+        //    {
+        //        try
+        //        {
+        //            _connectionString = Criptex.Cript("SERVER=" + Server + ";" +
+        //                                    "DATABASE=" + DB + ";" +
+        //                                    "UID=" + AdminLogin + ";" +
+        //                                    "Pwd=" + Criptex.UnCript(AdminPassword) + ";");
+        //        }
+        //        catch { }
+        //    }
+        //}
     }
 }

@@ -31,11 +31,11 @@ namespace GreenLeaf.Windows.Authentificate
         private void btnConnect_Click(object sender, RoutedEventArgs e)
         {
             // Получение настроек подключения
-            ProgramSettings.Server = tbServer.Text;
-            ProgramSettings.DB = tbDB.Text;
-            ProgramSettings.AdminLogin = tbLogin.Text;
+            //ProgramSettings.Server = tbServer.Text;
+            //ProgramSettings.DB = tbDB.Text;
+            //ProgramSettings.AdminLogin = tbLogin.Text;
 
-            ProgramSettings.AdminPassword = Criptex.Cript(pbPassword.Password);
+            //ProgramSettings.AdminPassword = Criptex.Cript(pbPassword.Password);
 
             // Проверка подключения
             MySqlConnection connection = new MySqlConnection(Criptex.UnCript(ProgramSettings.ConnectionString));
@@ -64,10 +64,10 @@ namespace GreenLeaf.Windows.Authentificate
             try
             {
                 SaveConnectionData saveData = new SaveConnectionData();
-                saveData.Server = Criptex.Cript(ProgramSettings.Server);
-                saveData.DB = Criptex.Cript(ProgramSettings.DB);
-                saveData.AdminLogin = Criptex.Cript(ProgramSettings.AdminLogin);
-                saveData.AdminPassword = ProgramSettings.AdminPassword;
+                //saveData.Server = Criptex.Cript(ProgramSettings.Server);
+                //saveData.DB = Criptex.Cript(ProgramSettings.DB);
+                //saveData.AdminLogin = Criptex.Cript(ProgramSettings.AdminLogin);
+                //saveData.AdminPassword = ProgramSettings.AdminPassword;
 
                 using (FileStream fs = new FileStream(ProgramSettings.WorkFolder + "conncfg.plg", FileMode.Create))
                 {

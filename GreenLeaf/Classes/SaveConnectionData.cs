@@ -5,12 +5,22 @@ namespace GreenLeaf.Classes
     [Serializable]
     public class SaveConnectionData
     {
-        public string Server = string.Empty;
+        /// <summary>
+        /// Зашифрованная строка подключения
+        /// </summary>
+        public string ConnectionString = string.Empty;
 
-        public string DB = string.Empty;
+        /// <summary>
+        /// Владелец ключа
+        /// </summary>
+        public string Owner = string.Empty;
 
-        public string AdminLogin = string.Empty;
+        //public string Server = string.Empty;
 
-        public string AdminPassword = string.Empty;
+        //public string DB = string.Empty;
+
+        //public string AdminLogin = string.Empty;
+
+        //public string AdminPassword = string.Empty;
     }
 }
