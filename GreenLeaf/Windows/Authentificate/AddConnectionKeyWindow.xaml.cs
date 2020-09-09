@@ -21,6 +21,13 @@ namespace GreenLeaf.Windows.Authentificate
             InitializeComponent();
         }
 
+        // Метод и делегат для асинхронной перерисовки объекта
+        private delegate void NoArgDelegate();
+        public static void Refresh(DependencyObject obj)
+        {
+            obj.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.ApplicationIdle, (NoArgDelegate)delegate { });
+        }
+
         /// <summary>
         /// Выбор файла подключения
         /// </summary>
@@ -38,8 +45,8 @@ namespace GreenLeaf.Windows.Authentificate
             if (!(bool)dialog.ShowDialog())
                 return;
 
-            // TODO добавить обновление элемента
             tbPath.Text = dialog.FileName;
+            Refresh(tbPath);
 
             using (FileStream fs = new FileStream(dialog.FileName, FileMode.Open))
             {

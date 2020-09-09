@@ -21,7 +21,7 @@
         <TextBox x:Name="tbPath" Grid.Column="1" Style="{DynamicResource TextBoxStyle}" IsReadOnly="True" Width="450" />
 
         <!-- Кнопка Соединение -->
-        <Button x:Name="btnSelect" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" IsDefault="True" Style="{DynamicResource ButtonOKStyle}" Margin="0,10,5,5" Click="btnSelect_Click">
+        <Button x:Name="btnSelect" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" IsDefault="True" Style="{DynamicResource ButtonOKStyle}" Width="120" Margin="0,10,5,5" Click="btnSelect_Click">
             <Button.Content>
                 <DockPanel Style="{DynamicResource DockPanelOKStyle}" >
                     <Image Source="..\..\Images\open.png" Style="{DynamicResource ImageOKStyle}" />

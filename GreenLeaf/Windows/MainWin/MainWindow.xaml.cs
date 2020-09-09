@@ -14,7 +14,7 @@ using GreenLeaf.ViewModel;
 //ConnectSetting.AdminLogin = "wYOq2RAf6y";
 //ConnectSetting.AdminPassword = "YA109CCuPp";
 
-namespace GreenLeaf.Windows
+namespace GreenLeaf.Windows.MainWin
 {
     /// <summary>
     /// Главное окно

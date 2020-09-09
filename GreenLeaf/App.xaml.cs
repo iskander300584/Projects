@@ -137,7 +137,7 @@ namespace GreenLeaf
 
             GetSettings();
 
-            MainWindow mainWindow = new MainWindow(splash, dtStartSplash);
+            Windows.MainWin.MainWindow mainWindow = new Windows.MainWin.MainWindow(splash, dtStartSplash);
             Current.MainWindow = mainWindow;
             Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
             app.Run(mainWindow);

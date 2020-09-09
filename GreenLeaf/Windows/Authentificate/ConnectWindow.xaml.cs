@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace GreenLeaf.Windows.Authentificate
 {
+    // НЕ ИСПОЛЬЗУЕТСЯ
     /// <summary>
     /// Окно настроек подключения к БД
     /// </summary>

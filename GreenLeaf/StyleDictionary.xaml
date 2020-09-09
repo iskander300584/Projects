@@ -78,14 +78,14 @@
             <Trigger Property="Button.IsEnabled" Value="True">
                 <Setter Property="Button.Content" >
                     <Setter.Value>
-                        <Image Source="Images\search.png" Width="14" />
+                        <Image Source="..\..\Images\search.png" Width="14" />
                     </Setter.Value>
                 </Setter>
             </Trigger>
             <Trigger Property="Button.IsEnabled" Value="False">
                 <Setter Property="Button.Content" >
                     <Setter.Value>
-                        <Image Source="Images\search_gray.png" Width="14" />
+                        <Image Source="..\..\Images\search_gray.png" Width="14" />
                     </Setter.Value>
                 </Setter>
                 <Setter Property="Button.Background" Value="GhostWhite" />
@@ -101,14 +101,14 @@
             <Trigger Property="Button.IsEnabled" Value="True">
                 <Setter Property="Button.Content" >
                     <Setter.Value>
-                        <Image Source="Images\return.png" Width="14" />
+                        <Image Source="..\..\Images\return.png" Width="14" />
                     </Setter.Value>
                 </Setter>
             </Trigger>
             <Trigger Property="Button.IsEnabled" Value="False">
                 <Setter Property="Button.Content" >
                     <Setter.Value>
-                        <Image Source="Images\return_gray.png" Width="14" />
+                        <Image Source="..\..\Images\return_gray.png" Width="14" />
                     </Setter.Value>
                 </Setter>
                 <Setter Property="Button.Background" Value="GhostWhite" />
@@ -124,7 +124,7 @@
             <Trigger Property="Button.Tag" Value="ascending">
                 <Setter Property="Button.Content" >
                     <Setter.Value>
-                        <Image Source="Images\triangle_up.png" Width="14" />
+                        <Image Source="..\..\Images\triangle_up.png" Width="14" />
                     </Setter.Value>
                 </Setter>
                 <Setter Property="Button.ToolTip">
@@ -136,7 +136,7 @@
             <Trigger Property="Button.Tag" Value="descending">
                 <Setter Property="Button.Content" >
                     <Setter.Value>
-                        <Image Source="Images\triangle_down.png" Width="14" />
+                        <Image Source="..\..\Images\triangle_down.png" Width="14" />
                     </Setter.Value>
                 </Setter>
                 <Setter Property="Button.ToolTip">

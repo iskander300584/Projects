@@ -1,12 +1,12 @@
-﻿<Window x:Class="GreenLeaf.Windows.MainWindow"
+﻿<Window x:Class="GreenLeaf.Windows.MainWin.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:conv="clr-namespace:GreenLeaf.Converters"
-        xmlns:win="clr-namespace:GreenLeaf.Windows"
+        xmlns:win="clr-namespace:GreenLeaf.Windows.MainWin"
         mc:Ignorable="d"
-        Icon="..\Images\greenleaf.png"
+        Icon="..\..\Images\greenleaf.png"
         Title="Green Leaf" Height="1000" MinWidth="600" Width="1500" WindowStartupLocation="CenterScreen" WindowState="Maximized">
 
     <Window.CommandBindings>
@@ -97,7 +97,7 @@
             <Button x:Name="btnRefresh" Style="{StaticResource MainMenuButtonStyle}" Command="win:MainWindow.RefreshData" >
                 <Button.Content>
                     <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <Image Source="..\Images\refresh.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                        <Image Source="..\..\Images\refresh.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
                         <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" >
                             <Run>Обновить</Run><LineBreak/>
                             <Run>данные</Run>
@@ -111,8 +111,8 @@
                     Command="win:MainWindow.CreatePurchaseInvoice">
                 <Button.Content>
                     <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <Image Source="..\Images\invoice.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                        <Image Source="..\Images\plus.png" DockPanel.Dock="Top" Height="20" Margin="20,-15,0,0" HorizontalAlignment="Center" />
+                        <Image Source="..\..\Images\invoice.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                        <Image Source="..\..\Images\plus.png" DockPanel.Dock="Top" Height="20" Margin="20,-15,0,0" HorizontalAlignment="Center" />
                         <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" >
                             <Run>Приходная</Run><LineBreak/>
                             <Run>накладная</Run>
@@ -125,8 +125,8 @@
             <Button x:Name="btnSalesInvoice" Style="{StaticResource MainMenuButtonStyle}" Command="win:MainWindow.CreateSalesInvoice" >
                 <Button.Content>
                     <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <Image Source="..\Images\invoice.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
-                        <Image Source="..\Images\minus.png" DockPanel.Dock="Top" Height="20" Margin="20,-15,0,0" HorizontalAlignment="Center" />
+                        <Image Source="..\..\Images\invoice.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                        <Image Source="..\..\Images\minus.png" DockPanel.Dock="Top" Height="20" Margin="20,-15,0,0" HorizontalAlignment="Center" />
                         <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" >
                             <Run>Расходная</Run><LineBreak/>
                             <Run>накладная</Run>
@@ -139,7 +139,7 @@
             <Button x:Name="btnReports" Style="{StaticResource MainMenuButtonStyle}" Command="win:MainWindow.ReportPopup" >
                 <Button.Content>
                     <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <Image Source="..\Images\report.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                        <Image Source="..\..\Images\report.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
                         <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" >
                             <Run>Отчеты</Run>
                         </TextBlock>
@@ -173,7 +173,7 @@
             <Button x:Name="btnCounterparty" Style="{StaticResource MainMenuButtonStyle}" Command="win:MainWindow.CounterpartyPopup" >
                 <Button.Content>
                     <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <Image Source="..\Images\counterparty.png" DockPanel.Dock="Top"  Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                        <Image Source="..\..\Images\counterparty.png" DockPanel.Dock="Top"  Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
                         <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" >
                             <Run>Контрагенты</Run>
                         </TextBlock>
@@ -200,7 +200,7 @@
                     Command="win:MainWindow.WarehouseManagement">
                 <Button.Content>
                     <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <Image Source="..\Images\warehouse.png" DockPanel.Dock="Top"  Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                        <Image Source="..\..\Images\warehouse.png" DockPanel.Dock="Top"  Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
                         <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" >
                             <Run>Управление</Run><LineBreak/>
                             <Run>складом</Run>
@@ -214,7 +214,7 @@
                     Command="win:MainWindow.AdminPopupCommand" >
                 <Button.Content>
                     <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                        <Image Source="..\Images\settings.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
+                        <Image Source="..\..\Images\settings.png" DockPanel.Dock="Top" Height="40" Margin="0,10,0,0" HorizontalAlignment="Center" />
                         <TextBlock Style="{StaticResource TextBlockMainButtonStyle}" >
                             <Run>Панель</Run><LineBreak/>
                             <Run>управления</Run>
@@ -472,8 +472,8 @@
                                     <Setter Property="Button.Content">
                                         <Setter.Value>
                                             <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                                                <Image Source="..\Images\product.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
-                                                <Image Source="..\Images\minus.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\..\Images\product.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\..\Images\minus.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
                                                 <TextBlock Margin="0,0,0,5" Style="{StaticResource TextBlockMainButtonStyle}" >
                                                     <Run>Аннулировать</Run><LineBreak/>
                                                     <Run>товар</Run>
@@ -489,8 +489,8 @@
                                     <Setter Property="Button.Content">
                                         <Setter.Value>
                                             <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="GhostWhite">
-                                                <Image Source="..\Images\product_gray.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
-                                                <Image Source="..\Images\minus_gray.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\..\Images\product_gray.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\..\Images\minus_gray.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
                                                 <TextBlock Margin="0,0,0,5" Style="{StaticResource TextBlockMainButtonStyle}" Foreground="Gray" >
                                                     <Run>Аннулировать</Run><LineBreak/>
                                                     <Run>товар</Run>
@@ -517,8 +517,8 @@
                                     <Setter Property="Button.Content">
                                         <Setter.Value>
                                             <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                                                <Image Source="..\Images\product.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
-                                                <Image Source="..\Images\return.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\..\Images\product.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\..\Images\return.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
                                                 <TextBlock Margin="0,0,0,5" Style="{StaticResource TextBlockMainButtonStyle}" >
                                                     <Run>Отменить</Run><LineBreak/>
                                                     <Run>аннулирование</Run>
@@ -534,8 +534,8 @@
                                     <Setter Property="Button.Content">
                                         <Setter.Value>
                                             <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="GhostWhite">
-                                                <Image Source="..\Images\product_gray.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
-                                                <Image Source="..\Images\return_gray.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\..\Images\product_gray.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\..\Images\return_gray.png" DockPanel.Dock="Top" Height="15" Margin="25,-20,0,0" HorizontalAlignment="Center" />
                                                 <TextBlock Margin="0,0,0,5" Style="{StaticResource TextBlockMainButtonStyle}" Foreground="Gray" >
                                                     <Run>Отменить</Run><LineBreak/>
                                                     <Run>аннулирование</Run>
@@ -562,8 +562,8 @@
                                     <Setter Property="Button.Content">
                                         <Setter.Value>
                                             <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                                                <Image Source="..\Images\warehouse.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
-                                                <Image Source="..\Images\count.png" DockPanel.Dock="Top" Height="20" Margin="25,-15,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\..\Images\warehouse.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\..\Images\count.png" DockPanel.Dock="Top" Height="20" Margin="25,-15,0,0" HorizontalAlignment="Center" />
                                                 <TextBlock Margin="0,0,0,5" Style="{StaticResource TextBlockMainButtonStyle}" >
                                                     <Run>Редактировать</Run><LineBreak/>
                                                     <Run>количество</Run>
@@ -579,8 +579,8 @@
                                     <Setter Property="Button.Content">
                                         <Setter.Value>
                                             <DockPanel LastChildFill="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="GhostWhite">
-                                                <Image Source="..\Images\product_gray.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
-                                                <Image Source="..\Images\count_gray.png" DockPanel.Dock="Top" Height="20" Margin="25,-15,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\..\Images\product_gray.png" DockPanel.Dock="Top" Height="30" Margin="0,5,0,0" HorizontalAlignment="Center" />
+                                                <Image Source="..\..\Images\count_gray.png" DockPanel.Dock="Top" Height="20" Margin="25,-15,0,0" HorizontalAlignment="Center" />
                                                 <TextBlock Margin="0,0,0,5" Style="{StaticResource TextBlockMainButtonStyle}" Foreground="Gray" >
                                                     <Run>Редактировать</Run><LineBreak/>
                                                     <Run>количество</Run>
