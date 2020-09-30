@@ -9,6 +9,7 @@ using Android.OS;
 
 namespace Xamarin_HelloApp.Droid
 {
+    // Theme = "@style/MainTheme"
     [Activity(Label = "Xamarin_HelloApp", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {

@@ -3,22 +3,77 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin_HelloApp.MainPage">
 
-    <StackLayout>
-        <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Label Text="Welcome to Xamarin.Forms!" HorizontalTextAlignment="Center" TextColor="White" FontSize="36"/>
-        </Frame>
-        <Label Text="Start developing now" FontSize="Title" Padding="30,10,30,10"/>
-        <Label Text="Make changes to your XAML file and save to see your UI update in the running app with XAML Hot Reload. Give it a try!" FontSize="16" Padding="30,0,30,0"/>
-        <Label FontSize="16" Padding="30,24,30,0">
-            <Label.FormattedText>
-                <FormattedString>
-                    <FormattedString.Spans>
-                        <Span Text="Learn more at "/>
-                        <Span Text="https://aka.ms/xamarin-quickstart" FontAttributes="Bold"/>
-                    </FormattedString.Spans>
-                </FormattedString>
-            </Label.FormattedText>
-        </Label>
-    </StackLayout>
+    <ScrollView >
+        <StackLayout Spacing="10"> 
+            <Frame BackgroundColor="#2196F3" Padding="15" CornerRadius="0">
+                <StackLayout>
+                    <Label Text="Pilot Mobile beta" HorizontalTextAlignment="Center" TextColor="White" FontSize="36"/>
+                    <Label x:Name="labelConnect" Text="Not connected" HorizontalTextAlignment="End" TextColor="White" FontSize="16" />
+                </StackLayout>
+            </Frame>
+
+            <Button Text="Add Item" Clicked="btn_Click" />
+
+            <!--<Label Text="We beleawe soon here will be data from Pilot DB" FontSize="Title" Padding="30,10,30,10"/>
+            <Label Text="Make changes to your XAML file and save to see your UI update in the running app with XAML Hot Reload. Give it a try!" FontSize="16" Padding="30,0,30,0"/> -->
+            
+            <!--<RelativeLayout>
+            <Label x:Name="label1"  FontSize="16" Padding="30,24,30,0">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <FormattedString.Spans>
+                            <Span Text="Learn more at "/>
+                            <Span Text="https://aka.ms/xamarin-quickstart" FontAttributes="Bold"/>
+                        </FormattedString.Spans>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+                <BoxView Color="LightGray" BackgroundColor="Yellow" CornerRadius="20" 
+                         RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToView, ElementName=lbl, Property=X, Factor=1, Constant=-30}"
+                         RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToView, ElementName=lbl, Property=Y, Factor=1, Constant=-15}"
+                         RelativeLayout.WidthConstraint="150" RelativeLayout.HeightConstraint="50"/>
+                <Label x:Name="lbl" Text="RelativeLayout" TextColor="Blue"
+                       RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=-50}"
+                       RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToView, ElementName=label1, Property=Y, Factor=1, Constant=30}" />
+            </RelativeLayout>-->
+
+            <!--<Grid ColumnSpacing="5" RowSpacing="5" >
+                <Grid.RowDefinitions >
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <BoxView Color="LightBlue" />
+                <BoxView Color="LightBlue" Grid.Column="1" />
+                <BoxView Color="LightBlue" Grid.Row="1" Grid.ColumnSpan="2" />
+                <BoxView Color="LightBlue" Grid.Row="1" Grid.Column="1" />
+            </Grid>-->
+            
+            <!--<Label Text="First Label" FontSize="20" IsVisible="False"/>
+            <Label Text="Second Label" FontSize="20" />
+            <Label Text="Third Label" FontSize="20" />
+            <Label Text="Fourth Label" FontSize="20" />
+            <Label Text="Fifth Label" FontSize="20" />
+            <Label Text="Sixth Label" FontSize="20" />
+            <Label Text="Seventh Label" FontSize="20" />
+            <Label Text="Eighth Label" FontSize="20" />
+            <Label Text="Ninth Label" FontSize="20" />
+            <Label Text="Tenth Label" FontSize="20" />
+            <Label Text="Eleventh Label" FontSize="20" />
+            <Label Text="Twelfth Label" FontSize="20" />
+            <Label Text="Thirteenth Label" FontSize="20" />
+            <Label Text="Fourteenth Label" FontSize="20" />
+            <Label Text="Fifteenth Label" FontSize="20" />-->
+
+            <ListView x:Name="listView" />
+
+            <Label x:Name="lblException" FontSize="14" TextColor="Black" />
+        </StackLayout>
+    </ScrollView>
 
 </ContentPage>
