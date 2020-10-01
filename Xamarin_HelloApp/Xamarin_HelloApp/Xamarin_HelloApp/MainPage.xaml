@@ -1,18 +1,53 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Xamarin_HelloApp.MainPage">
+             x:Class="Xamarin_HelloApp.MainPage"
+             xmlns:ffimage="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms">
 
-    <ScrollView >
+    <!--<ScrollView >-->
         <StackLayout Spacing="10"> 
-            <Frame BackgroundColor="#2196F3" Padding="15" CornerRadius="0">
+            <Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0">
                 <StackLayout>
-                    <Label Text="Pilot Mobile beta" HorizontalTextAlignment="Center" TextColor="White" FontSize="36"/>
-                    <Label x:Name="labelConnect" Text="Not connected" HorizontalTextAlignment="End" TextColor="White" FontSize="16" />
+                    <StackLayout Orientation="Horizontal" >
+                        <Label Text="Pilot Mobile" HorizontalTextAlignment="Start" TextColor="White" FontSize="Small"/>
+                        <Label x:Name="labelConnect" Text="Нет подключения" HorizontalTextAlignment="End" HorizontalOptions="EndAndExpand" TextColor="White" FontSize="Small" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal">
+                        <Button Text="↑" HorizontalOptions="EndAndExpand" Background="#2196F3" TextColor="White" FontSize="Medium" Clicked="Up_Click" WidthRequest="40" />
+                        <Button Text="∆" HorizontalOptions="End" Background="#2196F3" TextColor="White" FontSize="Medium" Clicked="Home_Click" WidthRequest="40" />
+                    </StackLayout>
+                
                 </StackLayout>
             </Frame>
 
-            <Button Text="Add Item" Clicked="btn_Click" />
+            <!-- HeightRequest="14" WidthRequest="14" -->
+            <ListView x:Name="listView" ItemTapped="PilotItem_Tapped" >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <StackLayout Orientation="Horizontal" Spacing="0" >
+                                    <ffimage:SvgCachedImage WidthRequest="15" HeightRequest="15" Source="{Binding ImageSource}" Margin="5,0,10,0" />
+                                    <Label Text="{Binding VisibleName}" FontSize="Body" VerticalOptions="Center" />
+                                </StackLayout>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+        <Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0" VerticalOptions="EndAndExpand" >
+            <StackLayout Orientation="Horizontal">
+                <Button Text="View" Background="#2196F3" TextColor="White" FontSize="Medium" WidthRequest="100" HorizontalOptions="Start" Margin="0,0,0,0" />
+                <Label HorizontalOptions="CenterAndExpand" />
+                <Button Text="File" Background="#2196F3" TextColor="White" FontSize="Medium" WidthRequest="100" HorizontalOptions="Center" />
+                <Label HorizontalOptions="CenterAndExpand" />
+                <Button Text="Card" Background="#2196F3" TextColor="White" FontSize="Medium" WidthRequest="100" HorizontalOptions="End" Margin="0,0,0,0" />
+            </StackLayout>
+        </Frame>
+            
+            <!--<Button Text="Add Item" Clicked="btn_Click" />-->
 
             <!--<Label Text="We beleawe soon here will be data from Pilot DB" FontSize="Title" Padding="30,10,30,10"/>
             <Label Text="Make changes to your XAML file and save to see your UI update in the running app with XAML Hot Reload. Give it a try!" FontSize="16" Padding="30,0,30,0"/> -->
@@ -70,10 +105,11 @@
             <Label Text="Fourteenth Label" FontSize="20" />
             <Label Text="Fifteenth Label" FontSize="20" />-->
 
-            <ListView x:Name="listView" />
 
-            <Label x:Name="lblException" FontSize="14" TextColor="Black" />
+            
+
+            <!--<Label x:Name="lblException" FontSize="14" TextColor="Black" />-->
         </StackLayout>
-    </ScrollView>
+    <!--</ScrollView>-->
 
 </ContentPage>
