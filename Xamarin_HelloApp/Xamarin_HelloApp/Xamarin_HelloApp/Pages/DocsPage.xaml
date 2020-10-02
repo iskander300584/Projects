@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Xamarin_HelloApp.Pages.DocsPage">
+    <ContentPage.Content>
+        <StackLayout>
+        <!-- Список объектов -->
+            <ListView x:Name="listView" ItemTapped="File_Tapped" >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <StackLayout Orientation="Horizontal" Spacing="0" >
+                                    <Label Text="{Binding Name}" FontSize="Body" VerticalOptions="Center" />
+                                    <!--<ImageButton WidthRequest="15" HeightRequest="15" BackgroundColor="Blue" HorizontalOptions="EndAndExpand" Clicked=""/>-->
+                                </StackLayout>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

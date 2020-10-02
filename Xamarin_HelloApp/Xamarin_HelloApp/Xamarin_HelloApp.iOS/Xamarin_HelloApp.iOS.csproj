@@ -68,6 +68,7 @@
     <None Include="Entitlements.plist" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <BundleResource Include="Resources\blanc_pdf.pdf" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -123,6 +124,9 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Syncfusion.Xamarin.SfPdfViewer">
+      <Version>18.3.0.35</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Forms" Version="4.8.0.1451" />
     <PackageReference Include="Xamarin.Essentials" Version="1.5.3.2" />
   </ItemGroup>
@@ -132,5 +136,29 @@
       <Project>{4DB4A8EA-722F-4C3D-9793-DBA159BD1909}</Project>
       <Name>Xamarin_HelloApp</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\connect.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\noconnect.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\pilot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\card.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\docs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\file.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\home.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\up.png" />
   </ItemGroup>
 </Project>

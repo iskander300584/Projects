@@ -3,6 +3,8 @@ using Ascon.Pilot.DataClasses;
 using Ascon.Pilot.Server.Api;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Xamarin_HelloApp.Models
@@ -15,7 +17,7 @@ namespace Xamarin_HelloApp.Models
         bool IsInitialized { get; }
     }
 
-    class Context : IContext
+    class Context : IContext, INotifyPropertyChanged
     {
         private Repository _repository;
         private HttpPilotClient _client;
@@ -23,9 +25,22 @@ namespace Xamarin_HelloApp.Models
 
         public IRepository Repository => _repository;
 
+
+        private bool isInitialized = false;
+        /// <summary>
+        /// Подключение выполнено
+        /// </summary>
         public bool IsInitialized
         {
-            get; private set;
+            get => isInitialized;
+            private set
+            {
+                if(isInitialized != value)
+                {
+                    isInitialized = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public Context()
@@ -61,6 +76,13 @@ namespace Xamarin_HelloApp.Models
         {
             _client?.Disconnect();
             _client?.Dispose();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
     }
 }

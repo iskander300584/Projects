@@ -2,114 +2,70 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin_HelloApp.MainPage"
-             xmlns:ffimage="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms">
+             xmlns:ffimage="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms"
+             xmlns:conv="clr-namespace:Xamarin_HelloApp.Converters"
+             >
 
-    <!--<ScrollView >-->
-        <StackLayout Spacing="10"> 
-            <Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0">
-                <StackLayout>
-                    <StackLayout Orientation="Horizontal" >
-                        <Label Text="Pilot Mobile" HorizontalTextAlignment="Start" TextColor="White" FontSize="Small"/>
-                        <Label x:Name="labelConnect" Text="Нет подключения" HorizontalTextAlignment="End" HorizontalOptions="EndAndExpand" TextColor="White" FontSize="Small" />
-                    </StackLayout>
+    <ContentPage.Resources>
+        <!-- Преобразование состояния подключения в пиктограмму -->
+        <conv:IsConnected_ImageSource_Converter x:Key="IsConnected_ImageSource" />
+    </ContentPage.Resources>
 
-                    <StackLayout Orientation="Horizontal">
-                        <Button Text="↑" HorizontalOptions="EndAndExpand" Background="#2196F3" TextColor="White" FontSize="Medium" Clicked="Up_Click" WidthRequest="40" />
-                        <Button Text="∆" HorizontalOptions="End" Background="#2196F3" TextColor="White" FontSize="Medium" Clicked="Home_Click" WidthRequest="40" />
-                    </StackLayout>
-                
+    <StackLayout Spacing="10">
+        <!-- Шапка -->
+        <Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0">
+            <StackLayout>
+                <StackLayout Orientation="Horizontal" >
+                    <Image Source="pilot.png" HeightRequest="20" />
+                    <Label Text="Pilot Mobile" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
+                    <Image HorizontalOptions="EndAndExpand" HeightRequest="10" Aspect="AspectFit" Source="{Binding IsConnected, Converter={StaticResource IsConnected_ImageSource}}" Margin="0,0,5,0" />
                 </StackLayout>
-            </Frame>
 
-            <!-- HeightRequest="14" WidthRequest="14" -->
-            <ListView x:Name="listView" ItemTapped="PilotItem_Tapped" >
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <ViewCell.View>
-                                <StackLayout Orientation="Horizontal" Spacing="0" >
-                                    <ffimage:SvgCachedImage WidthRequest="15" HeightRequest="15" Source="{Binding ImageSource}" Margin="5,0,10,0" />
-                                    <Label Text="{Binding VisibleName}" FontSize="Body" VerticalOptions="Center" />
-                                </StackLayout>
-                            </ViewCell.View>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                <StackLayout Orientation="Horizontal">
+                    <!-- Кнопка Наверх -->
+                    <ImageButton Source="up.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="EndAndExpand"  Clicked="Up_Click" />
 
-        <Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0" VerticalOptions="EndAndExpand" >
-            <StackLayout Orientation="Horizontal">
-                <Button Text="View" Background="#2196F3" TextColor="White" FontSize="Medium" WidthRequest="100" HorizontalOptions="Start" Margin="0,0,0,0" />
-                <Label HorizontalOptions="CenterAndExpand" />
-                <Button Text="File" Background="#2196F3" TextColor="White" FontSize="Medium" WidthRequest="100" HorizontalOptions="Center" />
-                <Label HorizontalOptions="CenterAndExpand" />
-                <Button Text="Card" Background="#2196F3" TextColor="White" FontSize="Medium" WidthRequest="100" HorizontalOptions="End" Margin="0,0,0,0" />
+                    <!-- Кнопка Домой -->
+                    <ImageButton Source="home.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="End" Clicked="Home_Click" Margin="5,0,0,0" />
+                </StackLayout>
             </StackLayout>
         </Frame>
-            
-            <!--<Button Text="Add Item" Clicked="btn_Click" />-->
 
-            <!--<Label Text="We beleawe soon here will be data from Pilot DB" FontSize="Title" Padding="30,10,30,10"/>
-            <Label Text="Make changes to your XAML file and save to see your UI update in the running app with XAML Hot Reload. Give it a try!" FontSize="16" Padding="30,0,30,0"/> -->
-            
-            <!--<RelativeLayout>
-            <Label x:Name="label1"  FontSize="16" Padding="30,24,30,0">
-                <Label.FormattedText>
-                    <FormattedString>
-                        <FormattedString.Spans>
-                            <Span Text="Learn more at "/>
-                            <Span Text="https://aka.ms/xamarin-quickstart" FontAttributes="Bold"/>
-                        </FormattedString.Spans>
-                    </FormattedString>
-                </Label.FormattedText>
-            </Label>
+        <!-- Список объектов -->
+        <ListView x:Name="listView" ItemTapped="PilotItem_Tapped" ItemsSource="{Binding Items}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <ViewCell.View>
+                            <StackLayout Orientation="Horizontal" Spacing="0" >
+                                <ffimage:SvgCachedImage WidthRequest="15" HeightRequest="15" Source="{Binding Type.ImageSource}" Margin="5,0,10,0" />
+                                <Label Text="{Binding VisibleName}" FontSize="Body" VerticalOptions="Center" />
+                            </StackLayout>
+                        </ViewCell.View>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
-                <BoxView Color="LightGray" BackgroundColor="Yellow" CornerRadius="20" 
-                         RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToView, ElementName=lbl, Property=X, Factor=1, Constant=-30}"
-                         RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToView, ElementName=lbl, Property=Y, Factor=1, Constant=-15}"
-                         RelativeLayout.WidthConstraint="150" RelativeLayout.HeightConstraint="50"/>
-                <Label x:Name="lbl" Text="RelativeLayout" TextColor="Blue"
-                       RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=0.5, Constant=-50}"
-                       RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToView, ElementName=label1, Property=Y, Factor=1, Constant=30}" />
-            </RelativeLayout>-->
+        <!-- Подвал -->
+        <Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0" VerticalOptions="EndAndExpand" >
+            <StackLayout Orientation="Horizontal">
+                <!-- Кнопка Файл -->
+                <ImageButton Source="file.png" Aspect="AspectFit" HeightRequest="30" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="Start" />
+                <Label HorizontalOptions="CenterAndExpand" />
+                <!-- заглушка -->
 
-            <!--<Grid ColumnSpacing="5" RowSpacing="5" >
-                <Grid.RowDefinitions >
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+                <!-- Кнопка Список документов -->
+                <ImageButton Source="docs.png" Aspect="AspectFit" HeightRequest="30" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="Center" 
+                             Clicked="Docs_Click"/>
+                <Label HorizontalOptions="CenterAndExpand" />
+                <!-- заглушка -->
 
-                <BoxView Color="LightBlue" />
-                <BoxView Color="LightBlue" Grid.Column="1" />
-                <BoxView Color="LightBlue" Grid.Row="1" Grid.ColumnSpan="2" />
-                <BoxView Color="LightBlue" Grid.Row="1" Grid.Column="1" />
-            </Grid>-->
-            
-            <!--<Label Text="First Label" FontSize="20" IsVisible="False"/>
-            <Label Text="Second Label" FontSize="20" />
-            <Label Text="Third Label" FontSize="20" />
-            <Label Text="Fourth Label" FontSize="20" />
-            <Label Text="Fifth Label" FontSize="20" />
-            <Label Text="Sixth Label" FontSize="20" />
-            <Label Text="Seventh Label" FontSize="20" />
-            <Label Text="Eighth Label" FontSize="20" />
-            <Label Text="Ninth Label" FontSize="20" />
-            <Label Text="Tenth Label" FontSize="20" />
-            <Label Text="Eleventh Label" FontSize="20" />
-            <Label Text="Twelfth Label" FontSize="20" />
-            <Label Text="Thirteenth Label" FontSize="20" />
-            <Label Text="Fourteenth Label" FontSize="20" />
-            <Label Text="Fifteenth Label" FontSize="20" />-->
+                <!-- Кнопка Карточка -->
+                <ImageButton Source="card.png" Aspect="AspectFit" HeightRequest="30" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="End" />
+            </StackLayout>
+        </Frame>
 
-
-            
-
-            <!--<Label x:Name="lblException" FontSize="14" TextColor="Black" />-->
-        </StackLayout>
-    <!--</ScrollView>-->
+    </StackLayout>
 
 </ContentPage>

@@ -10,18 +10,25 @@ using Xamarin_HelloApp.Models;
 using Ascon.Pilot.DataClasses;
 using Xamarin_HelloApp.ViewModels;
 using Xamarin_HelloApp.AppContext;
+using Xamarin_HelloApp.ViewContexts;
+using Xamarin_HelloApp.Pages;
 
 namespace Xamarin_HelloApp
 {
-    
+    /// <summary>
+    /// Главное окно
+    /// </summary>
     public partial class MainPage : ContentPage
     {
-        private ObservableCollection<PilotTreeItem> Items = new ObservableCollection<PilotTreeItem>();
+        /// <summary>
+        /// Контекст данных окна
+        /// </summary>
+        private MainPage_Context context = new MainPage_Context();
 
-        private int iterator = 1;
 
-        private PilotTreeItem parent;
-
+        /// <summary>
+        /// Главное окно
+        /// </summary>
         public MainPage()
         {
             InitializeComponent();
@@ -30,9 +37,6 @@ namespace Xamarin_HelloApp
             {
                 Global.DALContext = new Context();
                 Global.DALContext.Build();
-
-                if (Global.DALContext.IsInitialized)
-                    labelConnect.Text = "Подключено";
             }
             catch { }
 
@@ -40,96 +44,19 @@ namespace Xamarin_HelloApp
             {
                 Global.CurrentPerson = Global.DALContext.Repository.CurrentPerson();
 
-                DObject root = Global.DALContext.Repository.GetObjects(new[] { DObject.RootId}).First();              
-
-                var objects = root.Children;
-
-                foreach (DChild dchild in objects)
-                {
-                    PilotTreeItem item = new PilotTreeItem(dchild, null);
-                    if (item.HasAccess)
-                        Items.Add(item);
-                }
+                GetRootObjects();
             }
 
-            parent = null;
-
-            listView.ItemsSource = Items;
-
+            this.BindingContext = context;
         }
 
-        /// <summary>
-        /// Нажатие на элемент Pilot
-        /// </summary>
-        private void PilotItem_Tapped(object sender, ItemTappedEventArgs e)
-        {
-            listView.ItemsSource = null;
-
-            PilotTreeItem pilotItem = e.Item as PilotTreeItem;
-
-            Items = new ObservableCollection<PilotTreeItem>();
-
-            foreach (DChild dchild in pilotItem.DObject.Children)
-            {
-                PilotTreeItem item = new PilotTreeItem(dchild, pilotItem);
-                if (item.HasAccess)
-                    Items.Add(item);
-            }
-
-            parent = pilotItem;
-
-            listView.ItemsSource = Items;
-        }
 
         /// <summary>
-        /// Кнопка Вверх
+        /// Получить список головных объектов
         /// </summary>
-        private void Up_Click(object sender, EventArgs e)
+        private void GetRootObjects()
         {
-            listView.ItemsSource = null;
-
-            Items = new ObservableCollection<PilotTreeItem>();
-
-            if (parent != null)
-            {
-                foreach (DChild dchild in parent.DObject.Children)
-                {
-                    PilotTreeItem item = new PilotTreeItem(dchild, parent);
-                    if (item.HasAccess)
-                        Items.Add(item);
-                }
-
-                parent = parent.Parent;
-            }
-            else
-            {
-                DObject root = Global.DALContext.Repository.GetObjects(new[] { DObject.RootId }).First();
-
-                var objects = root.Children;
-
-                foreach (DChild dchild in objects)
-                {
-                    PilotTreeItem item = new PilotTreeItem(dchild, null);
-                    if (item.HasAccess)
-                        Items.Add(item);
-                }
-
-                parent = null;
-            }
-
-            listView.ItemsSource = Items;
-        }
-
-        /// <summary>
-        /// Кнопка Домой
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Home_Click(object sender, EventArgs e)
-        {
-            listView.ItemsSource = null;
-
-            Items = new ObservableCollection<PilotTreeItem>();
+            context.Items.Clear();
 
             DObject root = Global.DALContext.Repository.GetObjects(new[] { DObject.RootId }).First();
 
@@ -138,13 +65,93 @@ namespace Xamarin_HelloApp
             foreach (DChild dchild in objects)
             {
                 PilotTreeItem item = new PilotTreeItem(dchild, null);
-                if (item.HasAccess)
-                    Items.Add(item);
+                if (item.HasAccess && !item.Type.IsDocument && !item.Type.IsSystem)
+                    context.Items.Add(item);
             }
 
-            parent = null;
+            context.Parent = null;
+        }
 
-            listView.ItemsSource = Items;
+
+        /// <summary>
+        /// Нажатие на элемент Pilot
+        /// </summary>
+        private void PilotItem_Tapped(object sender, ItemTappedEventArgs e)
+        {
+            PilotTreeItem pilotItem = e.Item as PilotTreeItem;
+
+            if (!pilotItem.Type.IsDocument)
+            {
+                context.Items = new ObservableCollection<PilotTreeItem>();
+
+                foreach (DChild dchild in pilotItem.DObject.Children)
+                {
+                    PilotTreeItem item = new PilotTreeItem(dchild, pilotItem);
+                    if (item.HasAccess)
+                        context.Items.Add(item);
+                }
+
+                context.Parent = pilotItem;
+            }
+            else
+            {
+                DFile file = null;
+                var snapshot = pilotItem.DObject.ActualFileSnapshot;
+
+
+                if(snapshot != null)
+                {
+                    file = snapshot.Files.FirstOrDefault();
+                }
+
+                //Navigation.PushModalAsync(new XpsPage(file));
+
+                Navigation.PushModalAsync(new DocsPage(pilotItem.DObject));
+            }
+        }
+
+
+        /// <summary>
+        /// Кнопка Вверх
+        /// </summary>
+        private void Up_Click(object sender, EventArgs e)
+        {
+            context.Items = new ObservableCollection<PilotTreeItem>();
+
+            if (context.Parent != null)
+            {
+                foreach (DChild dchild in context.Parent.DObject.Children)
+                {
+                    PilotTreeItem item = new PilotTreeItem(dchild, context.Parent);
+                    if (item.HasAccess)
+                        context.Items.Add(item);
+                }
+
+                context.Parent = context.Parent.Parent;
+            }
+            else
+            {
+                GetRootObjects();
+            }
+        }
+
+
+        /// <summary>
+        /// Кнопка Домой
+        /// </summary>
+        private void Home_Click(object sender, EventArgs e)
+        {
+            GetRootObjects();
+        }
+
+
+        /// <summary>
+        /// Кнопка Список документов
+        /// </summary>
+        private void Docs_Click(object sender, EventArgs e)
+        {
+            if (context.Parent == null)
+                return;
         }
     }
 }

@@ -51,6 +51,16 @@ namespace Xamarin_HelloApp.ViewModels
         }
 
 
+        private PType type;
+        /// <summary>
+        /// Тип объекта
+        /// </summary>
+        public PType Type
+        {
+            get => type;
+        }
+
+
         private SvgImageSource imageSource = null;
         /// <summary>
         /// Источник изображения
@@ -96,21 +106,23 @@ namespace Xamarin_HelloApp.ViewModels
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
+
+        /// <summary>
+        /// Элемент дерева Pilot
+        /// </summary>
+        /// <param name="element">дочерний элемент Pilot</param>
+        /// <param name="parent">головной элемент</param>
         public PilotTreeItem(DChild element, PilotTreeItem parent)
         {
             guid = element.ObjectId;
             this.parent = parent;
 
-            imageSource = TypeImages.GetImageSource(element.TypeId);
-
-            
+            type = TypeFabrique.GetType(element.TypeId);          
 
             dObject = Global.DALContext.Repository.GetObjects(new[] { element.ObjectId }).FirstOrDefault();          
 
             if(dObject != null)
             {
-                //DPerson _currentPerson = context.Repository.CurrentPerson();
-
                 foreach (AccessRecord accessRecord in dObject.Access)
                 {
                     if(Global.CurrentPerson.AllOrgUnits.Contains(accessRecord.OrgUnitId))
@@ -125,11 +137,12 @@ namespace Xamarin_HelloApp.ViewModels
 
                 foreach(var attr in dObject.Attributes)
                 {
-                    visibleName += attr.Value.StrValue + " ";
+                    if (Type.Attributes.Any(a => a.Name == attr.Key && a.IsVisible && !a.IsSystem))
+                        visibleName += attr.Value.StrValue + " ";
                 }
 
                 visibleName.Trim();
-            }
+            }           
         }
     }
 }
