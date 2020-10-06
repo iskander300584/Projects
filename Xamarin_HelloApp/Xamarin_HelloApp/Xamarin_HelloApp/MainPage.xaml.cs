@@ -95,14 +95,13 @@ namespace Xamarin_HelloApp
             }
             else
             {
-                DFile file = null;
-                var snapshot = pilotItem.DObject.ActualFileSnapshot;
+                //DFile file = null;
+                //var snapshot = pilotItem.DObject.ActualFileSnapshot;
 
-
-                if(snapshot != null)
-                {
-                    file = snapshot.Files.FirstOrDefault();
-                }
+                //if(snapshot != null)
+                //{
+                //    file = snapshot.Files.FirstOrDefault();
+                //}
 
                 //Navigation.PushModalAsync(new XpsPage(file));
 

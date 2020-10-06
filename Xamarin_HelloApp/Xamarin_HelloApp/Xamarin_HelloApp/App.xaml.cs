@@ -1,6 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Xamarin_HelloApp.Pages;
 
 namespace Xamarin_HelloApp
 {
@@ -10,7 +11,11 @@ namespace Xamarin_HelloApp
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            MainPage = new AuthorizePage();
+
+            
+
+            //MainPage = new MainPage();
         }
 
         protected override void OnStart()

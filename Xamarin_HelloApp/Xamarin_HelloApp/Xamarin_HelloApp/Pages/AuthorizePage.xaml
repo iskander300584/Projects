@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Xamarin_HelloApp.Pages.AuthorizePage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0">
+                <StackLayout Orientation="Horizontal" >
+                    <Image Source="pilot.png" HeightRequest="20" />
+                    <Label Text="Pilot Mobile" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
+                </StackLayout>
+            </Frame>
+
+            <Label Text="Имя сервера" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
+            <Editor  FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
+
+            <Label Text="Имя базы данных" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
+            <Editor  FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
+
+            <Label Text="Имя пользователя" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
+            <Editor  FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
+
+            <Label Text="Пароль" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
+            <Editor  FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
+
+            <Button Text="Подключиться" FontSize="Title" Background="#2196F3" FontFamily="Tahoma" TextColor="White" 
+                    VerticalOptions="EndAndExpand" HorizontalOptions="Fill" Margin="10,0,10,10"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
