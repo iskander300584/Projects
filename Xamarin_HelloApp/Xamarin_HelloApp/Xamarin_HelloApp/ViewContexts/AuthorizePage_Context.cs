@@ -2,8 +2,8 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Xamarin.Forms;
 using Xamarin_HelloApp.AppContext;
-using Xamarin_HelloApp.Commands;
 using Xamarin_HelloApp.Models;
 using Xamarin_HelloApp.Pages;
 
@@ -33,6 +33,8 @@ namespace Xamarin_HelloApp.ViewContexts
                 {
                     server = value;
                     OnPropertyChanged();
+
+                    CheckConnection_CanExecute();
                 }
             }
         }
@@ -51,6 +53,8 @@ namespace Xamarin_HelloApp.ViewContexts
                 {
                     db = value;
                     OnPropertyChanged();
+
+                    CheckConnection_CanExecute();
                 }
             }
         }
@@ -69,6 +73,8 @@ namespace Xamarin_HelloApp.ViewContexts
                 {
                     login = value;
                     OnPropertyChanged();
+
+                    CheckConnection_CanExecute();
                 }
             }
         }
@@ -87,6 +93,8 @@ namespace Xamarin_HelloApp.ViewContexts
                 {
                     password = value;
                     OnPropertyChanged();
+
+                    CheckConnection_CanExecute();
                 }
             }
         }
@@ -140,6 +148,24 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
+        private bool canConnectCommand = false;
+        /// <summary>
+        /// Признак возможности выполнения команды
+        /// </summary>
+        public bool CanConnectCommand
+        {
+            get => canConnectCommand;
+            private set
+            {
+                if(canConnectCommand != value)
+                {
+                    canConnectCommand = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
@@ -153,7 +179,7 @@ namespace Xamarin_HelloApp.ViewContexts
         public AuthorizePage_Context(AuthorizePage authorizePage)
         {
             page = authorizePage;
-            connectCommand = new AuthorizeConnectCommand(this);
+            connectCommand = new Command(CheckConnection);
         }
 
 
@@ -167,12 +193,24 @@ namespace Xamarin_HelloApp.ViewContexts
 
 
         /// <summary>
+        /// Проверка возможности выполнения проверки подключения
+        /// </summary>
+        /// <returns></returns>
+        public void CheckConnection_CanExecute()
+        {
+            CanConnectCommand = (Server.Trim() != "" && DB.Trim() != "" && Login.Trim() != "" && Password.Trim() != "");
+        }
+
+
+        /// <summary>
         /// Проверка соединения с БД 
         /// TODO сохранение настроек
         /// </summary>
         /// <returns>возвращает TRUE в случае успешного подключения</returns>
         public void CheckConnection()
         {
+            Error = string.Empty;
+
             Credentials credentials = Credentials.GetConnectionCredentials(server.Trim(), db.Trim(), login.Trim(), password.Trim());
             Exception ex = Global.DALContext.Connect(credentials);
             if (ex != null)
@@ -182,6 +220,34 @@ namespace Xamarin_HelloApp.ViewContexts
             }
 
             // TODO сохранение настроек
+            object temp = "";
+            if (App.Current.Properties.TryGetValue("server", out temp))
+            {
+                App.Current.Properties["server"] = credentials.ServerUrl;
+            }
+            else
+                App.Current.Properties.Add("server", credentials.ServerUrl);
+
+            if (App.Current.Properties.TryGetValue("db", out temp))
+            {
+                App.Current.Properties["db"] = credentials.DatabaseName;
+            }
+            else
+                App.Current.Properties.Add("db", credentials.DatabaseName);
+
+            if (App.Current.Properties.TryGetValue("login", out temp))
+            {
+                App.Current.Properties["login"] = credentials.Username;
+            }
+            else
+                App.Current.Properties.Add("login", credentials.Username);
+
+            if (App.Current.Properties.TryGetValue("password", out temp))
+            {
+                App.Current.Properties["password"] = credentials.ProtectedPassword;
+            }
+            else
+                App.Current.Properties.Add("password", credentials.ProtectedPassword);
 
             page.NavigateToMainPage();
         }

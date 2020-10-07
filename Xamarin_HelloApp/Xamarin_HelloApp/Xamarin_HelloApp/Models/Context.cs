@@ -76,7 +76,7 @@ namespace Xamarin_HelloApp.Models
 
             try
             {
-                _client = new HttpPilotClient(credentials.ServerUrl.ToString());
+                _client = new HttpPilotClient(credentials.ServerUrl);
                 _client.Connect(false);
                 var serverApi = _client.GetServerApi(_serverCallback);
                 var authApi = _client.GetAuthenticationApi();

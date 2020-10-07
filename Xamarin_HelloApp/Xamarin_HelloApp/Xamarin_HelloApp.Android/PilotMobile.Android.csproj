@@ -8,7 +8,7 @@
     <TemplateGuid>{c9e5eea5-ca05-42a1-839b-61506e0a37df}</TemplateGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Xamarin_HelloApp.Droid</RootNamespace>
-    <AssemblyName>Xamarin_HelloApp.Android</AssemblyName>
+    <AssemblyName>PilotMobile.Android</AssemblyName>
     <Deterministic>True</Deterministic>
     <AndroidApplication>True</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
@@ -97,9 +97,9 @@
     <AndroidResource Include="Resources\drawable\card.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Xamarin_HelloApp\Xamarin_HelloApp.csproj">
-      <Project>{4DB4A8EA-722F-4C3D-9793-DBA159BD1909}</Project>
-      <Name>Xamarin_HelloApp</Name>
+    <ProjectReference Include="..\Xamarin_HelloApp\PilotMobile.csproj">
+      <Project>{0E4C93E4-48F7-4ADB-B23F-53F28A4E08DA}</Project>
+      <Name>PilotMobile</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +122,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\pilot_icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

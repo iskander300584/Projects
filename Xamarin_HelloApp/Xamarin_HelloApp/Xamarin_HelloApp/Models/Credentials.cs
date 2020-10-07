@@ -1,13 +1,14 @@
 ﻿using Ascon.Pilot.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Xamarin_HelloApp.Models
 {
+    /// <summary>
+    /// Настройки подключения
+    /// </summary>
     public class Credentials
     {
-        public Uri ServerUrl { get; private set; }
+        public string ServerUrl { get; private set; }
+        //public Uri ServerUrl { get; private set; }
         public string Username { get; private set; }
         public string ProtectedPassword { get; private set; }
 
@@ -22,7 +23,8 @@ namespace Xamarin_HelloApp.Models
         {
             var credentials = new Credentials
             {
-                ServerUrl = new Uri(@"http://ecm.ascon.ru:5545/"),
+                ServerUrl = @"http://ecm.ascon.ru:5545/",
+                //ServerUrl = new Uri(@"http://ecm.ascon.ru:5545/"),
                 Username = username,
                 ProtectedPassword = password,
                 DatabaseName = database
@@ -44,9 +46,31 @@ namespace Xamarin_HelloApp.Models
         {
             var credentials = new Credentials
             {
-                ServerUrl = new Uri(server),
+                ServerUrl = server,
                 Username = username,
                 ProtectedPassword = password.EncryptAes(),
+                DatabaseName = database
+            };
+
+            return credentials;
+        }
+
+
+        /// <summary>
+        /// Получить настройки подключения без преобразования пароля
+        /// </summary>
+        /// <param name="server">имя сервера</param>
+        /// <param name="database">имя БД</param>
+        /// <param name="username">имя пользователя</param>
+        /// <param name="password">пароль</param>
+        /// <returns>возвращает соответствующие настройки подключения</returns>
+        public static Credentials GetProtectedCredentials(string server, string database, string username, string password)
+        {
+            var credentials = new Credentials
+            {
+                ServerUrl = server,
+                Username = username,
+                ProtectedPassword = password,
                 DatabaseName = database
             };
 

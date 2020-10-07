@@ -21,17 +21,18 @@
             <Entry Text="{Binding Login, Mode=TwoWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
 
             <Label Text="Пароль" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
-            <!--<Editor Text="{Binding Password, Mode=TwoWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />-->
             <Entry IsPassword="True" Text="{Binding Password, Mode=TwoWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill"
                    Margin="10,0,10,10" />
 
-            <Label Text="{Binding Error, Mode=OneWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,10,10,0"
-                   TextColor="Red" IsVisible="{Binding IsErrorVisible, Mode=OneWay}"/>
+            <Label Text="Ошибка подключения к БД Pilot" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,10,10,0"
+                   TextColor="Red" IsVisible="{Binding IsErrorVisible, Mode=OneWay}" />
+            <!--<Label Text="{Binding Error, Mode=OneWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0"
+                   TextColor="Red" IsVisible="{Binding IsErrorVisible, Mode=OneWay}"/>-->
 
-            <!-- Command="{Binding ConnectCommand}" -->
             <Button Text="Подключиться" FontSize="Title" Background="#2196F3" FontFamily="Tahoma" TextColor="White" 
                     VerticalOptions="EndAndExpand" HorizontalOptions="Fill" Margin="10,0,10,10"
-                    Clicked="Connect_Click" />
+                    Command="{Binding ConnectCommand}"
+                    IsEnabled="{Binding CanConnectCommand, Mode=OneWay}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

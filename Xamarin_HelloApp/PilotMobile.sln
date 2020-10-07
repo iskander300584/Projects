@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30517.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin_HelloApp.Android", "Xamarin_HelloApp\Xamarin_HelloApp.Android\Xamarin_HelloApp.Android.csproj", "{13F3158A-6872-4BE1-AA6F-FBAB2874523D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PilotMobile.Android", "Xamarin_HelloApp\Xamarin_HelloApp.Android\PilotMobile.Android.csproj", "{13F3158A-6872-4BE1-AA6F-FBAB2874523D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin_HelloApp.iOS", "Xamarin_HelloApp\Xamarin_HelloApp.iOS\Xamarin_HelloApp.iOS.csproj", "{AA708E74-1272-42A7-8586-33B1F770D460}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PilotMobile.iOS", "Xamarin_HelloApp\Xamarin_HelloApp.iOS\PilotMobile.iOS.csproj", "{AA708E74-1272-42A7-8586-33B1F770D460}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xamarin_HelloApp", "Xamarin_HelloApp\Xamarin_HelloApp\Xamarin_HelloApp.csproj", "{0E4C93E4-48F7-4ADB-B23F-53F28A4E08DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PilotMobile", "Xamarin_HelloApp\Xamarin_HelloApp\PilotMobile.csproj", "{0E4C93E4-48F7-4ADB-B23F-53F28A4E08DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

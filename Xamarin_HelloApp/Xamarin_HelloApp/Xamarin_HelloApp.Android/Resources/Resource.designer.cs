@@ -8875,37 +8875,40 @@ namespace Xamarin_HelloApp.Droid
 			public const int pilot = 2131165353;
 			
 			// aapt resource value: 0x7F0700AA
-			public const int Search = 2131165354;
+			public const int pilot_icon = 2131165354;
 			
 			// aapt resource value: 0x7F0700AB
-			public const int sfprogressbar_determinate_linear = 2131165355;
+			public const int Search = 2131165355;
 			
 			// aapt resource value: 0x7F0700AC
-			public const int sfprogressbar_indeterminate_circular = 2131165356;
+			public const int sfprogressbar_determinate_linear = 2131165356;
 			
 			// aapt resource value: 0x7F0700AD
-			public const int sfprogressbar_indeterminate_linear = 2131165357;
+			public const int sfprogressbar_indeterminate_circular = 2131165357;
 			
 			// aapt resource value: 0x7F0700AE
-			public const int SignaturePadBottomCorner = 2131165358;
+			public const int sfprogressbar_indeterminate_linear = 2131165358;
 			
 			// aapt resource value: 0x7F0700AF
-			public const int SignaturepadRoundedCorners = 2131165359;
+			public const int SignaturePadBottomCorner = 2131165359;
 			
 			// aapt resource value: 0x7F0700B0
-			public const int SignaturePadTopCorner = 2131165360;
+			public const int SignaturepadRoundedCorners = 2131165360;
 			
 			// aapt resource value: 0x7F0700B1
-			public const int tooltip_frame_dark = 2131165361;
+			public const int SignaturePadTopCorner = 2131165361;
 			
 			// aapt resource value: 0x7F0700B2
-			public const int tooltip_frame_light = 2131165362;
+			public const int tooltip_frame_dark = 2131165362;
 			
 			// aapt resource value: 0x7F0700B3
-			public const int up = 2131165363;
+			public const int tooltip_frame_light = 2131165363;
 			
 			// aapt resource value: 0x7F0700B4
-			public const int Viewmode = 2131165364;
+			public const int up = 2131165364;
+			
+			// aapt resource value: 0x7F0700B5
+			public const int Viewmode = 2131165365;
 			
 			static Drawable()
 			{
