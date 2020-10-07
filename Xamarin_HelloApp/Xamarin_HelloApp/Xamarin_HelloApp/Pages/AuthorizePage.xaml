@@ -12,19 +12,26 @@
             </Frame>
 
             <Label Text="Имя сервера" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
-            <Editor  FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
+            <Entry Text="{Binding Server, Mode=TwoWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
 
             <Label Text="Имя базы данных" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
-            <Editor  FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
+            <Entry Text="{Binding DB, Mode=TwoWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
 
             <Label Text="Имя пользователя" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
-            <Editor  FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
+            <Entry Text="{Binding Login, Mode=TwoWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
 
             <Label Text="Пароль" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
-            <Editor  FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
+            <!--<Editor Text="{Binding Password, Mode=TwoWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />-->
+            <Entry IsPassword="True" Text="{Binding Password, Mode=TwoWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill"
+                   Margin="10,0,10,10" />
 
+            <Label Text="{Binding Error, Mode=OneWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,10,10,0"
+                   TextColor="Red" IsVisible="{Binding IsErrorVisible, Mode=OneWay}"/>
+
+            <!-- Command="{Binding ConnectCommand}" -->
             <Button Text="Подключиться" FontSize="Title" Background="#2196F3" FontFamily="Tahoma" TextColor="White" 
-                    VerticalOptions="EndAndExpand" HorizontalOptions="Fill" Margin="10,0,10,10"/>
+                    VerticalOptions="EndAndExpand" HorizontalOptions="Fill" Margin="10,0,10,10"
+                    Clicked="Connect_Click" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

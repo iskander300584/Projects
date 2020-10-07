@@ -13,8 +13,6 @@ namespace Xamarin_HelloApp
 
             MainPage = new AuthorizePage();
 
-            
-
             //MainPage = new MainPage();
         }
 

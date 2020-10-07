@@ -13,7 +13,8 @@ namespace Xamarin_HelloApp.Models
     {
         //void Build(HttpContext http);
         IRepository Repository { get; }
-        DDatabaseInfo Connect(Credentials credentials);
+        DDatabaseInfo ConnectOld(Credentials credentials);
+        Exception Connect(Credentials credentials);
         bool IsInitialized { get; }
     }
 
@@ -48,7 +49,7 @@ namespace Xamarin_HelloApp.Models
             _serverCallback = new ServerCallback();
         }
 
-        public DDatabaseInfo Connect(Credentials credentials)
+        public DDatabaseInfo ConnectOld(Credentials credentials)
         {
             _client = new HttpPilotClient(@"http://ecm.ascon.ru:5545");
             // Do not check versions of the Server and Client
@@ -63,13 +64,43 @@ namespace Xamarin_HelloApp.Models
             return dbInfo;
         }
 
+
+        /// <summary>
+        /// Подключение к БД
+        /// </summary>
+        /// <param name="credentials">настройки подключения</param>
+        /// <returns>возвращает ошибку подключения или NULL, если ошибки не произошло</returns>
+        public Exception Connect(Credentials credentials)
+        {
+            Exception ex = null;
+
+            try
+            {
+                _client = new HttpPilotClient(credentials.ServerUrl.ToString());
+                _client.Connect(false);
+                var serverApi = _client.GetServerApi(_serverCallback);
+                var authApi = _client.GetAuthenticationApi();
+                authApi.Login(credentials.DatabaseName, credentials.Username, credentials.ProtectedPassword, false, 103);
+                var dbInfo = serverApi.OpenDatabase();
+                _repository = new Repository(serverApi, _serverCallback);
+                _repository.Initialize(credentials.Username);
+                IsInitialized = true;
+            }
+            catch(Exception exception)
+            {
+                ex = exception;
+            }
+
+            return ex;
+        }
+
         public void Build()
         {
             if (IsInitialized)
                 return;
             
             var creds = Credentials.GetConnectionCredentials("pilot_ascon", "ryapolov_an", "sSR4mzCQ");
-            Connect(creds);
+            ConnectOld(creds);
         }
 
         public void Dispose()

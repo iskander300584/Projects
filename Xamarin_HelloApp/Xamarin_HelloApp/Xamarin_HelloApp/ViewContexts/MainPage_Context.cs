@@ -48,21 +48,12 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        //private bool isConnected = false;
         /// <summary>
         /// Соединение установлено
         /// </summary>
         public bool IsConnected
         {
             get => Global.DALContext.IsInitialized;
-            //set
-            //{
-            //    if(isConnected != value)
-            //    {
-            //        isConnected = value;
-            //        OnPropertyChanged();
-            //    }
-            //}
         }
 
 
