@@ -33,13 +33,6 @@ namespace Xamarin_HelloApp
         {
             InitializeComponent();
 
-            //try
-            //{
-            //    Global.DALContext = new Context();
-            //    Global.DALContext.Build();
-            //}
-            //catch { }
-
             if (Global.DALContext != null && Global.DALContext.IsInitialized)
             {
                 Global.CurrentPerson = Global.DALContext.Repository.CurrentPerson();

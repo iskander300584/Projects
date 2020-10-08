@@ -251,7 +251,5 @@ namespace Xamarin_HelloApp.ViewContexts
 
             page.NavigateToMainPage();
         }
-
-
     }
 }

@@ -1,11 +1,12 @@
 ﻿using Ascon.Pilot.DataClasses;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin_HelloApp.AppContext;
@@ -29,15 +30,6 @@ namespace Xamarin_HelloApp.Pages
         {
             InitializeComponent();
 
-            //Files = files;
-
-            //DChild file = files.First();
-
-            //DObject File = Global.DALContext.Repository.GetObjects(new Guid[] { file.ObjectId }).FirstOrDefault();
-
-            //var snapshot = File.ActualFileSnapshot;
-            //Files = snapshot.Files;
-
             Files = new List<DFile>();
 
             foreach(DChild dChild in dObject.Children)
@@ -59,11 +51,29 @@ namespace Xamarin_HelloApp.Pages
         /// <summary>
         /// Нажат файл
         /// </summary>
-        private void File_Tapped(object sender, ItemTappedEventArgs e)
+        private async void File_Tapped(object sender, ItemTappedEventArgs e)
         {
+            // Проверка прав доступа
+            if (await (Global.GetFilesPermissions()) != true)
+                return;
+
+            // Получение файла из БД Pilot
             DFile dFile = e.Item as DFile;
 
-            
+            byte[] array = Global.DALContext.Repository.GetFileChunk(dFile.Body.Id, 0, (int)dFile.Body.Size);
+
+            string fileName = Path.Combine(@"/storage/emulated/0/Download", dFile.Name);
+
+            File.WriteAllBytes(fileName, array);
+
+            // Открытие файла средствами ОС
+            if (File.Exists(fileName))
+            {
+                await Launcher.OpenAsync(new OpenFileRequest
+                {
+                    File = new ReadOnlyFile(fileName)
+                });
+            }
         }
     }
 }
