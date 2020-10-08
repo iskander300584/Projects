@@ -12,6 +12,7 @@ using Xamarin_HelloApp.ViewModels;
 using Xamarin_HelloApp.AppContext;
 using Xamarin_HelloApp.ViewContexts;
 using Xamarin_HelloApp.Pages;
+using PilotMobile.Pages;
 
 namespace Xamarin_HelloApp
 {
@@ -53,16 +54,43 @@ namespace Xamarin_HelloApp
 
             DObject root = Global.DALContext.Repository.GetObjects(new[] { DObject.RootId }).First();
 
-            var objects = root.Children;
-
-            foreach (DChild dchild in objects)
-            {
-                PilotTreeItem item = new PilotTreeItem(dchild, null);
-                if (item.HasAccess && !item.Type.IsDocument && !item.Type.IsSystem)
-                    context.Items.Add(item);
-            }
-
             context.Parent = null;
+
+            AsyncGetChildren(root);
+
+            //var objects = root.Children;
+
+            //foreach (DChild dchild in objects)
+            //{
+            //    PilotTreeItem item = new PilotTreeItem(dchild, null);
+            //    if (item.HasAccess && !item.Type.IsDocument && !item.Type.IsSystem)
+            //        context.Items.Add(item);
+            //}
+
+            
+        }
+
+
+        private async void AsyncGetChildren(DObject dObject)
+        {
+            foreach (DChild dchild in dObject.Children)
+            {
+                await GetChild(dchild);
+
+                //PilotTreeItem item = new PilotTreeItem(dchild, null);
+                //if (item.HasAccess && !item.Type.IsDocument && !item.Type.IsSystem)
+                //    context.Items.Add(item);
+            }
+        }
+
+
+        private async Task<bool> GetChild(DChild dchild)
+        {
+            PilotTreeItem item = new PilotTreeItem(dchild, null);
+            if (item.HasAccess && !item.Type.IsDocument && !item.Type.IsSystem)
+                context.Items.Add(item);
+
+            return true;
         }
 
 
@@ -77,14 +105,16 @@ namespace Xamarin_HelloApp
             {
                 context.Items = new ObservableCollection<PilotTreeItem>();
 
-                foreach (DChild dchild in pilotItem.DObject.Children)
-                {
-                    PilotTreeItem item = new PilotTreeItem(dchild, pilotItem);
-                    if (item.HasAccess)
-                        context.Items.Add(item);
-                }
+                //foreach (DChild dchild in pilotItem.DObject.Children)
+                //{
+                //    PilotTreeItem item = new PilotTreeItem(dchild, pilotItem);
+                //    if (item.HasAccess)
+                //        context.Items.Add(item);
+                //}
 
                 context.Parent = pilotItem;
+
+                AsyncGetChildren(pilotItem.DObject);
             }
             else
             {
@@ -98,7 +128,9 @@ namespace Xamarin_HelloApp
 
                 //Navigation.PushModalAsync(new XpsPage(file));
 
-                Navigation.PushModalAsync(new DocsPage(pilotItem.DObject));
+                //Navigation.PushModalAsync(new DocsPage(pilotItem.DObject));
+
+                Navigation.PushModalAsync(new DocumentCarrousel(pilotItem.DObject));
             }
         }
 

@@ -28,19 +28,19 @@ namespace Xamarin_HelloApp.Pages
         {
             InitializeComponent();
 
-            if (file != null)
-            {
+            //if (file != null)
+            //{
                 
-                byte[] array = Global.DALContext.Repository.GetFileChunk(file.Body.Id, 0, (int)file.Body.Size);
+            //    byte[] array = Global.DALContext.Repository.GetFileChunk(file.Body.Id, 0, (int)file.Body.Size);
 
-                if(array != null)
-                {
-                    MemoryStream ms = new MemoryStream();
-                    ms.Write(array, 0, array.Length);
+            //    if(array != null)
+            //    {
+            //        MemoryStream ms = new MemoryStream();
+            //        ms.Write(array, 0, array.Length);
 
                     
-                }
-            }
+            //    }
+            //}
         }
     }
 }
