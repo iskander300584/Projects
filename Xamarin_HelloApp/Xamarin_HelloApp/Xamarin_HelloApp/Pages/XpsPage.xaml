@@ -8,7 +8,7 @@
             <Label Text="Предварительный просмотр документа в настоящее время не реализован, будем надеяться, что со временем, этот функционал появится. А пока вы можете свайпнуть* влево для доступа к списку документов"
                    FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
             
-            <Label Text="Свайпнуть (swipe) - в переводе с древне-славянского означает провести пальцем по сенсорному экрану"
+            <Label Text="* Свайпнуть (swipe) - в переводе с древне-славянского означает провести пальцем по сенсорному экрану"
                    FontSize="Medium" FontFamily="Tahoma" FontAttributes="Italic" HorizontalOptions="StartAndExpand" VerticalOptions="EndAndExpand" Margin="10,0,10,0" />
             <!--<Editor x:Name="textEditor" />
             <sf:SfPdfViewer x:Name="pdfViewer" />-->

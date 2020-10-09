@@ -48,23 +48,24 @@
         </ListView>
 
         <!-- Подвал -->
-        <Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0" VerticalOptions="EndAndExpand" >
-            <StackLayout Orientation="Horizontal">
+        <!--<Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0" VerticalOptions="EndAndExpand" >
+            <StackLayout Orientation="Horizontal">-->
                 <!-- Кнопка Файл -->
-                <ImageButton Source="file.png" Aspect="AspectFit" HeightRequest="30" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="Start" />
-                <Label HorizontalOptions="CenterAndExpand" />
+                <!--<ImageButton Source="file.png" Aspect="AspectFit" HeightRequest="30" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="Start" />
+                <Label HorizontalOptions="CenterAndExpand" />-->
                 <!-- заглушка -->
 
                 <!-- Кнопка Список документов -->
-                <ImageButton Source="docs.png" Aspect="AspectFit" HeightRequest="30" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="Center" 
+                <!--<ImageButton Source="docs.png" Aspect="AspectFit" HeightRequest="30" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="Center" 
                              Clicked="Docs_Click"/>
-                <Label HorizontalOptions="CenterAndExpand" />
+                <Label HorizontalOptions="CenterAndExpand" />-->
+        
                 <!-- заглушка -->
 
                 <!-- Кнопка Карточка -->
-                <ImageButton Source="card.png" Aspect="AspectFit" HeightRequest="30" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="End" />
+                <!--<ImageButton Source="card.png" Aspect="AspectFit" HeightRequest="30" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="End" />
             </StackLayout>
-        </Frame>
+        </Frame>-->
 
     </StackLayout>
 

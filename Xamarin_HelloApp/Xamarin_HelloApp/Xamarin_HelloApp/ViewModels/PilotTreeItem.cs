@@ -1,16 +1,9 @@
 ﻿using Ascon.Pilot.DataClasses;
 using FFImageLoading.Svg.Forms;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Security.Policy;
-using System.Text;
-
-using Xamarin.Forms;
-
 using Xamarin_HelloApp.AppContext;
 using Xamarin_HelloApp.Models;
 

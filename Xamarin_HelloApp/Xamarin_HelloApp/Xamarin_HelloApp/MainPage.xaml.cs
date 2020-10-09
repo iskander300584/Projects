@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using System.Collections.ObjectModel;
-using Xamarin_HelloApp.Models;
 using Ascon.Pilot.DataClasses;
 using Xamarin_HelloApp.ViewModels;
 using Xamarin_HelloApp.AppContext;
 using Xamarin_HelloApp.ViewContexts;
-using Xamarin_HelloApp.Pages;
 using PilotMobile.Pages;
+using System.Threading;
 
 namespace Xamarin_HelloApp
 {
@@ -52,45 +47,54 @@ namespace Xamarin_HelloApp
         {
             context.Items.Clear();
 
-            DObject root = Global.DALContext.Repository.GetObjects(new[] { DObject.RootId }).First();
-
             context.Parent = null;
 
-            AsyncGetChildren(root);
-
-            //var objects = root.Children;
-
-            //foreach (DChild dchild in objects)
-            //{
-            //    PilotTreeItem item = new PilotTreeItem(dchild, null);
-            //    if (item.HasAccess && !item.Type.IsDocument && !item.Type.IsSystem)
-            //        context.Items.Add(item);
-            //}
-
-            
+            AsyncGetChildren(null);
         }
 
 
-        private async void AsyncGetChildren(DObject dObject)
+        /// <summary>
+        /// Асинхронный метод получения вложенных объектов
+        /// </summary>
+        /// <param name="dObject">объект Pilot</param>
+        private void AsyncGetChildren(PilotTreeItem pilotItem)
         {
-            foreach (DChild dchild in dObject.Children)
+            Thread thread = new Thread(new ParameterizedThreadStart(GetChildren));
+            thread.Start(pilotItem);
+        }
+
+
+        /// <summary>
+        /// Метод получения вложенных объектов для параллельного потока
+        /// </summary>
+        /// <param name="pilotItem">объект Pilot</param>
+        private void GetChildren(object pilotItem)
+        {
+            // Получение вложенных объектов
+            if (pilotItem != null)
             {
-                await GetChild(dchild);
+                PilotTreeItem _item = (PilotTreeItem)pilotItem;
 
-                //PilotTreeItem item = new PilotTreeItem(dchild, null);
-                //if (item.HasAccess && !item.Type.IsDocument && !item.Type.IsSystem)
-                //    context.Items.Add(item);
+                foreach (DChild dchild in _item.DObject.Children)
+                {
+                    PilotTreeItem item = new PilotTreeItem(dchild, _item);
+                    // item.HasAccess
+                    if (item.VisibleName.Trim() != "" && !item.Type.IsSystem)
+                        context.Items.Add(item);
+                }
             }
-        }
+            // Получение корневых объектов
+            else
+            {
+                DObject root = Global.DALContext.Repository.GetObjects(new[] { DObject.RootId }).First();
 
-
-        private async Task<bool> GetChild(DChild dchild)
-        {
-            PilotTreeItem item = new PilotTreeItem(dchild, null);
-            if (item.HasAccess && !item.Type.IsDocument && !item.Type.IsSystem)
-                context.Items.Add(item);
-
-            return true;
+                foreach (DChild dchild in root.Children)
+                {
+                    PilotTreeItem item = new PilotTreeItem(dchild, null);
+                    if (item.VisibleName.Trim() != "" && !item.Type.IsSystem)
+                        context.Items.Add(item);
+                }
+            }
         }
 
 
@@ -101,35 +105,18 @@ namespace Xamarin_HelloApp
         {
             PilotTreeItem pilotItem = e.Item as PilotTreeItem;
 
+            // Отображение вложенных объектов
             if (!pilotItem.Type.IsDocument)
             {
                 context.Items = new ObservableCollection<PilotTreeItem>();
 
-                //foreach (DChild dchild in pilotItem.DObject.Children)
-                //{
-                //    PilotTreeItem item = new PilotTreeItem(dchild, pilotItem);
-                //    if (item.HasAccess)
-                //        context.Items.Add(item);
-                //}
-
                 context.Parent = pilotItem;
 
-                AsyncGetChildren(pilotItem.DObject);
+                AsyncGetChildren(pilotItem);
             }
+            // Отображение окон документа
             else
             {
-                //DFile file = null;
-                //var snapshot = pilotItem.DObject.ActualFileSnapshot;
-
-                //if(snapshot != null)
-                //{
-                //    file = snapshot.Files.FirstOrDefault();
-                //}
-
-                //Navigation.PushModalAsync(new XpsPage(file));
-
-                //Navigation.PushModalAsync(new DocsPage(pilotItem.DObject));
-
                 Navigation.PushModalAsync(new DocumentCarrousel(pilotItem.DObject));
             }
         }
@@ -144,14 +131,18 @@ namespace Xamarin_HelloApp
 
             if (context.Parent != null)
             {
-                foreach (DChild dchild in context.Parent.DObject.Children)
+                context.Parent = context.Parent.Parent;
+
+                AsyncGetChildren(context.Parent);
+
+                /*foreach (DChild dchild in context.Parent.DObject.Children)
                 {
                     PilotTreeItem item = new PilotTreeItem(dchild, context.Parent);
                     if (item.HasAccess)
                         context.Items.Add(item);
-                }
+                }*/
 
-                context.Parent = context.Parent.Parent;
+                
             }
             else
             {
