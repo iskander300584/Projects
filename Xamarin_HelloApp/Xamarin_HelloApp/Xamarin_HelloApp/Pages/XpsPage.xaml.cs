@@ -4,6 +4,7 @@ using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin_HelloApp.AppContext;
+using Xamarin_HelloApp.ViewModels;
 
 namespace Xamarin_HelloApp.Pages
 {
@@ -16,8 +17,8 @@ namespace Xamarin_HelloApp.Pages
         /// <summary>
         /// Окно отображения документа
         /// </summary>
-        /// <param name="dObject">объект Pilot</param>
-        public XpsPage(DObject dObject)
+        /// <param name="pilotTreeItem">объект Pilot</param>
+        public XpsPage(PilotTreeItem pilotTreeItem)
         {
             InitializeComponent();
 
@@ -25,7 +26,7 @@ namespace Xamarin_HelloApp.Pages
             GetPermissions();
 
             DFile file = null;
-            var snapshot = dObject.ActualFileSnapshot;
+            var snapshot = pilotTreeItem.DObject.ActualFileSnapshot;
 
             if (snapshot != null)
             {

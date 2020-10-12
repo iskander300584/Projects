@@ -9,7 +9,7 @@ namespace Xamarin_HelloApp.Models
     /// <summary>
     /// Тип Pilot
     /// </summary>
-    class PType
+    public class PType
     {
         private int id = 0;
         /// <summary>

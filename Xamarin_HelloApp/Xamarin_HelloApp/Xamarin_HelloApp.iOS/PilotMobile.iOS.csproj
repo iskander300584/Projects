@@ -161,4 +161,13 @@
   <ItemGroup>
     <BundleResource Include="Resources\up.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\home_gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\up_gray.png" />
+  </ItemGroup>
 </Project>

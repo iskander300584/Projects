@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Windows.Input;
+using Xamarin.Forms;
 using Xamarin_HelloApp.AppContext;
 using Xamarin_HelloApp.ViewModels;
 
@@ -26,24 +28,6 @@ namespace Xamarin_HelloApp.ViewContexts
                 if(items != value)
                 {
                     items = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-
-        private PilotTreeItem selectedItem = null;
-        /// <summary>
-        /// Выбранный объект списка
-        /// </summary>
-        public PilotTreeItem SelectedItem
-        {
-            get => selectedItem;
-            set
-            {
-                if(selectedItem != value)
-                {
-                    selectedItem = value;
                     OnPropertyChanged();
                 }
             }
@@ -106,6 +90,36 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
+        private ICommand upCommand;
+        /// <summary>
+        /// Команда Вверх
+        /// </summary>
+        public ICommand UpCommand
+        {
+            get => upCommand;
+        }
+
+
+        private ICommand homeCommand;
+        /// <summary>
+        /// Команда Домой
+        /// </summary>
+        public ICommand HomeCommand
+        {
+            get => homeCommand;
+        }
+
+
+        private ICommand updateCommand;
+        /// <summary>
+        /// Команда Об
+        /// </summary>
+        public ICommand UpdateCommand
+        {
+            get => updateCommand;
+        }
+
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
@@ -121,6 +135,12 @@ namespace Xamarin_HelloApp.ViewContexts
         {
             if (IsConnected)
                 GetRootObjects();
+
+            upCommand = new Command(Up_Execute);
+            homeCommand = new Command(Home_Execute);
+            updateCommand = new Command(Update_Execute);
+
+            Up_CanExecute();
         }
 
 
@@ -194,6 +214,8 @@ namespace Xamarin_HelloApp.ViewContexts
 
             if (Parent.Children.Count == 0)
                 AsyncGetChildren(Parent);
+
+            Up_CanExecute();
         }
 
 
@@ -205,6 +227,8 @@ namespace Xamarin_HelloApp.ViewContexts
             Parent = Parent.Parent;
 
             Items = Parent.Children;
+
+            Up_CanExecute();
         }
 
 
@@ -216,6 +240,8 @@ namespace Xamarin_HelloApp.ViewContexts
             Parent = Root;
 
             Items = Parent.Children;
+
+            Up_CanExecute();
         }
 
 
@@ -234,6 +260,8 @@ namespace Xamarin_HelloApp.ViewContexts
 
                 AsyncGetChildren(Parent);
             }
+
+            Up_CanExecute();
         }
     }
 }

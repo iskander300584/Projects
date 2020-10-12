@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin_HelloApp.Pages;
+using Xamarin_HelloApp.ViewModels;
 
 namespace PilotMobile.Pages
 {
@@ -14,14 +15,14 @@ namespace PilotMobile.Pages
         /// <summary>
         /// Карусель окон документа
         /// </summary>
-        /// <param name="dObject">объект документ</param>
-        public DocumentCarrousel(DObject dObject)
+        /// <param name="pilotTreeItem">объект документ в дереве Pilot</param>
+        public DocumentCarrousel(PilotTreeItem pilotTreeItem)
         {
             InitializeComponent();
 
             // Добавление окон предварительного просмотра и списка файлов
-            Children.Add(new XpsPage(dObject));
-            Children.Add(new DocsPage(dObject));
+            Children.Add(new XpsPage(pilotTreeItem));
+            Children.Add(new DocsPage(pilotTreeItem));
         }
     }
 }

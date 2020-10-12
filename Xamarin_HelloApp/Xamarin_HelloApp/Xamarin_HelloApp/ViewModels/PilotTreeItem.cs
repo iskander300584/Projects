@@ -12,7 +12,7 @@ namespace Xamarin_HelloApp.ViewModels
     /// <summary>
     /// Элемент дерева Pilot
     /// </summary>
-    class PilotTreeItem : INotifyPropertyChanged
+    public class PilotTreeItem : INotifyPropertyChanged
     {
         private Guid guid = new Guid();
         /// <summary>
@@ -118,7 +118,7 @@ namespace Xamarin_HelloApp.ViewModels
             {
                 foreach (AccessRecord accessRecord in dObject.Access)
                 {
-                    if(Global.CurrentPerson.AllOrgUnits.Contains(accessRecord.OrgUnitId))
+                    if(Global.CurrentPerson != null && Global.CurrentPerson.AllOrgUnits.Contains(accessRecord.OrgUnitId))
                     {
                         Access _access = accessRecord.Access;
                         hasAccess = (_access.AccessLevel != AccessLevel.None);

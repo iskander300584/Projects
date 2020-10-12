@@ -49,36 +49,8 @@ namespace Xamarin_HelloApp
             // Отображение окон документа
             else
             {
-                Navigation.PushModalAsync(new DocumentCarrousel(pilotItem.DObject));
+                Navigation.PushModalAsync(new DocumentCarrousel(pilotItem));
             }
-        }
-
-
-        /// <summary>
-        /// Кнопка Вверх
-        /// </summary>
-        private void Up_Click(object sender, EventArgs e)
-        {
-            context.Up_Execute();
-        }
-
-
-        /// <summary>
-        /// Кнопка Домой
-        /// </summary>
-        private void Home_Click(object sender, EventArgs e)
-        {
-            context.Home_Execute();
-        }
-
-
-        /// <summary>
-        /// Кнопка Список документов
-        /// </summary>
-        private void Docs_Click(object sender, EventArgs e)
-        {
-            if (context.Parent == null)
-                return;
         }
     }
 }

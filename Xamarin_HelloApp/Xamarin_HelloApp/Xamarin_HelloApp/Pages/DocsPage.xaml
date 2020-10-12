@@ -4,8 +4,44 @@
              x:Class="Xamarin_HelloApp.Pages.DocsPage">
     <ContentPage.Content>
         <StackLayout>
-        <!-- Список объектов -->
-            <ListView x:Name="listView" ItemTapped="File_Tapped" >
+            <!-- Шапка -->
+            <Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0">
+                <StackLayout>
+                    <StackLayout Orientation="Horizontal" >
+                        <Image Source="pilot.png" HeightRequest="20" />
+                        <Label Text="Pilot Mobile" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
+                        <!--<Image HorizontalOptions="EndAndExpand" HeightRequest="10" Aspect="AspectFit" Source="{Binding IsConnected, Converter={StaticResource IsConnected_ImageSource}}" Margin="0,0,5,0" />-->
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal">
+                        <!-- Кнопка Обновить -->
+                        <ImageButton Source="refresh.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#2196F3" WidthRequest="20" HorizontalOptions="Start" 
+                                     Command="{Binding UpdateCommand}"/>
+
+                        <!-- Кнопка Наверх -->
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#2196F3" WidthRequest="20" HorizontalOptions="EndAndExpand"  
+                                     Command="{Binding UpCommand}" IsEnabled="{Binding UpCanExecute}"
+                                     >
+                            <ImageButton.Style>
+                                <Style TargetType="ImageButton">
+                                    <Style.Triggers>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="True">
+                                            <Setter Property="Source" Value="up.png"/>
+                                        </Trigger>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="False">
+                                            <Setter Property="Source" Value="up_gray.png"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ImageButton.Style>
+                        </ImageButton>
+
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+            
+            <!-- Список файлов -->
+            <ListView x:Name="listView" ItemTapped="File_Tapped" ItemsSource="{Binding Items}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>

@@ -5,7 +5,7 @@ namespace Xamarin_HelloApp.Models
     /// <summary>
     /// Атрибут Pilot
     /// </summary>
-    class PAttribute
+    public class PAttribute
     {
         private MAttribute mAttribute;
         /// <summary>
