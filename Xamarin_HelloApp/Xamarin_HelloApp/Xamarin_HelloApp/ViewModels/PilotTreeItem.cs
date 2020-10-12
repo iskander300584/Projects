@@ -1,6 +1,6 @@
 ﻿using Ascon.Pilot.DataClasses;
-using FFImageLoading.Svg.Forms;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -44,6 +44,16 @@ namespace Xamarin_HelloApp.ViewModels
         }
 
 
+        private ObservableCollection<PilotTreeItem> children = new ObservableCollection<PilotTreeItem>();
+        /// <summary>
+        /// Коллекция потомков
+        /// </summary>
+        public ObservableCollection<PilotTreeItem> Children
+        {
+            get => children;
+        }
+
+
         private PType type;
         /// <summary>
         /// Тип объекта
@@ -51,16 +61,6 @@ namespace Xamarin_HelloApp.ViewModels
         public PType Type
         {
             get => type;
-        }
-
-
-        private SvgImageSource imageSource = null;
-        /// <summary>
-        /// Источник изображения
-        /// </summary>
-        public SvgImageSource ImageSource
-        {
-            get => imageSource;
         }
 
 
@@ -110,7 +110,7 @@ namespace Xamarin_HelloApp.ViewModels
             guid = element.ObjectId;
             this.parent = parent;
 
-            type = TypeFabrique.GetType(element.TypeId);          
+            type = TypeFabrique.GetType(element.TypeId);  
 
             dObject = Global.DALContext.Repository.GetObjects(new[] { element.ObjectId }).FirstOrDefault();          
 
@@ -130,12 +130,30 @@ namespace Xamarin_HelloApp.ViewModels
 
                 foreach(var attr in dObject.Attributes)
                 {
-                    if (Type.Attributes.Any(a => a.Name == attr.Key && a.IsVisible && !a.IsSystem))
+                    if (Type != null && Type.Attributes.Any(a => a.Name == attr.Key && a.IsVisible && !a.IsSystem))
                         visibleName += attr.Value.StrValue + " ";
                 }
 
                 visibleName.Trim();
             }           
+        }
+
+
+        /// <summary>
+        /// Корневой элемент дерева Pilot
+        /// </summary>
+        /// <param name="rootObject">корневой элемент дерева Pilot</param>
+        public PilotTreeItem(DObject rootObject)
+        {
+            guid = rootObject.Id;
+
+            dObject = rootObject;
+
+            parent = null;
+
+            type = null;
+
+            hasAccess = true;
         }
     }
 }

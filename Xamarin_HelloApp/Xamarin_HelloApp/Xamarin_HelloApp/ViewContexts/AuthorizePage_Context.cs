@@ -60,7 +60,7 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        private string login = string.Empty;
+        private string login = "ryapolov_an";// string.Empty;
         /// <summary>
         /// Имя пользователя
         /// </summary>
@@ -80,7 +80,7 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        private string password = string.Empty;
+        private string password = "sSR4mzCQ"; // string.Empty;
         /// <summary>
         /// Пароль
         /// </summary>
@@ -180,6 +180,7 @@ namespace Xamarin_HelloApp.ViewContexts
         {
             page = authorizePage;
             connectCommand = new Command(CheckConnection);
+            CheckConnection_CanExecute();
         }
 
 
@@ -203,8 +204,7 @@ namespace Xamarin_HelloApp.ViewContexts
 
 
         /// <summary>
-        /// Проверка соединения с БД 
-        /// TODO сохранение настроек
+        /// Проверка соединения с БД
         /// </summary>
         /// <returns>возвращает TRUE в случае успешного подключения</returns>
         public void CheckConnection()
@@ -219,7 +219,10 @@ namespace Xamarin_HelloApp.ViewContexts
                 return;
             }
 
-            // TODO сохранение настроек
+            Global.Credentials = credentials;
+
+
+            // Сохранение настроек
             object temp = "";
             if (App.Current.Properties.TryGetValue("server", out temp))
             {

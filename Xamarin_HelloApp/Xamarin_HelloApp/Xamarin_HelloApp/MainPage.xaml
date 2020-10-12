@@ -3,70 +3,70 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin_HelloApp.MainPage"
              xmlns:ffimage="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms"
-             xmlns:conv="clr-namespace:Xamarin_HelloApp.Converters"
-             >
+             xmlns:conv="clr-namespace:Xamarin_HelloApp.Converters">
 
     <ContentPage.Resources>
         <!-- Преобразование состояния подключения в пиктограмму -->
         <conv:IsConnected_ImageSource_Converter x:Key="IsConnected_ImageSource" />
     </ContentPage.Resources>
 
-    <StackLayout Spacing="10">
-        <!-- Шапка -->
-        <Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0">
-            <StackLayout>
-                <StackLayout Orientation="Horizontal" >
-                    <Image Source="pilot.png" HeightRequest="20" />
-                    <Label Text="Pilot Mobile" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
-                    <Image HorizontalOptions="EndAndExpand" HeightRequest="10" Aspect="AspectFit" Source="{Binding IsConnected, Converter={StaticResource IsConnected_ImageSource}}" Margin="0,0,5,0" />
+    <ContentPage.Content>
+        <StackLayout Spacing="10">
+            <!-- Шапка -->
+            <Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0">
+                <StackLayout>
+                    <StackLayout Orientation="Horizontal" >
+                        <Image Source="pilot.png" HeightRequest="20" />
+                        <Label Text="Pilot Mobile" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
+                        <Image HorizontalOptions="EndAndExpand" HeightRequest="10" Aspect="AspectFit" Source="{Binding IsConnected, Converter={StaticResource IsConnected_ImageSource}}" Margin="0,0,5,0" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal">
+                        <!-- Кнопка Наверх -->
+                        <ImageButton Source="up.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="EndAndExpand"  Clicked="Up_Click" />
+
+                        <!-- Кнопка Домой -->
+                        <ImageButton Source="home.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="End" Clicked="Home_Click" Margin="5,0,0,0" />
+                    </StackLayout>
                 </StackLayout>
+            </Frame>
 
-                <StackLayout Orientation="Horizontal">
-                    <!-- Кнопка Наверх -->
-                    <ImageButton Source="up.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="EndAndExpand"  Clicked="Up_Click" />
+            <!-- Список объектов -->
+            <ListView x:Name="listView" ItemTapped="PilotItem_Tapped" ItemsSource="{Binding Items}" HasUnevenRows="True" SelectionMode="Single" >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <StackLayout Orientation="Horizontal" Spacing="0" Margin="0,5,0,5" >
+                                    <ffimage:SvgCachedImage WidthRequest="15" HeightRequest="15" Source="{Binding Type.ImageSource}" Margin="5,0,10,0" />
+                                    <Label Text="{Binding VisibleName}" FontSize="Body" VerticalOptions="Center" LineBreakMode="WordWrap" MaxLines="3" />
+                                </StackLayout>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
 
-                    <!-- Кнопка Домой -->
-                    <ImageButton Source="home.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="End" Clicked="Home_Click" Margin="5,0,0,0" />
-                </StackLayout>
-            </StackLayout>
-        </Frame>
-
-        <!-- Список объектов -->
-        <ListView x:Name="listView" ItemTapped="PilotItem_Tapped" ItemsSource="{Binding Items}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <ViewCell.View>
-                            <StackLayout Orientation="Horizontal" Spacing="0" >
-                                <ffimage:SvgCachedImage WidthRequest="15" HeightRequest="15" Source="{Binding Type.ImageSource}" Margin="5,0,10,0" />
-                                <Label Text="{Binding VisibleName}" FontSize="Body" VerticalOptions="Center" />
-                            </StackLayout>
-                        </ViewCell.View>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-
-        <!-- Подвал -->
-        <!--<Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0" VerticalOptions="EndAndExpand" >
+            <!-- Подвал -->
+            <!--<Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0" VerticalOptions="EndAndExpand" >
             <StackLayout Orientation="Horizontal">-->
-                <!-- Кнопка Файл -->
-                <!--<ImageButton Source="file.png" Aspect="AspectFit" HeightRequest="30" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="Start" />
+            <!-- Кнопка Файл -->
+            <!--<ImageButton Source="file.png" Aspect="AspectFit" HeightRequest="30" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="Start" />
                 <Label HorizontalOptions="CenterAndExpand" />-->
-                <!-- заглушка -->
+            <!-- заглушка -->
 
-                <!-- Кнопка Список документов -->
-                <!--<ImageButton Source="docs.png" Aspect="AspectFit" HeightRequest="30" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="Center" 
+            <!-- Кнопка Список документов -->
+            <!--<ImageButton Source="docs.png" Aspect="AspectFit" HeightRequest="30" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="Center" 
                              Clicked="Docs_Click"/>
                 <Label HorizontalOptions="CenterAndExpand" />-->
-        
-                <!-- заглушка -->
 
-                <!-- Кнопка Карточка -->
-                <!--<ImageButton Source="card.png" Aspect="AspectFit" HeightRequest="30" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="End" />
+            <!-- заглушка -->
+
+            <!-- Кнопка Карточка -->
+            <!--<ImageButton Source="card.png" Aspect="AspectFit" HeightRequest="30" BackgroundColor="#2196F3" WidthRequest="30" HorizontalOptions="End" />
             </StackLayout>
         </Frame>-->
 
-    </StackLayout>
-
+        </StackLayout>
+    </ContentPage.Content>
 </ContentPage>

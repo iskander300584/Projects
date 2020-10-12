@@ -1,7 +1,9 @@
 ﻿using Ascon.Pilot.DataClasses;
+using System.IO;
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-
+using Xamarin_HelloApp.AppContext;
 
 namespace Xamarin_HelloApp.Pages
 {
@@ -19,25 +21,50 @@ namespace Xamarin_HelloApp.Pages
         {
             InitializeComponent();
 
-            //DFile file = null;
-            //var snapshot = dObject.ActualFileSnapshot;
+            // Проверка прав доступа
+            GetPermissions();
 
-            //if(snapshot != null)
-            //{
-            //    file = snapshot.Files.FirstOrDefault();
-            //}
+            DFile file = null;
+            var snapshot = dObject.ActualFileSnapshot;
 
-            //if (file != null)
-            //{
+            if (snapshot != null)
+            {
+                file = snapshot.Files.FirstOrDefault();
+            }
 
-            //    byte[] array = Global.DALContext.Repository.GetFileChunk(file.Body.Id, 0, (int)file.Body.Size);
+            if (file != null)
+            {
 
-            //    if(array != null)
-            //    {
-            //        MemoryStream ms = new MemoryStream();
-            //        ms.Write(array, 0, array.Length);
-            //    }
-            //}
+                byte[] array = Global.DALContext.Repository.GetFileChunk(file.Body.Id, 0, (int)file.Body.Size);
+
+                string fileName = Path.Combine(@"/storage/emulated/0/Download", file.Name);
+
+                File.WriteAllBytes(fileName, array);
+
+                if (File.Exists(fileName))
+                {
+                    //using (PdfSharp.Xps.XpsModel.XpsDocument xpsDoc = PdfSharp.Xps.XpsModel.XpsDocument.Open(fileName))
+                    //{
+                    //    FileInfo fileInfo = new FileInfo(fileName);
+                    //    string newFileName = fileName.Substring(0, fileName.Length - 3);
+                    //    newFileName = Path.Combine(newFileName, ".pdf");
+
+                    //    PdfSharp.Xps.XpsConverter.Convert(xpsDoc, newFileName, 0);
+
+                    //    if(File.Exists(newFileName))
+                    //    {
+                    //        MemoryStream ms = new MemoryStream(File.ReadAllBytes(newFileName));
+
+                    //        pdfViewer.LoadDocument(ms);
+                    //    }
+                    //}
+                }
+            }
+        }
+
+        private async void GetPermissions()
+        {
+            await (Global.GetFilesPermissions());
         }
     }
 }

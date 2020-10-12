@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin_HelloApp.ViewContexts;
 
@@ -41,11 +35,6 @@ namespace Xamarin_HelloApp.Pages
         public void NavigateToMainPage()
         {
             Navigation.PushModalAsync(new MainPage());
-        }
-
-        private void Connect_Click(object sender, EventArgs e)
-        {
-            context.CheckConnection();
         }
     }
 }

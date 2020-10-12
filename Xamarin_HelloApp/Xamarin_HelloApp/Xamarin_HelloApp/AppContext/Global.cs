@@ -23,6 +23,12 @@ namespace Xamarin_HelloApp.AppContext
 
 
         /// <summary>
+        /// Настройки подключения
+        /// </summary>
+        public static Credentials Credentials;
+
+
+        /// <summary>
         /// Получение прав доступа к файлам для приложения
         /// </summary>
         /// <returns>возвращает TRUE, если все необходимые права получены</returns>

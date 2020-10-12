@@ -20,7 +20,7 @@ namespace PilotMobile.Pages
             InitializeComponent();
 
             // Добавление окон предварительного просмотра и списка файлов
-            Children.Add(new XpsPage(null));
+            Children.Add(new XpsPage(dObject));
             Children.Add(new DocsPage(dObject));
         }
     }
