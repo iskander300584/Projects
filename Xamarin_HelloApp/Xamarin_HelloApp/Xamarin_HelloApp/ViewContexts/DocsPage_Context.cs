@@ -1,4 +1,5 @@
 ﻿using Ascon.Pilot.DataClasses;
+using PilotMobile.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -20,11 +21,11 @@ namespace PilotMobile.ViewContexts
     /// </summary>
     class DocsPage_Context : INotifyPropertyChanged
     {
-        private ObservableCollection<DFile> items = new ObservableCollection<DFile>();
+        private ObservableCollection<PilotFile> items = new ObservableCollection<PilotFile>();
         /// <summary>
         /// Список элементов
         /// </summary>
-        public ObservableCollection<DFile> Items
+        public ObservableCollection<PilotFile> Items
         {
             get => items;
         }
@@ -75,7 +76,10 @@ namespace PilotMobile.ViewContexts
             updateCommand = new Command(GetFiles);
             upCommand = new Command(Up_Execute);
 
-            GetFiles();
+            items = pilotTreeItem.Files;
+
+            if (items.Count == 0)
+                GetFiles();
         }
 
 
@@ -104,7 +108,7 @@ namespace PilotMobile.ViewContexts
                 {
                     DFile file = child.ActualFileSnapshot.Files.FirstOrDefault();
                     if (file != null)
-                        Items.Add(file);
+                        Items.Add(new PilotFile(file));
                 }
             }
         }
@@ -122,17 +126,17 @@ namespace PilotMobile.ViewContexts
         /// <summary>
         /// Нажатие на файл
         /// </summary>
-        /// <param name="dFile">файл в Pilot</param>
-        public async void ItemTapped(DFile dFile)
+        /// <param name="pilotFile">файл в Pilot</param>
+        public async void ItemTapped(PilotFile pilotFile)
         {
             // Проверка прав доступа
             if (await (Global.GetFilesPermissions()) != true)
                 return;
 
             // Получение файла
-            byte[] array = Global.DALContext.Repository.GetFileChunk(dFile.Body.Id, 0, (int)dFile.Body.Size);
+            byte[] array = Global.DALContext.Repository.GetFileChunk(pilotFile.DFile.Body.Id, 0, (int)pilotFile.DFile.Body.Size);
 
-            string fileName = Path.Combine(@"/storage/emulated/0/Download", dFile.Name);
+            string fileName = Path.Combine(@"/storage/emulated/0/Download", pilotFile.DFile.Name);
 
             File.WriteAllBytes(fileName, array);
 

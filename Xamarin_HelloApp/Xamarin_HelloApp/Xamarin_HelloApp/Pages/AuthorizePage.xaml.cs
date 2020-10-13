@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using PilotMobile.Pages;
+using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin_HelloApp.ViewContexts;
 
@@ -34,7 +35,7 @@ namespace Xamarin_HelloApp.Pages
         /// </summary>
         public void NavigateToMainPage()
         {
-            Navigation.PushModalAsync(new MainPage());
+            Navigation.PushModalAsync(new MainCarrouselPage());
         }
     }
 }

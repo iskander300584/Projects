@@ -25,7 +25,7 @@ namespace Xamarin_HelloApp
         {
             InitializeComponent();
 
-            if (Global.DALContext != null && Global.DALContext.IsInitialized)
+            if (Global.DALContext != null && Global.DALContext.IsInitialized && Global.CurrentPerson == null)
             {
                 Global.CurrentPerson = Global.DALContext.Repository.CurrentPerson();
             }

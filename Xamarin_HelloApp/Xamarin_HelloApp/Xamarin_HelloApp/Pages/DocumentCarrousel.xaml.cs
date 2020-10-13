@@ -1,5 +1,4 @@
-﻿using Ascon.Pilot.DataClasses;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin_HelloApp.Pages;
 using Xamarin_HelloApp.ViewModels;

@@ -1,12 +1,19 @@
-﻿using Xamarin.Forms;
+﻿using PilotMobile.Pages;
+using Xamarin.Forms;
 using Xamarin_HelloApp.AppContext;
 using Xamarin_HelloApp.Models;
 using Xamarin_HelloApp.Pages;
 
 namespace Xamarin_HelloApp
 {
+    /// <summary>
+    /// Класс запуска мобильного клиента Pilot
+    /// </summary>
     public partial class App : Application
     {
+        /// <summary>
+        /// Класс запуска мобильного клиента Pilot
+        /// </summary>
         public App()
         {
             InitializeComponent();
@@ -20,7 +27,11 @@ namespace Xamarin_HelloApp
             }
 
             if (Global.DALContext.IsInitialized)
-                MainPage = new MainPage();
+            {
+                Global.CurrentPerson = Global.DALContext.Repository.CurrentPerson();
+
+                MainPage = new MainCarrouselPage();
+            }
             else
                 MainPage = new AuthorizePage();
         }

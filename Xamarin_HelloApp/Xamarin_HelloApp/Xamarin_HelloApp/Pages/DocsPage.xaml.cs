@@ -1,5 +1,6 @@
 ﻿using Ascon.Pilot.DataClasses;
 using PilotMobile.ViewContexts;
+using PilotMobile.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin_HelloApp.ViewModels;
@@ -38,9 +39,9 @@ namespace Xamarin_HelloApp.Pages
         private void File_Tapped(object sender, ItemTappedEventArgs e)
         {
             // Получение выбранного файла
-            DFile dFile = e.Item as DFile;
+            PilotFile pilotFile = e.Item as PilotFile;
 
-            context.ItemTapped(dFile);
+            context.ItemTapped(pilotFile);
         }
 
 

@@ -1,4 +1,5 @@
 ﻿using Ascon.Pilot.DataClasses;
+using PilotMobile.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -89,6 +90,16 @@ namespace Xamarin_HelloApp.ViewModels
         public bool HasAccess
         {
             get => hasAccess;
+        }
+
+
+        private ObservableCollection<PilotFile> files = new ObservableCollection<PilotFile>();
+        /// <summary>
+        /// Список файлов документа
+        /// </summary>
+        public ObservableCollection<PilotFile> Files
+        {
+            get => files;
         }
 
 

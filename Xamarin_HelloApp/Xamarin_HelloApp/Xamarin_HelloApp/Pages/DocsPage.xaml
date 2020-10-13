@@ -41,14 +41,14 @@
             </Frame>
             
             <!-- Список файлов -->
-            <ListView x:Name="listView" ItemTapped="File_Tapped" ItemsSource="{Binding Items}">
+            <ListView x:Name="listView" ItemTapped="File_Tapped" ItemsSource="{Binding Items}" HasUnevenRows="True" SelectionMode="Single">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
                             <ViewCell.View>
-                                <StackLayout Orientation="Horizontal" Spacing="0" >
-                                    <Label Text="{Binding Name}" FontSize="Body" VerticalOptions="Center" />
-                                    <!--<ImageButton WidthRequest="15" HeightRequest="15" BackgroundColor="Blue" HorizontalOptions="EndAndExpand" Clicked=""/>-->
+                                <StackLayout Orientation="Horizontal" Spacing="0" Margin="0,5,0,5">
+                                    <Image Source="{Binding ImageSource}" WidthRequest="15" HeightRequest="15" Margin="5,0,10,0" />
+                                    <Label Text="{Binding FileName}" VerticalOptions="Center" LineBreakMode="WordWrap" MaxLines="3" />
                                 </StackLayout>
                             </ViewCell.View>
                         </ViewCell>

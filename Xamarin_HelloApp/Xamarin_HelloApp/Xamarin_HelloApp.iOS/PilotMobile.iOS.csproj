@@ -68,7 +68,6 @@
     <None Include="Entitlements.plist" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <BundleResource Include="Resources\blanc_pdf.pdf" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -169,5 +168,68 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\up_gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\acd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\cad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\doc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\jpg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\kompas.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\pdf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\ppt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\txt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\xls.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\zip.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\odp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\ods.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\odt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\rar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\sxc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\sxi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\sxw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\archicad.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\nx.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\renga.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\sw.png" />
   </ItemGroup>
 </Project>
