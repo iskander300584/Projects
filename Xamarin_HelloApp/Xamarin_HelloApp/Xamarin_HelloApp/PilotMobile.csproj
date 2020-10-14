@@ -16,6 +16,7 @@
     <PackageReference Include="Ascon.Pilot.Common" Version="20.22.0" />
     <PackageReference Include="Ascon.Pilot.DataClasses" Version="20.22.0" />
     <PackageReference Include="Ascon.Pilot.Server.Api" Version="20.38.0" />
+    <PackageReference Include="Aspose.PDF" Version="20.10.0" />
     <PackageReference Include="Syncfusion.Xamarin.SfPdfViewer" Version="18.3.0.38" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />

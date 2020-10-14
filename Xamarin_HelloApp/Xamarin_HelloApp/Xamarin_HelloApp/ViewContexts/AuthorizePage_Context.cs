@@ -221,7 +221,6 @@ namespace Xamarin_HelloApp.ViewContexts
 
             Global.Credentials = credentials;
 
-
             // Сохранение настроек
             object temp = "";
             if (App.Current.Properties.TryGetValue("server", out temp))
@@ -251,6 +250,8 @@ namespace Xamarin_HelloApp.ViewContexts
             }
             else
                 App.Current.Properties.Add("password", credentials.ProtectedPassword);
+
+            Global.GetMetaData();
 
             page.NavigateToMainPage();
         }

@@ -6,7 +6,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Xamarin_HelloApp.AppContext;
+using Xamarin_HelloApp.Models;
 
 namespace PilotMobile.ViewContexts
 {
@@ -112,14 +114,54 @@ namespace PilotMobile.ViewContexts
         /// <summary>
         /// Метод получения списка заданий в отдельном потоке
         /// </summary>
-        private void AsyncGetTasks()
+        private async void AsyncGetTasks()
         {
-            DObject rootObj = Global.DALContext.Repository.GetObjects(new[] { DObject.TaskRootId }).First();
-            if (rootObj == null)
-                return;
+            List<Guid> _taskGuids = new List<Guid>();
 
-            RecurseGetTasks(rootObj);
+            // формирование условия поиска по типам заданий
+            string searchType = @"+DObject\.TypeId:(";
+            foreach (PType pType in TypeFabrique.GetAllTypes().Where(t => t.IsTask))
+                searchType += @"&#32;" + pType.ID + " OR ";
 
+            searchType = searchType.Remove(searchType.Length - 4).Trim();
+            searchType +=  ")";
+
+            List<int> units = Global.CurrentPerson.Positions;
+            foreach (int unit in units)
+            {
+                // Формирование условия поиска по атрибуту
+                string searchAttribute = @"+(t\.actualFor:&#32;" + unit.ToString() + ")";
+
+                // Формирование общего условия поиска
+                string search = searchType + " " + searchAttribute;
+                DSearchDefinition searchDefinition = new DSearchDefinition
+                {
+                    Id = Guid.NewGuid(),
+                    Request =
+                    {
+                    MaxResults = 100,
+                    SearchKind = (SearchKind)0,
+                    SearchString = search,
+                    SortDefinitions =
+                    {
+                        new DSortDefinition {
+                            Ascending = false,
+                            FieldName = SystemAttributes.TASK_DATE_OF_ASSIGNMENT
+                        }
+                    }
+                    }
+                };
+
+                IEnumerable<Guid> _guids = await GetTaskGuidList(searchDefinition);
+
+                if (_guids != null)
+                    foreach (Guid guid in _guids)
+                        if (!_taskGuids.Contains(guid))
+                            _taskGuids.Add(guid);
+            }
+
+
+            // Всегда возвращает NULL
             //DSearchDefinition searchDefinition = new DSearchDefinition
             //{
             //    Id = Guid.NewGuid(),
@@ -145,28 +187,15 @@ namespace PilotMobile.ViewContexts
 
 
         /// <summary>
-        /// Рекурсивное получение заданий
+        /// Получение списка Guid заданий
         /// </summary>
-        /// <param name="parent">объект Pilot</param>
-        private void RecurseGetTasks(DObject parent)
+        /// <param name="searchDefinition">условие поиска</param>
+        /// <returns></returns>
+        private async Task<IEnumerable<Guid>> GetTaskGuidList(DSearchDefinition searchDefinition)
         {
-            List<Guid> _guids = new List<Guid>();
-            foreach (DChild dChild in parent.Children)
-                _guids.Add(dChild.ObjectId);
+            DSearchResult result = await Global.DALContext.Repository.Search(searchDefinition);
 
-            List<DObject> _dObjects = Global.DALContext.Repository.GetObjects(_guids.ToArray());
-
-            foreach(DObject dObject in _dObjects)
-            {
-                if(dObject.IsTask())
-                {
-                    _allTasks.Add(dObject);
-                    Tasks.Add(dObject);
-                }
-
-                if (dObject.Children.Count > 0)
-                    RecurseGetTasks(dObject);
-            }
+            return result.Found;
         }
     }
 }

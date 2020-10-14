@@ -21,7 +21,7 @@ namespace Xamarin_HelloApp.AppContext
         /// <summary>
         /// Словарь пиктограмм типов
         /// </summary>
-        private static Dictionary<int, SvgImageSource> _typeImages = new Dictionary<int, SvgImageSource>();
+        //private static Dictionary<int, SvgImageSource> _typeImages = new Dictionary<int, SvgImageSource>();
 
 
         /// <summary>
@@ -51,29 +51,42 @@ namespace Xamarin_HelloApp.AppContext
 
 
         /// <summary>
+        /// Получение всех типов БД Pilot
+        /// </summary>
+        /// <returns>возвращает список всех типов</returns>
+        public static List<PType> GetAllTypes()
+        {
+            List<PType> _list = new List<PType>();
+            foreach (KeyValuePair<int, PType> pair in _types)
+                _list.Add(pair.Value);
+
+            return _list;
+        }
+
+        /// <summary>
         /// Получить пиктограмму типа по ID типа
         /// </summary>
         /// <param name="id">ID типа</param>
         /// <returns></returns>
-        public static SvgImageSource GetImageSource(int id)
-        {
-            if (_typeImages.Keys.Contains(id))
-                return _typeImages[id];
-            else
-            {
-                MType type = Global.DALContext.Repository.GetType(id);
+        //public static SvgImageSource GetImageSource(int id)
+        //{
+            //if (_typeImages.Keys.Contains(id))
+            //    return _typeImages[id];
+            //else
+            //{
+            //    MType type = Global.DALContext.Repository.GetType(id);
 
-                if (type.Icon != null)
-                {
-                    SvgImageSource imageSource = SvgImageSource.FromStream(() => new MemoryStream(type.Icon));
+            //    if (type.Icon != null)
+            //    {
+            //        SvgImageSource imageSource = SvgImageSource.FromStream(() => new MemoryStream(type.Icon));
 
-                    _typeImages.Add(id, imageSource);
+            //        _typeImages.Add(id, imageSource);
 
-                    return imageSource;
-                }
+            //        return imageSource;
+            //    }
 
-                return null;
-            }
-        }
+            //    return null;
+            //}
+        //}
     }
 }

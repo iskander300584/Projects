@@ -44,6 +44,16 @@ namespace Xamarin_HelloApp.Pages
 
                 if (File.Exists(fileName))
                 {
+                    //Aspose.Pdf.XpsLoadOptions xpsLoadOptions = new Aspose.Pdf.XpsLoadOptions();
+                    //xpsLoadOptions.BatchSize = (int)file.Body.Size;
+                    //Aspose.Pdf.Document document = new Aspose.Pdf.Document(fileName, xpsLoadOptions);
+                    //document.Convert(@"/storage/emulated/0/Download/temp.pdf", Aspose.Pdf.PdfFormat.PDF_A_1A, Aspose.Pdf.ConvertErrorAction.None);
+
+                    //if(File.Exists(@"/storage/emulated/0/Download/temp.pdf"))
+                    //{
+
+                    //}
+
                     //using (PdfSharp.Xps.XpsModel.XpsDocument xpsDoc = PdfSharp.Xps.XpsModel.XpsDocument.Open(fileName))
                     //{
                     //    FileInfo fileInfo = new FileInfo(fileName);

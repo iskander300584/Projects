@@ -91,6 +91,16 @@ namespace Xamarin_HelloApp.Models
         }
 
 
+        private bool isTask = false;
+        /// <summary>
+        /// Тип является заданием
+        /// </summary>
+        public bool IsTask
+        {
+            get => isTask;
+        }
+
+
         /// <summary>
         /// Тип Pilot
         /// </summary>
@@ -116,6 +126,8 @@ namespace Xamarin_HelloApp.Models
             isSystem = (type.Kind != TypeKind.User);
 
             isDocument = type.HasFiles;
+
+            isTask = type.IsTaskType();
 
             // Получение списка атрибутов
             List<PAttribute> _attrs = new List<PAttribute>();

@@ -56,5 +56,20 @@ namespace Xamarin_HelloApp.AppContext
 
             return true;
         }
+
+
+        /// <summary>
+        /// Получение метаданных БД Pilot
+        /// </summary>
+        public static void GetMetaData()
+        {
+            // Получение подключенного пользователя
+            CurrentPerson = DALContext.Repository.CurrentPerson();
+
+            // Получение типов БД Pilot
+            IEnumerable<MType> types = DALContext.Repository.GetTypes();
+            foreach (MType mType in types)
+                TypeFabrique.GetType(mType.Id);
+        }
     }
 }

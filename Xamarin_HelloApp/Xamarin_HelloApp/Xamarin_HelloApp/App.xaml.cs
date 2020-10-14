@@ -1,4 +1,6 @@
-﻿using PilotMobile.Pages;
+﻿using Ascon.Pilot.DataClasses;
+using PilotMobile.Pages;
+using System.Collections.Generic;
 using Xamarin.Forms;
 using Xamarin_HelloApp.AppContext;
 using Xamarin_HelloApp.Models;
@@ -28,7 +30,7 @@ namespace Xamarin_HelloApp
 
             if (Global.DALContext.IsInitialized)
             {
-                Global.CurrentPerson = Global.DALContext.Repository.CurrentPerson();
+                Global.GetMetaData();
 
                 MainPage = new MainCarrouselPage();
             }
