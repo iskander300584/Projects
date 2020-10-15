@@ -112,7 +112,7 @@ namespace Xamarin_HelloApp.ViewContexts
 
         private ICommand updateCommand;
         /// <summary>
-        /// Команда Об
+        /// Команда Обновить
         /// </summary>
         public ICommand UpdateCommand
         {

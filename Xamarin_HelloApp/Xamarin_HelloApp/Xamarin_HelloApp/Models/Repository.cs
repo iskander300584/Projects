@@ -19,6 +19,7 @@ namespace Xamarin_HelloApp.Models
         MType GetType(int id);
         IEnumerable<MType> GetTypes();
         byte[] GetFileChunk(Guid id, long pos, int count);
+        List<MUserState> GetStates();
     }
 
     class Repository : IRepository, IRemoteStorageListener
@@ -33,6 +34,8 @@ namespace Xamarin_HelloApp.Models
         public Repository(IServerApi serverApi, ServerCallback serverCallback)
         {
             _serverApi = serverApi;
+            var info = _serverApi.GetDatabaseInfo();
+            
             serverCallback.SetCallbackListener(this);
         }
 
@@ -106,6 +109,13 @@ namespace Xamarin_HelloApp.Models
         public byte[] GetFileChunk(Guid id, long pos, int count)
         {
             return _serverApi.GetFileChunk(id, pos, count);
+        }
+
+        public List<MUserState> GetStates()
+        {
+            var info = _serverApi.GetDatabaseInfo();
+            var metaData = _serverApi.GetMetadata(info.MetadataVersion);
+            return metaData.UserStates;
         }
     }
 }

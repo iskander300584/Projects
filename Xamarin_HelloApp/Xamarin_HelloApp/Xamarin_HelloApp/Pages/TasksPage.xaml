@@ -1,7 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="PilotMobile.Pages.TasksPage">
+             x:Class="PilotMobile.Pages.TasksPage"
+             xmlns:ffimage="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms">
+    
     <ContentPage.Content>
         <StackLayout>
             <!-- Шапка -->
@@ -16,7 +18,7 @@
                     <StackLayout Orientation="Horizontal" >
                         <!-- Кнопка Обновить -->
                         <ImageButton Source="refresh.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#2196F3" WidthRequest="20" HorizontalOptions="Start" 
-                                     VerticalOptions="Center" />
+                                     VerticalOptions="Center" Command="{Binding UpdateCommand}"/>
 
                         <Picker HorizontalOptions="EndAndExpand" ItemsSource="{Binding TaskFilter}" SelectedIndex="{Binding SelectedFilterIndex, Mode=TwoWay}" Margin="10,0,10,0" 
                                 TextColor="White" WidthRequest="200" HorizontalTextAlignment="End" />
@@ -31,8 +33,9 @@
                         <ViewCell>
                             <ViewCell.View>
                                 <StackLayout Orientation="Horizontal" Spacing="0" Margin="0,5,0,5" >
-                                    
-                                    <Label Text="{Binding Id}" FontSize="Body" VerticalOptions="Center" LineBreakMode="WordWrap" MaxLines="3" />
+                                    <ffimage:SvgCachedImage WidthRequest="15" HeightRequest="15" Source="{Binding Type.ImageSource}" Margin="5,0,10,0" />
+                                    <ffimage:SvgCachedImage WidthRequest="15" HeightRequest="15" Source="{Binding State.ImageSource}" Margin="0,0,10,0" />
+                                    <Label Text="{Binding VisibleName}" FontSize="Body" VerticalOptions="Center" LineBreakMode="WordWrap" MaxLines="3" />
                                 </StackLayout>
                             </ViewCell.View>
                         </ViewCell>
