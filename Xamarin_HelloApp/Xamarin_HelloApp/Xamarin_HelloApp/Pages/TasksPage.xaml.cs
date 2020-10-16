@@ -1,10 +1,5 @@
 ﻿using PilotMobile.ViewContexts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using PilotMobile.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -28,6 +23,18 @@ namespace PilotMobile.Pages
             context = new TasksPage_Context();
 
             this.BindingContext = context;
+        }
+
+
+        /// <summary>
+        /// Нажатие на задание
+        /// </summary>
+        private void Task_Tapped(object sender, ItemTappedEventArgs e)
+        {
+            // Получение выбранного задания
+            PilotTask task = e.Item as PilotTask;
+
+            Navigation.PushModalAsync(new DocumentCarrousel(task));
         }
     }
 }

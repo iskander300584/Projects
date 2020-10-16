@@ -1,4 +1,5 @@
 ﻿using Ascon.Pilot.DataClasses;
+using PilotMobile.ViewModels;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -16,11 +17,11 @@ namespace Xamarin_HelloApp.ViewContexts
     /// </summary>
     class MainPage_Context : INotifyPropertyChanged
     {
-        private ObservableCollection<PilotTreeItem> items = new ObservableCollection<PilotTreeItem>();
+        private ObservableCollection<IPilotObject> items = new ObservableCollection<IPilotObject>();
         /// <summary>
         /// Список отображаемых элементов
         /// </summary>
-        public ObservableCollection<PilotTreeItem> Items
+        public ObservableCollection<IPilotObject> Items
         {
             get => items;
             private set
@@ -34,12 +35,12 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        private PilotTreeItem parent;
+        private IPilotObject parent;
         /// <summary>
         /// Головной элемент для элементов отображаемого списка
         /// <para>NULL, если отображаются корневые элементы</para>
         /// </summary>
-        public PilotTreeItem Parent
+        public IPilotObject Parent
         {
             get => parent;
             set
@@ -168,7 +169,7 @@ namespace Xamarin_HelloApp.ViewContexts
         /// Асинхронный метод получения вложенных объектов
         /// </summary>
         /// <param name="dObject">объект Pilot</param>
-        private void AsyncGetChildren(PilotTreeItem pilotItem)
+        private void AsyncGetChildren(IPilotObject pilotItem)
         {
             Thread thread = new Thread(new ParameterizedThreadStart(GetChildren));
             thread.Start(pilotItem);

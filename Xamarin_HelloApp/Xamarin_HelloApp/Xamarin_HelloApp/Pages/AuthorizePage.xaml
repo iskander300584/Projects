@@ -4,7 +4,7 @@
              x:Class="Xamarin_HelloApp.Pages.AuthorizePage">
     <ContentPage.Content>
         <StackLayout>
-            <Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0">
+            <Frame BackgroundColor="#7A87BF" Padding="10" CornerRadius="0">
                 <StackLayout Orientation="Horizontal" >
                     <Image Source="pilot.png" HeightRequest="20" />
                     <Label Text="Pilot Mobile" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
@@ -29,7 +29,7 @@
             <!--<Label Text="{Binding Error, Mode=OneWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0"
                    TextColor="Red" IsVisible="{Binding IsErrorVisible, Mode=OneWay}"/>-->
 
-            <Button Text="Подключиться" FontSize="Title" Background="#2196F3" FontFamily="Tahoma" TextColor="White" 
+            <Button Text="Подключиться" FontSize="Title" Background="#7A87BF" FontFamily="Tahoma" TextColor="White" 
                     VerticalOptions="EndAndExpand" HorizontalOptions="Fill" Margin="10,0,10,10"
                     Command="{Binding ConnectCommand}"
                     IsEnabled="{Binding CanConnectCommand, Mode=OneWay}"/>

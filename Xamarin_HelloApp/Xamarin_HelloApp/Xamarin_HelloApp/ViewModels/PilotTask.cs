@@ -2,49 +2,16 @@
 using PilotMobile.AppContext;
 using PilotMobile.Models;
 using System;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Xamarin_HelloApp.AppContext;
-using Xamarin_HelloApp.Models;
 
 namespace PilotMobile.ViewModels
 {
     /// <summary>
     /// Задание Pilot
     /// </summary>
-    public class PilotTask : INotifyPropertyChanged
+    public class PilotTask : IPilotObject
     {
-        private Guid guid;
-        /// <summary>
-        /// GUID задания
-        /// </summary>
-        public Guid Guid
-        {
-            get => guid;
-        }
-
-
-        private DObject dObject;
-        /// <summary>
-        /// Соответствующий объект Pilot
-        /// </summary>
-        public DObject DObject
-        {
-            get => dObject;
-        }
-
-
-        private PType type;
-        /// <summary>
-        /// Тип задания
-        /// </summary>
-        public PType Type
-        {
-            get => type;
-        }
-
-
         private PState state;
         /// <summary>
         /// Состояние задания
@@ -70,24 +37,6 @@ namespace PilotMobile.ViewModels
                     OnPropertyChanged();
 
                     GetVisibleName();
-                }
-            }
-        }
-
-
-        private string visibliName = string.Empty;
-        /// <summary>
-        /// Отображаемое имя
-        /// </summary>
-        public string VisibleName
-        {
-            get => visibliName;
-            private set
-            {
-                if(visibliName != value)
-                {
-                    visibliName = value;
-                    OnPropertyChanged();
                 }
             }
         }
@@ -160,14 +109,6 @@ namespace PilotMobile.ViewModels
                     GetVisibleName();
                 }
             }
-        }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
 

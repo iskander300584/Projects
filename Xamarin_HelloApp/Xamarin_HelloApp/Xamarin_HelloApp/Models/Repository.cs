@@ -3,7 +3,6 @@ using Ascon.Pilot.Server.Api.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Xamarin_HelloApp.Models
@@ -56,7 +55,15 @@ namespace Xamarin_HelloApp.Models
 
         public List<DObject> GetObjects(Guid[] ids)
         {
-            return _serverApi.GetObjects(ids);
+            List<DObject> objects = new List<DObject>();
+
+            try
+            {
+                objects = _serverApi.GetObjects(ids);
+            }
+            catch { }
+
+            return objects;
         }
 
         public DPerson GetPersonOnOrganisationUnit(int id)
@@ -115,6 +122,8 @@ namespace Xamarin_HelloApp.Models
         {
             var info = _serverApi.GetDatabaseInfo();
             var metaData = _serverApi.GetMetadata(info.MetadataVersion);
+            
+
             return metaData.UserStates;
         }
     }

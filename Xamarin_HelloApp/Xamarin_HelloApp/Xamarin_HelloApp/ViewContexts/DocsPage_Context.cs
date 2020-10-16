@@ -1,6 +1,7 @@
 ﻿using Ascon.Pilot.DataClasses;
 using PilotMobile.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -34,7 +35,7 @@ namespace PilotMobile.ViewContexts
         /// <summary>
         /// Объект Pilot
         /// </summary>
-        private PilotTreeItem pilotTreeItem;
+        private IPilotObject pilotItem;
 
 
         /// <summary>
@@ -66,17 +67,17 @@ namespace PilotMobile.ViewContexts
         /// <summary>
         /// Контекст данных страницы списка файлов
         /// </summary>
-        /// <param name="pilotTreeItem">объект Pilot</param>
+        /// <param name="pilotItem">объект Pilot</param>
         /// <param name="page">страница списка документов</param>
-        public DocsPage_Context(PilotTreeItem pilotTreeItem, DocsPage page)
+        public DocsPage_Context(IPilotObject pilotItem, DocsPage page)
         {
-            this.pilotTreeItem = pilotTreeItem;
+            this.pilotItem = pilotItem;
             this.page = page;
 
             updateCommand = new Command(GetFiles);
             upCommand = new Command(Up_Execute);
 
-            items = pilotTreeItem.Files;
+            items = pilotItem.Files;
 
             if (items.Count == 0)
                 GetFiles();
@@ -98,19 +99,69 @@ namespace PilotMobile.ViewContexts
         /// <summary>
         /// Метод получения списка фалов в отдельном потоке
         /// </summary>
-        private void AsyncGetFiles()
+        private async void AsyncGetFiles()
         {
-            foreach (DChild dChild in pilotTreeItem.DObject.Children)
+            if (pilotItem is PilotTreeItem)
             {
-                DObject child = Global.DALContext.Repository.GetObjects(new Guid[] { dChild.ObjectId }).FirstOrDefault();
-
-                if (child != null)
+                foreach (DChild dChild in pilotItem.DObject.Children)
                 {
-                    DFile file = child.ActualFileSnapshot.Files.FirstOrDefault();
-                    if (file != null)
-                        Items.Add(new PilotFile(file));
+                    DObject child = Global.DALContext.Repository.GetObjects(new Guid[] { dChild.ObjectId }).FirstOrDefault();
+
+                    if (child != null)
+                    {
+                        foreach (DFile file in child.ActualFileSnapshot.Files)
+                            Items.Add(new PilotFile(file));
+                    }
                 }
             }
+            else if(pilotItem is PilotTask)
+            {
+                // XPS
+                //List<DRelation> relations = pilotItem.DObject.Relations;
+                //foreach(DRelation relation in relations)
+                //{
+                //    DObject child = Global.DALContext.Repository.GetObjects(new Guid[] { relation.TargetId }).FirstOrDefault();
+
+                //    if (child != null)
+                //    {
+                //        foreach(DFile file in child.ActualFileSnapshot.Files)                      
+                //            Items.Add(new PilotFile(file));
+                //    }
+                //}
+
+
+
+
+                //string searchAttribute = $@"+s\.targetId:(&#s;{pilotItem.Guid})";
+
+                //// Формирование общего условия поиска
+                
+                //DSearchDefinition searchDefinition = new DSearchDefinition
+                //{
+                //    Id = Guid.NewGuid(),
+                //    Request =
+                //    {
+                //    MaxResults = 1000,
+                //    SearchKind = SearchKind.Custom,
+                //    SearchString = searchAttribute,
+                //    SortDefinitions =
+                //    {
+                //        new DSortDefinition {
+                //            Ascending = false,
+                //            FieldName = SystemAttributes.TASK_DATE_OF_ASSIGNMENT
+                //        }
+                //    }
+                //    }
+                //};
+
+                //DSearchResult result = await Global.DALContext.Repository.Search(searchDefinition);
+                //if(result.Found != null)
+                //{
+
+                //}
+            }
+
+
         }
 
 

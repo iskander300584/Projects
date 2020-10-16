@@ -13,7 +13,7 @@
     <ContentPage.Content>
         <StackLayout Spacing="10">
             <!-- Шапка -->
-            <Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0">
+            <Frame BackgroundColor="#7A87BF" Padding="10" CornerRadius="0">
                 <StackLayout>
                     <StackLayout Orientation="Horizontal" >
                         <Image Source="pilot.png" HeightRequest="20" />
@@ -23,11 +23,29 @@
 
                     <StackLayout Orientation="Horizontal">
                         <!-- Кнопка Обновить -->
-                        <ImageButton Source="refresh.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#2196F3" WidthRequest="20" HorizontalOptions="Start" 
+                        <ImageButton Source="refresh.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
                                      Command="{Binding UpdateCommand}"/>
 
+                        <!-- Кнопка Карточка -->
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand"  
+                                     IsEnabled="{Binding UpCanExecute}" Clicked="Card_Click"
+                                     >
+                            <ImageButton.Style>
+                                <Style TargetType="ImageButton">
+                                    <Style.Triggers>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="True">
+                                            <Setter Property="Source" Value="card.png"/>
+                                        </Trigger>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="False">
+                                            <Setter Property="Source" Value="card_gray.png"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ImageButton.Style>
+                        </ImageButton>
+                        
                         <!-- Кнопка Наверх -->
-                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#2196F3" WidthRequest="20" HorizontalOptions="EndAndExpand"  
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End" Margin="20,0,0,0"
                                      Command="{Binding UpCommand}" IsEnabled="{Binding UpCanExecute}"
                                      >
                             <ImageButton.Style>
@@ -45,7 +63,7 @@
                         </ImageButton>
 
                         <!-- Кнопка Домой -->
-                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#2196F3" WidthRequest="20" HorizontalOptions="End" Margin="5,0,0,0" 
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End" Margin="10,0,0,0" 
                                      Command="{Binding HomeCommand}" IsEnabled="{Binding UpCanExecute}">
                             <ImageButton.Style>
                                 <Style TargetType="ImageButton">

@@ -232,4 +232,7 @@
   <ItemGroup>
     <BundleResource Include="Resources\sw.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\card_gray.png" />
+  </ItemGroup>
 </Project>

@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PilotMobile.Pages.CardPage"
+             xmlns:conv="clr-namespace:PilotMobile.Converters">
+
+    <ContentPage.Resources>
+        <!-- Шаблон данных для надписи -->
+        <DataTemplate x:DataType="Label" x:Key="labelTemplate">
+            <Label Text="{Binding Text}"
+                   FontSize="{Binding FontSize}"
+                   Margin="{Binding Margin}" />
+        </DataTemplate>
+
+        <!-- Шаблон данных для поля ввода -->
+        <DataTemplate x:DataType="Entry" x:Key="entryTemplate">
+            <Entry Text="{Binding Text}"
+                   FontSize="{Binding FontSize}"
+                   Margin="{Binding Margin}"
+                   IsReadOnly="{Binding IsReadOnly}"
+                               />
+        </DataTemplate>
+
+        <!-- Шаблон данных для выбора даты -->
+        <DataTemplate x:DataType="DatePicker" x:Key="dateTemplate">
+            <DatePicker Date="{Binding Date}"
+                        FontSize="{Binding FontSize}"
+                        Margin="{Binding Margin}"
+                        IsEnabled="{Binding IsEnabled}"
+                               />
+        </DataTemplate>
+
+        <!-- Шаблон данных для организационной единицы -->
+        <DataTemplate x:DataType="Editor" x:Key="editorTemplate">
+            <Editor Text="{Binding Text}"
+                    FontSize="{Binding FontSize}"
+                    Margin="{Binding Margin}"
+                    IsReadOnly="{Binding IsReadOnly}"
+                               />
+        </DataTemplate>
+
+        <!-- Выбор шаблона данных -->
+        <conv:PersonDataTemplateSelector x:Key="dataTemplateSelector"
+                                         LabelTemplate="{StaticResource labelTemplate}"
+                                         EntryTemplate="{StaticResource entryTemplate}"
+                                         DateTemplate="{StaticResource dateTemplate}"
+                                         EditorTemplate="{StaticResource editorTemplate}"
+                                         />
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+        <StackLayout>
+            <!-- Шапка -->
+            <Frame BackgroundColor="#7A87BF" Padding="10" CornerRadius="0" >
+                <StackLayout>
+                    <StackLayout Orientation="Horizontal" >
+                        <Image Source="pilot.png" HeightRequest="20" />
+                        <Label Text="Pilot Mobile" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal">
+                        <!-- Кнопка Обновить -->
+                        <ImageButton Source="refresh.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
+                                     Command="{Binding UpdateCommand}"
+                                     />
+
+                        <!-- Кнопка Наверх -->
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand"  
+                                     Command="{Binding UpCommand}"
+                                     >
+                            <ImageButton.Style>
+                                <Style TargetType="ImageButton">
+                                    <Style.Triggers>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="True">
+                                            <Setter Property="Source" Value="up.png"/>
+                                        </Trigger>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="False">
+                                            <Setter Property="Source" Value="up_gray.png"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ImageButton.Style>
+                        </ImageButton>
+
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+
+            <ScrollView >
+                <StackLayout Orientation="Vertical" Margin="0,10,0,0" BindableLayout.ItemsSource="{Binding Views}" BindableLayout.ItemTemplateSelector="{StaticResource dataTemplateSelector}" />
+            </ScrollView>
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

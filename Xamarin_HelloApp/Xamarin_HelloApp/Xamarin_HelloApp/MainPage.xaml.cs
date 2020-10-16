@@ -52,5 +52,14 @@ namespace Xamarin_HelloApp
                 Navigation.PushModalAsync(new DocumentCarrousel(pilotItem));
             }
         }
+
+
+        /// <summary>
+        /// Нажатие кнопки Карточка
+        /// </summary>
+        private void Card_Click(object sender, EventArgs e)
+        {
+            Navigation.PushModalAsync(new CardPage(context.Parent));
+        }
     }
 }

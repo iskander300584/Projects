@@ -1,88 +1,15 @@
 ﻿using Ascon.Pilot.DataClasses;
 using PilotMobile.ViewModels;
-using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Xamarin_HelloApp.AppContext;
-using Xamarin_HelloApp.Models;
 
 namespace Xamarin_HelloApp.ViewModels
 {
     /// <summary>
     /// Элемент дерева Pilot
     /// </summary>
-    public class PilotTreeItem : INotifyPropertyChanged
+    public class PilotTreeItem : IPilotObject
     {
-        private Guid guid = new Guid();
-        /// <summary>
-        /// GUID
-        /// </summary>
-        public Guid Guid
-        {
-            get => guid;
-        }
-
-
-        private DObject dObject = null;
-        /// <summary>
-        /// Объект Pilot
-        /// </summary>
-        public DObject DObject
-        {
-            get => dObject;
-        }
-
-
-        private PilotTreeItem parent;
-        /// <summary>
-        /// Головной объект
-        /// </summary>
-        public PilotTreeItem Parent
-        {
-            get => parent;
-        }
-
-
-        private ObservableCollection<PilotTreeItem> children = new ObservableCollection<PilotTreeItem>();
-        /// <summary>
-        /// Коллекция потомков
-        /// </summary>
-        public ObservableCollection<PilotTreeItem> Children
-        {
-            get => children;
-        }
-
-
-        private PType type;
-        /// <summary>
-        /// Тип объекта
-        /// </summary>
-        public PType Type
-        {
-            get => type;
-        }
-
-
-        private string visibleName = string.Empty;
-        /// <summary>
-        /// Отображаемое имя
-        /// </summary>
-        public string VisibleName
-        {
-            get => visibleName;
-            private set
-            {
-                if(visibleName != value)
-                {
-                    visibleName = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-
         private bool hasAccess = false;
         /// <summary>
         /// У пользователя есть доступ к объекту
@@ -90,24 +17,6 @@ namespace Xamarin_HelloApp.ViewModels
         public bool HasAccess
         {
             get => hasAccess;
-        }
-
-
-        private ObservableCollection<PilotFile> files = new ObservableCollection<PilotFile>();
-        /// <summary>
-        /// Список файлов документа
-        /// </summary>
-        public ObservableCollection<PilotFile> Files
-        {
-            get => files;
-        }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
 

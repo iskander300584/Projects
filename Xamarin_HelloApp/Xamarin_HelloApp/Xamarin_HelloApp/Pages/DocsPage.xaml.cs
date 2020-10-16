@@ -1,9 +1,7 @@
-﻿using Ascon.Pilot.DataClasses;
-using PilotMobile.ViewContexts;
+﻿using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using Xamarin_HelloApp.ViewModels;
 
 namespace Xamarin_HelloApp.Pages
 {
@@ -22,12 +20,12 @@ namespace Xamarin_HelloApp.Pages
         /// <summary>
         /// Страница списка документов
         /// </summary>
-        /// <param name="pilotTreeItem">объект Pilot</param>
-        public DocsPage(PilotTreeItem pilotTreeItem)
+        /// <param name="pilotItem">объект Pilot</param>
+        public DocsPage(IPilotObject pilotItem)
         {
             InitializeComponent();
 
-            context = new DocsPage_Context(pilotTreeItem, this);
+            context = new DocsPage_Context(pilotItem, this);
 
             this.BindingContext = context;
         }

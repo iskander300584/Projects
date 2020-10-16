@@ -1,4 +1,6 @@
 ﻿using Ascon.Pilot.DataClasses;
+using PilotMobile.ViewModels;
+using System;
 using System.IO;
 using System.Linq;
 using Xamarin.Forms;
@@ -17,8 +19,8 @@ namespace Xamarin_HelloApp.Pages
         /// <summary>
         /// Окно отображения документа
         /// </summary>
-        /// <param name="pilotTreeItem">объект Pilot</param>
-        public XpsPage(PilotTreeItem pilotTreeItem)
+        /// <param name="pilotItem">объект Pilot</param>
+        public XpsPage(IPilotObject pilotItem)
         {
             InitializeComponent();
 
@@ -26,16 +28,32 @@ namespace Xamarin_HelloApp.Pages
             GetPermissions();
 
             DFile file = null;
-            var snapshot = pilotTreeItem.DObject.ActualFileSnapshot;
 
-            if (snapshot != null)
+            // Получение файла для объекта
+            if (pilotItem is PilotTreeItem)
             {
-                file = snapshot.Files.FirstOrDefault();
+                var snapshot = pilotItem.DObject.ActualFileSnapshot;
+
+                if (snapshot != null)
+                {
+                    file = snapshot.Files.FirstOrDefault();
+                }
+            }
+            // Получение файла для задачи
+            else if(pilotItem is PilotTask)
+            {
+                DRelation relation = pilotItem.DObject.Relations.FirstOrDefault();
+                if(relation.TargetId != null)
+                {                   
+                    DObject child = Global.DALContext.Repository.GetObjects(new Guid[] { relation.TargetId }).FirstOrDefault();
+
+                    if (child != null)
+                        file = child.ActualFileSnapshot.Files.FirstOrDefault();
+                }
             }
 
             if (file != null)
             {
-
                 byte[] array = Global.DALContext.Repository.GetFileChunk(file.Body.Id, 0, (int)file.Body.Size);
 
                 string fileName = Path.Combine(@"/storage/emulated/0/Download", file.Name);

@@ -5,7 +5,7 @@
     <ContentPage.Content>
         <StackLayout>
             <!-- Шапка -->
-            <Frame BackgroundColor="#2196F3" Padding="10" CornerRadius="0">
+            <Frame BackgroundColor="#7A87BF" Padding="10" CornerRadius="0">
                 <StackLayout>
                     <StackLayout Orientation="Horizontal" >
                         <Image Source="pilot.png" HeightRequest="20" />
@@ -15,11 +15,11 @@
 
                     <StackLayout Orientation="Horizontal">
                         <!-- Кнопка Обновить -->
-                        <ImageButton Source="refresh.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#2196F3" WidthRequest="20" HorizontalOptions="Start" 
+                        <ImageButton Source="refresh.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
                                      Command="{Binding UpdateCommand}"/>
 
                         <!-- Кнопка Наверх -->
-                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#2196F3" WidthRequest="20" HorizontalOptions="EndAndExpand"  
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand"  
                                      Command="{Binding UpCommand}" IsEnabled="{Binding UpCanExecute}"
                                      >
                             <ImageButton.Style>
