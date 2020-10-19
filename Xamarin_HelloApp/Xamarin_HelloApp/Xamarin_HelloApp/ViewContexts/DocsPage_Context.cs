@@ -1,7 +1,6 @@
 ﻿using Ascon.Pilot.DataClasses;
 using PilotMobile.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -99,8 +98,9 @@ namespace PilotMobile.ViewContexts
         /// <summary>
         /// Метод получения списка фалов в отдельном потоке
         /// </summary>
-        private async void AsyncGetFiles()
+        private void AsyncGetFiles()
         {
+            // Получение списка файлов для документа
             if (pilotItem is PilotTreeItem)
             {
                 foreach (DChild dChild in pilotItem.DObject.Children)
@@ -114,54 +114,31 @@ namespace PilotMobile.ViewContexts
                     }
                 }
             }
-            else if(pilotItem is PilotTask)
+            // Получение списка файлов для задачи
+            else if (pilotItem is PilotTask)
             {
-                // XPS
-                //List<DRelation> relations = pilotItem.DObject.Relations;
-                //foreach(DRelation relation in relations)
-                //{
-                //    DObject child = Global.DALContext.Repository.GetObjects(new Guid[] { relation.TargetId }).FirstOrDefault();
-
-                //    if (child != null)
-                //    {
-                //        foreach(DFile file in child.ActualFileSnapshot.Files)                      
-                //            Items.Add(new PilotFile(file));
-                //    }
-                //}
-
-
-
-
-                //string searchAttribute = $@"+s\.targetId:(&#s;{pilotItem.Guid})";
-
-                //// Формирование общего условия поиска
+                // получение ссылки на документ XPS
+                DRelation relation = pilotItem.DObject.Relations.FirstOrDefault();
+                if (relation.TargetId == null)
+                    return;
                 
-                //DSearchDefinition searchDefinition = new DSearchDefinition
-                //{
-                //    Id = Guid.NewGuid(),
-                //    Request =
-                //    {
-                //    MaxResults = 1000,
-                //    SearchKind = SearchKind.Custom,
-                //    SearchString = searchAttribute,
-                //    SortDefinitions =
-                //    {
-                //        new DSortDefinition {
-                //            Ascending = false,
-                //            FieldName = SystemAttributes.TASK_DATE_OF_ASSIGNMENT
-                //        }
-                //    }
-                //    }
-                //};
+                DObject xps = Global.DALContext.Repository.GetObjects(new Guid[] { relation.TargetId }).FirstOrDefault();
+                
+                if (xps == null || xps.Children == null)
+                    return;
 
-                //DSearchResult result = await Global.DALContext.Repository.Search(searchDefinition);
-                //if(result.Found != null)
-                //{
+                // получение вложенных файлов
+                foreach (DChild dChild in xps.Children)
+                {
+                    DObject child = Global.DALContext.Repository.GetObjects(new Guid[] { dChild.ObjectId }).FirstOrDefault();
 
-                //}
+                    if (child != null)
+                    {
+                        foreach (DFile file in child.ActualFileSnapshot.Files)
+                            Items.Add(new PilotFile(file));
+                    }
+                }
             }
-
-
         }
 
 

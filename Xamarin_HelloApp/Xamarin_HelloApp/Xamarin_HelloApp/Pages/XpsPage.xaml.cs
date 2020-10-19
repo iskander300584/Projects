@@ -62,12 +62,16 @@ namespace Xamarin_HelloApp.Pages
 
                 if (File.Exists(fileName))
                 {
+                    Spire.Pdf.PdfDocument doc = new Spire.Pdf.PdfDocument();
+                    doc.LoadFromFile(fileName, Spire.Pdf.FileFormat.XPS);
+                    doc.SaveToFile(@"/storage/emulated/0/Download/temp.pdf", Spire.Pdf.FileFormat.PDF);
+
                     //Aspose.Pdf.XpsLoadOptions xpsLoadOptions = new Aspose.Pdf.XpsLoadOptions();
                     //xpsLoadOptions.BatchSize = (int)file.Body.Size;
                     //Aspose.Pdf.Document document = new Aspose.Pdf.Document(fileName, xpsLoadOptions);
                     //document.Convert(@"/storage/emulated/0/Download/temp.pdf", Aspose.Pdf.PdfFormat.PDF_A_1A, Aspose.Pdf.ConvertErrorAction.None);
 
-                    //if(File.Exists(@"/storage/emulated/0/Download/temp.pdf"))
+                    //if (File.Exists(@"/storage/emulated/0/Download/temp.pdf"))
                     //{
 
                     //}
