@@ -2,16 +2,35 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin_HelloApp.Pages.XpsPage"
-             xmlns:sf="clr-namespace:Syncfusion.SfPdfViewer.XForms;assembly=Syncfusion.SfPdfViewer.XForms">
+             xmlns:sf="clr-namespace:Syncfusion.SfPdfViewer.XForms;assembly=Syncfusion.SfPdfViewer.XForms"
+             Appearing="OnAppearing">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Предварительный просмотр документа в настоящее время не реализован, будем надеяться, что со временем, этот функционал появится. А пока вы можете свайпнуть* влево для доступа к списку документов"
-                   FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
+            <!-- Шапка -->
+            <Frame BackgroundColor="#7A87BF" Padding="10" CornerRadius="0">
+                <StackLayout>
+                    <StackLayout Orientation="Horizontal" >
+                        <Image Source="pilot.png" HeightRequest="20" />
+                        <Label Text="Pilot Mobile" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal">
+                        <!-- Кнопка Обновить -->
+                        <ImageButton Source="refresh.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
+                                     Command="{Binding UpdateCommand}" Margin="0,0,10,0"
+                                     />
+                        <!-- Сообщение -->
+                        <Label Text="{Binding Message}" IsVisible="{Binding IsMessageVisible}" FontSize="Medium" TextColor="White" VerticalOptions="StartAndExpand" />
+                        <!-- Кнопка Наверх -->
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand"  
+                                     Command="{Binding UpCommand}" Source="up.png" />
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+
+            <!-- Просмотрщик PDF -->
+            <sf:SfPdfViewer x:Name="pdfViewer" />
             
-            <Label Text="* Свайпнуть (swipe) - в переводе с древне-славянского означает провести пальцем по сенсорному экрану"
-                   FontSize="Medium" FontFamily="Tahoma" FontAttributes="Italic" HorizontalOptions="StartAndExpand" VerticalOptions="EndAndExpand" Margin="10,0,10,0" />
-            <!--<Editor x:Name="textEditor" />
-            <sf:SfPdfViewer x:Name="pdfViewer" />-->
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

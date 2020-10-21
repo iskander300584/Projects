@@ -21,20 +21,20 @@ namespace PilotMobile.Pages
             InitializeComponent();
 
             // Добавление окон предварительного просмотра, карточки и списка файлов
-            XpsPage xps = new XpsPage(pilotItem);
-            CardPage card = new CardPage(pilotItem);
+            //if (pilotItem is PilotTreeItem)
+            //{
+            //    Children.Add(new XpsPage(pilotItem));
+            //    Children.Add(new CardPage(pilotItem));
+            //}
+            //else
+            //{
+            //    Children.Add(new CardPage(pilotItem));
+            //    Children.Add(new XpsPage(pilotItem));
+            //}
 
-            if(pilotItem is PilotTreeItem)
-            {
-                Children.Add(xps);
-                Children.Add(card);
-            }
-            else
-            {
-                Children.Add(card);
-                Children.Add(xps);
-            }
-            
+            Children.Add(new XpsPage(pilotItem));
+            Children.Add(new CardPage(pilotItem));
+
             Children.Add(new DocsPage(pilotItem));
         }
     }

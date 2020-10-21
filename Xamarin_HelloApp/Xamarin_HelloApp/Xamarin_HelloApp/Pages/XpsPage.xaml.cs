@@ -1,12 +1,9 @@
-﻿using Ascon.Pilot.DataClasses;
+﻿using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
-using System;
 using System.IO;
-using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using Xamarin_HelloApp.AppContext;
-using Xamarin_HelloApp.ViewModels;
+
 
 namespace Xamarin_HelloApp.Pages
 {
@@ -17,6 +14,12 @@ namespace Xamarin_HelloApp.Pages
     public partial class XpsPage : ContentPage
     {
         /// <summary>
+        /// Контекст данных страницы
+        /// </summary>
+        private XpsPage_Context context;
+
+
+        /// <summary>
         /// Окно отображения документа
         /// </summary>
         /// <param name="pilotItem">объект Pilot</param>
@@ -24,80 +27,67 @@ namespace Xamarin_HelloApp.Pages
         {
             InitializeComponent();
 
-            // Проверка прав доступа
-            GetPermissions();
+            context = new XpsPage_Context(pilotItem, this);
 
-            DFile file = null;
+            this.BindingContext = context;
+        }
 
-            // Получение файла для объекта
-            if (pilotItem is PilotTreeItem)
+
+        /// <summary>
+        /// Загрузка документа в просмотрщик
+        /// </summary>
+        public void LoadDocument()
+        {
+            if (context == null || context.DocLoaded)
+                return;
+
+            if(context != null && context.PdfFileName != "Failed")
             {
-                var snapshot = pilotItem.DObject.ActualFileSnapshot;
-
-                if (snapshot != null)
+                if (context.PdfFileName != "" && File.Exists(context.PdfFileName))
                 {
-                    file = snapshot.Files.FirstOrDefault();
+                    using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(context.PdfFileName)))
+                    {
+                        pdfViewer.LoadDocument(ms);
+                    }
+
+                    context.DocLoaded = true;
                 }
             }
-            // Получение файла для задачи
-            else if(pilotItem is PilotTask)
+            else
             {
-                DRelation relation = pilotItem.DObject.Relations.FirstOrDefault();
-                if(relation.TargetId != null)
-                {                   
-                    DObject child = Global.DALContext.Repository.GetObjects(new Guid[] { relation.TargetId }).FirstOrDefault();
-
-                    if (child != null)
-                        file = child.ActualFileSnapshot.Files.FirstOrDefault();
-                }
-            }
-
-            if (file != null)
-            {
-                byte[] array = Global.DALContext.Repository.GetFileChunk(file.Body.Id, 0, (int)file.Body.Size);
-
-                string fileName = Path.Combine(@"/storage/emulated/0/Download", file.Name);
-
-                File.WriteAllBytes(fileName, array);
-
-                if (File.Exists(fileName))
-                {
-                    Spire.Pdf.PdfDocument doc = new Spire.Pdf.PdfDocument();
-                    doc.LoadFromFile(fileName, Spire.Pdf.FileFormat.XPS);
-                    doc.SaveToFile(@"/storage/emulated/0/Download/temp.pdf", Spire.Pdf.FileFormat.PDF);
-
-                    //Aspose.Pdf.XpsLoadOptions xpsLoadOptions = new Aspose.Pdf.XpsLoadOptions();
-                    //xpsLoadOptions.BatchSize = (int)file.Body.Size;
-                    //Aspose.Pdf.Document document = new Aspose.Pdf.Document(fileName, xpsLoadOptions);
-                    //document.Convert(@"/storage/emulated/0/Download/temp.pdf", Aspose.Pdf.PdfFormat.PDF_A_1A, Aspose.Pdf.ConvertErrorAction.None);
-
-                    //if (File.Exists(@"/storage/emulated/0/Download/temp.pdf"))
-                    //{
-
-                    //}
-
-                    //using (PdfSharp.Xps.XpsModel.XpsDocument xpsDoc = PdfSharp.Xps.XpsModel.XpsDocument.Open(fileName))
-                    //{
-                    //    FileInfo fileInfo = new FileInfo(fileName);
-                    //    string newFileName = fileName.Substring(0, fileName.Length - 3);
-                    //    newFileName = Path.Combine(newFileName, ".pdf");
-
-                    //    PdfSharp.Xps.XpsConverter.Convert(xpsDoc, newFileName, 0);
-
-                    //    if(File.Exists(newFileName))
-                    //    {
-                    //        MemoryStream ms = new MemoryStream(File.ReadAllBytes(newFileName));
-
-                    //        pdfViewer.LoadDocument(ms);
-                    //    }
-                    //}
-                }
+                context.DocLoaded = true;
             }
         }
 
-        private async void GetPermissions()
+
+        /// <summary>
+        /// Выгрузить документ
+        /// </summary>
+        public void UnLoadDocument()
         {
-            await (Global.GetFilesPermissions());
+            pdfViewer.Unload();
+        }
+
+
+        /// <summary>
+        /// Переход на основную страницу приложения
+        /// </summary>
+        public void NavigateToMainPage()
+        {
+            Navigation.PopModalAsync();
+        }
+
+
+        /// <summary>
+        /// Открытие страницы документа
+        /// </summary>
+        private void OnAppearing(object sender, System.EventArgs e)
+        {
+            if (context != null)
+            {
+                if (!context.DocLoaded)
+                    context.GetXPS();
+            }
         }
     }
 }

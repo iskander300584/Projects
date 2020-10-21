@@ -1,6 +1,9 @@
 ﻿using Ascon.Pilot.DataClasses;
+using FFImageLoading.Helpers.Exif;
 using PilotMobile.Pages;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using Xamarin.Forms;
 using Xamarin_HelloApp.AppContext;
 using Xamarin_HelloApp.Models;
@@ -40,6 +43,17 @@ namespace Xamarin_HelloApp
 
         protected override void OnStart()
         {
+            // Очистка КЕШа файлов XPS
+            string[] files = System.IO.Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+            foreach(string fileName in files)
+                if(fileName.Contains(".xps"))
+                {
+                    try
+                    {
+                        File.Delete(fileName);
+                    }
+                    catch { }
+                }
         }
 
         protected override void OnSleep()
