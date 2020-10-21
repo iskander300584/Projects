@@ -25,6 +25,8 @@ namespace Xamarin_HelloApp.Pages
         /// <param name="pilotItem">объект Pilot</param>
         public XpsPage(IPilotObject pilotItem)
         {
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzM5MjY2QDMxMzgyZTMzMmUzMEIwKzBENG9sRkl0WVlYcXg3QjdYbjlkU1B1cXUxNVpQb0FEVkJYTVIweEE9");
+
             InitializeComponent();
 
             context = new XpsPage_Context(pilotItem, this);
@@ -45,9 +47,16 @@ namespace Xamarin_HelloApp.Pages
             {
                 if (context.PdfFileName != "" && File.Exists(context.PdfFileName))
                 {
-                    using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(context.PdfFileName)))
+                    try
                     {
-                        pdfViewer.LoadDocument(ms);
+                        using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(context.PdfFileName)))
+                        {
+                            pdfViewer.LoadDocument(ms);
+                        }
+                    }
+                    catch 
+                    {
+                        context.PdfFileName = "Failed";
                     }
 
                     context.DocLoaded = true;

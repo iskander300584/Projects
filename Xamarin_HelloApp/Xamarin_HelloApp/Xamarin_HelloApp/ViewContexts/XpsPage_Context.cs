@@ -26,7 +26,7 @@ namespace PilotMobile.ViewContexts
         public string PdfFileName
         {
             get => pdfFileName;
-            private set
+            set
             {
                 if(pdfFileName != value)
                 {

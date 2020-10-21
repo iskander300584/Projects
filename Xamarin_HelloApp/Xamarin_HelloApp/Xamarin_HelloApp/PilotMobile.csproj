@@ -17,7 +17,8 @@
     <PackageReference Include="Ascon.Pilot.DataClasses" Version="20.22.0" />
     <PackageReference Include="Ascon.Pilot.Server.Api" Version="20.38.0" />
     <PackageReference Include="Spire.PDF" Version="6.10.4" />
-    <PackageReference Include="Syncfusion.Xamarin.SfPdfViewer" Version="18.3.0.42" />
+    <PackageReference Include="Syncfusion.Licensing" Version="18.3.0.35" />
+    <PackageReference Include="Syncfusion.Xamarin.SfPdfViewer" Version="18.3.0.35" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.Forms" Version="4.8.0.1560" />
