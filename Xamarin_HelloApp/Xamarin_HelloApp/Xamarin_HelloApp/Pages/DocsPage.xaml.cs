@@ -21,11 +21,12 @@ namespace Xamarin_HelloApp.Pages
         /// Страница списка документов
         /// </summary>
         /// <param name="pilotItem">объект Pilot</param>
-        public DocsPage(IPilotObject pilotItem)
+        /// <param name="xpsPage">страница XPS</param>
+        public DocsPage(IPilotObject pilotItem, XpsPage xpsPage)
         {
             InitializeComponent();
 
-            context = new DocsPage_Context(pilotItem, this);
+            context = new DocsPage_Context(pilotItem, this, xpsPage);
 
             this.BindingContext = context;
         }

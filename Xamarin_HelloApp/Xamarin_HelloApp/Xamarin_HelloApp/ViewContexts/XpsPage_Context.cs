@@ -12,6 +12,7 @@ using Xamarin_HelloApp.AppContext;
 using Xamarin_HelloApp.Pages;
 using Xamarin_HelloApp.ViewModels;
 
+
 namespace PilotMobile.ViewContexts
 {
     /// <summary>
@@ -237,6 +238,7 @@ namespace PilotMobile.ViewContexts
                                 Spire.Pdf.PdfDocument doc = new Spire.Pdf.PdfDocument();
                                 doc.LoadFromFile(_xpsName, Spire.Pdf.FileFormat.XPS);
                                 doc.SaveToFile(_pdfName, Spire.Pdf.FileFormat.PDF);
+                                doc.Dispose();
 
                                 try
                                 {
@@ -244,8 +246,10 @@ namespace PilotMobile.ViewContexts
                                 }
                                 catch { }
                             }
-                            catch
+                            catch(Exception ex)
                             {
+                                string msg = ex.Message;
+                                if(msg != "") { }
                                 try
                                 {
                                     if (File.Exists(_pdfName))
@@ -304,6 +308,7 @@ namespace PilotMobile.ViewContexts
         /// </summary>
         private void Up_Execute()
         {
+            page.UnLoadDocument(true);
             page.NavigateToMainPage();
         }
 

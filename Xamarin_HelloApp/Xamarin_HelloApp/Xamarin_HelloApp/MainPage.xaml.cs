@@ -59,7 +59,7 @@ namespace Xamarin_HelloApp
         /// </summary>
         private void Card_Click(object sender, EventArgs e)
         {
-            Navigation.PushModalAsync(new CardPage(context.Parent));
+            Navigation.PushModalAsync(new CardPage(context.Parent, null));
         }
     }
 }

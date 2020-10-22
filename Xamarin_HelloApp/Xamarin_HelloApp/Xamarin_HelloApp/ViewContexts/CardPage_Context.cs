@@ -12,7 +12,7 @@ using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin_HelloApp.AppContext;
 using Xamarin_HelloApp.Models;
-
+using Xamarin_HelloApp.Pages;
 
 namespace PilotMobile.ViewContexts
 {
@@ -123,6 +123,12 @@ namespace PilotMobile.ViewContexts
         }
 
 
+        /// <summary>
+        /// Страница XPS
+        /// </summary>
+        private XpsPage xpsPage;
+
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
@@ -137,10 +143,12 @@ namespace PilotMobile.ViewContexts
         /// <param name="pilotObject">элемент Pilot</param>
         /// <param name="mode">режим работы окна</param>
         /// <param name="page">страница карточки</param>
-        public CardPage_Context(IPilotObject pilotObject, CardPage page, PageMode mode = PageMode.View)
+        /// <param name="xpsPage">страница XPS</param>
+        public CardPage_Context(IPilotObject pilotObject, CardPage page, XpsPage xpsPage, PageMode mode = PageMode.View)
         {
             this.pilotObject = pilotObject;
             this.page = page;
+            this.xpsPage = xpsPage;
 
             upCommand = new Command(Up_Execute);
             updateCommand = new Command(GetData);
@@ -367,6 +375,9 @@ namespace PilotMobile.ViewContexts
         /// </summary>
         private void Up_Execute()
         {
+            if (xpsPage != null)
+                xpsPage.UnLoadDocument(true);
+
             page.NavigateToMainPage();
         }
     }

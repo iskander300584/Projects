@@ -64,14 +64,21 @@ namespace PilotMobile.ViewContexts
 
 
         /// <summary>
+        /// Страница XPS
+        /// </summary>
+        private XpsPage xpsPage;
+
+
+        /// <summary>
         /// Контекст данных страницы списка файлов
         /// </summary>
         /// <param name="pilotItem">объект Pilot</param>
         /// <param name="page">страница списка документов</param>
-        public DocsPage_Context(IPilotObject pilotItem, DocsPage page)
+        public DocsPage_Context(IPilotObject pilotItem, DocsPage page, XpsPage xpsPage)
         {
             this.pilotItem = pilotItem;
             this.page = page;
+            this.xpsPage = xpsPage;
 
             updateCommand = new Command(GetFiles);
             upCommand = new Command(Up_Execute);
@@ -147,6 +154,9 @@ namespace PilotMobile.ViewContexts
         /// </summary>
         private void Up_Execute()
         {
+            if (xpsPage != null)
+                xpsPage.UnLoadDocument(true);
+
             page.NavigateToMainPage();
         }
 

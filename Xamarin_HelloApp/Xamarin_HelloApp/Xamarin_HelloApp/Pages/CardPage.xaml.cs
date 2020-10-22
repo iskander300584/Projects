@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Xamarin_HelloApp.Pages;
 
 namespace PilotMobile.Pages
 {
@@ -27,11 +28,11 @@ namespace PilotMobile.Pages
         /// Страница карточки объекта
         /// </summary>
         /// <param name="pilotItem">элемент Pilot</param>
-        public CardPage(IPilotObject pilotItem)
+        public CardPage(IPilotObject pilotItem, XpsPage xpsPage)
         {
             InitializeComponent();
 
-            context = new CardPage_Context(pilotItem, this);
+            context = new CardPage_Context(pilotItem, this, xpsPage);
 
             this.BindingContext = context;
         }

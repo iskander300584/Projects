@@ -1,4 +1,5 @@
-﻿using PilotMobile.ViewContexts;
+﻿using FFImageLoading;
+using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
 using System.IO;
 using Xamarin.Forms;
@@ -51,7 +52,7 @@ namespace Xamarin_HelloApp.Pages
                     {
                         using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(context.PdfFileName)))
                         {
-                            pdfViewer.LoadDocument(ms);
+                            pdfViewer.LoadDocumentAsync(ms, null);
                         }
                     }
                     catch 
@@ -72,9 +73,17 @@ namespace Xamarin_HelloApp.Pages
         /// <summary>
         /// Выгрузить документ
         /// </summary>
-        public void UnLoadDocument()
+        /// <param name="unloadViever">выгрузить просмотрщик документов</param>
+        public void UnLoadDocument(bool unloadViever = false)
         {
-            pdfViewer.Unload();
+            try
+            {
+                pdfViewer.Unload();
+
+                if (unloadViever)
+                    pdfViewer.TryDispose();
+            }
+            catch { }
         }
 
 

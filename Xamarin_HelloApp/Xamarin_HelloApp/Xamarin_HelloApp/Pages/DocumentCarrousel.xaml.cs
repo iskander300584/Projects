@@ -2,7 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin_HelloApp.Pages;
-using Xamarin_HelloApp.ViewModels;
+
 
 namespace PilotMobile.Pages
 {
@@ -21,21 +21,10 @@ namespace PilotMobile.Pages
             InitializeComponent();
 
             // Добавление окон предварительного просмотра, карточки и списка файлов
-            //if (pilotItem is PilotTreeItem)
-            //{
-            //    Children.Add(new XpsPage(pilotItem));
-            //    Children.Add(new CardPage(pilotItem));
-            //}
-            //else
-            //{
-            //    Children.Add(new CardPage(pilotItem));
-            //    Children.Add(new XpsPage(pilotItem));
-            //}
-
-            Children.Add(new XpsPage(pilotItem));
-            Children.Add(new CardPage(pilotItem));
-
-            Children.Add(new DocsPage(pilotItem));
+            XpsPage xpsPage = new XpsPage(pilotItem);
+            Children.Add(xpsPage);
+            Children.Add(new CardPage(pilotItem, xpsPage));
+            Children.Add(new DocsPage(pilotItem, xpsPage));
         }
     }
 }
