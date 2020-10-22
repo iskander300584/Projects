@@ -52,7 +52,7 @@ namespace Xamarin_HelloApp.Pages
                     {
                         using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(context.PdfFileName)))
                         {
-                            pdfViewer.LoadDocumentAsync(ms, null);
+                            pdfViewer.LoadDocument(ms);
                         }
                     }
                     catch 
@@ -80,8 +80,8 @@ namespace Xamarin_HelloApp.Pages
             {
                 pdfViewer.Unload();
 
-                if (unloadViever)
-                    pdfViewer.TryDispose();
+                //if (unloadViever)
+                //    pdfViewer.TryDispose();
             }
             catch { }
         }
