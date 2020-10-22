@@ -60,7 +60,7 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        private string login = "ryapolov_an";// string.Empty;
+        private string login = string.Empty; // "ryapolov_an"
         /// <summary>
         /// Имя пользователя
         /// </summary>
@@ -80,7 +80,7 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        private string password = "sSR4mzCQ"; // string.Empty;
+        private string password = string.Empty; // "sSR4mzCQ"
         /// <summary>
         /// Пароль
         /// </summary>
