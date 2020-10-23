@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin_HelloApp.AppContext;
@@ -159,11 +160,12 @@ namespace PilotMobile.ViewContexts
         /// <summary>
         /// Получение данных XPS
         /// </summary>
-        public void GetXPS()
+        /// <param name="update">обновить данные</param>
+        public void GetXPS(bool update = false)
         {
             GetPermissions();
 
-            GetXpsData();
+            GetXpsData(update);
         }
 
 
@@ -171,7 +173,7 @@ namespace PilotMobile.ViewContexts
         /// Получение данных XPS документа в отдельном потоке
         /// </summary>
         /// <param name="update">обновить данные</param>
-        private void GetXpsData(bool update = false)
+        private void GetXpsData(bool update)
         {
             string _xpsName = string.Empty;
 
@@ -215,47 +217,67 @@ namespace PilotMobile.ViewContexts
                     // Загрузка и формирование PDF, если не был загружен ранее
                     if (!File.Exists(_pdfName) || update)
                     {
-                        // Загрузка XPS
-                        byte[] array = Global.DALContext.Repository.GetFileChunk(file.Body.Id, 0, (int)file.Body.Size);
-                        _xpsName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), new Guid().ToString() + ".xps");
-
-                        File.WriteAllBytes(_xpsName, array);
-
-                        if (File.Exists(_xpsName))
+                        try
                         {
-                            try
+                            if (File.Exists(_pdfName))
+                                File.Delete(_pdfName);
+                        }
+                        catch { }
+
+                        Regex regex = new Regex(@"xps$");
+
+                        // Конвертация XPS
+                        if (regex.IsMatch(file.Name.ToLower()))
+                        {
+                            // Загрузка XPS
+                            byte[] array = Global.DALContext.Repository.GetFileChunk(file.Body.Id, 0, (int)file.Body.Size);
+                            _xpsName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), new Guid().ToString() + ".xps");
+
+                            File.WriteAllBytes(_xpsName, array);
+
+                            if (File.Exists(_xpsName))
                             {
                                 try
                                 {
-                                    if (File.Exists(_pdfName))
-                                        File.Delete(_pdfName);
-                                }
-                                catch { }
+                                    //Spire.License.LicenseProvider.SetLicenseKey("5TV2WACA75Q3");
+                                    //Spire.License.LicenseProvider.LoadLicense();
 
-                                //Spire.License.LicenseProvider.SetLicenseKey("5TV2WACA75Q3");
-                                //Spire.License.LicenseProvider.LoadLicense();
+                                    Spire.Pdf.PdfDocument doc = new Spire.Pdf.PdfDocument();
+                                    doc.LoadFromFile(_xpsName, Spire.Pdf.FileFormat.XPS);
+                                    doc.SaveToFile(_pdfName, Spire.Pdf.FileFormat.PDF);
+                                    doc.Dispose();
 
-                                Spire.Pdf.PdfDocument doc = new Spire.Pdf.PdfDocument();
-                                doc.LoadFromFile(_xpsName, Spire.Pdf.FileFormat.XPS);
-                                doc.SaveToFile(_pdfName, Spire.Pdf.FileFormat.PDF);
-                                doc.Dispose();
-
-                                try
-                                {
-                                    File.Delete(_xpsName);
-                                }
-                                catch { }
-                            }
-                            catch(Exception ex)
-                            {
-                                string msg = ex.Message;
-                                if(msg != "") { }
-                                try
-                                {
-                                    if (File.Exists(_pdfName))
-                                        File.Delete(_pdfName);
-                                    if (File.Exists(_xpsName))
+                                    try
+                                    {
                                         File.Delete(_xpsName);
+                                    }
+                                    catch { }
+                                }
+                                catch (Exception ex)
+                                {
+                                    string msg = ex.Message;
+                                    if (msg != "") { }
+                                    try
+                                    {
+                                        if (File.Exists(_pdfName))
+                                            File.Delete(_pdfName);
+                                        if (File.Exists(_xpsName))
+                                            File.Delete(_xpsName);
+                                    }
+                                    catch { }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            regex = new Regex(@"pdf$");
+
+                            if(regex.IsMatch(file.Name.ToLower()))
+                            {
+                                try
+                                {
+                                    byte[] array = Global.DALContext.Repository.GetFileChunk(file.Body.Id, 0, (int)file.Body.Size);
+                                    File.WriteAllBytes(_pdfName, array);
                                 }
                                 catch { }
                             }
@@ -320,10 +342,9 @@ namespace PilotMobile.ViewContexts
         {
             DocLoaded = false;
             PdfFileName = string.Empty;
-            page.UnLoadDocument();
+            //page.UnLoadDocument();
 
-            GetPermissions();
-            GetXpsData(true);
+            GetXPS(true);
         }
 
 

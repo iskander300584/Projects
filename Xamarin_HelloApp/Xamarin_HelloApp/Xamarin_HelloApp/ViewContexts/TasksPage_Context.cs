@@ -130,6 +130,8 @@ namespace PilotMobile.ViewContexts
             tasks.Clear();
             _allTasks.Clear();
 
+            Global.CurrentPerson = Global.DALContext.Repository.GetPerson(Global.CurrentPerson.Id);
+
             Thread thread = new Thread(AsyncGetTasks);
             thread.Start();
         }
@@ -212,6 +214,17 @@ namespace PilotMobile.ViewContexts
 
             List<int> units = Global.CurrentPerson.Positions;
             foreach (int unit in units)
+            {
+                IEnumerable<Guid> _guids = await GetTaskGuidList(searchType, unit);
+
+                if (_guids != null)
+                    foreach (Guid guid in _guids)
+                        if (!_taskGuids.Contains(guid))
+                            _taskGuids.Add(guid);
+            }
+
+            HashSet<int> orgUnits = Global.CurrentPerson.AllOrgUnits;
+            foreach (int unit in orgUnits)
             {
                 IEnumerable<Guid> _guids = await GetTaskGuidList(searchType, unit);
 

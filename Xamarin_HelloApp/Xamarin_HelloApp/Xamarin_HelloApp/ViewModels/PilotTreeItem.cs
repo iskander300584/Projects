@@ -32,30 +32,9 @@ namespace Xamarin_HelloApp.ViewModels
 
             type = TypeFabrique.GetType(element.TypeId);  
 
-            dObject = Global.DALContext.Repository.GetObjects(new[] { element.ObjectId }).FirstOrDefault();          
+            dObject = Global.DALContext.Repository.GetObjects(new[] { element.ObjectId }).FirstOrDefault();
 
-            if(dObject != null)
-            {
-                foreach (AccessRecord accessRecord in dObject.Access)
-                {
-                    if(Global.CurrentPerson != null && Global.CurrentPerson.AllOrgUnits.Contains(accessRecord.OrgUnitId))
-                    {
-                        Access _access = accessRecord.Access;
-                        hasAccess = (_access.AccessLevel != AccessLevel.None);
-
-                        if (hasAccess)
-                            break;
-                    }
-                }
-
-                foreach(var attr in dObject.Attributes)
-                {
-                    if (Type != null && Type.Attributes.Any(a => a.Name == attr.Key && a.IsVisible && !a.IsSystem))
-                        visibleName += attr.Value.StrValue + " ";
-                }
-
-                visibleName.Trim();
-            }           
+            GetObjectData();
         }
 
 
@@ -74,6 +53,47 @@ namespace Xamarin_HelloApp.ViewModels
             type = null;
 
             hasAccess = true;
+        }
+
+
+        /// <summary>
+        /// Обновление данных объекта
+        /// </summary>
+        public override void UpdateObjectData()
+        {
+            base.UpdateObjectData();
+
+            GetObjectData();
+        }
+
+
+        /// <summary>
+        /// Получение данных объекта
+        /// </summary>
+        private void GetObjectData()
+        {
+            if (dObject != null)
+            {
+                foreach (AccessRecord accessRecord in dObject.Access)
+                {
+                    if (Global.CurrentPerson != null && Global.CurrentPerson.AllOrgUnits.Contains(accessRecord.OrgUnitId))
+                    {
+                        Access _access = accessRecord.Access;
+                        hasAccess = (_access.AccessLevel != AccessLevel.None);
+
+                        if (hasAccess)
+                            break;
+                    }
+                }
+
+                foreach (var attr in dObject.Attributes)
+                {
+                    if (Type != null && Type.Attributes.Any(a => a.Name == attr.Key && a.IsVisible && !a.IsSystem))
+                        visibleName += attr.Value.StrValue + " ";
+                }
+
+                visibleName.Trim();
+            }
         }
     }
 }

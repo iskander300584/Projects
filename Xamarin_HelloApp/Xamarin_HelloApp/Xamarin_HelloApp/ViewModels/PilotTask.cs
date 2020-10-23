@@ -236,5 +236,16 @@ namespace PilotMobile.ViewModels
 
             return dObject.Attributes[attribute];
         }
+
+
+        /// <summary>
+        /// Обновление данных объекта
+        /// </summary>
+        public override void UpdateObjectData()
+        {
+            base.UpdateObjectData();
+
+            GetData();
+        }
     }
 }

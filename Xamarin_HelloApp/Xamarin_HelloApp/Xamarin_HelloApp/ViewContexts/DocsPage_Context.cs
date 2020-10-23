@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Input;
 using Xamarin.Essentials;
@@ -141,8 +142,13 @@ namespace PilotMobile.ViewContexts
 
                     if (child != null)
                     {
+                        Regex regex = new Regex(@"pilotthumbnail$"); // костыль - исключение системных файлов
+
                         foreach (DFile file in child.ActualFileSnapshot.Files)
-                            Items.Add(new PilotFile(file));
+                        {
+                            if (!regex.IsMatch(file.Name.ToLower()))
+                                Items.Add(new PilotFile(file));
+                        }
                     }
                 }
             }

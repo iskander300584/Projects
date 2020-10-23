@@ -1,10 +1,10 @@
 ﻿using Ascon.Pilot.DataClasses;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
+using Xamarin_HelloApp.AppContext;
 using Xamarin_HelloApp.Models;
 
 namespace PilotMobile.ViewModels
@@ -94,6 +94,16 @@ namespace PilotMobile.ViewModels
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+
+        /// <summary>
+        /// Обновление данных
+        /// </summary>
+        public virtual void UpdateObjectData()
+        {
+            if (guid != null)
+                dObject = Global.DALContext.Repository.GetObjects(new[] { guid }).FirstOrDefault();
         }
     }
 }

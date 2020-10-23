@@ -182,15 +182,15 @@ namespace Xamarin_HelloApp.ViewContexts
         /// <param name="pilotItem">объект Pilot</param>
         private void GetChildren(object pilotItem)
         {
-                PilotTreeItem _item = (PilotTreeItem)pilotItem;
+            PilotTreeItem _item = (PilotTreeItem)pilotItem;
 
-                foreach (DChild dchild in _item.DObject.Children)
-                {
-                    PilotTreeItem item = new PilotTreeItem(dchild, _item);
-                    // item.HasAccess
-                    if (item.VisibleName.Trim() != "" && !item.Type.IsSystem)
-                        Items.Add(item);
-                }
+            foreach (DChild dchild in _item.DObject.Children)
+            {
+                PilotTreeItem item = new PilotTreeItem(dchild, _item);
+                // item.HasAccess
+                if (item.VisibleName.Trim() != "" && !item.Type.IsSystem)
+                    Items.Add(item);
+            }
         }
 
 
@@ -258,6 +258,8 @@ namespace Xamarin_HelloApp.ViewContexts
             if (IsConnected)
             {
                 Parent.Children.Clear();
+
+                Parent.UpdateObjectData();
 
                 AsyncGetChildren(Parent);
             }

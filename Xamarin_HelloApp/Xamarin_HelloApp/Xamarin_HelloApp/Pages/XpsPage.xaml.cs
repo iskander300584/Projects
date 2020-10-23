@@ -1,5 +1,4 @@
-﻿using FFImageLoading;
-using PilotMobile.ViewContexts;
+﻿using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
 using System.IO;
 using Xamarin.Forms;
