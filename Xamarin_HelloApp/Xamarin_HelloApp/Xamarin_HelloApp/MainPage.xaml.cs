@@ -4,6 +4,8 @@ using Xamarin_HelloApp.ViewModels;
 using Xamarin_HelloApp.AppContext;
 using Xamarin_HelloApp.ViewContexts;
 using PilotMobile.Pages;
+using System.Threading.Tasks;
+using PilotMobile.AppContext;
 
 namespace Xamarin_HelloApp
 {
@@ -15,7 +17,7 @@ namespace Xamarin_HelloApp
         /// <summary>
         /// Контекст данных окна
         /// </summary>
-        private MainPage_Context context = new MainPage_Context();
+        private MainPage_Context context;
 
 
         /// <summary>
@@ -29,6 +31,8 @@ namespace Xamarin_HelloApp
             {
                 Global.CurrentPerson = Global.DALContext.Repository.CurrentPerson();
             }
+
+            context = new MainPage_Context(this);
 
             this.BindingContext = context;
         }
@@ -60,6 +64,37 @@ namespace Xamarin_HelloApp
         private void Card_Click(object sender, EventArgs e)
         {
             Navigation.PushModalAsync(new CardPage(context.Parent, null));
+        }
+
+
+        /// <summary>
+        /// Получение выбранного пользователем пункта в главном меню
+        /// </summary>
+        public async Task<string> GetAction()
+        {
+            return await DisplayActionSheet(StringConstants.ActionChoose, StringConstants.Cancel, null, StringConstants.Authentificate, StringConstants.ClearCache, StringConstants.Exit);
+        }
+
+
+        /// <summary>
+        /// Вывести сообщение
+        /// </summary>
+        /// <param name="caption">заголовок</param>
+        /// <param name="message">текст сообщения</param>
+        /// <param name="isQuestion">сообщение является вопросом</param>
+        /// <returns>возвращает TRUE, если ответ "Да" или сообщение не является вопросом</returns>
+        public async Task<bool> DisplayMessage(string caption, string message, bool isQuestion)
+        {
+            if (!isQuestion)
+            {
+                await DisplayAlert(caption, message, StringConstants.Ok);
+
+                return true;
+            }
+            else
+            {
+                return await DisplayAlert(caption, message, StringConstants.Yes, StringConstants.No);
+            }
         }
     }
 }

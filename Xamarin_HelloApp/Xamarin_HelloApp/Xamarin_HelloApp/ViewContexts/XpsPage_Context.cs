@@ -1,4 +1,5 @@
 ﻿using Ascon.Pilot.DataClasses;
+using PilotMobile.AppContext;
 using PilotMobile.Models;
 using PilotMobile.ViewModels;
 using System;
@@ -211,7 +212,7 @@ namespace PilotMobile.ViewContexts
 
                     LoadedFile loadedFile = new LoadedFile(file.Body.Id, md5, extension);
 
-                    string dir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                    string dir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "/";
                     string _pdfName = Path.Combine(dir + loadedFile.FileName);
 
                     // Загрузка и формирование PDF, если не был загружен ранее
@@ -231,7 +232,7 @@ namespace PilotMobile.ViewContexts
                         {
                             // Загрузка XPS
                             byte[] array = Global.DALContext.Repository.GetFileChunk(file.Body.Id, 0, (int)file.Body.Size);
-                            _xpsName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), new Guid().ToString() + ".xps");
+                            _xpsName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), new Guid().ToString() + StringConstants.XPS);
 
                             File.WriteAllBytes(_xpsName, array);
 

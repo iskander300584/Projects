@@ -1,7 +1,10 @@
 ﻿using Ascon.Pilot.DataClasses;
+using PilotMobile.AppContext;
 using PilotMobile.ViewModels;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -17,6 +20,12 @@ namespace Xamarin_HelloApp.ViewContexts
     /// </summary>
     class MainPage_Context : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Соответствующая страница
+        /// </summary>
+        private MainPage page;
+
+
         private ObservableCollection<IPilotObject> items = new ObservableCollection<IPilotObject>();
         /// <summary>
         /// Список отображаемых элементов
@@ -121,6 +130,16 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
+        private ICommand mainMenuCommand;
+        /// <summary>
+        /// Команда Главное меню
+        /// </summary>
+        public ICommand MainMenuCommand
+        {
+            get => mainMenuCommand;
+        }
+
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
@@ -132,14 +151,17 @@ namespace Xamarin_HelloApp.ViewContexts
         /// <summary>
         /// Контекст данных главного окна
         /// </summary>
-        public MainPage_Context()
+        public MainPage_Context(MainPage page)
         {
+            this.page = page;
+
             if (IsConnected)
                 GetRootObjects();
 
             upCommand = new Command(Up_Execute);
             homeCommand = new Command(Home_Execute);
             updateCommand = new Command(Update_Execute);
+            mainMenuCommand = new Command(MainMenu_Execute);
 
             Up_CanExecute();
         }
@@ -265,6 +287,70 @@ namespace Xamarin_HelloApp.ViewContexts
             }
 
             Up_CanExecute();
+        }
+
+
+        /// <summary>
+        /// Нажатие кнопки Главное меню
+        /// </summary>
+        private async void MainMenu_Execute()
+        {
+            string action = await page.GetAction();
+
+            switch(action)
+            {
+                case StringConstants.Authentificate:
+
+                    break;
+
+                case StringConstants.ClearCache:
+                    ClearCache();
+                    break;
+
+                case StringConstants.Exit:
+                    System.Diagnostics.Process.GetCurrentProcess().CloseMainWindow();
+                    break;
+            }
+        }
+
+
+        /// <summary>
+        /// Очистка кэша приложения
+        /// </summary>
+        private async void ClearCache()
+        {
+            string dir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "/";          
+
+            string[] files = Directory.GetFiles(dir);
+
+            double size = 0;
+
+            foreach(string fileName in files)
+            {
+                FileInfo fileInfo = new FileInfo(fileName);
+                
+                if(fileInfo.Extension.ToLower() == StringConstants.PDF || fileInfo.Extension.ToLower() == StringConstants.XPS)
+                {
+                    try
+                    {
+                        long _tempSize = fileInfo.Length;
+                        File.Delete(fileName);
+                        size += _tempSize;
+                    }
+                    catch(Exception ex)
+                    {
+                        await page.DisplayMessage("Ошибка удаления файла", ex.Message, false);
+                    }
+                }
+            }
+
+            string _size = String.Format("{0:#.#}", size / 1048576);
+            if (_size.Trim() == "")
+                _size = "0";
+            else if (_size[0] == '.' || _size[0] == ',')
+                _size = "0" + _size;
+
+            await page.DisplayMessage(StringConstants.CacheCleared, StringConstants.Free + _size + StringConstants.TotalSize, false);
         }
     }
 }
