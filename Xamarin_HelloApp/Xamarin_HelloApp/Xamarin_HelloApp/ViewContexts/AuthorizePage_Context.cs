@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PilotMobile.AppContext;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -14,6 +15,15 @@ namespace Xamarin_HelloApp.ViewContexts
     /// </summary>
     class AuthorizePage_Context : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Наименование приложения
+        /// </summary>
+        public string AppName
+        {
+            get => StringConstants.ApplicationName;
+        }
+
+
         /// <summary>
         /// Страница авторизации
         /// </summary>

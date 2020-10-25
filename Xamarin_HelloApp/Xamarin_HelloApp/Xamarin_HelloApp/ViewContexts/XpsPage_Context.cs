@@ -22,6 +22,15 @@ namespace PilotMobile.ViewContexts
     /// </summary>
     class XpsPage_Context : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Наименование приложения
+        /// </summary>
+        public string AppName
+        {
+            get => StringConstants.ApplicationName;
+        }
+
+
         private string pdfFileName = string.Empty;
         /// <summary>
         /// Путь к файлу PDF

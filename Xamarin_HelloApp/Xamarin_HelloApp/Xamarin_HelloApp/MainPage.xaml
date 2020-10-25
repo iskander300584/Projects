@@ -19,7 +19,7 @@
                         <ImageButton Source="pilot.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
                                      Command="{Binding MainMenuCommand}"/>
                         <!--<Image Source="pilot.png" HeightRequest="20" />-->
-                        <Label Text="Pilot Mobile" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
+                        <Label Text="{Binding AppName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
                         <!--<Image HorizontalOptions="EndAndExpand" HeightRequest="10" Aspect="AspectFit" Source="{Binding IsConnected, Converter={StaticResource IsConnected_ImageSource}}" Margin="0,0,5,0" />-->
                     </StackLayout>
 

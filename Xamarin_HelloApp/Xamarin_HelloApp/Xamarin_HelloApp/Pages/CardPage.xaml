@@ -55,7 +55,7 @@
                 <StackLayout>
                     <StackLayout Orientation="Horizontal" >
                         <Image Source="pilot.png" HeightRequest="20" />
-                        <Label Text="Pilot Mobile" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
+                        <Label Text="{Binding AppName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
                     </StackLayout>
 
                     <StackLayout Orientation="Horizontal">

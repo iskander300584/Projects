@@ -21,6 +21,14 @@ namespace Xamarin_HelloApp.ViewContexts
     class MainPage_Context : INotifyPropertyChanged
     {
         /// <summary>
+        /// Наименование приложения
+        /// </summary>
+        public string AppName
+        {
+            get => StringConstants.ApplicationName;
+        }
+
+        /// <summary>
         /// Соответствующая страница
         /// </summary>
         private MainPage page;

@@ -6,6 +6,11 @@
     public static class StringConstants
     {
         /// <summary>
+        /// Наименование приложения Pilot-FLY
+        /// </summary>
+        public const string ApplicationName = "Pilot-FLY";
+
+        /// <summary>
         /// Учетная запись
         /// </summary>
         public const string Authentificate = "Учетная запись";

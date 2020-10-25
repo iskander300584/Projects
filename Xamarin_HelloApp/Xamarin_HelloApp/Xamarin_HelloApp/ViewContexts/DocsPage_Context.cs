@@ -1,4 +1,5 @@
 ﻿using Ascon.Pilot.DataClasses;
+using PilotMobile.AppContext;
 using PilotMobile.ViewModels;
 using System;
 using System.Collections.ObjectModel;
@@ -22,6 +23,15 @@ namespace PilotMobile.ViewContexts
     /// </summary>
     class DocsPage_Context : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Наименование приложения
+        /// </summary>
+        public string AppName
+        {
+            get => StringConstants.ApplicationName;
+        }
+
+
         private ObservableCollection<PilotFile> items = new ObservableCollection<PilotFile>();
         /// <summary>
         /// Список элементов

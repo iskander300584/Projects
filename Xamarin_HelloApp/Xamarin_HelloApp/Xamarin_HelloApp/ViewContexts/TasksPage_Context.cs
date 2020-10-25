@@ -21,6 +21,15 @@ namespace PilotMobile.ViewContexts
     /// </summary>
     class TasksPage_Context : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Наименование приложения
+        /// </summary>
+        public string AppName
+        {
+            get => StringConstants.ApplicationName;
+        }
+
+
         private List<string> taskFilter = new List<string>();
         /// <summary>
         /// Фильтр заданий

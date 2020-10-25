@@ -21,6 +21,15 @@ namespace PilotMobile.ViewContexts
     /// </summary>
     class CardPage_Context : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Наименование приложения
+        /// </summary>
+        public string AppName
+        {
+            get => StringConstants.ApplicationName;
+        }
+
+
         private IPilotObject pilotObject;
         /// <summary>
         /// Элемент Pilot
