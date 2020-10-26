@@ -20,11 +20,12 @@ namespace Xamarin_HelloApp.Pages
         /// <summary>
         /// Окно авторизации
         /// </summary>
-        public AuthorizePage()
+        /// <param name="reconnect">признак смены учетной записи</param>
+        public AuthorizePage(bool reconnect = false)
         {
             InitializeComponent();
 
-            context = new AuthorizePage_Context(this);
+            context = new AuthorizePage_Context(this, reconnect);
 
             this.BindingContext = context;
         }

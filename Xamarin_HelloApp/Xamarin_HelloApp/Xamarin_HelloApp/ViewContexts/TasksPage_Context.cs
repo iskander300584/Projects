@@ -21,6 +21,8 @@ namespace PilotMobile.ViewContexts
     /// </summary>
     class TasksPage_Context : INotifyPropertyChanged
     {
+        #region Поля класса
+
         /// <summary>
         /// Наименование приложения
         /// </summary>
@@ -94,12 +96,43 @@ namespace PilotMobile.ViewContexts
         }
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
-        }
+        /// <summary>
+        /// Актуальные задания получены
+        /// </summary>
+        private bool _actualTaken;
+
+
+        /// <summary>
+        /// Выданные задания получены
+        /// </summary>
+        private bool _initiatorTaken;
+
+
+        /// <summary>
+        /// Полученные задания получены
+        /// </summary>
+        private bool _executorTaken;
+
+
+        /// <summary>
+        /// Ответственные задания получены
+        /// </summary>
+        private bool _responsibleTaken;
+
+
+        /// <summary>
+        /// Аудиторские задания получены
+        /// </summary>
+        private bool _auditorTaken;
+
+
+        /// <summary>
+        /// Все задания получены
+        /// </summary>
+        private bool _allTaken = false;
+
+
+        #endregion
 
 
         /// <summary>
@@ -113,6 +146,9 @@ namespace PilotMobile.ViewContexts
 
             GetTaskList();
         }
+
+
+        #region Методы класса
 
 
         /// <summary>
@@ -141,8 +177,24 @@ namespace PilotMobile.ViewContexts
 
             Global.CurrentPerson = Global.DALContext.Repository.GetPerson(Global.CurrentPerson.Id);
 
+            ClearMarkers();
+
             Thread thread = new Thread(AsyncGetTasks);
             thread.Start();
+        }
+
+
+        /// <summary>
+        /// Обнуление маркеров полученных заданий
+        /// </summary>
+        private void ClearMarkers()
+        {
+            _actualTaken = false;
+            _initiatorTaken = false;
+            _executorTaken = false;
+            _responsibleTaken = false;
+            _auditorTaken = false;
+            _allTaken = false;
         }
 
 
@@ -175,7 +227,7 @@ namespace PilotMobile.ViewContexts
 
                 // Просроченные
                 case 3:
-                    foreach (PilotTask task in _allTasks.Where(t => t.Deadline != null && t.Deadline > DateTime.Today))
+                    foreach (PilotTask task in _allTasks.Where(t => t.Deadline != null && t.Deadline > DateTime.Today && t.State.Name != "done"))
                         Tasks.Add(task);
                     break;
 
@@ -213,38 +265,47 @@ namespace PilotMobile.ViewContexts
         {
             List<Guid> _taskGuids = new List<Guid>();
 
-            // формирование условия поиска по типам заданий
-            string searchType = @"+DObject\.TypeId:(";
-            foreach (PType pType in TypeFabrique.GetAllTypes().Where(t => t.IsTask))
-                searchType += @"&#32;" + pType.ID + " OR ";
-
-            searchType = searchType.Remove(searchType.Length - 4).Trim();
-            searchType +=  ")";
-
-            List<int> units = Global.CurrentPerson.Positions;
-            foreach (int unit in units)
+            // Проверка необходимости выполнения поиска в БД
+            if (CheckNeedSearch())
             {
-                IEnumerable<Guid> _guids = await GetTaskGuidList(searchType, unit);
+                // формирование условия поиска по типам заданий
+                string searchType = @"+DObject\.TypeId:(";
+                foreach (PType pType in TypeFabrique.GetAllTypes().Where(t => t.IsTask))
+                    searchType += @"&#32;" + pType.ID + " OR ";
 
-                if (_guids != null)
-                    foreach (Guid guid in _guids)
-                        if (!_taskGuids.Contains(guid))
-                            _taskGuids.Add(guid);
+                searchType = searchType.Remove(searchType.Length - 4).Trim();
+                searchType += ")";
+
+                // Поиск по должностям
+                List<int> units = Global.CurrentPerson.Positions;
+                foreach (int unit in units)
+                {
+                    IEnumerable<Guid> _guids = await GetTaskGuidList(searchType, unit);
+
+                    if (_guids != null)
+                        foreach (Guid guid in _guids)
+                            if (!_taskGuids.Contains(guid))
+                                _taskGuids.Add(guid);
+                }
+
+                // Поиск по организационным единицам
+                HashSet<int> orgUnits = Global.CurrentPerson.AllOrgUnits;
+                foreach (int unit in orgUnits)
+                {
+                    IEnumerable<Guid> _guids = await GetTaskGuidList(searchType, unit);
+
+                    if (_guids != null)
+                        foreach (Guid guid in _guids)
+                            if (!_taskGuids.Contains(guid))
+                                _taskGuids.Add(guid);
+                }
+
+                foreach (Guid guid in _taskGuids)
+                    if (!_allTasks.Any(t => t.Guid == guid))
+                        _allTasks.Add(new PilotTask(guid));
+
+                SetMarkers();
             }
-
-            HashSet<int> orgUnits = Global.CurrentPerson.AllOrgUnits;
-            foreach (int unit in orgUnits)
-            {
-                IEnumerable<Guid> _guids = await GetTaskGuidList(searchType, unit);
-
-                if (_guids != null)
-                    foreach (Guid guid in _guids)
-                        if (!_taskGuids.Contains(guid))
-                            _taskGuids.Add(guid);
-            }
-
-            foreach (Guid guid in _taskGuids)
-                _allTasks.Add(new PilotTask(guid));
 
             SelectVisibleTasks();
         }
@@ -259,7 +320,9 @@ namespace PilotMobile.ViewContexts
         private async Task<IEnumerable<Guid>> GetTaskGuidList(string searchType, int unit)
         {
             // Формирование условия поиска по атрибутам
-            string searchAttribute = $@"+(i32\.actualFor:(&#32;{unit}) OR i32\.executor:(&#32;{unit}) OR i32\.auditors:(&#32;{unit}) OR i32\.responsible:(&#32;{unit}))";
+            //string searchAttribute = $@"+(i32\.actualFor:(&#32;{unit}) OR i32\.initiator:(&#32;{unit}) OR i32\.executor:(&#32;{unit}) OR i32\.auditors:(&#32;{unit}) OR i32\.responsible:(&#32;{unit}))";
+
+            string searchAttribute = GetSearchQuery(unit);
 
             // Формирование общего условия поиска
             string search = searchType + " " + searchAttribute;
@@ -285,5 +348,121 @@ namespace PilotMobile.ViewContexts
 
             return result.Found;
         }
+
+
+        /// <summary>
+        /// Проверка необходимости выполнить поиск заданий в БД
+        /// </summary>
+        /// <returns>возвращает TRUE, если необходимо выполнить поиск заданий</returns>
+        private bool CheckNeedSearch()
+        {
+            return (!_allTaken && (
+                (SelectedFilterIndex == 0 && !_actualTaken) ||
+                (SelectedFilterIndex == 1 && !_initiatorTaken) ||
+                (SelectedFilterIndex == 2 && !_executorTaken) ||
+                (SelectedFilterIndex == 4 && !_responsibleTaken) ||
+                (SelectedFilterIndex == 5 && !_auditorTaken) ||
+                SelectedFilterIndex == 3 ||
+                SelectedFilterIndex == 6 ||
+                SelectedFilterIndex == 7
+                ));
+        }
+
+
+        /// <summary>
+        /// Возвращает строку запроса по атрибутам
+        /// </summary>
+        /// <param name="unit">ID организационной единицы</param>
+        private string GetSearchQuery(int unit)
+        {
+            string query = string.Empty;
+
+            switch(SelectedFilterIndex)
+            {
+                // Актуальные
+                case 0:
+                    query = $@"+(i32\.actualFor:(&#32;{unit}))";
+                    break;
+
+                // Выданные
+                case 1:
+                    query = $@"+(i32\.initiator:(&#32;{unit}))";
+                    break;
+
+                // Полученные
+                case 2:
+                    query = $@"+(i32\.executor:(&#32;{unit}))";
+                    break;
+
+                // Ответственный
+                case 4:
+                    query = $@"+(i32\.responsible:(&#32;{unit}))";
+                    break;
+
+                // Аудитор
+                case 5:
+                    query = $@"+(i32\.auditors:(&#32;{unit}))";
+                    break;
+
+                // Остальные
+                default:
+                    query = $@"+(i32\.actualFor:(&#32;{unit}) OR i32\.initiator:(&#32;{unit}) OR i32\.executor:(&#32;{unit}) OR i32\.auditors:(&#32;{unit}) OR i32\.responsible:(&#32;{unit}))";
+                    break;
+            }
+
+            return query;
+        }
+
+
+        /// <summary>
+        /// Установить маркеры полученных заданий
+        /// </summary>
+        private void SetMarkers()
+        {
+            switch (SelectedFilterIndex)
+            {
+
+                // Актуальные
+                case 0:
+                    _actualTaken = true;
+                    break;
+
+                // Выданные
+                case 1:
+                    _initiatorTaken = true;
+                    break;
+
+                // Полученные
+                case 2:
+                    _executorTaken = true;
+                    break;
+
+                // Ответственный
+                case 4:
+                    _responsibleTaken = true;
+                    break;
+
+                // Аудитор
+                case 5:
+                    _auditorTaken = true;
+                    break;
+
+                // Остальные
+                default:
+                    _allTaken = true;
+                    break;
+            }
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+
+        #endregion
     }
 }

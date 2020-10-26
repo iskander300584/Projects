@@ -96,5 +96,22 @@ namespace Xamarin_HelloApp
                 return await DisplayAlert(caption, message, StringConstants.Yes, StringConstants.No);
             }
         }
+
+
+
+        /// <summary>
+        /// Нажатие кнопки Назад
+        /// </summary>
+        protected override bool OnBackButtonPressed()
+        {
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                bool result = await DisplayMessage("Внимание!", "Закрыть программу?", true);
+                if (result)
+                    System.Diagnostics.Process.GetCurrentProcess().CloseMainWindow();
+            });
+
+            return true;
+        }
     }
 }

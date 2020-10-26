@@ -66,6 +66,7 @@ namespace Xamarin_HelloApp.AppContext
 
             // Получение типов БД Pilot
             IEnumerable<MType> types = DALContext.Repository.GetTypes();
+            TypeFabrique.ClearTypes();
             foreach (MType mType in types)
                 TypeFabrique.GetType(mType.Id);
         }

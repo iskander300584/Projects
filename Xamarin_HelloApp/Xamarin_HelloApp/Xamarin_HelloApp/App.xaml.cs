@@ -1,8 +1,5 @@
-﻿using Ascon.Pilot.DataClasses;
-using FFImageLoading.Helpers.Exif;
-using PilotMobile.Pages;
+﻿using PilotMobile.Pages;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using Xamarin.Forms;
 using Xamarin_HelloApp.AppContext;
@@ -44,7 +41,7 @@ namespace Xamarin_HelloApp
         protected override void OnStart()
         {
             // Очистка КЕШа файлов XPS
-            string[] files = System.IO.Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
+            string[] files = Directory.GetFiles(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData));
             foreach(string fileName in files)
                 if(fileName.Contains(".xps"))
                 {
@@ -73,6 +70,8 @@ namespace Xamarin_HelloApp
         {
             object temp = "";
             string server = "", db = "", login = "", password = "";
+            int license = 0;
+
             if (Current.Properties.TryGetValue("server", out temp))
             {
                 server = (string)temp;
@@ -101,7 +100,15 @@ namespace Xamarin_HelloApp
             else
                 return null;
 
-            return Credentials.GetProtectedCredentials(server, db, login, password);
+            if (Current.Properties.TryGetValue("license", out temp))
+            {
+                if (!int.TryParse((string)temp, out license))
+                    return null;
+            }
+            else
+                return null;
+
+            return Credentials.GetProtectedCredentials(server, db, login, password, license);
         }
     }
 }

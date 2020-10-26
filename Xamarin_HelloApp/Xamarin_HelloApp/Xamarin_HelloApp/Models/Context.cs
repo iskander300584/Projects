@@ -79,7 +79,10 @@ namespace Xamarin_HelloApp.Models
                 _client.Connect(false);
                 var serverApi = _client.GetServerApi(_serverCallback);
                 var authApi = _client.GetAuthenticationApi();
-                authApi.Login(credentials.DatabaseName, credentials.Username, credentials.ProtectedPassword, false, 103);
+
+                int license = (credentials.License != null && credentials.License != 0) ? credentials.License : 103;
+
+                authApi.Login(credentials.DatabaseName, credentials.Username, credentials.ProtectedPassword, false, credentials.License);
                 var dbInfo = serverApi.OpenDatabase();
                 _repository = new Repository(serverApi, _serverCallback);
                 _repository.Initialize(credentials.Username);

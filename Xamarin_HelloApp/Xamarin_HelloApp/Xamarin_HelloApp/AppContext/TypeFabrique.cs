@@ -63,30 +63,13 @@ namespace Xamarin_HelloApp.AppContext
             return _list;
         }
 
+        
         /// <summary>
-        /// Получить пиктограмму типа по ID типа
+        /// Очистить список типов
         /// </summary>
-        /// <param name="id">ID типа</param>
-        /// <returns></returns>
-        //public static SvgImageSource GetImageSource(int id)
-        //{
-            //if (_typeImages.Keys.Contains(id))
-            //    return _typeImages[id];
-            //else
-            //{
-            //    MType type = Global.DALContext.Repository.GetType(id);
-
-            //    if (type.Icon != null)
-            //    {
-            //        SvgImageSource imageSource = SvgImageSource.FromStream(() => new MemoryStream(type.Icon));
-
-            //        _typeImages.Add(id, imageSource);
-
-            //        return imageSource;
-            //    }
-
-            //    return null;
-            //}
-        //}
+        public static void ClearTypes()
+        {
+            _types.Clear();
+        }
     }
 }

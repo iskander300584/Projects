@@ -11,6 +11,7 @@ using System.Threading;
 using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin_HelloApp.AppContext;
+using Xamarin_HelloApp.Pages;
 using Xamarin_HelloApp.ViewModels;
 
 namespace Xamarin_HelloApp.ViewContexts
@@ -308,7 +309,7 @@ namespace Xamarin_HelloApp.ViewContexts
             switch(action)
             {
                 case StringConstants.Authentificate:
-
+                    App.Current.MainPage = new AuthorizePage(true);
                     break;
 
                 case StringConstants.ClearCache:

@@ -20,6 +20,7 @@
                         <ImageButton Source="refresh.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
                                      VerticalOptions="Center" Command="{Binding UpdateCommand}"/>
 
+                        <!-- Фильтр заданий -->
                         <Picker HorizontalOptions="EndAndExpand" ItemsSource="{Binding TaskFilter}" SelectedIndex="{Binding SelectedFilterIndex, Mode=TwoWay}" Margin="10,0,10,0" 
                                 TextColor="White" WidthRequest="200" HorizontalTextAlignment="End" />
                     </StackLayout>
