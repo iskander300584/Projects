@@ -42,10 +42,14 @@ namespace PilotMobile.ViewContexts
         }
 
 
+        private IPilotObject pilotItem;
         /// <summary>
         /// Объект Pilot
         /// </summary>
-        private IPilotObject pilotItem;
+        public IPilotObject PilotItem
+        {
+            get => pilotItem;
+        }
 
 
         /// <summary>

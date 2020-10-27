@@ -37,6 +37,8 @@
                         </ImageButton>
 
                     </StackLayout>
+
+                    <Label Text="{Binding PilotItem.VisibleName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Small" Margin="0,0,0,0" LineBreakMode="WordWrap" MaxLines="2" />
                 </StackLayout>
             </Frame>
             

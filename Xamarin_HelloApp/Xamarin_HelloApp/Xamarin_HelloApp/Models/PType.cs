@@ -33,7 +33,7 @@ namespace Xamarin_HelloApp.Models
 
         private string name = string.Empty;
         /// <summary>
-        /// Системное имя атрибута
+        /// Системное имя типа
         /// </summary>
         public string Name
         {
@@ -43,7 +43,7 @@ namespace Xamarin_HelloApp.Models
 
         private string visibleName = string.Empty;
         /// <summary>
-        /// Отображаемое имя атрибута
+        /// Отображаемое имя типа
         /// </summary>
         public string VisibleName
         {

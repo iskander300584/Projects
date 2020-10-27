@@ -238,4 +238,16 @@
   <ItemGroup>
     <BundleResource Include="Resources\card_gray.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\abort.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\plus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\plus_gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\search.png" />
+  </ItemGroup>
 </Project>

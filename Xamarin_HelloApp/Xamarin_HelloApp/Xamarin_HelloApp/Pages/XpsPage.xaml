@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin_HelloApp.Pages.XpsPage"
              xmlns:sf="clr-namespace:Syncfusion.SfPdfViewer.XForms;assembly=Syncfusion.SfPdfViewer.XForms"
-             
              Appearing="OnAppearing">
+    
     <ContentPage.Content>
         <StackLayout>
             <!-- Шапка -->
@@ -26,6 +26,8 @@
                         <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand"  
                                      Command="{Binding UpCommand}" Source="up.png" />
                     </StackLayout>
+
+                    <Label Text="{Binding PilotItem.VisibleName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Small" Margin="0,0,0,0" LineBreakMode="WordWrap" MaxLines="2" />
                 </StackLayout>
             </Frame>
 

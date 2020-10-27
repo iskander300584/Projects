@@ -17,8 +17,7 @@
             <Entry Text="{Binding Text}"
                    FontSize="{Binding FontSize}"
                    Margin="{Binding Margin}"
-                   IsReadOnly="{Binding IsReadOnly}"
-                               />
+                   IsReadOnly="{Binding IsReadOnly}" />
         </DataTemplate>
 
         <!-- Шаблон данных для выбора даты -->
@@ -26,8 +25,7 @@
             <DatePicker Date="{Binding Date}"
                         FontSize="{Binding FontSize}"
                         Margin="{Binding Margin}"
-                        IsEnabled="{Binding IsEnabled}"
-                               />
+                        IsEnabled="{Binding IsEnabled}" />
         </DataTemplate>
 
         <!-- Шаблон данных для организационной единицы -->
@@ -83,6 +81,8 @@
                         </ImageButton>
 
                     </StackLayout>
+
+                    <Label Text="{Binding PilotObject.VisibleName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Small" Margin="0,0,0,0" LineBreakMode="WordWrap" MaxLines="2" />
                 </StackLayout>
             </Frame>
 

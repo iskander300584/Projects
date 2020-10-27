@@ -18,7 +18,6 @@
                     <StackLayout Orientation="Horizontal" >
                         <ImageButton Source="pilot.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
                                      Command="{Binding MainMenuCommand}"/>
-                        <!--<Image Source="pilot.png" HeightRequest="20" />-->
                         <Label Text="{Binding AppName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
                         <!--<Image HorizontalOptions="EndAndExpand" HeightRequest="10" Aspect="AspectFit" Source="{Binding IsConnected, Converter={StaticResource IsConnected_ImageSource}}" Margin="0,0,5,0" />-->
                     </StackLayout>
@@ -28,10 +27,13 @@
                         <ImageButton Source="refresh.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
                                      Command="{Binding UpdateCommand}"/>
 
+                        <!-- Кнопка Поиск -->
+                        <ImageButton Source="search.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
+                                     Clicked="Search_Click" Margin="10,0,0,0" />
+
                         <!-- Кнопка Карточка -->
                         <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand"  
-                                     IsEnabled="{Binding UpCanExecute}" Clicked="Card_Click"
-                                     >
+                                     IsEnabled="{Binding UpCanExecute}" Clicked="Card_Click" >
                             <ImageButton.Style>
                                 <Style TargetType="ImageButton">
                                     <Style.Triggers>
@@ -81,6 +83,8 @@
                             </ImageButton.Style>
                         </ImageButton>
                     </StackLayout>
+
+                    <Label Text="{Binding Parent.VisibleName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Small" Margin="0,0,0,0" LineBreakMode="WordWrap" MaxLines="2" /> 
                 </StackLayout>
             </Frame>
 

@@ -113,5 +113,21 @@ namespace Xamarin_HelloApp
 
             return true;
         }
+
+
+        /// <summary>
+        /// Нажатие кнопки Поиск TODO
+        /// </summary>
+        private async void Search_Click(object sender, EventArgs e)
+        {
+            SearchQueryPage page = new SearchQueryPage();
+
+            await Navigation.PushModalAsync(page, true);
+
+            if(page.SearchQuery != string.Empty)
+            {
+                // TODO
+            }
+        }
     }
 }
