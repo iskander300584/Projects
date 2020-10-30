@@ -6,6 +6,9 @@
              xmlns:local="clr-namespace:PilotMobile.Models.SearchQuery">
 
     <ContentPage.Resources>
+        <!-- Возвращает красный цвет, если переданная строка пустая -->
+        <conv:EmptyString_RedColor_Converter x:Key="StringColorConverter" />
+        
         <!-- Шаблон данных для надписи -->
         <DataTemplate x:DataType="local:TypeQueryItem" x:Key="typeTemplate">
             <StackLayout>
@@ -25,7 +28,7 @@
                     TextColor="Black"/>
                     <!-- Кнопка Удалить -->
                     <ImageButton Grid.Column="1" Source="abort.png" Aspect="AspectFit" WidthRequest="20" BackgroundColor="White"
-                                     Margin="0,0,10,5"/>
+                                     Margin="0,0,10,5" Command="{Binding Delete}" CommandParameter="{Binding SystemName}" />
                 </Grid>
             </StackLayout>
         </DataTemplate>
@@ -33,9 +36,14 @@
         <!-- Шаблон данных для поля ввода -->
         <DataTemplate x:DataType="local:AttributeQueryItem" x:Key="attributeTemplate">
             <StackLayout>
-                <Label Text="{Binding Name}"
-                   FontSize="Small"
-                   Margin="10,0,10,0"/>
+                <StackLayout Orientation="Horizontal" >
+                    <Label Text="Атрибут" FontSize="Small" Margin="10,0,10,0" VerticalOptions="End" />
+                    <Label Text="{Binding Name}"
+                        FontSize="Medium"
+                        Margin="0,0,10,0" 
+                        TextColor="{Binding Value, Converter={StaticResource StringColorConverter}}" 
+                           />
+                </StackLayout>
                 <Grid HorizontalOptions="FillAndExpand" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -47,7 +55,7 @@
                     Margin="10,0,10,5" />
                     <!-- Кнопка Удалить -->
                     <ImageButton Grid.Column="1" Source="abort.png" Aspect="AspectFit" WidthRequest="20" BackgroundColor="White"
-                                     Margin="0,0,10,5"/>
+                                     Margin="0,0,10,5" Command="{Binding Delete}" CommandParameter="{Binding SystemName}" />
                 </Grid>
                 
             </StackLayout>
@@ -60,6 +68,9 @@
                                          TypeTemplate="{StaticResource typeTemplate}"
                                          AttributeTemplate="{StaticResource attributeTemplate}"
                                          />
+
+        
+
     </ContentPage.Resources>
 
     <ContentPage.Content>
@@ -127,13 +138,14 @@
                         </Style>
                     </ImageButton.Style>
                 </ImageButton>
-                <!--<Button Grid.Column="1" Text="+" FontSize="Medium" HorizontalOptions="End" Command="{Binding AddAttribute}" IsEnabled="{Binding AddAttribute_CanExecute}" 
-                        WidthRequest="20" HeightRequest="20" Margin="0,0,10,0" />-->
             </Grid>
-            
+
+            <!--<Rectangle Margin="10" HorizontalOptions="FillAndExpand" HeightRequest="2" BackgroundColor="Gray" />-->
+
             <!-- Список элементов поиска -->
             <ScrollView >
-                <StackLayout Orientation="Vertical" Margin="0,10,0,0" BindableLayout.ItemsSource="{Binding Items}" BindableLayout.ItemTemplateSelector="{StaticResource dataTemplateSelector}" />
+                <StackLayout Orientation="Vertical" Margin="0,10,0,0" BindableLayout.ItemsSource="{Binding Items}" BindableLayout.ItemTemplateSelector="{StaticResource dataTemplateSelector}" 
+                            Spacing="10" />
             </ScrollView>
 
             <Button Text="Поиск" FontSize="Title" Background="#7A87BF" FontFamily="Tahoma" TextColor="White" 

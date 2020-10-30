@@ -1,4 +1,5 @@
-﻿using Xamarin_HelloApp.Models;
+﻿using System.Windows.Input;
+using Xamarin_HelloApp.Models;
 
 
 namespace PilotMobile.Models.SearchQuery
@@ -22,9 +23,11 @@ namespace PilotMobile.Models.SearchQuery
         /// Элемент поискового запроса "Тип"
         /// </summary>
         /// <param name="type">тип Pilot</param>
-        public TypeQueryItem(PType type)
+        public TypeQueryItem(PType type, ICommand delCommand)
         {
             this.type = type;
+            this.delete = delCommand;
+            systemName = type.ID.ToString();
             isType = true;
             Name = "Тип";
             Value = Type.VisibleName;

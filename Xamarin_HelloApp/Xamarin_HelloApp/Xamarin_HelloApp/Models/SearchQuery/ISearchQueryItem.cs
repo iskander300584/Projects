@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 
 namespace PilotMobile.Models.SearchQuery
 {
@@ -8,6 +9,16 @@ namespace PilotMobile.Models.SearchQuery
     /// </summary>
     abstract class ISearchQueryItem : INotifyPropertyChanged
     {
+        protected string systemName;
+        /// <summary>
+        /// Системное имя объекта
+        /// </summary>
+        public string SystemName
+        {
+            get => systemName;
+        }
+
+
         protected string name;
         /// <summary>
         /// Наименование типа/атрибута
@@ -28,7 +39,7 @@ namespace PilotMobile.Models.SearchQuery
         }
 
 
-        protected string value;
+        protected string value = string.Empty;
         /// <summary>
         /// Значение типа/атрибута
         /// </summary>
@@ -65,6 +76,16 @@ namespace PilotMobile.Models.SearchQuery
         public bool IsType
         {
             get => isType;
+        }
+
+
+        protected ICommand delete;
+        /// <summary>
+        /// Команда удааления элемента поискового запроса
+        /// </summary>
+        public ICommand Delete
+        {
+            get => delete;
         }
 
 

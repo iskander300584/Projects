@@ -110,6 +110,14 @@ namespace PilotMobile.ViewContexts
         public ObservableCollection<ISearchQueryItem> Items
         {
             get => items;
+            private set
+            {
+                if(items != value)
+                {
+                    items = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
 
@@ -267,7 +275,7 @@ namespace PilotMobile.ViewContexts
             Types.Clear();
 
             foreach (PType type in _allowedTypes)
-                if (!items.Any(i => i.IsType && i.Value == type.VisibleName))
+                if (!items.Any(i => i.IsType && i.Value == type.VisibleName) && !Types.Contains(type.VisibleName))
                     Types.Add(type.VisibleName);
 
 
@@ -285,7 +293,7 @@ namespace PilotMobile.ViewContexts
             _allowedTypes = new List<PType>();
 
             foreach (PType type in _types)
-                if (!type.IsTask && !type.IsSystem)
+                if (!type.IsTask && !type.IsSystem && type.MType.Kind == Ascon.Pilot.DataClasses.TypeKind.User && !type.MType.IsService)
                     _allowedTypes.Add(type);
 
             _allowedTypes = _allowedTypes.OrderBy(t => t.VisibleName).ToList();
@@ -299,28 +307,18 @@ namespace PilotMobile.ViewContexts
         {
             Attributes.Clear();
 
-            if (Types.Count > 0)
+            // Перебор всех добавленных типов
+            foreach(ISearchQueryItem typeQuery in Items.Where(i => i.IsType))
             {
-                List<string> _attrs = new List<string>();
-
-                foreach (string typeName in Types)
+                // Перебор всех типов с таким наименованием
+                foreach(PType type in _allowedTypes.Where(t => t.VisibleName == typeQuery.Value))
                 {
-                    ISearchQueryItem searchItem = Items.FirstOrDefault(i => i.IsType && i.Value == typeName);
-
-                    if (searchItem != null)
+                    foreach(PAttribute attr in type.Attributes.Where(a => !a.IsSystem))
                     {
-                        TypeQueryItem type = searchItem as TypeQueryItem;
-
-                        foreach (PAttribute pAttribute in type.Type.Attributes)
-                        {
-                            if (pAttribute.IsVisible && !_attrs.Contains(pAttribute.VisibleName) && !Items.Any(i => !i.IsType && i.Name == pAttribute.VisibleName))
-                                _attrs.Add(pAttribute.VisibleName);
-                        }
+                        if (!Attributes.Contains(attr.VisibleName) && !Items.Any(i => !i.IsType && i.Name == attr.VisibleName))
+                            Attributes.Add(attr.VisibleName);
                     }
                 }
-
-                foreach (string attrName in _attrs.OrderBy(a => a))
-                    Attributes.Add(attrName);
             }
 
             SelectedAttribute = (Attributes.Count > 0) ? Attributes[0] : null;
@@ -336,7 +334,8 @@ namespace PilotMobile.ViewContexts
 
             if(type != null)
             {
-                Items.Add(new TypeQueryItem(type));
+                items.Add(new TypeQueryItem(type, DeleteItem));
+                Items = SortItems();
 
                 Types.Remove(SelectedType);
 
@@ -364,7 +363,7 @@ namespace PilotMobile.ViewContexts
                     break;
             }
 
-            Items.Add(new AttributeQueryItem(pAttribute));
+            Items.Add(new AttributeQueryItem(pAttribute, DeleteItem));
 
             Attributes.Remove(SelectedAttribute);
             
@@ -377,23 +376,84 @@ namespace PilotMobile.ViewContexts
         /// <summary>
         /// Выполнение команды удаления элемента поиска
         /// </summary>
-        private void DeleteItem_Execute()
+        private void DeleteItem_Execute(object parameter)
         {
-            if(SelectedItem != null)
+            if(parameter != null)
             {
-                bool _isType = SelectedItem.IsType;
+                string param = (string)parameter;
 
-                Items.Remove(SelectedItem);
-
-                if(_isType)
+                int id = 0;
+                if (int.TryParse(param, out id))
                 {
+                    DeleteType(id);
+
                     GetTypes();
+                }
+                else
+                {
+                    ISearchQueryItem item = Items.FirstOrDefault(i => !i.IsType && i.SystemName == param);
+
+                    if (item != null)
+                        Items.Remove(item);
                 }
 
                 GetAttributes();
             }
 
             Search_CanExecute = (Items.Count > 0);
+        }
+
+
+        /// <summary>
+        /// Удаление типа из элементов поиска
+        /// </summary>
+        /// <param name="id">ID типа</param>
+        private void DeleteType(int id)
+        {
+            ISearchQueryItem item = Items.FirstOrDefault(i => i.IsType && i.SystemName == id.ToString());
+            if(item != null)
+            {
+                Items.Remove(item);
+
+                TypeQueryItem typeQuery = item as TypeQueryItem;
+
+                // Удаление атрибутов, связанных только с этим типом
+                List<string> attrTitles = new List<string>();
+
+                foreach (PAttribute attr in typeQuery.Type.Attributes)
+                    attrTitles.Add(attr.VisibleName);
+
+                List<ISearchQueryItem> _typeQueries = Items.Where(i => i.IsType).ToList();
+
+                List<PType> _addedTypes = new List<PType>(); // список типов, для которых могли быть добавлены атрибуты
+                foreach(ISearchQueryItem _typeQuery in _typeQueries)
+                {
+                    foreach (PType type in _allowedTypes.Where(t => t.VisibleName == _typeQuery.Value))
+                        _addedTypes.Add(type);
+                }
+
+                // Исключение лишних атрибутов
+                foreach (string attrTitle in attrTitles)
+                {
+                    ISearchQueryItem attrQuery = Items.FirstOrDefault(i => !i.IsType && i.Name == attrTitle);
+                    if (attrQuery != null)
+                    {
+                        bool finded = false;
+
+                        foreach(PType _type in _addedTypes)
+                        {
+                            if(_type.Attributes.Any(a => a.VisibleName == attrTitle && !a.IsSystem))
+                            {
+                                finded = true;
+                                break;
+                            }
+                        }
+
+                        if (!finded)
+                            Items.Remove(attrQuery);
+                    }
+                }
+            }
         }
 
 
@@ -414,6 +474,25 @@ namespace PilotMobile.ViewContexts
         private void ParseSearchQuery()
         {
             query = "here will be query";
+        }
+
+
+        /// <summary>
+        /// Сортировка элементов наблюдаемой коллекции
+        /// </summary>
+        private ObservableCollection<ISearchQueryItem> SortItems()
+        {
+            ObservableCollection<ISearchQueryItem> _collection = new ObservableCollection<ISearchQueryItem>();
+
+            IEnumerable<ISearchQueryItem> temp = Items.Where(i => i.IsType).OrderBy(t => t.Value);
+            foreach (ISearchQueryItem _typeItem in temp)
+                _collection.Add(_typeItem);
+
+            temp = Items.Where(i => !i.IsType).OrderBy(a => a.Name);
+            foreach (ISearchQueryItem _attrItem in temp)
+                _collection.Add(_attrItem);
+
+            return _collection;
         }
 
 

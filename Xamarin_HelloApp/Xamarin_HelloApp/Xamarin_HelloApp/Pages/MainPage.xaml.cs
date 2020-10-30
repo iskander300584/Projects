@@ -7,6 +7,7 @@ using PilotMobile.Pages;
 using System.Threading.Tasks;
 using PilotMobile.AppContext;
 
+
 namespace Xamarin_HelloApp
 {
     /// <summary>
@@ -98,7 +99,6 @@ namespace Xamarin_HelloApp
         }
 
 
-
         /// <summary>
         /// Нажатие кнопки Назад
         /// </summary>
@@ -116,7 +116,7 @@ namespace Xamarin_HelloApp
 
 
         /// <summary>
-        /// Нажатие кнопки Поиск TODO
+        /// Нажатие кнопки Поиск
         /// </summary>
         private async void Search_Click(object sender, EventArgs e)
         {
@@ -124,9 +124,25 @@ namespace Xamarin_HelloApp
 
             await Navigation.PushModalAsync(page, true);
 
-            if(page.SearchQuery != string.Empty)
+            App.Current.ModalPopping += HandleModalPopping;
+        }
+
+
+        /// <summary>
+        /// Перехват возврата из модальной страницы TODO
+        /// </summary>
+        private void HandleModalPopping(object sender, ModalPoppingEventArgs e)
+        {
+            if(e.Modal is SearchQueryPage)
             {
-                // TODO
+                SearchQueryPage page = e.Modal as SearchQueryPage;
+
+                if (page.SearchQuery != string.Empty)
+                {
+                    // TODO
+                }
+
+                App.Current.ModalPopping -= HandleModalPopping;
             }
         }
     }

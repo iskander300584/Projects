@@ -1,4 +1,5 @@
-﻿using Xamarin_HelloApp.Models;
+﻿using System.Windows.Input;
+using Xamarin_HelloApp.Models;
 
 
 namespace PilotMobile.Models.SearchQuery
@@ -15,10 +16,12 @@ namespace PilotMobile.Models.SearchQuery
         }
 
 
-        public AttributeQueryItem(PAttribute attribute)
+        public AttributeQueryItem(PAttribute attribute, ICommand delComand)
         {
             this.attribute = attribute;
+            this.delete = delComand;
             Name = attribute.VisibleName;
+            systemName = attribute.Name;
         }
 
 
