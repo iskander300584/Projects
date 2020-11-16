@@ -578,7 +578,12 @@ namespace PilotMobile.ViewContexts
                             break;
 
                         case Ascon.Pilot.DataClasses.MAttrType.String:
-                            query += @"s\." + attribute.Name + $":(&#s;%{item.Value}%) OR ";
+                            query += @"t\." + attribute.Name + $":{item.Value}* OR ";
+                            _attributeAdded = true;
+                            break;
+
+                        case Ascon.Pilot.DataClasses.MAttrType.DateTime:
+                            query += @"t\." + attribute.Name + $":{item.Value} OR ";
                             _attributeAdded = true;
                             break;
                     }

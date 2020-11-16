@@ -472,11 +472,13 @@ namespace Xamarin_HelloApp.ViewContexts
         /// <param name="queryString">запрос поиска</param>
         private async void GetSearchResults(object queryString)
         {
-            string query = (string)queryString;
-            DSearchDefinition searchDefinition = new DSearchDefinition
+            try
             {
-                Id = Guid.NewGuid(),
-                Request =
+                string query = (string)queryString;
+                DSearchDefinition searchDefinition = new DSearchDefinition
+                {
+                    Id = Guid.NewGuid(),
+                    Request =
                     {
                     MaxResults = 1000,
                     SearchKind = SearchKind.Custom,
@@ -489,20 +491,31 @@ namespace Xamarin_HelloApp.ViewContexts
                         }
                     }
                     }
-            };
+                };
 
-            DSearchResult result = await Global.DALContext.Repository.Search(searchDefinition);
+                DSearchResult result = await Global.DALContext.Repository.Search(searchDefinition);
 
-            if (result.Found == null)
-                return;
+                if (result.Found == null)
+                {
+                    Up_CanExecute();
+                    return;
+                }
 
-            List<DObject> dObjects = Global.DALContext.Repository.GetObjects(result.Found.ToArray());
+                List<DObject> dObjects = Global.DALContext.Repository.GetObjects(result.Found.ToArray());
 
-            foreach (DObject dObject in dObjects)
+                foreach (DObject dObject in dObjects)
+                {
+                    PilotTreeItem pilotTreeItem = new PilotTreeItem(dObject, true);
+                    if (pilotTreeItem.VisibleName != "")
+                        Parent.Children.Add(pilotTreeItem);
+                }
+            }
+            catch(Exception ex)
             {
-                PilotTreeItem pilotTreeItem = new PilotTreeItem(dObject, true);
-                if (pilotTreeItem.VisibleName != "")
-                    Parent.Children.Add(pilotTreeItem);
+                if(ex != null)
+                {
+
+                }
             }
 
             Up_CanExecute();
