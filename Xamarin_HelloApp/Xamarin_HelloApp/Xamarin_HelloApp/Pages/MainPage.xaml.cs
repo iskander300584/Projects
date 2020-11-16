@@ -120,7 +120,7 @@ namespace Xamarin_HelloApp
         /// </summary>
         private async void Search_Click(object sender, EventArgs e)
         {
-            SearchQueryPage page = new SearchQueryPage();
+            SearchQueryPage page = new SearchQueryPage(context.SearchContext);
 
             await Navigation.PushModalAsync(page, true);
 
@@ -129,7 +129,7 @@ namespace Xamarin_HelloApp
 
 
         /// <summary>
-        /// Перехват возврата из модальной страницы TODO
+        /// Перехват возврата из модальной страницы
         /// </summary>
         private void HandleModalPopping(object sender, ModalPoppingEventArgs e)
         {
@@ -139,7 +139,8 @@ namespace Xamarin_HelloApp
 
                 if (page.SearchQuery != string.Empty)
                 {
-                    // TODO
+                    context.SearchContext = page.SearchContext;
+                    context.DoSearch(page.SearchQuery);
                 }
 
                 App.Current.ModalPopping -= HandleModalPopping;

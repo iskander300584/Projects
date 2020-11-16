@@ -17,7 +17,7 @@ namespace PilotMobile.ViewContexts
     /// <summary>
     /// Контекст данных страницы формирования запроса поиска
     /// </summary>
-    class SearchQueryPage_Context : INotifyPropertyChanged
+    public class SearchQueryPage_Context : INotifyPropertyChanged
     {
         #region Поля класса
 
@@ -243,12 +243,41 @@ namespace PilotMobile.ViewContexts
         }
 
 
+        private ICommand reset;
+        /// <summary>
+        /// Команда сброса настроек поиска
+        /// </summary>
+        public ICommand Reset
+        {
+            get => reset;
+        }
+
+
+        private bool canReset = false;
+        /// <summary>
+        /// Признак возможности сброса настроек поиска
+        /// </summary>
+        public bool CanReset
+        {
+            get => canReset;
+            private set
+            {
+                if(canReset != value)
+                {
+                    canReset = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
         #endregion
 
 
         /// <summary>
         /// Контекст данных страницы формирования запроса поиска
         /// </summary>
+        /// <param name="page">страница поиска</param>
         public SearchQueryPage_Context(SearchQueryPage page)
         {
             this.page = page;
@@ -258,10 +287,22 @@ namespace PilotMobile.ViewContexts
             addAttribute = new Command(AddAttribute_Execute);
             deleteItem = new Command(DeleteItem_Execute);
             search = new Command(Search_Execute);
+            reset = new Command(Reset_Execute);
         }
 
 
         #region Методы класса
+
+
+        /// <summary>
+        /// Задать страницу контекста
+        /// </summary>
+        /// <param name="page">страница поиска</param>
+        public void SetPage(SearchQueryPage page)
+        {
+            this.page = page;
+            query = string.Empty;
+        }
 
 
         /// <summary>
@@ -345,6 +386,8 @@ namespace PilotMobile.ViewContexts
             SelectedType = (Types.Count > 0) ? Types[0] : null;
 
             Search_CanExecute = (Items.Count > 0);
+
+            Reset_CanExecute();
         }
 
 
@@ -370,6 +413,8 @@ namespace PilotMobile.ViewContexts
             SelectedAttribute = (Attributes.Count > 0) ? Attributes[0] : null;
 
             Search_CanExecute = (Items.Count > 0);
+
+            Reset_CanExecute();
         }
 
 
@@ -401,6 +446,8 @@ namespace PilotMobile.ViewContexts
             }
 
             Search_CanExecute = (Items.Count > 0);
+
+            Reset_CanExecute();
         }
 
 
@@ -460,8 +507,15 @@ namespace PilotMobile.ViewContexts
         /// <summary>
         /// Выполнение команды Поиск
         /// </summary>
-        private void Search_Execute()
+        private async void Search_Execute()
         {
+            if (Items.Any(i => i.Value == ""))
+            {
+                await page.DisplayMessage(StringConstants.Warning, StringConstants.NotFill, false);
+
+                return;
+            }
+
             ParseSearchQuery();
 
             page.NavigationToMain();
@@ -473,7 +527,67 @@ namespace PilotMobile.ViewContexts
         /// </summary>
         private void ParseSearchQuery()
         {
-            query = "here will be query";
+            // Формирование строки поиска по типам
+            query = @" +DObject\.TypeId:(";
+
+            List<PType> _addedTypes = new List<PType>();
+
+            foreach (ISearchQueryItem item in Items.Where(i => i.IsType))
+            {
+                PType type = _allowedTypes.FirstOrDefault(t => t.VisibleName == item.Value);
+
+                if (type != null)
+                {
+                    _addedTypes.Add(type);
+                    query += StringConstants.DigitalSearch + type.ID.ToString() + " OR ";
+                }
+            }
+
+            if (!query.Contains("OR"))
+            {
+                query = string.Empty;
+                return;
+            }
+
+            query = query.Remove(query.Length - 4).Trim();
+            query += ") +(";
+
+            // Формирование строки поиска по атрибутам
+            bool _attributeAdded = false;
+            foreach(ISearchQueryItem item in Items.Where(i => !i.IsType))
+            {
+                List<PAttribute> _actualAttributes = new List<PAttribute>();
+
+                foreach(PType type in _addedTypes)
+                {
+                    PAttribute attribute = type.Attributes.FirstOrDefault(a => a.Name == item.SystemName);
+
+                    if(attribute != null && !_actualAttributes.Any(aa => aa.AttributeType == attribute.AttributeType))
+                    {
+                        _actualAttributes.Add(attribute);
+                    }
+                }
+
+                foreach(PAttribute attribute in _actualAttributes)
+                {
+                    switch(attribute.AttributeType)
+                    {
+                        case Ascon.Pilot.DataClasses.MAttrType.Integer:
+                            query += @"i32\." + attribute.Name + $":({StringConstants.DigitalSearch}{item.Value}) OR ";
+                            _attributeAdded = true;
+                            break;
+
+                        case Ascon.Pilot.DataClasses.MAttrType.String:
+                            query += @"s\." + attribute.Name + $":(&#s;%{item.Value}%) OR ";
+                            _attributeAdded = true;
+                            break;
+                    }
+                }
+            }
+
+            query = query.Remove(query.Length - 3).Trim();
+            if (_attributeAdded)
+                query += ")";
         }
 
 
@@ -493,6 +607,28 @@ namespace PilotMobile.ViewContexts
                 _collection.Add(_attrItem);
 
             return _collection;
+        }
+
+
+        /// <summary>
+        /// Проверка возможности сброса настроек поиска
+        /// </summary>
+        private void Reset_CanExecute()
+        {
+            CanReset = (Items.Count > 0);
+        }
+
+
+        /// <summary>
+        /// Сброс настроек поиска
+        /// </summary>
+        private void Reset_Execute()
+        {
+            Items.Clear();
+            GetTypes();
+            GetAttributes();
+
+            Search_CanExecute = (Items.Count > 0);
         }
 
 

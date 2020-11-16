@@ -88,6 +88,22 @@
         public const string TotalSize = " МБ памяти";
 
 
-        
+        /// <summary>
+        /// Внимание!
+        /// </summary>
+        public const string Warning = "Внимание!";
+
+
+        /// <summary>
+        /// Заполнены не все данные
+        /// </summary>
+        public const string NotFill = "Заполнены не все данные";
+
+
+        /// <summary>
+        /// Строка для поиска по числовому параметру
+        /// <para>&#32;</para>
+        /// </summary>
+        public const string DigitalSearch = @"&#32;";
     }
 }

@@ -24,8 +24,21 @@
 
                     <StackLayout Orientation="Horizontal">
                         <!-- Кнопка Обновить -->
-                        <ImageButton Source="refresh.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
-                                     Command="{Binding UpdateCommand}"/>
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
+                                     Command="{Binding UpdateCommand}" IsEnabled="{Binding UpdateCanExecute}">
+                            <ImageButton.Style>
+                                <Style TargetType="ImageButton">
+                                    <Style.Triggers>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="True">
+                                            <Setter Property="Source" Value="refresh.png"/>
+                                        </Trigger>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="False">
+                                            <Setter Property="Source" Value="refresh_gray.png"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ImageButton.Style>
+                        </ImageButton>
 
                         <!-- Кнопка Поиск -->
                         <ImageButton Source="search.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
@@ -68,7 +81,7 @@
 
                         <!-- Кнопка Домой -->
                         <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End" Margin="20,0,0,0" 
-                                     Command="{Binding HomeCommand}" IsEnabled="{Binding UpCanExecute}">
+                                     Command="{Binding HomeCommand}" IsEnabled="{Binding HomeCanExecute}">
                             <ImageButton.Style>
                                 <Style TargetType="ImageButton">
                                     <Style.Triggers>

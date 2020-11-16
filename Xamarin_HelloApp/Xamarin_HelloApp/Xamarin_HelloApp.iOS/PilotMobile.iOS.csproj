@@ -250,4 +250,13 @@
   <ItemGroup>
     <BundleResource Include="Resources\search.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\refresh_gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\undo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\undo_gray.png" />
+  </ItemGroup>
 </Project>

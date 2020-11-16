@@ -319,9 +319,6 @@ namespace PilotMobile.ViewContexts
         /// <returns>возвращает массив GUID заданий или NULL, если задания не найдены</returns>
         private async Task<IEnumerable<Guid>> GetTaskGuidList(string searchType, int unit)
         {
-            // Формирование условия поиска по атрибутам
-            //string searchAttribute = $@"+(i32\.actualFor:(&#32;{unit}) OR i32\.initiator:(&#32;{unit}) OR i32\.executor:(&#32;{unit}) OR i32\.auditors:(&#32;{unit}) OR i32\.responsible:(&#32;{unit}))";
-
             string searchAttribute = GetSearchQuery(unit);
 
             // Формирование общего условия поиска

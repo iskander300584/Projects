@@ -21,6 +21,11 @@ namespace PilotMobile.AppContext
         /// <summary>
         /// Редактирование
         /// </summary>
-        Edit
+        Edit,
+
+        /// <summary>
+        /// Поиск
+        /// </summary>
+        Search
     }
 }

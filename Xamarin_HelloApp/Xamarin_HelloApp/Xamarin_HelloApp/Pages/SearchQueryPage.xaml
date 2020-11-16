@@ -83,6 +83,26 @@
                         <Label Text="{Binding AppName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
                         <Label Text="Поиск" HorizontalTextAlignment="End" HorizontalOptions="EndAndExpand" TextColor="White" FontSize="Medium" Margin="0,0,10,0"/>
                     </StackLayout>
+
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                        <!-- Кнопка Сброс -->
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand" Margin="0,0,10,0"
+                                     Command="{Binding Reset}" IsEnabled="{Binding CanReset}">
+                            <ImageButton.Style>
+                                <Style TargetType="ImageButton">
+                                    <Style.Triggers>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="True">
+                                            <Setter Property="Source" Value="undo.png"/>
+                                        </Trigger>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="False">
+                                            <Setter Property="Source" Value="undo_gray.png"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ImageButton.Style>
+                        </ImageButton>
+
+                    </StackLayout>
                 </StackLayout>
             </Frame>
 

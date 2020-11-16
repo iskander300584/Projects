@@ -20,6 +20,9 @@ namespace Xamarin_HelloApp.ViewModels
         }
 
 
+        #region Конструкторы
+
+
         /// <summary>
         /// Элемент дерева Pilot
         /// </summary>
@@ -42,11 +45,34 @@ namespace Xamarin_HelloApp.ViewModels
         /// Корневой элемент дерева Pilot
         /// </summary>
         /// <param name="rootObject">корневой элемент дерева Pilot</param>
-        public PilotTreeItem(DObject rootObject)
+        /// <param name="getAll">получить все данные</param>
+        public PilotTreeItem(DObject rootObject, bool getAll = false)
         {
             guid = rootObject.Id;
-
             dObject = rootObject;
+            parent = null;
+
+            if (!getAll)
+            {
+                type = null;
+                hasAccess = true;
+            }
+            else
+            {
+                type = TypeFabrique.GetType(dObject.TypeId);
+                GetObjectData();
+            }
+        }
+
+
+        /// <summary>
+        /// Пустой корневой элемент дерева Pilot 
+        /// </summary>
+        public PilotTreeItem()
+        {
+            guid = new System.Guid();
+
+            dObject = null;
 
             parent = null;
 
@@ -54,6 +80,9 @@ namespace Xamarin_HelloApp.ViewModels
 
             hasAccess = true;
         }
+
+
+        #endregion
 
 
         /// <summary>

@@ -7,7 +7,7 @@ namespace PilotMobile.Models.SearchQuery
     /// <summary>
     /// Элемент поискового запроса
     /// </summary>
-    abstract class ISearchQueryItem : INotifyPropertyChanged
+    public abstract class ISearchQueryItem : INotifyPropertyChanged
     {
         protected string systemName;
         /// <summary>

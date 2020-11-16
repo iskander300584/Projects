@@ -1,7 +1,9 @@
 ﻿using Ascon.Pilot.DataClasses;
 using PilotMobile.AppContext;
+using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -21,6 +23,8 @@ namespace Xamarin_HelloApp.ViewContexts
     /// </summary>
     class MainPage_Context : INotifyPropertyChanged
     {
+        #region Поля класса
+
         /// <summary>
         /// Наименование приложения
         /// </summary>
@@ -28,6 +32,25 @@ namespace Xamarin_HelloApp.ViewContexts
         {
             get => StringConstants.ApplicationName;
         }
+
+
+        private PageMode mode = PageMode.View;
+        /// <summary>
+        /// Режим работы окна
+        /// </summary>
+        public PageMode Mode
+        {
+            get => mode;
+            private set
+            {
+                if(mode != value)
+                {
+                    mode = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
 
         /// <summary>
         /// Соответствующая страница
@@ -109,6 +132,42 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
+        private bool homeCanExecute = false;
+        /// <summary>
+        /// Признак возможности нажатия кнопки Домой
+        /// </summary>
+        public bool HomeCanExecute
+        {
+            get => homeCanExecute;
+            private set
+            {
+                if(homeCanExecute != value)
+                {
+                    homeCanExecute = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+        private bool updateCanExecute = false;
+        /// <summary>
+        /// Признак возможности нажатия кнопки Обновить
+        /// </summary>
+        public bool UpdateCanExecute
+        {
+            get => updateCanExecute;
+            private set
+            {
+                if(updateCanExecute != value)
+                {
+                    updateCanExecute = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
         private ICommand upCommand;
         /// <summary>
         /// Команда Вверх
@@ -147,6 +206,27 @@ namespace Xamarin_HelloApp.ViewContexts
         {
             get => mainMenuCommand;
         }
+
+
+        private SearchQueryPage_Context searchContext = null;
+        /// <summary>
+        /// Контекст данных окна поиска
+        /// </summary>
+        public SearchQueryPage_Context SearchContext
+        {
+            get => searchContext;
+            set
+            {
+                if(searchContext != value)
+                {
+                    searchContext = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+        #endregion
 
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -226,11 +306,15 @@ namespace Xamarin_HelloApp.ViewContexts
 
 
         /// <summary>
-        /// Проверка возможности нажатия кнопки Вверх
+        /// Проверка возможности нажатия кнопкок Вверх, Домой, Обновить
         /// </summary>
         private void Up_CanExecute()
         {
-            UpCanExecute = (Parent != null && Root != null && Parent != Root);
+            UpCanExecute = (Parent != null && Root != null && Parent != Root && Mode == PageMode.View);
+
+            HomeCanExecute = (UpCanExecute || Mode == PageMode.Search);
+
+            UpdateCanExecute = (Mode == PageMode.View);
         }
 
 
@@ -269,6 +353,8 @@ namespace Xamarin_HelloApp.ViewContexts
         /// </summary>
         public void Home_Execute()
         {
+            Mode = PageMode.View;
+
             Parent = Root;
 
             Items = Parent.Children;
@@ -360,6 +446,66 @@ namespace Xamarin_HelloApp.ViewContexts
                 _size = "0" + _size;
 
             await page.DisplayMessage(StringConstants.CacheCleared, StringConstants.Free + _size + StringConstants.TotalSize, false);
+        }
+
+
+        /// <summary>
+        /// Выполнить поиск данных
+        /// </summary>
+        /// <param name="query">строка поиска</param>
+        public void DoSearch(string query)
+        {
+            Mode = PageMode.Search;
+
+            Parent = new PilotTreeItem();
+
+            Items = Parent.Children;
+
+            Thread thread = new Thread(new ParameterizedThreadStart(GetSearchResults));
+            thread.Start(query);
+        }
+
+
+        /// <summary>
+        /// Получение результатов поиска
+        /// </summary>
+        /// <param name="queryString">запрос поиска</param>
+        private async void GetSearchResults(object queryString)
+        {
+            string query = (string)queryString;
+            DSearchDefinition searchDefinition = new DSearchDefinition
+            {
+                Id = Guid.NewGuid(),
+                Request =
+                    {
+                    MaxResults = 1000,
+                    SearchKind = SearchKind.Custom,
+                    SearchString = query,
+                    SortDefinitions =
+                    {
+                        new DSortDefinition {
+                            Ascending = false,
+                            FieldName = SystemAttributes.CREATION_TIME
+                        }
+                    }
+                    }
+            };
+
+            DSearchResult result = await Global.DALContext.Repository.Search(searchDefinition);
+
+            if (result.Found == null)
+                return;
+
+            List<DObject> dObjects = Global.DALContext.Repository.GetObjects(result.Found.ToArray());
+
+            foreach (DObject dObject in dObjects)
+            {
+                PilotTreeItem pilotTreeItem = new PilotTreeItem(dObject, true);
+                if (pilotTreeItem.VisibleName != "")
+                    Parent.Children.Add(pilotTreeItem);
+            }
+
+            Up_CanExecute();
         }
     }
 }
