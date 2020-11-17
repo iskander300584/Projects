@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin_HelloApp.AppContext;
@@ -22,6 +23,9 @@ namespace PilotMobile.ViewContexts
     /// </summary>
     class XpsPage_Context : INotifyPropertyChanged
     {
+        #region Поля класса
+
+
         /// <summary>
         /// Наименование приложения
         /// </summary>
@@ -45,9 +49,10 @@ namespace PilotMobile.ViewContexts
                     pdfFileName = value;
                     OnPropertyChanged();
 
-                    CalcMessage();
+                    Device.BeginInvokeOnMainThread(LoadDoc);
+                    /*CalcMessage();
 
-                    page.LoadDocument();
+                    page.LoadDocument();*/
                 }
             }
         }
@@ -86,6 +91,24 @@ namespace PilotMobile.ViewContexts
         public ICommand UpdateCommand
         {
             get => updateCommand;
+        }
+
+
+        private bool updateCanExecute = true;
+        /// <summary>
+        /// Признак доступности команды Обновить
+        /// </summary>
+        public bool UpdateCanExecute
+        {
+            get => updateCanExecute;
+            private set
+            {
+                if(updateCanExecute != value)
+                {
+                    updateCanExecute = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
 
@@ -143,6 +166,29 @@ namespace PilotMobile.ViewContexts
         }
 
 
+        private bool loading = false;
+        /// <summary>
+        /// Признак выполняемой загрузки документа
+        /// </summary>
+        public bool Loading
+        {
+            get => loading;
+            private set
+            {
+                if(loading != value)
+                {
+                    loading = value;
+                    OnPropertyChanged();
+
+                    UpdateCanExecute = !loading;
+                }
+            }
+        }
+
+
+        #endregion
+
+
         /// <summary>
         /// Контекст данных окна документа
         /// </summary>
@@ -159,11 +205,25 @@ namespace PilotMobile.ViewContexts
         }
 
 
+        #region Методы класса
+
+
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+
+        /// <summary>
+        /// Метод загрузки документа в осносном потоке
+        /// </summary>
+        private void LoadDoc()
+        {
+            CalcMessage();
+
+            page.LoadDocument();
         }
 
 
@@ -175,16 +235,21 @@ namespace PilotMobile.ViewContexts
         {
             GetPermissions();
 
-            GetXpsData(update);
+            Loading = true;
+
+            Thread thread = new Thread(new ParameterizedThreadStart(GetXpsData));
+            thread.Start(update);
+            //GetXpsData(update);
         }
 
 
         /// <summary>
         /// Получение данных XPS документа в отдельном потоке
         /// </summary>
-        /// <param name="update">обновить данные</param>
-        private void GetXpsData(bool update)
+        /// <param name="updateData">обновить данные</param>
+        private void GetXpsData(object updateData)
         {
+            bool update = (bool)updateData;
             string _xpsName = string.Empty;
 
             try
@@ -323,6 +388,8 @@ namespace PilotMobile.ViewContexts
 
             if (PdfFileName == "")
                 PdfFileName = "Failed";
+
+            Loading = false;
         }
 
 
@@ -380,5 +447,8 @@ namespace PilotMobile.ViewContexts
                 Message = "Загрузка данных...";
             }
         }
+
+
+        #endregion
     }
 }

@@ -37,7 +37,6 @@ namespace Xamarin_HelloApp.Pages
         public void NavigateToMainPage()
         {
             App.Current.MainPage = new MainCarrouselPage();
-            //Navigation.PushModalAsync(new MainCarrouselPage());
         }
     }
 }

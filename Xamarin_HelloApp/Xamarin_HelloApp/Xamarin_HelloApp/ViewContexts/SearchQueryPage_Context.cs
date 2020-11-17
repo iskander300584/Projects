@@ -1,9 +1,11 @@
 ﻿using PilotMobile.AppContext;
 using PilotMobile.Models.SearchQuery;
 using PilotMobile.Pages;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -577,13 +579,37 @@ namespace PilotMobile.ViewContexts
                             _attributeAdded = true;
                             break;
 
+                        case Ascon.Pilot.DataClasses.MAttrType.Decimal:
+                            query += @"i64\." + attribute.Name + @$":(&#64;{item.Value}) OR ";
+                            _attributeAdded = true;
+                            break;
+
+                        case Ascon.Pilot.DataClasses.MAttrType.Double:
+                            query += @"d\." + attribute.Name + @$":(&#d;{item.Value}) OR ";
+                            _attributeAdded = true;
+                            break;
+
                         case Ascon.Pilot.DataClasses.MAttrType.String:
                             query += @"t\." + attribute.Name + $":{item.Value}* OR ";
                             _attributeAdded = true;
                             break;
 
                         case Ascon.Pilot.DataClasses.MAttrType.DateTime:
-                            query += @"t\." + attribute.Name + $":{item.Value} OR ";
+                            //DateTime dateTime = DateTime.MinValue;
+                            //string tempDate = item.Value.Replace('.', '-').Trim();
+
+                            DateTime? dateTime = StringToDate(item.Value);
+
+                            //if (DateTime.TryParse(tempDate, out dateTime))
+                            if(dateTime != null)
+                            {
+                                query += @"t\." + attribute.Name + $":{DateToString((DateTime)dateTime, Resolution.SECOND)} OR ";
+                                _attributeAdded = true;
+                            }
+                            break;
+
+                        default:
+                            query += @"t\." + attribute.Name + $":*{item.Value}* OR ";
                             _attributeAdded = true;
                             break;
                     }
@@ -593,6 +619,195 @@ namespace PilotMobile.ViewContexts
             query = query.Remove(query.Length - 3).Trim();
             if (_attributeAdded)
                 query += ")";
+        }
+
+
+        private DateTime? StringToDate(string dateString)
+        {
+            int index = dateString.IndexOf('.');
+            if(index != -1)
+            {
+                if(index == 4)
+                {
+                    string year = dateString.Substring(0, 4);
+                    
+                    string tempStr = dateString.Substring(5);
+
+                    index = tempStr.IndexOf('.');
+
+                    if(index == 2)
+                    {
+                        string month = tempStr.Substring(0, 2);
+                        string day = tempStr.Substring(4);
+                        dateString = year + month + day;
+                    }
+                    else
+                    {
+                        dateString = year;
+                    }
+
+                }
+                else if(index == 2)
+                {
+                    string s1 = dateString.Substring(0, 2);
+
+                    string tempStr = dateString.Substring(3);
+
+                    index = tempStr.IndexOf('.');
+
+                    if (index == 2)
+                    {
+                        string month = tempStr.Substring(0, 2);
+                        string year = tempStr.Substring(3);
+                        dateString = year + month + s1;
+                    }
+                    else
+                    {
+                        dateString = tempStr + s1;
+                    }
+                }
+            }
+
+            DateTime dateTime;
+            if (dateString.Length == 4)
+                dateTime = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)), 1, 1, 0, 0, 0, 0);
+            else if (dateString.Length == 6)
+                dateTime = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)), Convert.ToInt16(dateString.Substring(4, 2)), 1, 0, 0, 0, 0);
+            else if (dateString.Length == 8)
+                dateTime = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)), Convert.ToInt16(dateString.Substring(4, 2)), Convert.ToInt16(dateString.Substring(6, 2)), 0, 0, 0, 0);
+            else if (dateString.Length == 10)
+                dateTime = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)), Convert.ToInt16(dateString.Substring(4, 2)), Convert.ToInt16(dateString.Substring(6, 2)), Convert.ToInt16(dateString.Substring(8, 2)), 0, 0, 0);
+            else if (dateString.Length == 12)
+                dateTime = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)), Convert.ToInt16(dateString.Substring(4, 2)), Convert.ToInt16(dateString.Substring(6, 2)), Convert.ToInt16(dateString.Substring(8, 2)), Convert.ToInt16(dateString.Substring(10, 2)), 0, 0);
+            else if (dateString.Length == 14)
+            {
+                dateTime = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)), Convert.ToInt16(dateString.Substring(4, 2)), Convert.ToInt16(dateString.Substring(6, 2)), Convert.ToInt16(dateString.Substring(8, 2)), Convert.ToInt16(dateString.Substring(10, 2)), Convert.ToInt16(dateString.Substring(12, 2)), 0);
+            }
+            else
+            {
+                if (dateString.Length != 17)
+                {
+                    return null;
+                    //throw new FormatException("Input is not valid date string: " + dateString);
+                }
+                dateTime = new DateTime(Convert.ToInt16(dateString.Substring(0, 4)), Convert.ToInt16(dateString.Substring(4, 2)), Convert.ToInt16(dateString.Substring(6, 2)), Convert.ToInt16(dateString.Substring(8, 2)), Convert.ToInt16(dateString.Substring(10, 2)), Convert.ToInt16(dateString.Substring(12, 2)), Convert.ToInt16(dateString.Substring(14, 3)));
+            }
+            return dateTime;
+        }
+
+
+        public string DateToString(DateTime date, Resolution resolution)
+        {
+            return TimeToString(date.Ticks / 10000L, resolution);
+        }
+
+
+        private readonly string YEAR_FORMAT = "yyyy";
+        private readonly string MONTH_FORMAT = "yyyyMM";
+        private readonly string DAY_FORMAT = "yyyyMMdd";
+        private readonly string HOUR_FORMAT = "yyyyMMddHH";
+        private readonly string MINUTE_FORMAT = "yyyyMMddHHmm";
+        private readonly string SECOND_FORMAT = "yyyyMMddHHmmss";
+        private readonly string MILLISECOND_FORMAT = "yyyyMMddHHmmssfff";
+
+
+        public string TimeToString(long time, Resolution resolution)
+        {
+            DateTime dateTime = new DateTime(Round(time, resolution));
+            if (resolution == Resolution.YEAR)
+                return dateTime.ToString(YEAR_FORMAT, CultureInfo.InvariantCulture);
+            if (resolution == Resolution.MONTH)
+                return dateTime.ToString(MONTH_FORMAT, CultureInfo.InvariantCulture);
+            if (resolution == Resolution.DAY)
+                return dateTime.ToString(DAY_FORMAT, CultureInfo.InvariantCulture);
+            if (resolution == Resolution.HOUR)
+                return dateTime.ToString(HOUR_FORMAT, CultureInfo.InvariantCulture);
+            if (resolution == Resolution.MINUTE)
+                return dateTime.ToString(MINUTE_FORMAT, CultureInfo.InvariantCulture);
+            if (resolution == Resolution.SECOND)
+                return dateTime.ToString(SECOND_FORMAT, CultureInfo.InvariantCulture);
+            if (resolution == Resolution.MILLISECOND)
+                return dateTime.ToString(MILLISECOND_FORMAT, CultureInfo.InvariantCulture);
+            throw new ArgumentException("unknown resolution " + resolution);
+        }
+
+
+        private DateTime Round(DateTime date, Resolution resolution)
+        {
+            return new DateTime(Round(date.Ticks / 10000L, resolution));
+        }
+
+
+        private long Round(long time, Resolution resolution)
+        {
+            DateTime dateTime = new DateTime(time * 10000L);
+            if (resolution == Resolution.YEAR)
+            {
+                dateTime = dateTime.AddMonths(1 - dateTime.Month);
+                dateTime = dateTime.AddDays(1 - dateTime.Day);
+                dateTime = dateTime.AddHours(-dateTime.Hour);
+                dateTime = dateTime.AddMinutes(-dateTime.Minute);
+                dateTime = dateTime.AddSeconds(-dateTime.Second);
+                dateTime = dateTime.AddMilliseconds(-dateTime.Millisecond);
+            }
+            else if (resolution == Resolution.MONTH)
+            {
+                dateTime = dateTime.AddDays(1 - dateTime.Day);
+                dateTime = dateTime.AddHours(-dateTime.Hour);
+                dateTime = dateTime.AddMinutes(-dateTime.Minute);
+                dateTime = dateTime.AddSeconds(-dateTime.Second);
+                dateTime = dateTime.AddMilliseconds(-dateTime.Millisecond);
+            }
+            else if (resolution == Resolution.DAY)
+            {
+                dateTime = dateTime.AddHours(-dateTime.Hour);
+                dateTime = dateTime.AddMinutes(-dateTime.Minute);
+                dateTime = dateTime.AddSeconds(-dateTime.Second);
+                dateTime = dateTime.AddMilliseconds(-dateTime.Millisecond);
+            }
+            else if (resolution == Resolution.HOUR)
+            {
+                dateTime = dateTime.AddMinutes(-dateTime.Minute);
+                dateTime = dateTime.AddSeconds(-dateTime.Second);
+                dateTime = dateTime.AddMilliseconds(-dateTime.Millisecond);
+            }
+            else if (resolution == Resolution.MINUTE)
+            {
+                dateTime = dateTime.AddSeconds(-dateTime.Second);
+                dateTime = dateTime.AddMilliseconds(-dateTime.Millisecond);
+            }
+            else if (resolution == Resolution.SECOND)
+                dateTime = dateTime.AddMilliseconds(-dateTime.Millisecond);
+            else if (resolution != Resolution.MILLISECOND)
+                throw new ArgumentException("unknown resolution " + resolution);
+            return dateTime.Ticks;
+        }
+
+        /// <summary>Specifies the time granularity. </summary>
+        public class Resolution
+        {
+            public static readonly Resolution YEAR = new Resolution("year");
+            public static readonly Resolution MONTH = new Resolution("month");
+            public static readonly Resolution DAY = new Resolution("day");
+            public static readonly Resolution HOUR = new Resolution("hour");
+            public static readonly Resolution MINUTE = new Resolution("minute");
+            public static readonly Resolution SECOND = new Resolution("second");
+            public static readonly Resolution MILLISECOND = new Resolution("millisecond");
+            private readonly string _resolution;
+
+            internal Resolution()
+            {
+            }
+
+            internal Resolution(string resolution)
+            {
+                _resolution = resolution;
+            }
+
+            public override string ToString()
+            {
+                return _resolution;
+            }
         }
 
 

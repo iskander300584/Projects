@@ -40,7 +40,7 @@ namespace PilotMobile.Pages
             // Получение выбранного задания
             PilotTask task = e.Item as PilotTask;
 
-            Navigation.PushModalAsync(new DocumentCarrousel(task));
+            Navigation.PushModalAsync(new TaskCarrousel(task));
         }
 
 

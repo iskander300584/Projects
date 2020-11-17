@@ -102,7 +102,7 @@ namespace Xamarin_HelloApp.Pages
         {
             if (context != null)
             {
-                if (!context.DocLoaded)
+                if (!context.DocLoaded && !context.Loading )
                     context.GetXPS();
             }
         }

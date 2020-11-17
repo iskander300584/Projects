@@ -6,7 +6,7 @@ using Xamarin_HelloApp.ViewContexts;
 using PilotMobile.Pages;
 using System.Threading.Tasks;
 using PilotMobile.AppContext;
-
+using PilotMobile.ViewModels;
 
 namespace Xamarin_HelloApp
 {
@@ -24,7 +24,8 @@ namespace Xamarin_HelloApp
         /// <summary>
         /// Главное окно
         /// </summary>
-        public MainPage()
+        /// <param name="rootObject">головной объект для подчиненного окна</param>
+        public MainPage(IPilotObject rootObject = null)
         {
             InitializeComponent();
 
@@ -33,7 +34,7 @@ namespace Xamarin_HelloApp
                 Global.CurrentPerson = Global.DALContext.Repository.CurrentPerson();
             }
 
-            context = new MainPage_Context(this);
+            context = new MainPage_Context(this, rootObject);
 
             this.BindingContext = context;
         }

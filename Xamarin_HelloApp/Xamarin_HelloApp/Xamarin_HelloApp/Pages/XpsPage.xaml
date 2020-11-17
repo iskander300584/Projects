@@ -17,9 +17,23 @@
 
                     <StackLayout Orientation="Horizontal">
                         <!-- Кнопка Обновить -->
-                        <ImageButton Source="refresh.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
-                                     Command="{Binding UpdateCommand}" Margin="0,0,10,0"
-                                     />
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
+                                     Command="{Binding UpdateCommand}" IsEnabled="{Binding UpdateCanExecute}" Margin="0,0,10,0"
+                                     >
+                            <ImageButton.Style>
+                                <Style TargetType="ImageButton">
+                                    <Style.Triggers>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="True">
+                                            <Setter Property="Source" Value="refresh.png"/>
+                                        </Trigger>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="False">
+                                            <Setter Property="Source" Value="refresh_gray.png"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ImageButton.Style>
+                        </ImageButton>
+                        
                         <!-- Сообщение -->
                         <Label Text="{Binding Message}" IsVisible="{Binding IsMessageVisible}" FontSize="Medium" TextColor="White" VerticalOptions="StartAndExpand" />
                         <!-- Кнопка Наверх -->

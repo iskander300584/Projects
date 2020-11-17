@@ -124,5 +124,15 @@ namespace Xamarin_HelloApp.ViewModels
                 visibleName.Trim();
             }
         }
+
+
+        /// <summary>
+        /// Задать головной объект
+        /// </summary>
+        /// <param name="parent">головной объект</param>
+        public void SetParent(PilotTreeItem parent)
+        {
+            this.parent = parent;
+        }
     }
 }

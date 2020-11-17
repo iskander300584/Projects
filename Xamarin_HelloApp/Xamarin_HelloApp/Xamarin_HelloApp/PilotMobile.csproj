@@ -27,6 +27,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Pages\Carousels\TaskCarrousel.xaml.cs">
+      <DependentUpon>TaskCarrousel.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Update="Pages\AuthorizePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
@@ -36,13 +42,16 @@
     <EmbeddedResource Update="Pages\DocsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Pages\DocumentCarrousel.xaml">
+    <EmbeddedResource Update="Pages\Carousels\DocumentCarrousel.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Pages\MainCarrouselPage.xaml">
+    <EmbeddedResource Update="Pages\Carousels\MainCarrouselPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Pages\SearchQueryPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Pages\Carousels\TaskCarrousel.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Pages\TasksPage.xaml">

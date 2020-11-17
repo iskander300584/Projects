@@ -160,6 +160,10 @@
                 </ImageButton>
             </Grid>
 
+            <Frame BackgroundColor="#7A87BF" Padding="10" CornerRadius="0" Margin="0,5,0,5">
+                <Label Text="Параметры поиска:" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
+            </Frame>
+            
             <!--<Rectangle Margin="10" HorizontalOptions="FillAndExpand" HeightRequest="2" BackgroundColor="Gray" />-->
 
             <!-- Список элементов поиска -->

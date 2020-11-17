@@ -25,6 +25,7 @@ namespace Xamarin_HelloApp.ViewContexts
     {
         #region Поля класса
 
+
         /// <summary>
         /// Наименование приложения
         /// </summary>
@@ -229,22 +230,25 @@ namespace Xamarin_HelloApp.ViewContexts
         #endregion
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
-        }
-
-
         /// <summary>
         /// Контекст данных главного окна
         /// </summary>
-        public MainPage_Context(MainPage page)
+        /// <param name="page">соответствующая страница</param>
+        /// <param name="rootObject">головной объект (для подчиненной страницы)</param>
+        public MainPage_Context(MainPage page, IPilotObject rootObject)
         {
             this.page = page;
 
-            if (IsConnected)
+            if(rootObject != null && rootObject is PilotTask)
+            {
+
+                root = new PilotTreeItem(rootObject.DObject, true);
+                Mode = PageMode.Slave;
+
+                if (IsConnected)
+                    GetTaskRootObjects();
+            }
+            else if (IsConnected)
                 GetRootObjects();
 
             upCommand = new Command(Up_Execute);
@@ -256,14 +260,21 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
+        #region Методы
+
+
         /// <summary>
         /// Получить список головных объектов
         /// </summary>
         private void GetRootObjects(bool update = false)
         {
-            DObject rootObj = Global.DALContext.Repository.GetObjects(new[] { DObject.RootId }).First();
+            if (Mode != PageMode.Slave)
+            {
+                DObject rootObj = Global.DALContext.Repository.GetObjects(new[] { DObject.RootId }).First();
 
-            root = new PilotTreeItem(rootObj);
+                root = new PilotTreeItem(rootObj);
+            }
+
             Parent = Root;
 
             Items = Parent.Children;
@@ -272,6 +283,35 @@ namespace Xamarin_HelloApp.ViewContexts
             {
                 Parent.Children.Clear();
                 AsyncGetChildren(Parent);
+            }
+        }
+
+
+        /// <summary>
+        /// Получение объектов, вложенных в задание
+        /// </summary>
+        private void GetTaskRootObjects()
+        {
+            Root.Children.Clear();
+            Items = Root.Children;
+
+            foreach (DRelation relation in Root.DObject.Relations)
+            {
+                if (relation.TargetId == null)
+                    continue;
+
+                DObject childObj = Global.DALContext.Repository.GetObjects(new Guid[] { relation.TargetId }).FirstOrDefault();
+
+                if (childObj != null)
+                {
+                    PilotTreeItem child = new PilotTreeItem(childObj, true);
+
+                    if (child.VisibleName != "")
+                    {
+                        child.SetParent(Root);
+                        Root.Children.Add(child);
+                    }
+                }
             }
         }
 
@@ -314,7 +354,7 @@ namespace Xamarin_HelloApp.ViewContexts
 
             HomeCanExecute = (UpCanExecute || Mode == PageMode.Search);
 
-            UpdateCanExecute = (Mode == PageMode.View);
+            UpdateCanExecute = (Mode != PageMode.Search);
         }
 
 
@@ -378,7 +418,10 @@ namespace Xamarin_HelloApp.ViewContexts
 
                 Parent.UpdateObjectData();
 
-                AsyncGetChildren(Parent);
+                if (Mode == PageMode.View || Parent != Root)
+                    AsyncGetChildren(Parent);
+                else
+                    GetTaskRootObjects();
             }
 
             Up_CanExecute();
@@ -520,5 +563,15 @@ namespace Xamarin_HelloApp.ViewContexts
 
             Up_CanExecute();
         }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+        #endregion
     }
 }

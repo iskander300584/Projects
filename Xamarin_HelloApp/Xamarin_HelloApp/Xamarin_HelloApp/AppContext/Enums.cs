@@ -26,6 +26,11 @@ namespace PilotMobile.AppContext
         /// <summary>
         /// Поиск
         /// </summary>
-        Search
+        Search,
+
+        /// <summary>
+        /// Подчиненное окно с ограниченным функционалом
+        /// </summary>
+        Slave
     }
 }
