@@ -147,5 +147,14 @@ namespace Xamarin_HelloApp
                 App.Current.ModalPopping -= HandleModalPopping;
             }
         }
+
+
+        /// <summary>
+        /// Возврат к предыдущей странице
+        /// </summary>
+        public void NavigationToMain()
+        {
+            Navigation.PopModalAsync();
+        }
     }
 }

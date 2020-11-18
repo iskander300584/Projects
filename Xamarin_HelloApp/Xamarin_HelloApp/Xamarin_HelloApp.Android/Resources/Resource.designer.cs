@@ -8991,17 +8991,23 @@ namespace Xamarin_HelloApp.Droid
 			// aapt resource value: 0x7F0700D0
 			public const int up = 2131165392;
 			
+			// aapt resource value: 0x7F0700D2
+			public const int upArrow = 2131165394;
+			
+			// aapt resource value: 0x7F0700D3
+			public const int upArrow_gray = 2131165395;
+			
 			// aapt resource value: 0x7F0700D1
 			public const int up_gray = 2131165393;
 			
-			// aapt resource value: 0x7F0700D2
-			public const int Viewmode = 2131165394;
-			
-			// aapt resource value: 0x7F0700D3
-			public const int xls = 2131165395;
-			
 			// aapt resource value: 0x7F0700D4
-			public const int zip = 2131165396;
+			public const int Viewmode = 2131165396;
+			
+			// aapt resource value: 0x7F0700D5
+			public const int xls = 2131165397;
+			
+			// aapt resource value: 0x7F0700D6
+			public const int zip = 2131165398;
 			
 			static Drawable()
 			{

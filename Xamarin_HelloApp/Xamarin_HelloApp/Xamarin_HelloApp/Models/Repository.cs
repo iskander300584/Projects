@@ -13,6 +13,7 @@ namespace Xamarin_HelloApp.Models
         List<DObject> GetObjects(Guid[] ids);
         DPerson GetPersonOnOrganisationUnit(int id);
         DPerson GetPerson(int id);
+        IEnumerable<DPerson> GetPersons(string login);
         DOrganisationUnit GetOrganisationUnit(int id);
         DPerson CurrentPerson();
         MType GetType(int id);
@@ -42,7 +43,7 @@ namespace Xamarin_HelloApp.Models
         {
             _persons = _serverApi.LoadPeople().ToDictionary(x => x.Id, y => y);
             _organisationUnits = _serverApi.LoadOrganisationUnits().ToDictionary(x => x.Id, y => y);
-            _person = _persons.First(p => p.Value.Login.Equals(currentLogin, StringComparison.OrdinalIgnoreCase)).Value;
+            _person = _persons.First(p => p.Value.Login.Equals(currentLogin, StringComparison.OrdinalIgnoreCase) && !p.Value.IsDeleted && !p.Value.IsInactive).Value;
             _types = _serverApi.GetMetadata(0).Types;
         }
 
@@ -76,6 +77,11 @@ namespace Xamarin_HelloApp.Models
         public DPerson GetPerson(int id)
         {
             return _persons.Values.FirstOrDefault(p => p.Id.Equals(id));
+        }
+
+        public IEnumerable<DPerson> GetPersons(string login)
+        {
+            return _persons.Values.Where(p => p.Login.ToLower() == login.ToLower());
         }
 
         public DOrganisationUnit GetOrganisationUnit(int id)

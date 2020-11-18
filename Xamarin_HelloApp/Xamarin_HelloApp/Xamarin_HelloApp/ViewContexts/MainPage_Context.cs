@@ -209,6 +209,26 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
+        private ICommand backCommand;
+        /// <summary>
+        /// Команда Назад
+        /// </summary>
+        public ICommand BackCommand
+        {
+            get => backCommand;
+        }
+
+
+        private bool backVisible = false;
+        /// <summary>
+        /// Признак видимости кнопки Назад
+        /// </summary>
+        public bool BackVisible
+        {
+            get => backVisible;
+        }
+
+
         private SearchQueryPage_Context searchContext = null;
         /// <summary>
         /// Контекст данных окна поиска
@@ -227,6 +247,16 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
+        private bool searchVisible = true;
+        /// <summary>
+        /// Отображение кнопки Поиск
+        /// </summary>
+        public bool SearchVisible
+        {
+            get => searchVisible;
+        }
+
+
         #endregion
 
 
@@ -241,12 +271,15 @@ namespace Xamarin_HelloApp.ViewContexts
 
             if(rootObject != null && rootObject is PilotTask)
             {
-
                 root = new PilotTreeItem(rootObject.DObject, true);
+                Parent = Root;
                 Mode = PageMode.Slave;
 
                 if (IsConnected)
                     GetTaskRootObjects();
+
+                searchVisible = false;
+                backVisible = true;
             }
             else if (IsConnected)
                 GetRootObjects();
@@ -255,6 +288,7 @@ namespace Xamarin_HelloApp.ViewContexts
             homeCommand = new Command(Home_Execute);
             updateCommand = new Command(Update_Execute);
             mainMenuCommand = new Command(MainMenu_Execute);
+            backCommand = new Command(Back_Execute);
 
             Up_CanExecute();
         }
@@ -292,8 +326,8 @@ namespace Xamarin_HelloApp.ViewContexts
         /// </summary>
         private void GetTaskRootObjects()
         {
-            Root.Children.Clear();
-            Items = Root.Children;
+            Parent.Children.Clear();
+            Items = Parent.Children;
 
             foreach (DRelation relation in Root.DObject.Relations)
             {
@@ -350,7 +384,7 @@ namespace Xamarin_HelloApp.ViewContexts
         /// </summary>
         private void Up_CanExecute()
         {
-            UpCanExecute = (Parent != null && Root != null && Parent != Root && Mode == PageMode.View);
+            UpCanExecute = (Parent != null && Root != null && Parent != Root && Parent.DObject != null && Parent.Parent != null);
 
             HomeCanExecute = (UpCanExecute || Mode == PageMode.Search);
 
@@ -425,6 +459,15 @@ namespace Xamarin_HelloApp.ViewContexts
             }
 
             Up_CanExecute();
+        }
+
+
+        /// <summary>
+        /// Команда Назад
+        /// </summary>
+        private void Back_Execute()
+        {
+            page.NavigationToMain();
         }
 
 

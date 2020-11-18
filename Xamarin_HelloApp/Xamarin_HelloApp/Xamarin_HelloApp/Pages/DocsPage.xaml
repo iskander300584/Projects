@@ -18,18 +18,18 @@
                         <ImageButton Source="refresh.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
                                      Command="{Binding UpdateCommand}"/>
 
-                        <!-- Кнопка Наверх -->
+                        <!-- Кнопка Наверх  IsEnabled="{Binding UpCanExecute}" -->
                         <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand"  
-                                     Command="{Binding UpCommand}" IsEnabled="{Binding UpCanExecute}"
+                                     Command="{Binding UpCommand}" Padding="1"
                                      >
                             <ImageButton.Style>
                                 <Style TargetType="ImageButton">
                                     <Style.Triggers>
                                         <Trigger TargetType="ImageButton" Property="IsEnabled" Value="True">
-                                            <Setter Property="Source" Value="up.png"/>
+                                            <Setter Property="Source" Value="upArrow.png"/>
                                         </Trigger>
                                         <Trigger TargetType="ImageButton" Property="IsEnabled" Value="False">
-                                            <Setter Property="Source" Value="up_gray.png"/>
+                                            <Setter Property="Source" Value="upArrow_gray.png"/>
                                         </Trigger>
                                     </Style.Triggers>
                                 </Style>
@@ -38,7 +38,7 @@
 
                     </StackLayout>
 
-                    <Label Text="{Binding PilotItem.VisibleName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Small" Margin="0,0,0,0" LineBreakMode="WordWrap" MaxLines="2" />
+                    <Label Text="{Binding PilotItem.VisibleName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Small" LineBreakMode="WordWrap" MaxLines="2" />
                 </StackLayout>
             </Frame>
             

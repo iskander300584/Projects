@@ -181,6 +181,16 @@ namespace PilotMobile.ViewContexts
         }
 
 
+        private ICommand upCommand;
+        /// <summary>
+        /// Команда Наверх
+        /// </summary>
+        public ICommand UpCommand
+        {
+            get => upCommand;
+        }
+
+
         private bool addType_CanExecute = false;
         /// <summary>
         /// Признак доступности команды добавления типа
@@ -290,6 +300,7 @@ namespace PilotMobile.ViewContexts
             deleteItem = new Command(DeleteItem_Execute);
             search = new Command(Search_Execute);
             reset = new Command(Reset_Execute);
+            upCommand = new Command(UpCommand_Execute);
         }
 
 
@@ -304,6 +315,15 @@ namespace PilotMobile.ViewContexts
         {
             this.page = page;
             query = string.Empty;
+        }
+
+
+        /// <summary>
+        /// Выполнение команды Наверх
+        /// </summary>
+        private void UpCommand_Execute()
+        {
+            page.NavigationToMain();
         }
 
 

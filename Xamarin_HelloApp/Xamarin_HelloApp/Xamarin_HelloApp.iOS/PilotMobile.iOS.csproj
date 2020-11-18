@@ -259,4 +259,10 @@
   <ItemGroup>
     <BundleResource Include="Resources\undo_gray.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\upArrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\upArrow_gray.png" />
+  </ItemGroup>
 </Project>

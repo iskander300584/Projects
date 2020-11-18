@@ -115,13 +115,14 @@ namespace Xamarin_HelloApp.ViewModels
                     }
                 }
 
+                visibleName = string.Empty;
                 foreach (var attr in dObject.Attributes)
                 {
                     if (Type != null && Type.Attributes.Any(a => a.Name == attr.Key && a.IsVisible && !a.IsSystem))
                         visibleName += attr.Value.StrValue + " ";
                 }
 
-                visibleName.Trim();
+                VisibleName = visibleName.Trim();
             }
         }
 

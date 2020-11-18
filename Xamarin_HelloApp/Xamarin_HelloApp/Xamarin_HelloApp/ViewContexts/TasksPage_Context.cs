@@ -56,7 +56,7 @@ namespace PilotMobile.ViewContexts
                     selectedFilterIndex = value;
                     OnPropertyChanged();
 
-                    SelectVisibleTasks();
+                    SearchTasks();
                 }
             }
         }
@@ -179,6 +179,15 @@ namespace PilotMobile.ViewContexts
 
             ClearMarkers();
 
+            SearchTasks();
+        }
+
+
+        /// <summary>
+        /// Выполнить поиск заданий
+        /// </summary>
+        private void SearchTasks()
+        {
             Thread thread = new Thread(AsyncGetTasks);
             thread.Start();
         }
@@ -275,6 +284,16 @@ namespace PilotMobile.ViewContexts
 
                 searchType = searchType.Remove(searchType.Length - 4).Trim();
                 searchType += ")";
+
+                // Поиск по ID пользователя
+                {
+                    IEnumerable<Guid> _guids = await GetTaskGuidList(searchType, Global.CurrentPerson.Id);
+
+                    if (_guids != null)
+                        foreach (Guid guid in _guids)
+                            if (!_taskGuids.Contains(guid))
+                                _taskGuids.Add(guid);
+                }
 
                 // Поиск по должностям
                 List<int> units = Global.CurrentPerson.Positions;

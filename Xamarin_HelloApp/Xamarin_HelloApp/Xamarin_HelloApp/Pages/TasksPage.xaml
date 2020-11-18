@@ -12,7 +12,7 @@
                     <StackLayout Orientation="Horizontal" >
                         <Image Source="pilot.png" HeightRequest="20" />
                         <Label Text="{Binding AppName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
-                        <Label Text="Задания" HorizontalTextAlignment="End" HorizontalOptions="EndAndExpand" TextColor="White" FontSize="Medium" Margin="0,0,10,0"/>
+                        <Label Text="Задания" HorizontalTextAlignment="End" HorizontalOptions="EndAndExpand" TextColor="White" FontSize="Medium" />
                     </StackLayout>
 
                     <StackLayout Orientation="Horizontal" >
@@ -21,7 +21,7 @@
                                      VerticalOptions="Center" Command="{Binding UpdateCommand}"/>
 
                         <!-- Фильтр заданий -->
-                        <Picker HorizontalOptions="EndAndExpand" ItemsSource="{Binding TaskFilter}" SelectedIndex="{Binding SelectedFilterIndex, Mode=TwoWay}" Margin="10,0,10,0" 
+                        <Picker HorizontalOptions="EndAndExpand" ItemsSource="{Binding TaskFilter}" SelectedIndex="{Binding SelectedFilterIndex, Mode=TwoWay}" Margin="10,0,0,0" 
                                 TextColor="White" WidthRequest="200" HorizontalTextAlignment="End" />
                     </StackLayout>
                 </StackLayout>

@@ -17,7 +17,7 @@
                 <StackLayout>
                     <StackLayout Orientation="Horizontal" >
                         <ImageButton Source="pilot.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
-                                     Command="{Binding MainMenuCommand}"/>
+                                     Command="{Binding MainMenuCommand}" IsEnabled="{Binding SearchVisible}"/>
                         <Label Text="{Binding AppName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
                         <!--<Image HorizontalOptions="EndAndExpand" HeightRequest="10" Aspect="AspectFit" Source="{Binding IsConnected, Converter={StaticResource IsConnected_ImageSource}}" Margin="0,0,5,0" />-->
                     </StackLayout>
@@ -42,10 +42,30 @@
 
                         <!-- Кнопка Поиск -->
                         <ImageButton Source="search.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
-                                     Clicked="Search_Click" Margin="20,0,0,0" />
+                                     Clicked="Search_Click" IsVisible="{Binding SearchVisible}" Margin="20,0,0,0" />
 
+                        <Label HorizontalOptions="EndAndExpand" />
+
+                        <!-- Кнопка Наверх -->
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End"  
+                                     Command="{Binding BackCommand}" Padding="1" IsVisible="{Binding BackVisible}"
+                                     >
+                            <ImageButton.Style>
+                                <Style TargetType="ImageButton">
+                                    <Style.Triggers>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="True">
+                                            <Setter Property="Source" Value="upArrow.png"/>
+                                        </Trigger>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="False">
+                                            <Setter Property="Source" Value="upArrow_gray.png"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ImageButton.Style>
+                        </ImageButton>
+                        
                         <!-- Кнопка Карточка -->
-                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand"  
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End" Margin="20,0,0,0"  
                                      IsEnabled="{Binding UpCanExecute}" Clicked="Card_Click" >
                             <ImageButton.Style>
                                 <Style TargetType="ImageButton">
@@ -97,7 +117,8 @@
                         </ImageButton>
                     </StackLayout>
 
-                    <Label Text="{Binding Parent.VisibleName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Small" Margin="0,0,0,0" LineBreakMode="WordWrap" MaxLines="2" /> 
+                    <!-- Наименование объекта -->
+                    <Label Text="{Binding Parent.VisibleName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Small" LineBreakMode="WordWrap" MaxLines="2" /> 
                 </StackLayout>
             </Frame>
 
