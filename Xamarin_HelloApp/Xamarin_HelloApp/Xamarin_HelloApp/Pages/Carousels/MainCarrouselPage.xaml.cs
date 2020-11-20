@@ -13,11 +13,11 @@ namespace PilotMobile.Pages
         /// <summary>
         /// Карусель главных окон
         /// </summary>
-        public MainCarrouselPage()
+        public MainCarrouselPage(string? url)
         {
             InitializeComponent();
 
-            Children.Add(new MainPage()); // Добавление главного окна
+            Children.Add(new MainPage(url)); // Добавление главного окна
             Children.Add(new TasksPage()); // Добавление окна заданий
         }
     }

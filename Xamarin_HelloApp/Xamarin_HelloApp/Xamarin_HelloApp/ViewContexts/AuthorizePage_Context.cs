@@ -78,7 +78,7 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        private string login = "ryapolov_an"; // "ryapolov_an"
+        private string login = ""; // "ryapolov_an"
         /// <summary>
         /// Имя пользователя
         /// </summary>
@@ -98,7 +98,7 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        private string password = "sSR4mzCQ"; // "sSR4mzCQ"
+        private string password = ""; // "sSR4mzCQ"
         /// <summary>
         /// Пароль
         /// </summary>
@@ -324,7 +324,7 @@ namespace Xamarin_HelloApp.ViewContexts
             if (!reconnect)
                 page.NavigateToMainPage();
             else
-                App.Current.MainPage = new MainCarrouselPage();
+                App.Current.MainPage = new MainCarrouselPage(null);
         }
 
 

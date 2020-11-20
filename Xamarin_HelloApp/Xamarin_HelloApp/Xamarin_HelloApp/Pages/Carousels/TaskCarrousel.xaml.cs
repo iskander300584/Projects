@@ -20,7 +20,7 @@ namespace PilotMobile.Pages
             InitializeComponent();
 
             Children.Add(new CardPage(pilotItem, null));
-            Children.Add(new MainPage(pilotItem));
+            Children.Add(new MainPage(null, pilotItem));
         }
     }
 }

@@ -8,11 +8,27 @@ using Android.Widget;
 using Android.OS;
 using FFImageLoading.Forms.Platform;
 using FFImageLoading.Svg.Forms;
+using Android.Content;
 
 namespace Xamarin_HelloApp.Droid
 {
-    // Theme = "@style/MainTheme"
     [Activity(Label = "Pilot-FLY", Icon = "@drawable/pilot_icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
+    [IntentFilter (new[] { Intent.ActionView },
+        Categories = new[] { 
+        Intent.CategoryBrowsable, Intent.CategoryDefault},
+        DataSchemes = new[] { "http", "https" },
+        //DataHost = "ecm.ascon.ru",
+        //DataPort = "5545",
+
+        //DataScheme = ".*",
+        //DataHost = ".*",
+        //DataPort = ".*",
+        //DataPathPrefix = "/url"
+
+        DataHost = "*",
+        DataPathPrefix = "/url"
+       // DataPathPattern = ".*\\\\.*\\url.*"
+        )]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         protected override void OnCreate(Bundle savedInstanceState)
@@ -28,7 +44,11 @@ namespace Xamarin_HelloApp.Droid
             CachedImageRenderer.Init(true);
             var ignore = typeof(SvgCachedImage);
 
-            LoadApplication(new App());
+            string? url = null;
+            if(this.Intent != null && this.Intent.Data != null)
+                url = this.Intent.Data.ToString();
+
+            LoadApplication(new App(url));
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {

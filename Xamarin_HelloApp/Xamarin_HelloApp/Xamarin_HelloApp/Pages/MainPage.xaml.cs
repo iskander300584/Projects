@@ -25,7 +25,7 @@ namespace Xamarin_HelloApp
         /// Главное окно
         /// </summary>
         /// <param name="rootObject">головной объект для подчиненного окна</param>
-        public MainPage(IPilotObject rootObject = null)
+        public MainPage(string url, IPilotObject rootObject = null)
         {
             InitializeComponent();
 
@@ -37,6 +37,9 @@ namespace Xamarin_HelloApp
             context = new MainPage_Context(this, rootObject);
 
             this.BindingContext = context;
+
+            if (url != null)
+                DisplayMessage("URL", "В ближайшее время функционал перехода по ссылке будет реализован =)" + (string)url, false);
         }
 
 

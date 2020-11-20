@@ -36,7 +36,7 @@ namespace Xamarin_HelloApp.Pages
         /// </summary>
         public void NavigateToMainPage()
         {
-            App.Current.MainPage = new MainCarrouselPage();
+            App.Current.MainPage = new MainCarrouselPage(null);
         }
     }
 }

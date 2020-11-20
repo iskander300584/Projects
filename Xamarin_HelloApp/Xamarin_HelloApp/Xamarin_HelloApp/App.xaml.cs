@@ -16,7 +16,7 @@ namespace Xamarin_HelloApp
         /// <summary>
         /// Класс запуска мобильного клиента Pilot
         /// </summary>
-        public App()
+        public App(string? url)
         {
             InitializeComponent();
 
@@ -32,7 +32,7 @@ namespace Xamarin_HelloApp
             {
                 Global.GetMetaData();
 
-                MainPage = new MainCarrouselPage();
+                MainPage = new MainCarrouselPage(url);
             }
             else
                 MainPage = new AuthorizePage();
