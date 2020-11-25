@@ -286,14 +286,14 @@ namespace PilotMobile.ViewContexts
                 searchType += ")";
 
                 // Поиск по ID пользователя
-                {
+                /*{
                     IEnumerable<Guid> _guids = await GetTaskGuidList(searchType, Global.CurrentPerson.Id);
 
                     if (_guids != null)
                         foreach (Guid guid in _guids)
                             if (!_taskGuids.Contains(guid))
                                 _taskGuids.Add(guid);
-                }
+                }*/
 
                 // Поиск по должностям
                 List<int> units = Global.CurrentPerson.Positions;
@@ -308,7 +308,7 @@ namespace PilotMobile.ViewContexts
                 }
 
                 // Поиск по организационным единицам
-                HashSet<int> orgUnits = Global.CurrentPerson.AllOrgUnits;
+                /*HashSet<int> orgUnits = Global.CurrentPerson.AllOrgUnits;
                 foreach (int unit in orgUnits)
                 {
                     IEnumerable<Guid> _guids = await GetTaskGuidList(searchType, unit);
@@ -317,7 +317,7 @@ namespace PilotMobile.ViewContexts
                         foreach (Guid guid in _guids)
                             if (!_taskGuids.Contains(guid))
                                 _taskGuids.Add(guid);
-                }
+                }*/
 
                 foreach (Guid guid in _taskGuids)
                     if (!_allTasks.Any(t => t.Guid == guid))
