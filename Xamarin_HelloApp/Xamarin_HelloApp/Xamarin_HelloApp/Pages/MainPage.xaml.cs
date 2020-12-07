@@ -34,12 +34,9 @@ namespace Xamarin_HelloApp
                 Global.CurrentPerson = Global.DALContext.Repository.CurrentPerson();
             }
 
-            context = new MainPage_Context(this, rootObject);
+            context = new MainPage_Context(this, rootObject, url);
 
             this.BindingContext = context;
-
-            if (url != null)
-                DisplayMessage("URL", "В ближайшее время функционал перехода по ссылке будет реализован =)" + (string)url, false);
         }
 
 

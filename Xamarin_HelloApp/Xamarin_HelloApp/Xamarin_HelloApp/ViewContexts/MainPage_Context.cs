@@ -1,5 +1,6 @@
 ﻿using Ascon.Pilot.DataClasses;
 using PilotMobile.AppContext;
+using PilotMobile.Pages;
 using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
 using System;
@@ -265,7 +266,8 @@ namespace Xamarin_HelloApp.ViewContexts
         /// </summary>
         /// <param name="page">соответствующая страница</param>
         /// <param name="rootObject">головной объект (для подчиненной страницы)</param>
-        public MainPage_Context(MainPage page, IPilotObject rootObject)
+        /// <param name="url">ссылка на объект</param>
+        public MainPage_Context(MainPage page, IPilotObject rootObject, string url)
         {
             this.page = page;
 
@@ -282,7 +284,7 @@ namespace Xamarin_HelloApp.ViewContexts
                 backVisible = true;
             }
             else if (IsConnected)
-                GetRootObjects();
+                GetRootObjects(false, url);
 
             upCommand = new Command(Up_Execute);
             homeCommand = new Command(Home_Execute);
@@ -300,7 +302,9 @@ namespace Xamarin_HelloApp.ViewContexts
         /// <summary>
         /// Получить список головных объектов
         /// </summary>
-        private void GetRootObjects(bool update = false)
+        /// <param name="update">обновить данные</param>
+        /// <param name="url">ссылка на объект</param>
+        private void GetRootObjects(bool update = false, String url = null)
         {
             if (Mode != PageMode.Slave)
             {
@@ -309,15 +313,80 @@ namespace Xamarin_HelloApp.ViewContexts
                 root = new PilotTreeItem(rootObj);
             }
 
-            Parent = Root;
+            Guid? guid;
 
-            Items = Parent.Children;
-
-            if (update || Parent.Children.Count == 0)
+            // Получение головных объектов
+            if (url == null || (guid = ParseURL(url)) == null)
             {
-                Parent.Children.Clear();
-                AsyncGetChildren(Parent);
+                Parent = Root;
+
+                Items = Parent.Children;
+
+                if (update || Parent.Children.Count == 0)
+                {
+                    Parent.Children.Clear();
+                    AsyncGetChildren(Parent);
+                }
             }
+            // Получение объекта по ссылке
+            else
+            {
+                DObject dObject = Global.DALContext.Repository.GetObjects(new Guid[] { (Guid)guid }).FirstOrDefault();
+
+                if (dObject != null)
+                {
+                    PilotTreeItem item = new PilotTreeItem(dObject, true);
+
+                    if (item.VisibleName != "" && !item.Type.IsSystem)
+                    {
+                        Mode = PageMode.Url;
+
+                        // Получение структуры для объекта
+                        if (!item.Type.IsDocument)
+                        {
+                            Parent = item;
+                            Items = Parent.Children;
+
+                            AsyncGetChildren(item);
+                        }
+                        // Открытие документа
+                        else
+                        {
+                            page.Navigation.PushModalAsync(new DocumentCarrousel(item));
+                        }
+                    }
+                    else
+                    {
+                        var result = page.DisplayMessage("Внимание!", "У Вас нет доступа к указанному объекту", false);
+
+                        // Получение головных объектов
+                        Parent = Root;
+
+                        Items = Parent.Children;
+
+                        if (update || Parent.Children.Count == 0)
+                        {
+                            Parent.Children.Clear();
+                            AsyncGetChildren(Parent);
+                        }
+                    }
+                }
+                else
+                {
+                    // Получение головных объектов
+                    Parent = Root;
+
+                    Items = Parent.Children;
+
+                    if (update || Parent.Children.Count == 0)
+                    {
+                        Parent.Children.Clear();
+                        AsyncGetChildren(Parent);
+                    }
+                }
+            }
+
+
         }
 
 
@@ -380,13 +449,42 @@ namespace Xamarin_HelloApp.ViewContexts
 
 
         /// <summary>
+        /// Получить GUID из ссылки
+        /// </summary>
+        /// <param name="url">ссылка</param>
+        private Guid? ParseURL(string url)
+        {
+            int index = url.ToLower().IndexOf(@"url?id=");
+
+            if (index == -1)
+                return null;
+
+            try
+            {
+                string _guidStr = url.Substring(index + 7);
+
+                index = _guidStr.IndexOf(@"&v=");
+
+                if(index != -1)
+                    _guidStr = _guidStr.Substring(0, index);
+
+                return new Guid(_guidStr);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+
+        /// <summary>
         /// Проверка возможности нажатия кнопкок Вверх, Домой, Обновить
         /// </summary>
         private void Up_CanExecute()
         {
-            UpCanExecute = (Parent != null && Root != null && Parent != Root && Parent.DObject != null && Parent.Parent != null);
+            UpCanExecute = (Parent != null && Root != null && Parent != Root && Parent.DObject != null && ( Parent.Parent != null || Mode == PageMode.Url));
 
-            HomeCanExecute = (UpCanExecute || Mode == PageMode.Search);
+            HomeCanExecute = (UpCanExecute || Mode == PageMode.Search || Mode == PageMode.Url);
 
             UpdateCanExecute = (Mode != PageMode.Search);
         }
@@ -414,9 +512,42 @@ namespace Xamarin_HelloApp.ViewContexts
         /// </summary>
         public void Up_Execute()
         {
-            Parent = Parent.Parent;
+            if (Mode != PageMode.Url)
+            {
+                Parent = Parent.Parent;
 
-            Items = Parent.Children;
+                Items = Parent.Children;
+            }
+            else
+            {
+                Guid parentGuid = Parent.DObject.ParentId;
+
+                if(parentGuid != Root.Guid)
+                {
+                    PilotTreeItem parent = new PilotTreeItem(Global.DALContext.Repository.GetObjects(new Guid[] { parentGuid }).FirstOrDefault(), true);
+
+                    Parent = parent;
+                    Items = Parent.Children;
+
+                    AsyncGetChildren(parent);
+                }
+                // Получение корневых объектов
+                else
+                {
+                    Mode = PageMode.View;
+
+                    Parent = Root;
+
+                    Items = Parent.Children;
+
+                    if (Items.Count == 0)
+                    {
+                        AsyncGetChildren(Parent);
+                    }
+
+                    Up_CanExecute();
+                }
+            }
 
             Up_CanExecute();
         }
@@ -433,6 +564,11 @@ namespace Xamarin_HelloApp.ViewContexts
 
             Items = Parent.Children;
 
+            if(Items.Count == 0)
+            {
+                AsyncGetChildren(Parent);
+            }
+
             Up_CanExecute();
         }
 
@@ -442,23 +578,37 @@ namespace Xamarin_HelloApp.ViewContexts
         /// </summary>
         public void Update_Execute()
         {
-            if (!IsConnected)
-                if (Global.DALContext.Connect(Global.Credentials) != null)
-                    return;
-
-            if (IsConnected)
+            try
             {
-                Parent.Children.Clear();
+                /*if (!IsConnected)
+                    if (Global.DALContext.Connect(Global.Credentials) != null)
+                        return;*/
 
-                Parent.UpdateObjectData();
+                Exception ex = Global.Reconnect();
+                if(ex != null)
+                {
+                    var res = page.DisplayMessage(StringConstants.Warning, ex.Message, false);
+                    return;
+                }
 
-                if (Mode == PageMode.View || Parent != Root)
-                    AsyncGetChildren(Parent);
-                else
-                    GetTaskRootObjects();
+                if (IsConnected)
+                {
+                    Parent.Children.Clear();
+
+                    Parent.UpdateObjectData();
+
+                    if (Mode == PageMode.View || Parent != Root)
+                        AsyncGetChildren(Parent);
+                    else
+                        GetTaskRootObjects();
+                }
+
+                Up_CanExecute();
             }
-
-            Up_CanExecute();
+            catch(Exception ex)
+            {
+                var res = page.DisplayMessage("Ошибка", ex.Message, false);
+            }
         }
 
 

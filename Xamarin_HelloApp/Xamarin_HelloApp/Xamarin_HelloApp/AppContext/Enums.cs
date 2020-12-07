@@ -31,6 +31,11 @@ namespace PilotMobile.AppContext
         /// <summary>
         /// Подчиненное окно с ограниченным функционалом
         /// </summary>
-        Slave
+        Slave,
+
+        /// <summary>
+        /// Запуск по ссылке
+        /// </summary>
+        Url
     }
 }

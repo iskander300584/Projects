@@ -124,7 +124,6 @@ namespace Xamarin_HelloApp.Models
             visibleName = type.Title;
 
             isSystem = (type.Kind != TypeKind.User);
-
             isDocument = type.HasFiles;
 
             isTask = type.IsTaskType();

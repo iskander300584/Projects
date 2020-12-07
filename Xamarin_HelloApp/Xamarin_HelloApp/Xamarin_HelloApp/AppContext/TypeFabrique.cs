@@ -1,8 +1,6 @@
 ﻿using Ascon.Pilot.DataClasses;
-using FFImageLoading.Svg.Forms;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Xamarin_HelloApp.Models;
 
@@ -17,11 +15,6 @@ namespace Xamarin_HelloApp.AppContext
         /// Словарь типов Pilot
         /// </summary>
         private static Dictionary<int, PType> _types = new Dictionary<int, PType>();
-
-        /// <summary>
-        /// Словарь пиктограмм типов
-        /// </summary>
-        //private static Dictionary<int, SvgImageSource> _typeImages = new Dictionary<int, SvgImageSource>();
 
 
         /// <summary>

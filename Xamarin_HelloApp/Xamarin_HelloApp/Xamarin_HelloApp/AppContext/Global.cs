@@ -1,5 +1,7 @@
 ﻿using Ascon.Pilot.DataClasses;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin_HelloApp.Models;
@@ -69,6 +71,28 @@ namespace Xamarin_HelloApp.AppContext
             TypeFabrique.ClearTypes();
             foreach (MType mType in types)
                 TypeFabrique.GetType(mType.Id);
+        }
+
+
+        /// <summary>
+        /// Переподключиться к БД
+        /// </summary>
+        /// <returns>возвращает NULL в случае успешного подключения или ошибку</returns>
+        public static Exception Reconnect()
+        {
+            try
+            {
+                // Проверка необходимости переподключения
+                DObject rootObj = DALContext.Repository.GetObjects(new[] { DObject.RootId }).First();
+
+                return null;
+            }
+            catch
+            {
+                // Переподключение к БД
+                Exception except = DALContext.Connect(Credentials);
+                return except;
+            }
         }
     }
 }
