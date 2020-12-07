@@ -132,7 +132,7 @@ namespace Xamarin_HelloApp
         /// <summary>
         /// Перехват возврата из модальной страницы
         /// </summary>
-        private void HandleModalPopping(object sender, ModalPoppingEventArgs e)
+        public void HandleModalPopping(object sender, ModalPoppingEventArgs e)
         {
             if(e.Modal is SearchQueryPage)
             {
@@ -145,6 +145,12 @@ namespace Xamarin_HelloApp
                 }
 
                 App.Current.ModalPopping -= HandleModalPopping;
+            }
+            else if(context.Mode == PageMode.Url && context.Items == null || context.Items.Count == 0)
+            {
+                App.Current.ModalPopping -= HandleModalPopping;
+
+                context.GetRootObjects(true);
             }
         }
 

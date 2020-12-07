@@ -89,6 +89,11 @@ namespace Xamarin_HelloApp.AppContext
             }
             catch
             {
+                if (DALContext == null)
+                    throw new Exception("Не определен класс \'DALContext\'");
+                else if(Credentials == null)
+                    throw new Exception("Не определен класс \'Credentials\'");
+
                 // Переподключение к БД
                 Exception except = DALContext.Connect(Credentials);
                 return except;

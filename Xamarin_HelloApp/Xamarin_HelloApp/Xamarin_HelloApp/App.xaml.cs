@@ -25,7 +25,8 @@ namespace Xamarin_HelloApp
             Credentials credentials = TryGetCredentials();
             if(credentials != null)
             {
-                Global.DALContext.Connect(credentials);
+                if (Global.DALContext.Connect(credentials) == null)
+                    Global.Credentials = credentials;
             }
 
             if (Global.DALContext.IsInitialized)

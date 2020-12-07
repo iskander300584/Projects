@@ -304,7 +304,7 @@ namespace Xamarin_HelloApp.ViewContexts
         /// </summary>
         /// <param name="update">обновить данные</param>
         /// <param name="url">ссылка на объект</param>
-        private void GetRootObjects(bool update = false, String url = null)
+        public void GetRootObjects(bool update = false, String url = null)
         {
             if (Mode != PageMode.Slave)
             {
@@ -314,19 +314,12 @@ namespace Xamarin_HelloApp.ViewContexts
             }
 
             Guid? guid;
+            bool needGetRoot = false; // Признак необходимости получения головных объектов
 
             // Получение головных объектов
             if (url == null || (guid = ParseURL(url)) == null)
             {
-                Parent = Root;
-
-                Items = Parent.Children;
-
-                if (update || Parent.Children.Count == 0)
-                {
-                    Parent.Children.Clear();
-                    AsyncGetChildren(Parent);
-                }
+                needGetRoot = true;
             }
             // Получение объекта по ссылке
             else
@@ -337,7 +330,7 @@ namespace Xamarin_HelloApp.ViewContexts
                 {
                     PilotTreeItem item = new PilotTreeItem(dObject, true);
 
-                    if (item.VisibleName != "" && !item.Type.IsSystem)
+                    if (item.VisibleName != "" && !item.Type.IsSystem && !item.DObject.InRootRecycleBin())
                     {
                         Mode = PageMode.Url;
 
@@ -352,41 +345,43 @@ namespace Xamarin_HelloApp.ViewContexts
                         // Открытие документа
                         else
                         {
+                            App.Current.ModalPopping += page.HandleModalPopping;
+
                             page.Navigation.PushModalAsync(new DocumentCarrousel(item));
                         }
+                    }
+                    else if(item.DObject.InRootRecycleBin() || item.DObject.IsForbidden())
+                    {
+                        var result = page.DisplayMessage("Внимание!", "Объект был удален", false);
+
+                        needGetRoot = true;
                     }
                     else
                     {
                         var result = page.DisplayMessage("Внимание!", "У Вас нет доступа к указанному объекту", false);
 
-                        // Получение головных объектов
-                        Parent = Root;
-
-                        Items = Parent.Children;
-
-                        if (update || Parent.Children.Count == 0)
-                        {
-                            Parent.Children.Clear();
-                            AsyncGetChildren(Parent);
-                        }
+                        needGetRoot = true;
                     }
                 }
                 else
                 {
-                    // Получение головных объектов
-                    Parent = Root;
-
-                    Items = Parent.Children;
-
-                    if (update || Parent.Children.Count == 0)
-                    {
-                        Parent.Children.Clear();
-                        AsyncGetChildren(Parent);
-                    }
+                    needGetRoot = true;
                 }
             }
 
+            // Получение головных объектов
+            if (needGetRoot)
+            {
+                Parent = Root;
 
+                Items = Parent.Children;
+
+                if (update || Parent.Children.Count == 0)
+                {
+                    Parent.Children.Clear();
+                    AsyncGetChildren(Parent);
+                }
+            }
         }
 
 
