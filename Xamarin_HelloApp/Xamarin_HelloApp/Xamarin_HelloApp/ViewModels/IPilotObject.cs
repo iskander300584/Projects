@@ -38,6 +38,14 @@ namespace PilotMobile.ViewModels
         public IPilotObject Parent
         {
             get => parent;
+            set
+            {
+                if(parent != value)
+                {
+                    parent = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
 

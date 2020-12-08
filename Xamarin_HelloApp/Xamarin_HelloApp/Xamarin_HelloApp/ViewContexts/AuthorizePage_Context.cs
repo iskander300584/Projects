@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin_HelloApp.AppContext;
@@ -78,7 +80,7 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        private string login = ""; // "ryapolov_an"
+        private string login = "ryapolov_an"; // "ryapolov_an"
         /// <summary>
         /// Имя пользователя
         /// </summary>
@@ -98,7 +100,7 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        private string password = ""; // "sSR4mzCQ"
+        private string password = "sSR4mzCQ"; // "sSR4mzCQ"
         /// <summary>
         /// Пароль
         /// </summary>
@@ -179,6 +181,26 @@ namespace Xamarin_HelloApp.ViewContexts
                 {
                     isErrorVisible = value;
                     OnPropertyChanged();
+                }
+            }
+        }
+
+
+        private bool isIndicatorActive = false;
+        /// <summary>
+        /// Активность индикатора подключения
+        /// </summary>
+        public bool IsIndicatorActive
+        {
+            get => isIndicatorActive;
+            private set
+            {
+                if(isIndicatorActive != value)
+                {
+                    isIndicatorActive = value;
+                    OnPropertyChanged();
+
+                    page.ActiveIndicator(isIndicatorActive);
                 }
             }
         }
@@ -267,18 +289,38 @@ namespace Xamarin_HelloApp.ViewContexts
         /// <summary>
         /// Проверка соединения с БД
         /// </summary>
-        /// <returns>возвращает TRUE в случае успешного подключения</returns>
         public void CheckConnection()
         {
+            //IsIndicatorActive = true;
+
             Error = string.Empty;
 
             Credentials credentials = Credentials.GetConnectionCredentials(server.Trim(), db.Trim(), login.Trim(), password.Trim(), GetLicenseType());
-            Exception ex = Global.DALContext.Connect(credentials);
+            /*Exception ex = Global.DALContext.Connect(credentials);
             if (ex != null)
             {
                 Error = ex.Message;
+                IsIndicatorActive = false;
+                return;
+            }*/
+
+            Thread thread = new Thread(new ParameterizedThreadStart(AsyncCheckConnection));
+            thread.Start(credentials);
+            thread.Join();
+
+            if(Error != "")
+            {
+                IsIndicatorActive = false;
                 return;
             }
+
+            //bool connect = await AsyncCheckConnection(credentials);
+
+            //if(!connect)
+            //{
+            //    IsIndicatorActive = false;
+            //    return;
+            //}
 
             Global.Credentials = credentials;
 
@@ -321,10 +363,38 @@ namespace Xamarin_HelloApp.ViewContexts
 
             Global.GetMetaData();
 
+            IsIndicatorActive = false;
+
             if (!reconnect)
                 page.NavigateToMainPage();
             else
                 App.Current.MainPage = new MainCarrouselPage(null);
+        }
+
+
+        private void AsyncCheckConnection(object _credentials)
+        {
+            //Device.BeginInvokeOnMainThread(SetIndicator);
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                IsIndicatorActive = true;
+            });
+
+
+            Credentials credentials = (Credentials)_credentials;
+
+            Exception ex = Global.DALContext.Connect(credentials);
+            if (ex != null)
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    Error = ex.Message;
+                });
+            }
+
+            Thread.Sleep(1000);
+
+            //return (ex == null);
         }
 
 

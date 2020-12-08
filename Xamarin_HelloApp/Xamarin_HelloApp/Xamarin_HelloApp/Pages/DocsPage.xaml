@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Xamarin_HelloApp.Pages.DocsPage">
+             x:Class="Xamarin_HelloApp.Pages.DocsPage" NavigationPage.HasNavigationBar="False">
+    
     <ContentPage.Content>
         <StackLayout>
             <!-- Шапка -->
             <Frame BackgroundColor="#7A87BF" Padding="10" CornerRadius="0">
                 <StackLayout>
-                    <StackLayout Orientation="Horizontal" >
+                    <!--<StackLayout Orientation="Horizontal" >
                         <Image Source="pilot.png" HeightRequest="20" />
                         <Label Text="{Binding AppName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
-                        <!--<Image HorizontalOptions="EndAndExpand" HeightRequest="10" Aspect="AspectFit" Source="{Binding IsConnected, Converter={StaticResource IsConnected_ImageSource}}" Margin="0,0,5,0" />-->
-                    </StackLayout>
+                    </StackLayout>-->
 
                     <StackLayout Orientation="Horizontal">
                         <!-- Кнопка Обновить -->
@@ -19,7 +19,7 @@
                                      Command="{Binding UpdateCommand}"/>
 
                         <!-- Кнопка Наверх  IsEnabled="{Binding UpCanExecute}" -->
-                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand"  
+                        <!--<ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand"  
                                      Command="{Binding UpCommand}" Padding="1"
                                      >
                             <ImageButton.Style>
@@ -34,7 +34,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </ImageButton.Style>
-                        </ImageButton>
+                        </ImageButton>-->
 
                     </StackLayout>
 

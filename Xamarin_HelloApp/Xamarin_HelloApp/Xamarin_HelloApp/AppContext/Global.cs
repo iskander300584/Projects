@@ -99,5 +99,27 @@ namespace Xamarin_HelloApp.AppContext
                 return except;
             }
         }
+
+
+        /// <summary>
+        /// Копировать ссылку в буфер обмена
+        /// </summary>
+        /// <param name="dObject">объект Pilot</param>
+        /// <returns>возвращает True, по окончании операции, False в случае ошибки</returns>
+        public static async Task<bool> CreateLink(DObject dObject)
+        {
+            try
+            {
+                string link = Credentials.ServerUrl + "/url&id=" + dObject.Id.ToString();
+
+                await Clipboard.SetTextAsync(link);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

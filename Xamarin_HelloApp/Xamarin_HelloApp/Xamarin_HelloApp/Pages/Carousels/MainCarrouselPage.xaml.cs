@@ -17,7 +17,7 @@ namespace PilotMobile.Pages
         {
             InitializeComponent();
 
-            Children.Add(new MainPage(url)); // Добавление главного окна
+            Children.Add(new MainPage(this, url)); // Добавление главного окна
             Children.Add(new TasksPage()); // Добавление окна заданий
         }
     }

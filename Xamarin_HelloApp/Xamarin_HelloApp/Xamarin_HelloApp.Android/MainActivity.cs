@@ -48,6 +48,8 @@ namespace Xamarin_HelloApp.Droid
             if(this.Intent != null && this.Intent.Data != null)
                 url = this.Intent.Data.ToString();
 
+            this.Window.AddFlags(WindowManagerFlags.Fullscreen);
+
             LoadApplication(new App(url));
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)

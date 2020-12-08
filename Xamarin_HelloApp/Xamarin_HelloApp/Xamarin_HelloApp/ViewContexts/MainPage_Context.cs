@@ -14,6 +14,7 @@ using System.Threading;
 using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin_HelloApp.AppContext;
+using Xamarin_HelloApp.Models;
 using Xamarin_HelloApp.Pages;
 using Xamarin_HelloApp.ViewModels;
 
@@ -258,6 +259,16 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
+        private DObject urlItem = null;
+        /// <summary>
+        /// Объект, открытый по ссылке
+        /// </summary>
+        public DObject UrlItem
+        {
+            get => urlItem;
+        }
+
+
         #endregion
 
 
@@ -330,12 +341,12 @@ namespace Xamarin_HelloApp.ViewContexts
                 {
                     PilotTreeItem item = new PilotTreeItem(dObject, true);
 
-                    if (item.VisibleName != "" && !item.Type.IsSystem && !item.DObject.InRootRecycleBin())
+                    if (!item.DObject.InRootRecycleBin())
                     {
                         Mode = PageMode.Url;
 
                         // Получение структуры для объекта
-                        if (!item.Type.IsDocument)
+                        if (!item.Type.IsDocument && !item.Type.IsTask && !item.Type.IsSystem && item.VisibleName != "")
                         {
                             Parent = item;
                             Items = Parent.Children;
@@ -343,11 +354,71 @@ namespace Xamarin_HelloApp.ViewContexts
                             AsyncGetChildren(item);
                         }
                         // Открытие документа
-                        else
+                        else if (item.Type.IsDocument && item.Type.Name != TypeConstants.File)
                         {
+                            urlItem = item.DObject;
+
                             App.Current.ModalPopping += page.HandleModalPopping;
 
                             page.Navigation.PushModalAsync(new DocumentCarrousel(item));
+                        }
+                        // Открытие задания
+                        else if (item.Type.IsTask)
+                        {
+                            PilotTask task = new PilotTask(item.Guid);
+
+                            page.carrouselPage.CurrentPage = page.carrouselPage.Children[1];
+
+                            App.Current.ModalPopping += page.HandleModalPopping;
+
+                            page.Navigation.PushModalAsync(new TaskCarrousel(task));
+                        }
+                        // Открытие файла TODO
+                        else if(item.Type.IsSystem && item.Type.Name == TypeConstants.File)
+                        {
+                            PilotTreeItem file = new PilotTreeItem(Global.DALContext.Repository.GetObjects(new Guid[] { item.DObject.ParentId }).First(), false);
+                            DObject _document = null;
+                            foreach(DRelation relation in file.DObject.Relations)
+                            {
+                                DObject _dObject = Global.DALContext.Repository.GetObjects(new Guid[] { relation.TargetId }).First();
+                                PType _type = TypeFabrique.GetType(_dObject.TypeId);
+                                if(_type.IsDocument && !_type.IsSystem)
+                                {
+                                    _document = _dObject;
+                                    break;
+                                }
+                            }
+
+                            if (_document != null)
+                            {
+                                PilotTreeItem document = new PilotTreeItem(Global.DALContext.Repository.GetObjects(new Guid[] { _document.Id }).First(), true);
+
+                                urlItem = document.DObject;
+
+                                App.Current.ModalPopping += page.HandleModalPopping;
+
+                                page.Navigation.PushModalAsync(new DocumentCarrousel(document));
+                            }
+                            else
+                            {
+                                var result = page.DisplayMessage("Внимание!", "Ошибка доступа к документу", false);
+
+                                needGetRoot = true;
+                            }
+                        }
+                        // 
+                        //else if(item.VisibleName == "" && !item.Type.IsSystem)
+                        //{
+                        //    var result = page.DisplayMessage("Внимание!", "У Вас нет доступа к объекту", false);
+
+                        //    needGetRoot = true;
+                        //}
+                        // Заглушка
+                        else
+                        {
+                            var result = page.DisplayMessage("Внимание!", "Ссылка на объекты данного типа не поддерживается в мобильной версии", false);
+
+                            needGetRoot = true;
                         }
                     }
                     else if(item.DObject.InRootRecycleBin() || item.DObject.IsForbidden())
@@ -382,6 +453,8 @@ namespace Xamarin_HelloApp.ViewContexts
                     AsyncGetChildren(Parent);
                 }
             }
+
+            Up_CanExecute();
         }
 
 
@@ -418,27 +491,64 @@ namespace Xamarin_HelloApp.ViewContexts
         /// Асинхронный метод получения вложенных объектов
         /// </summary>
         /// <param name="dObject">объект Pilot</param>
-        private void AsyncGetChildren(IPilotObject pilotItem)
+        private void AsyncGetChildren(IPilotObject pilotItem, IPilotObject childItem = null)
         {
             Thread thread = new Thread(new ParameterizedThreadStart(GetChildren));
-            thread.Start(pilotItem);
+            thread.Start(new GetChildrenParam(pilotItem, childItem));
         }
 
+        /// <summary>
+        /// Внутренний класс для передачи данных в асинхронный метод
+        /// </summary>
+        internal class GetChildrenParam
+        {
+            /// <summary>
+            /// Новый головной объект Pilot
+            /// </summary>
+            public IPilotObject PilotItem { get; private set; }
+
+            /// <summary>
+            /// Вложенный объект Pilot
+            /// </summary>
+            public IPilotObject ChildItem { get; private set; }
+
+            /// <summary>
+            /// Класс для передачи данных в асинхронный метод
+            /// </summary>
+            /// <param name="pilotItem">Новый головной объект Pilot</param>
+            /// <param name="childItem">Вложенный объект Pilot</param>
+            public GetChildrenParam(IPilotObject pilotItem, IPilotObject childItem)
+            {
+                PilotItem = pilotItem;
+                ChildItem = childItem;
+            }
+        }
 
         /// <summary>
         /// Метод получения вложенных объектов для параллельного потока
         /// </summary>
         /// <param name="pilotItem">объект Pilot</param>
-        private void GetChildren(object pilotItem)
+        private void GetChildren(object getChildrenParam)
         {
-            PilotTreeItem _item = (PilotTreeItem)pilotItem;
+            GetChildrenParam param = (GetChildrenParam)getChildrenParam;
+            PilotTreeItem _item = (PilotTreeItem)param.PilotItem;
+            PilotTreeItem _child = (PilotTreeItem)param.ChildItem;
 
             foreach (DChild dchild in _item.DObject.Children)
             {
                 PilotTreeItem item = new PilotTreeItem(dchild, _item);
                 // item.HasAccess
                 if (item.VisibleName.Trim() != "" && !item.Type.IsSystem)
-                    Items.Add(item);
+                {
+                    if (_child != null && _child.Guid == item.Guid)
+                    {
+                        _item.Children.Add(_child);
+                        _child.Parent = _item;
+                    }
+                    else
+                        _item.Children.Add(item);
+                }
+                    //Items.Add(item);
             }
         }
 
@@ -507,7 +617,7 @@ namespace Xamarin_HelloApp.ViewContexts
         /// </summary>
         public void Up_Execute()
         {
-            if (Mode != PageMode.Url)
+            if (Mode != PageMode.Url || Parent.Parent != null)
             {
                 Parent = Parent.Parent;
 
@@ -516,6 +626,7 @@ namespace Xamarin_HelloApp.ViewContexts
             else
             {
                 Guid parentGuid = Parent.DObject.ParentId;
+                IPilotObject current = Parent;
 
                 if(parentGuid != Root.Guid)
                 {
@@ -524,7 +635,17 @@ namespace Xamarin_HelloApp.ViewContexts
                     Parent = parent;
                     Items = Parent.Children;
 
-                    AsyncGetChildren(parent);
+                    if (Items.Count == 0)
+                        AsyncGetChildren(parent, current);
+                    else
+                    {
+                        IPilotObject child = Parent.Children.FirstOrDefault(c => c.Guid == current.Guid);
+                        if (child != null)
+                        {
+                            child = current;
+                            current.Parent = Parent;
+                        }
+                    }
                 }
                 // Получение корневых объектов
                 else
@@ -537,10 +658,17 @@ namespace Xamarin_HelloApp.ViewContexts
 
                     if (Items.Count == 0)
                     {
-                        AsyncGetChildren(Parent);
+                        AsyncGetChildren(Parent, current);
                     }
-
-                    Up_CanExecute();
+                    else
+                    {
+                        IPilotObject child = Parent.Children.FirstOrDefault(c => c.Guid == current.Guid);
+                        if (child != null)
+                        {
+                            child = current;
+                            current.Parent = Parent;
+                        }
+                    }
                 }
             }
 
@@ -750,6 +878,19 @@ namespace Xamarin_HelloApp.ViewContexts
             }
 
             Up_CanExecute();
+        }
+
+
+        /// <summary>
+        /// Открыть структуру головного объекта
+        /// <para>для документов, открытых по сслыке</para>
+        /// </summary>
+        public void OpenParentStructure()
+        {
+            string url = @"url?id=" + UrlItem.ParentId.ToString();
+            urlItem = null;
+
+            GetRootObjects(true, url);
         }
 
 

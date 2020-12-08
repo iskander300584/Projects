@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Xamarin_HelloApp.Pages.AuthorizePage">
+             x:Class="Xamarin_HelloApp.Pages.AuthorizePage" NavigationPage.HasNavigationBar="False">
+    
     <ContentPage.Content>
         <StackLayout>
             <Frame BackgroundColor="#7A87BF" Padding="10" CornerRadius="0">
@@ -32,6 +33,12 @@
                    TextColor="Red" IsVisible="{Binding IsErrorVisible, Mode=OneWay}" />
             <!--<Label Text="{Binding Error, Mode=OneWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0"
                    TextColor="Red" IsVisible="{Binding IsErrorVisible, Mode=OneWay}"/>-->
+
+            <!-- IsRunning="{Binding IsIndicatorActive, Mode=OneWay}"
+                               IsVisible="{Binding IsIndicatorActive, Mode=OneWay}"
+                               IsEnabled="{Binding IsIndicatorActive, Mode=OneWay}" -->
+            <ActivityIndicator x:Name="indicator" Color="#7A87BF" HorizontalOptions="CenterAndExpand" Margin="0,10,0,10" WidthRequest="30" HeightRequest="30" 
+                                />
 
             <Button Text="Подключиться" FontSize="Title" Background="#7A87BF" FontFamily="Tahoma" TextColor="White" 
                     VerticalOptions="EndAndExpand" HorizontalOptions="Fill" Margin="10,0,10,10"

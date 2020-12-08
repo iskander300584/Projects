@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PilotMobile.Pages.SearchQueryPage"
              xmlns:conv="clr-namespace:PilotMobile.Converters"
-             xmlns:local="clr-namespace:PilotMobile.Models.SearchQuery">
+             xmlns:local="clr-namespace:PilotMobile.Models.SearchQuery" NavigationPage.HasNavigationBar="False">
 
     <ContentPage.Resources>
         <!-- Возвращает красный цвет, если переданная строка пустая -->
@@ -79,9 +79,10 @@
             <Frame BackgroundColor="#7A87BF" Padding="10" CornerRadius="0">
                 <StackLayout>
                     <StackLayout Orientation="Horizontal" >
-                        <Image Source="pilot.png" HeightRequest="20" />
-                        <Label Text="{Binding AppName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
-                        <Label Text="Поиск" HorizontalTextAlignment="End" HorizontalOptions="EndAndExpand" TextColor="White" FontSize="Medium" />
+                        <!--<Image Source="pilot.png" HeightRequest="20" />
+                        <Label Text="{Binding AppName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>-->
+                        <!--HorizontalTextAlignment="End"-->
+                        <Label Text="Поиск" HorizontalTextAlignment="Start" HorizontalOptions="EndAndExpand" TextColor="White" FontSize="Medium" />
                     </StackLayout>
 
                     <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
@@ -104,7 +105,7 @@
                         </ImageButton>
 
                         <!-- Кнопка Наверх -->
-                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End"  
+                        <!--<ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End"  
                                      Command="{Binding UpCommand}" IsEnabled="{Binding UpCanExecute}" Padding="1"
                                      >
                             <ImageButton.Style>
@@ -119,7 +120,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </ImageButton.Style>
-                        </ImageButton>
+                        </ImageButton>-->
 
                     </StackLayout>
                 </StackLayout>
@@ -182,8 +183,6 @@
             <Frame BackgroundColor="#7A87BF" Padding="10" CornerRadius="0" Margin="0,5,0,5">
                 <Label Text="Параметры поиска:" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
             </Frame>
-            
-            <!--<Rectangle Margin="10" HorizontalOptions="FillAndExpand" HeightRequest="2" BackgroundColor="Gray" />-->
 
             <!-- Список элементов поиска -->
             <ScrollView >

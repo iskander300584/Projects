@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PilotMobile.Pages.CardPage"
-             xmlns:conv="clr-namespace:PilotMobile.Converters">
+             xmlns:conv="clr-namespace:PilotMobile.Converters" NavigationPage.HasNavigationBar="False">
 
     <ContentPage.Resources>
         <!-- Шаблон данных для надписи -->
@@ -51,10 +51,10 @@
             <!-- Шапка -->
             <Frame BackgroundColor="#7A87BF" Padding="10" CornerRadius="0" >
                 <StackLayout>
-                    <StackLayout Orientation="Horizontal" >
+                    <!--<StackLayout Orientation="Horizontal" >
                         <Image Source="pilot.png" HeightRequest="20" />
                         <Label Text="{Binding AppName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
-                    </StackLayout>
+                    </StackLayout>-->
 
                     <StackLayout Orientation="Horizontal">
                         <!-- Кнопка Обновить -->
@@ -63,7 +63,7 @@
                                      />
 
                         <!-- Кнопка Наверх -->
-                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand"  
+                        <!--<ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand"  
                                      Command="{Binding UpCommand}" Padding="1"
                                      >
                             <ImageButton.Style>
@@ -78,7 +78,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </ImageButton.Style>
-                        </ImageButton>
+                        </ImageButton>-->
 
                     </StackLayout>
 

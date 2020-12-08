@@ -38,5 +38,17 @@ namespace Xamarin_HelloApp.Pages
         {
             App.Current.MainPage = new MainCarrouselPage(null);
         }
+
+
+        /// <summary>
+        /// Активация индикатора
+        /// </summary>
+        /// <param name="value">значение активации</param>
+        public void ActiveIndicator(bool value)
+        {
+            indicator.IsEnabled = value;
+            indicator.IsRunning = value;
+            indicator.IsVisible = value;
+        }
     }
 }

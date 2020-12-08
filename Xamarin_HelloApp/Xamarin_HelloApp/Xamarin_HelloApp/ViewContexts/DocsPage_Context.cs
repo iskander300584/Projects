@@ -88,7 +88,8 @@ namespace PilotMobile.ViewContexts
         private XpsPage xpsPage;
 
 
-        private Regex regex1 = new Regex(@"pilotthumbnail$"); // костыль - исключение системных файлов
+        // костыль - исключение системных файлов
+        private Regex regex1 = new Regex(@"pilotthumbnail$"); 
         private Regex regex2 = new Regex(@"^annotation");
         private Regex regex3 = new Regex(@"^note_chat_message");
         private Regex regex4 = new Regex(@"pilottextlabels");
@@ -211,7 +212,7 @@ namespace PilotMobile.ViewContexts
 
 
         /// <summary>
-        /// ПрДобавление подходящих файлов в общий список
+        /// Добавление подходящих файлов в общий список
         /// </summary>
         /// <param name="file">файл</param>
         private void AddFile(DFile file)

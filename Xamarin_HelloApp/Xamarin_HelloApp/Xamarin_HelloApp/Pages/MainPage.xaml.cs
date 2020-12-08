@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using PilotMobile.AppContext;
 using PilotMobile.ViewModels;
 
+
 namespace Xamarin_HelloApp
 {
     /// <summary>
@@ -21,13 +22,18 @@ namespace Xamarin_HelloApp
         private MainPage_Context context;
 
 
+        public MainCarrouselPage carrouselPage;
+
+
         /// <summary>
         /// Главное окно
         /// </summary>
         /// <param name="rootObject">головной объект для подчиненного окна</param>
-        public MainPage(string url, IPilotObject rootObject = null)
+        public MainPage(MainCarrouselPage carrousel, string url, IPilotObject rootObject = null)
         {
             InitializeComponent();
+
+            carrouselPage = carrousel;
 
             if (Global.DALContext != null && Global.DALContext.IsInitialized && Global.CurrentPerson == null)
             {
@@ -105,12 +111,37 @@ namespace Xamarin_HelloApp
         /// </summary>
         protected override bool OnBackButtonPressed()
         {
-            Device.BeginInvokeOnMainThread(async () =>
+            if(context.Mode == PageMode.Slave)
             {
-                bool result = await DisplayMessage("Внимание!", "Закрыть программу?", true);
-                if (result)
-                    System.Diagnostics.Process.GetCurrentProcess().CloseMainWindow();
-            });
+                if (context.UpCanExecute)
+                    context.Up_Execute();
+                else 
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        NavigationToMain();
+                    });
+            }
+            else if (context.Parent != context.Root)
+            {
+                if (context.UpCanExecute)
+                    context.Up_Execute();
+                else if (context.HomeCanExecute)
+                    context.Home_Execute();
+                else if (context.BackVisible)
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        NavigationToMain();
+                    });
+            }
+            else
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    bool result = await DisplayMessage("Внимание!", "Закрыть программу?", true);
+                    if (result)
+                        System.Diagnostics.Process.GetCurrentProcess().CloseMainWindow();
+                });
+            }
 
             return true;
         }
@@ -150,7 +181,12 @@ namespace Xamarin_HelloApp
             {
                 App.Current.ModalPopping -= HandleModalPopping;
 
-                context.GetRootObjects(true);
+                // Открыть корневую структуру
+                if (context.UrlItem == null)
+                    context.GetRootObjects(true);
+                // Открыть структуру головного объекта
+                else
+                    context.OpenParentStructure();
             }
         }
 
@@ -161,6 +197,22 @@ namespace Xamarin_HelloApp
         public void NavigationToMain()
         {
             Navigation.PopModalAsync();
+        }
+
+        private async void Copy_Link(object sender, EventArgs e)
+        {
+            var menuitem = sender as MenuItem;
+            if(menuitem != null)
+            {
+                IPilotObject pilotObject = menuitem.BindingContext as IPilotObject;
+
+                bool result = await Global.CreateLink(pilotObject.DObject);
+
+                if (result)
+                    result = await DisplayMessage("Ссылка скопирована", "", false);
+                else
+                    result = await DisplayMessage("Ошибка копирования ссылки", "", false);
+            }
         }
     }
 }
