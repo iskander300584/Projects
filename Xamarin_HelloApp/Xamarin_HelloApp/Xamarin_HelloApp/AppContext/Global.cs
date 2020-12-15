@@ -110,7 +110,7 @@ namespace Xamarin_HelloApp.AppContext
         {
             try
             {
-                string link = Credentials.ServerUrl + "/url&id=" + dObject.Id.ToString();
+                string link = Credentials.ServerUrl + "/url?id=" + dObject.Id.ToString();
 
                 await Clipboard.SetTextAsync(link);
 
