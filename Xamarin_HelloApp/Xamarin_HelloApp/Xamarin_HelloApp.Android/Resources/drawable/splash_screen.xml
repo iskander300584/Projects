@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+	<item>
+		<color android:color="@color/pilotColor" />
+	</item>
+	<item>
+		<bitmap
+			android:src="@drawable/pilot_fly_logo"
+			android:tileMode="disabled"
+			android:gravity="center"
+			android:layout_width="3dp"
+			android:width="3dp"/>
+	</item>
+	<!--<item>
+		<bitmap
+			android:src="@drawable/ascon_logo"
+			android:tileMode="disabled"
+			android:gravity="bottom" />
+	</item>-->
+</layer-list>

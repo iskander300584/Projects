@@ -19,7 +19,12 @@
     <PackageReference Include="Ascon.Pilot.Server.Api" Version="20.38.0" />
     <PackageReference Include="Spire.PDF" Version="6.10.4" />
     <PackageReference Include="Syncfusion.Licensing" Version="18.3.0.35" />
+    <PackageReference Include="Syncfusion.Xamarin.Compression" Version="18.3.0.35" />
+    <PackageReference Include="Syncfusion.Xamarin.Core" Version="18.3.0.35" />
+    <PackageReference Include="Syncfusion.Xamarin.Pdf" Version="18.3.0.35" />
+    <PackageReference Include="Syncfusion.Xamarin.SfBusyIndicator" Version="18.3.0.35" />
     <PackageReference Include="Syncfusion.Xamarin.SfPdfViewer" Version="18.3.0.35" />
+    <PackageReference Include="Syncfusion.Xamarin.SfProgressBar" Version="18.3.0.35" />
     <PackageReference Include="Toasts.Forms.Plugin" Version="3.3.2" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />

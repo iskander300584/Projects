@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin_HelloApp.AppContext;
@@ -19,6 +18,9 @@ namespace Xamarin_HelloApp.ViewContexts
     /// </summary>
     class AuthorizePage_Context : INotifyPropertyChanged
     {
+        #region Поля класса
+
+
         /// <summary>
         /// Наименование приложения
         /// </summary>
@@ -234,12 +236,43 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        private bool connectionChecked = false;
+        /// <summary>
+        /// Проверка подключения выполнена
+        /// </summary>
+        private bool ConnectionChecked
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            get => connectionChecked;
+            set
+            {
+                connectionChecked = value;
+
+                IsIndicatorActive = !connectionChecked;
+            }
         }
+
+
+        private bool isConnected = false;
+        /// <summary>
+        /// Соединение установлено
+        /// </summary>
+        private bool IsConnected
+        {
+            get => isConnected;
+            set
+            {
+                if (isConnected != value)
+                {
+                    isConnected = value;
+
+                    GoToProgram();
+                }
+            }
+        }
+
+
+        #endregion
+       
 
         /// <summary>
         /// Контекст данных окна авторизации
@@ -253,6 +286,9 @@ namespace Xamarin_HelloApp.ViewContexts
             connectCommand = new Command(CheckConnection);
             CheckConnection_CanExecute();
         }
+
+
+        #region Методы класса
 
 
         /// <summary>
@@ -291,36 +327,43 @@ namespace Xamarin_HelloApp.ViewContexts
         /// </summary>
         public void CheckConnection()
         {
-            //IsIndicatorActive = true;
+            ConnectionChecked = false;
 
             Error = string.Empty;
 
             Credentials credentials = Credentials.GetConnectionCredentials(server.Trim(), db.Trim(), login.Trim(), password.Trim(), GetLicenseType());
-            /*Exception ex = Global.DALContext.Connect(credentials);
-            if (ex != null)
-            {
-                Error = ex.Message;
-                IsIndicatorActive = false;
-                return;
-            }*/
 
             Thread thread = new Thread(new ParameterizedThreadStart(AsyncCheckConnection));
             thread.Start(credentials);
-            thread.Join();
+        }
 
-            if(Error != "")
+
+        /// <summary>
+        /// Асинхронный метод подключения к БД
+        /// </summary>
+        /// <param name="_credentials">настойки авторизации</param>
+        private void AsyncCheckConnection(object _credentials)
+        {
+            Credentials credentials = (Credentials)_credentials;
+
+            Exception ex = Global.DALContext.Connect(credentials);
+            if (ex != null)
             {
-                IsIndicatorActive = false;
-                return;
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    Error = ex.Message;
+                });
             }
 
-            //bool connect = await AsyncCheckConnection(credentials);
+            if (Error != "")
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    ConnectionChecked = true;
+                });
 
-            //if(!connect)
-            //{
-            //    IsIndicatorActive = false;
-            //    return;
-            //}
+                return;
+            }
 
             Global.Credentials = credentials;
 
@@ -363,38 +406,17 @@ namespace Xamarin_HelloApp.ViewContexts
 
             Global.GetMetaData();
 
-            IsIndicatorActive = false;
-
-            if (!reconnect)
-                page.NavigateToMainPage();
-            else
-                App.Current.MainPage = new MainCarrouselPage(null);
-        }
-
-
-        private void AsyncCheckConnection(object _credentials)
-        {
-            //Device.BeginInvokeOnMainThread(SetIndicator);
             Device.BeginInvokeOnMainThread(async () =>
             {
-                IsIndicatorActive = true;
+                ConnectionChecked = true;
             });
 
+            Thread.Sleep(100);
 
-            Credentials credentials = (Credentials)_credentials;
-
-            Exception ex = Global.DALContext.Connect(credentials);
-            if (ex != null)
+            Device.BeginInvokeOnMainThread(async () =>
             {
-                Device.BeginInvokeOnMainThread(async () =>
-                {
-                    Error = ex.Message;
-                });
-            }
-
-            Thread.Sleep(1000);
-
-            //return (ex == null);
+                IsConnected = true;
+            });
         }
 
 
@@ -424,5 +446,31 @@ namespace Xamarin_HelloApp.ViewContexts
 
             return 0;
         }
+
+
+        /// <summary>
+        /// Осуществить переход к программе
+        /// </summary>
+        private void GoToProgram()
+        {
+            if (!IsConnected)
+                return;
+
+            if (!reconnect)
+                page.NavigateToMainPage();
+            else
+                App.Current.MainPage = new MainCarrouselPage(null);
+        }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+
+        #endregion
     }
 }
