@@ -1,4 +1,5 @@
 ﻿using PilotMobile.Pages;
+using Plugin.Settings;
 using System;
 using System.IO;
 using Xamarin.Forms;
@@ -16,7 +17,7 @@ namespace Xamarin_HelloApp
         /// <summary>
         /// Класс запуска мобильного клиента Pilot
         /// </summary>
-        public App(string? url)
+        public App(string url)
         {
             InitializeComponent();
 
@@ -66,47 +67,19 @@ namespace Xamarin_HelloApp
         /// <summary>
         /// Получение настроек подключения
         /// </summary>
-        /// <returns></returns>
         private Credentials TryGetCredentials()
         {
             object temp = "";
             string server = "", db = "", login = "", password = "";
             int license = 0;
 
-            if (Current.Properties.TryGetValue("server", out temp))
-            {
-                server = (string)temp;
-            }
-            else
-                return null;
+            server = CrossSettings.Current.GetValueOrDefault("server", "");
+            db = CrossSettings.Current.GetValueOrDefault("db", "");
+            login = CrossSettings.Current.GetValueOrDefault("login", "");
+            password = CrossSettings.Current.GetValueOrDefault("password", "");
+            license = CrossSettings.Current.GetValueOrDefault("license", 0);
 
-            if (Current.Properties.TryGetValue("db", out temp))
-            {
-                db = (string)temp;
-            }
-            else
-                return null;
-
-            if (Current.Properties.TryGetValue("login", out temp))
-            {
-                login = (string)temp;
-            }
-            else
-                return null;
-
-            if (Current.Properties.TryGetValue("password", out temp))
-            {
-                password = (string)temp;
-            }
-            else
-                return null;
-
-            if (Current.Properties.TryGetValue("license", out temp))
-            {
-                if (!int.TryParse((string)temp, out license))
-                    return null;
-            }
-            else
+            if (server == "" || db == "" || login == "" || password == "" || license == 0)
                 return null;
 
             return Credentials.GetProtectedCredentials(server, db, login, password, license);

@@ -1,5 +1,6 @@
 ﻿using PilotMobile.AppContext;
 using PilotMobile.Pages;
+using Plugin.Settings;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -352,13 +353,6 @@ namespace Xamarin_HelloApp.ViewContexts
                 Device.BeginInvokeOnMainThread(async () =>
                 {
                     Error = ex.Message;
-                });
-            }
-
-            if (Error != "")
-            {
-                Device.BeginInvokeOnMainThread(async () =>
-                {
                     ConnectionChecked = true;
                 });
 
@@ -368,53 +362,18 @@ namespace Xamarin_HelloApp.ViewContexts
             Global.Credentials = credentials;
 
             // Сохранение настроек
-            object temp = "";
-            if (App.Current.Properties.TryGetValue("server", out temp))
-            {
-                App.Current.Properties["server"] = credentials.ServerUrl;
-            }
-            else
-                App.Current.Properties.Add("server", credentials.ServerUrl);
+            CrossSettings.Current.AddOrUpdateValue("server", credentials.ServerUrl);
+            CrossSettings.Current.AddOrUpdateValue("db", credentials.DatabaseName);
+            CrossSettings.Current.AddOrUpdateValue("login", credentials.Username);
+            CrossSettings.Current.AddOrUpdateValue("password", credentials.ProtectedPassword);
+            CrossSettings.Current.AddOrUpdateValue("license", credentials.License);
 
-            if (App.Current.Properties.TryGetValue("db", out temp))
-            {
-                App.Current.Properties["db"] = credentials.DatabaseName;
-            }
-            else
-                App.Current.Properties.Add("db", credentials.DatabaseName);
-
-            if (App.Current.Properties.TryGetValue("login", out temp))
-            {
-                App.Current.Properties["login"] = credentials.Username;
-            }
-            else
-                App.Current.Properties.Add("login", credentials.Username);
-
-            if (App.Current.Properties.TryGetValue("password", out temp))
-            {
-                App.Current.Properties["password"] = credentials.ProtectedPassword;
-            }
-            else
-                App.Current.Properties.Add("password", credentials.ProtectedPassword);
-
-            if (App.Current.Properties.TryGetValue("license", out temp))
-            {
-                App.Current.Properties["license"] = credentials.License.ToString();
-            }
-            else
-                App.Current.Properties.Add("license", credentials.License.ToString());
 
             Global.GetMetaData();
 
             Device.BeginInvokeOnMainThread(async () =>
             {
                 ConnectionChecked = true;
-            });
-
-            Thread.Sleep(100);
-
-            Device.BeginInvokeOnMainThread(async () =>
-            {
                 IsConnected = true;
             });
         }

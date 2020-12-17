@@ -1,9 +1,10 @@
 ﻿using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
+using System;
 using System.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-
+using Xamarin_HelloApp.AppContext;
 
 namespace Xamarin_HelloApp.Pages
 {
@@ -105,6 +106,15 @@ namespace Xamarin_HelloApp.Pages
                 if (!context.DocLoaded && !context.Loading )
                     context.GetXPS();
             }
+        }
+
+
+        /// <summary>
+        /// Копирование ссылки на объект
+        /// </summary>
+        private async void CopyLink(object sender, EventArgs e)
+        {
+            bool result = await Global.CreateLink(context.PilotItem.DObject);
         }
     }
 }

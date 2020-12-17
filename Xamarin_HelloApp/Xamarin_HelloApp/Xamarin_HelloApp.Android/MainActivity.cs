@@ -13,7 +13,7 @@ using Android.Content;
 namespace Xamarin_HelloApp.Droid
 {
     [Activity(Label = "Pilot-FLY", Icon = "@drawable/pilot_icon", Theme = "@style/MainTheme", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
-    [IntentFilter (new[] { Intent.ActionView },
+    /*[IntentFilter (new[] { Intent.ActionView },
         Categories = new[] { 
         Intent.CategoryBrowsable, Intent.CategoryDefault},
         DataSchemes = new[] { "http", "https" },
@@ -28,7 +28,7 @@ namespace Xamarin_HelloApp.Droid
         DataHost = "*",
         DataPathPrefix = "/url"
        // DataPathPattern = ".*\\\\.*\\url.*"
-        )]
+        )]*/
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         protected override void OnCreate(Bundle savedInstanceState)
@@ -44,11 +44,19 @@ namespace Xamarin_HelloApp.Droid
             CachedImageRenderer.Init(true);
             var ignore = typeof(SvgCachedImage);
 
-            string? url = null;
-            if(this.Intent != null && this.Intent.Data != null)
-                url = this.Intent.Data.ToString();
+            //string? url = null;
+            //if(this.Intent != null && this.Intent.Data != null)
+            //    url = this.Intent.Data.ToString();
 
             this.Window.AddFlags(WindowManagerFlags.Fullscreen);
+
+            string url = "";
+            
+            try
+            {
+                url = this.Intent.GetStringExtra("url").ToString();
+            }
+            catch { }
 
             LoadApplication(new App(url));
         }

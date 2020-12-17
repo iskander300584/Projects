@@ -37,9 +37,10 @@
                         
                         <!-- Сообщение -->
                         <Label Text="{Binding Message}" IsVisible="{Binding IsMessageVisible}" FontSize="Medium" TextColor="White" VerticalOptions="StartAndExpand" />
-                        <!-- Кнопка Наверх -->
-                        <!--<ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand"  
-                                     Command="{Binding UpCommand}" Source="upArrow.png" Padding="1" />-->
+
+                        <!-- Кнопка Копировать ссылку -->
+                        <ImageButton Source="link.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand" Clicked="CopyLink" Padding="1" />
+
                     </StackLayout>
 
                     <Label Text="{Binding PilotItem.VisibleName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Small" LineBreakMode="WordWrap" MaxLines="2" />

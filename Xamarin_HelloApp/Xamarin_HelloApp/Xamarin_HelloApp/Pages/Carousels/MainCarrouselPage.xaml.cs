@@ -13,7 +13,7 @@ namespace PilotMobile.Pages
         /// <summary>
         /// Карусель главных окон
         /// </summary>
-        public MainCarrouselPage(string? url)
+        public MainCarrouselPage(string url)
         {
             InitializeComponent();
 

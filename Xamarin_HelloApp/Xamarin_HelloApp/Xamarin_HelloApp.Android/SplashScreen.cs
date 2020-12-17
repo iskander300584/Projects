@@ -12,18 +12,29 @@ using System.Threading;
 
 namespace Xamarin_HelloApp.Droid
 {
-    [Activity(Label = "SplashScreen", MainLauncher = true, Theme = "@style/SplashTheme", NoHistory =true)]
+    [Activity(Label = "Pilot-FLY", MainLauncher = true, Theme = "@style/SplashTheme", NoHistory =true)]
+    [IntentFilter(new[] { Intent.ActionView },
+        Categories = new[] {
+        Intent.CategoryBrowsable, Intent.CategoryDefault},
+        DataSchemes = new[] { "http", "https" },
+        DataHost = "*",
+        DataPathPrefix = "/url"
+        )]
     public class SplashScreen : Activity
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
-            // Create your application here
+            string url = "";
+            if (this.Intent != null && this.Intent.Data != null)
+                url = this.Intent.Data.ToString();
 
-            Thread.Sleep(500);
+            Intent intent = new Intent(this, typeof(MainActivity));
+            intent.PutExtra("url", url);
+            StartActivity(intent);
 
-            StartActivity(typeof(MainActivity));
+            //StartActivity(typeof(MainActivity));
         }
     }
 }

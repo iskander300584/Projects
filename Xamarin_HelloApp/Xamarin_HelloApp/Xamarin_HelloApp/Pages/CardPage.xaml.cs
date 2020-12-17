@@ -1,13 +1,9 @@
 ﻿using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Xamarin_HelloApp.AppContext;
 using Xamarin_HelloApp.Pages;
 
 namespace PilotMobile.Pages
@@ -44,6 +40,15 @@ namespace PilotMobile.Pages
         public void NavigateToMainPage()
         {
             Navigation.PopModalAsync();
+        }
+
+
+        /// <summary>
+        /// Копирование ссылки на объект
+        /// </summary>
+        private async void CopyLink(object sender, EventArgs e)
+        {
+            bool result = await Global.CreateLink(context.PilotObject.DObject);
         }
     }
 }

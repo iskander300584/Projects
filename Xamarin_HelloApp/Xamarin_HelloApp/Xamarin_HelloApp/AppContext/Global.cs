@@ -1,4 +1,5 @@
 ﻿using Ascon.Pilot.DataClasses;
+using Plugin.Toast;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -114,10 +115,14 @@ namespace Xamarin_HelloApp.AppContext
 
                 await Clipboard.SetTextAsync(link);
 
+                CrossToastPopUp.Current.ShowToastSuccess("Ссылка скопирована");
+
                 return true;
             }
             catch
             {
+                CrossToastPopUp.Current.ShowToastError("Ошибка копирования ссылки");
+
                 return false;
             }
         }

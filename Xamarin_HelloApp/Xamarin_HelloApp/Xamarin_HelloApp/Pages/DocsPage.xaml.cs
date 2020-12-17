@@ -2,6 +2,7 @@
 using PilotMobile.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Xamarin_HelloApp.AppContext;
 
 namespace Xamarin_HelloApp.Pages
 {
@@ -50,6 +51,21 @@ namespace Xamarin_HelloApp.Pages
         public void NavigateToMainPage()
         {
             Navigation.PopModalAsync();
+        }
+
+
+        /// <summary>
+        /// Копирование ссылки на объект
+        /// </summary>
+        private async void Copy_Link(object sender, System.EventArgs e)
+        {
+            var menuitem = sender as MenuItem;
+            if (menuitem != null)
+            {
+                IPilotObject pilotObject = menuitem.BindingContext as IPilotObject;
+
+                bool result = await Global.CreateLink(pilotObject.DObject);
+            }
         }
     }
 }

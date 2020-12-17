@@ -51,10 +51,6 @@
             <!-- Шапка -->
             <Frame BackgroundColor="#7A87BF" Padding="10" CornerRadius="0" >
                 <StackLayout>
-                    <!--<StackLayout Orientation="Horizontal" >
-                        <Image Source="pilot.png" HeightRequest="20" />
-                        <Label Text="{Binding AppName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
-                    </StackLayout>-->
 
                     <StackLayout Orientation="Horizontal">
                         <!-- Кнопка Обновить -->
@@ -62,23 +58,8 @@
                                      Command="{Binding UpdateCommand}"
                                      />
 
-                        <!-- Кнопка Наверх -->
-                        <!--<ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand"  
-                                     Command="{Binding UpCommand}" Padding="1"
-                                     >
-                            <ImageButton.Style>
-                                <Style TargetType="ImageButton">
-                                    <Style.Triggers>
-                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="True">
-                                            <Setter Property="Source" Value="upArrow.png"/>
-                                        </Trigger>
-                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="False">
-                                            <Setter Property="Source" Value="upArrow_gray.png"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ImageButton.Style>
-                        </ImageButton>-->
+                        <!-- Кнопка Копировать ссылку -->
+                        <ImageButton Source="link.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand" Clicked="CopyLink" Padding="1" />
 
                     </StackLayout>
 

@@ -7,7 +7,7 @@ using PilotMobile.Pages;
 using System.Threading.Tasks;
 using PilotMobile.AppContext;
 using PilotMobile.ViewModels;
-
+using System.Threading;
 
 namespace Xamarin_HelloApp
 {
@@ -40,9 +40,17 @@ namespace Xamarin_HelloApp
                 Global.CurrentPerson = Global.DALContext.Repository.CurrentPerson();
             }
 
+            //if (url != null && url != "")
+            //{
+            //    var res = DisplayMessage("URL", url, false);
+            //}
+
+
             context = new MainPage_Context(this, rootObject, url);
 
             this.BindingContext = context;
+
+            
         }
 
 
@@ -179,6 +187,12 @@ namespace Xamarin_HelloApp
             }
             else if(context.Mode == PageMode.Url && context.Items == null || context.Items.Count == 0)
             {
+                try
+                {
+                    carrouselPage.CurrentPage = carrouselPage.Children[1];
+                }
+                catch { }
+
                 App.Current.ModalPopping -= HandleModalPopping;
 
                 // Открыть корневую структуру
@@ -199,6 +213,10 @@ namespace Xamarin_HelloApp
             Navigation.PopModalAsync();
         }
 
+
+        /// <summary>
+        /// Копирование ссылки на объект
+        /// </summary>
         private async void Copy_Link(object sender, EventArgs e)
         {
             var menuitem = sender as MenuItem;
@@ -207,11 +225,29 @@ namespace Xamarin_HelloApp
                 IPilotObject pilotObject = menuitem.BindingContext as IPilotObject;
 
                 bool result = await Global.CreateLink(pilotObject.DObject);
+            }
+        }
 
-                if (result)
-                    result = await DisplayMessage("Ссылка скопирована", "", false);
-                else
-                    result = await DisplayMessage("Ошибка копирования ссылки", "", false);
+        private void OnAppearing(object sender, EventArgs e)
+        {
+            Thread thread = new Thread(TrialExit);
+            thread.Start();
+        }
+
+
+        private void TrialExit()
+        {
+            if (DateTime.Today > new DateTime(2020, 12, 15))
+            {
+                var res = DisplayMessage("Внимание!", "Срок действия пробной версии истек, обратитесь в АСКОН для приобретения коммерческой версии", false);
+
+                if (res.Result)
+                {
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        Environment.Exit(0);
+                    });
+                }
             }
         }
     }

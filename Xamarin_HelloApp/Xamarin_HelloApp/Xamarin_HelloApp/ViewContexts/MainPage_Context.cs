@@ -315,7 +315,7 @@ namespace Xamarin_HelloApp.ViewContexts
         /// </summary>
         /// <param name="update">обновить данные</param>
         /// <param name="url">ссылка на объект</param>
-        public void GetRootObjects(bool update = false, String url = null)
+        public void GetRootObjects(bool update = false, string url = "")
         {
             if (Mode != PageMode.Slave)
             {
@@ -328,7 +328,7 @@ namespace Xamarin_HelloApp.ViewContexts
             bool needGetRoot = false; // Признак необходимости получения головных объектов
 
             // Получение головных объектов
-            if (url == null || (guid = ParseURL(url)) == null)
+            if (url == null || url == "" || (guid = ParseURL(url)) == null)
             {
                 needGetRoot = true;
             }
@@ -348,62 +348,94 @@ namespace Xamarin_HelloApp.ViewContexts
                         // Получение структуры для объекта
                         if (!item.Type.IsDocument && !item.Type.IsTask && !item.Type.IsSystem && item.VisibleName != "")
                         {
-                            Parent = item;
-                            Items = Parent.Children;
+                            try
+                            {
+                                Parent = item;
+                                Items = Parent.Children;
 
-                            AsyncGetChildren(item);
+                                AsyncGetChildren(item);
+                            }
+                            catch (Exception ex)
+                            {
+                                var res = page.DisplayMessage("Ошибка доступа к объекту", ex.Message, false);
+                            }
                         }
                         // Открытие документа
                         else if (item.Type.IsDocument && item.Type.Name != TypeConstants.File)
                         {
-                            urlItem = item.DObject;
+                            try
+                            {
+                                urlItem = item.DObject;
 
-                            App.Current.ModalPopping += page.HandleModalPopping;
+                                App.Current.ModalPopping += page.HandleModalPopping;
 
-                            page.Navigation.PushModalAsync(new DocumentCarrousel(item));
+                                page.Navigation.PushModalAsync(new DocumentCarrousel(item));
+                            }
+                            catch (Exception ex)
+                            {
+                                var res = page.DisplayMessage("Ошибка доступа к документу", ex.Message, false);
+                            }
                         }
                         // Открытие задания
                         else if (item.Type.IsTask)
                         {
-                            PilotTask task = new PilotTask(item.Guid);
+                            try
+                            {
+                                PilotTask task = new PilotTask(item.Guid);
 
-                            page.carrouselPage.CurrentPage = page.carrouselPage.Children[1];
+                                try
+                                {
+                                    page.carrouselPage.CurrentPage = page.carrouselPage.Children[1];
+                                }
+                                catch { }
 
-                            App.Current.ModalPopping += page.HandleModalPopping;
+                                App.Current.ModalPopping += page.HandleModalPopping;
 
-                            page.Navigation.PushModalAsync(new TaskCarrousel(task));
+                                page.Navigation.PushModalAsync(new TaskCarrousel(task));
+                            }
+                            catch(Exception ex)
+                            {
+                                var res = page.DisplayMessage("Ошибка доступа к заданию", ex.Message, false);
+                            }
                         }
                         // Открытие файла TODO
                         else if(item.Type.IsSystem && item.Type.Name == TypeConstants.File)
                         {
-                            PilotTreeItem file = new PilotTreeItem(Global.DALContext.Repository.GetObjects(new Guid[] { item.DObject.ParentId }).First(), false);
-                            DObject _document = null;
-                            foreach(DRelation relation in file.DObject.Relations)
+                            try
                             {
-                                DObject _dObject = Global.DALContext.Repository.GetObjects(new Guid[] { relation.TargetId }).First();
-                                PType _type = TypeFabrique.GetType(_dObject.TypeId);
-                                if(_type.IsDocument && !_type.IsSystem)
+                                PilotTreeItem file = new PilotTreeItem(Global.DALContext.Repository.GetObjects(new Guid[] { item.DObject.ParentId }).First(), false);
+                                DObject _document = null;
+                                foreach (DRelation relation in file.DObject.Relations)
                                 {
-                                    _document = _dObject;
-                                    break;
+                                    DObject _dObject = Global.DALContext.Repository.GetObjects(new Guid[] { relation.TargetId }).First();
+                                    PType _type = TypeFabrique.GetType(_dObject.TypeId);
+                                    if (_type.IsDocument && !_type.IsSystem)
+                                    {
+                                        _document = _dObject;
+                                        break;
+                                    }
+                                }
+
+                                if (_document != null)
+                                {
+                                    PilotTreeItem document = new PilotTreeItem(Global.DALContext.Repository.GetObjects(new Guid[] { _document.Id }).First(), true);
+
+                                    urlItem = document.DObject;
+
+                                    App.Current.ModalPopping += page.HandleModalPopping;
+
+                                    page.Navigation.PushModalAsync(new DocumentCarrousel(document));
+                                }
+                                else
+                                {
+                                    var result = page.DisplayMessage("Внимание!", "Ошибка доступа к документу", false);
+
+                                    needGetRoot = true;
                                 }
                             }
-
-                            if (_document != null)
+                            catch (Exception ex)
                             {
-                                PilotTreeItem document = new PilotTreeItem(Global.DALContext.Repository.GetObjects(new Guid[] { _document.Id }).First(), true);
-
-                                urlItem = document.DObject;
-
-                                App.Current.ModalPopping += page.HandleModalPopping;
-
-                                page.Navigation.PushModalAsync(new DocumentCarrousel(document));
-                            }
-                            else
-                            {
-                                var result = page.DisplayMessage("Внимание!", "Ошибка доступа к документу", false);
-
-                                needGetRoot = true;
+                                var res = page.DisplayMessage("Ошибка доступа к файлу", ex.Message, false);
                             }
                         }
                         // 
