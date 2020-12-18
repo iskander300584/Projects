@@ -16,13 +16,20 @@ namespace Xamarin_HelloApp
     /// </summary>
     public partial class MainPage : ContentPage
     {
+        #region Поля класса
+
         /// <summary>
         /// Контекст данных окна
         /// </summary>
         private MainPage_Context context;
 
 
+        /// <summary>
+        /// Окно карусели
+        /// </summary>
         public MainCarrouselPage carrouselPage;
+
+        #endregion
 
 
         /// <summary>
@@ -35,24 +42,31 @@ namespace Xamarin_HelloApp
 
             carrouselPage = carrousel;
 
-            if (Global.DALContext != null && Global.DALContext.IsInitialized && Global.CurrentPerson == null)
+            try
             {
-                Global.CurrentPerson = Global.DALContext.Repository.CurrentPerson();
+                if (Global.DALContext != null && Global.DALContext.IsInitialized && Global.CurrentPerson == null)
+                {
+                    Global.CurrentPerson = Global.DALContext.Repository.CurrentPerson();
+                }
+
+                //if (url != null && url != "")
+                //{
+                //    var res = DisplayMessage("URL", url, false);
+                //}
+
+
+                context = new MainPage_Context(this, rootObject, url);
+
+                this.BindingContext = context;
             }
-
-            //if (url != null && url != "")
-            //{
-            //    var res = DisplayMessage("URL", url, false);
-            //}
-
-
-            context = new MainPage_Context(this, rootObject, url);
-
-            this.BindingContext = context;
-
-            
+            catch (Exception ex)
+            {
+                DisplayMessage("Ошибка", ex.Message, false);
+            }
         }
 
+
+        #region Методы класса
 
         /// <summary>
         /// Нажатие на элемент Pilot
@@ -91,7 +105,7 @@ namespace Xamarin_HelloApp
             return await DisplayActionSheet(StringConstants.ActionChoose, StringConstants.Cancel, null, StringConstants.Authentificate, StringConstants.ClearCache, StringConstants.Exit);
         }
 
-
+        
         /// <summary>
         /// Вывести сообщение
         /// </summary>
@@ -113,6 +127,18 @@ namespace Xamarin_HelloApp
             }
         }
 
+
+        /// <summary>
+        /// Вывести сообщение об ошибке
+        /// </summary>
+        /// <param name="message">текст сообщения об ошибке</param>
+        /// <param name="caption">заголовок ошибки</param>
+        /// <returns>возвращает TRUE, если необходимо отправить отчет об ошибке</returns>
+        public async Task<bool> DisplayError(string message, string caption = "Ошибка")
+        {
+            return await DisplayAlert(caption, message + StringConstants.SendErrorMessage, StringConstants.Send, StringConstants.DontSend);
+        }
+        
 
         /// <summary>
         /// Нажатие кнопки Назад
@@ -219,36 +245,77 @@ namespace Xamarin_HelloApp
         /// </summary>
         private async void Copy_Link(object sender, EventArgs e)
         {
-            var menuitem = sender as MenuItem;
-            if(menuitem != null)
+            try
             {
-                IPilotObject pilotObject = menuitem.BindingContext as IPilotObject;
-
-                bool result = await Global.CreateLink(pilotObject.DObject);
-            }
-        }
-
-        private void OnAppearing(object sender, EventArgs e)
-        {
-            Thread thread = new Thread(TrialExit);
-            thread.Start();
-        }
-
-
-        private void TrialExit()
-        {
-            if (DateTime.Today > new DateTime(2020, 12, 15))
-            {
-                var res = DisplayMessage("Внимание!", "Срок действия пробной версии истек, обратитесь в АСКОН для приобретения коммерческой версии", false);
-
-                if (res.Result)
+                var menuitem = sender as MenuItem;
+                if (menuitem != null)
                 {
-                    Device.BeginInvokeOnMainThread(async () =>
-                    {
-                        Environment.Exit(0);
-                    });
+                    IPilotObject pilotObject = menuitem.BindingContext as IPilotObject;
+
+                    bool result = await Global.CreateLink(pilotObject.DObject);
                 }
             }
+            catch (Exception ex)
+            {
+                var res = await DisplayError(ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
+            }
         }
+
+
+        /// <summary>
+        /// Запуск главного окна
+        /// </summary>
+        private void OnAppearing(object sender, EventArgs e)
+        {
+            if (Global.IsTrial && !Global.TrialMessageShown)
+            {
+                Thread thread = new Thread(TrialExit);
+                thread.Start();
+            }
+        }
+
+
+        /// <summary>
+        /// Проверка окончания пробного периода
+        /// </summary>
+        private async void TrialExit()
+        {
+            double lastDays = (Global.TrialExitDate - DateTime.Today).TotalDays;
+
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                Global.TrialMessageShown = true;
+            });
+
+            if (lastDays < 0)
+            {
+                var res = await DisplayMessage("Внимание!", "Срок действия пробной версии истек.\nОбратитесь в АСКОН для приобретения коммерческой версии", false);
+
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    Environment.Exit(0);
+                });
+            }
+            else if (lastDays <= 14)
+            {
+                int value = (int)lastDays;
+                string days = " дней";
+                string last = " осталось ";
+                if (value == 1)
+                {
+                    days = " день";
+                    last = " остался ";
+                }
+                else if (value > 1 && value < 5)
+                    days = " дня";
+
+                var res = await DisplayMessage("Внимание!", "До окончания пробного периода" + last + value + days + ".\nОбратитесь в АСКОН для приобретения коммерческой версии", false);
+            }
+        }
+
+        #endregion
     }
 }

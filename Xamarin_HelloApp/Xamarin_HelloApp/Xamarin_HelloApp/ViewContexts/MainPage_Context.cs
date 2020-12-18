@@ -3,6 +3,7 @@ using PilotMobile.AppContext;
 using PilotMobile.Pages;
 using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
+using Plugin.Toast;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -231,6 +232,16 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
+        private ICommand testCommand;
+        /// <summary>
+        /// Тестовая команда
+        /// </summary>
+        public ICommand TestCommand
+        {
+            get => testCommand;
+        }
+
+
         private SearchQueryPage_Context searchContext = null;
         /// <summary>
         /// Контекст данных окна поиска
@@ -302,6 +313,7 @@ namespace Xamarin_HelloApp.ViewContexts
             updateCommand = new Command(Update_Execute);
             mainMenuCommand = new Command(MainMenu_Execute);
             backCommand = new Command(Back_Execute);
+            testCommand = new Command(TestCommand_Execute);
 
             Up_CanExecute();
         }
@@ -315,206 +327,260 @@ namespace Xamarin_HelloApp.ViewContexts
         /// </summary>
         /// <param name="update">обновить данные</param>
         /// <param name="url">ссылка на объект</param>
-        public void GetRootObjects(bool update = false, string url = "")
+        public async void GetRootObjects(bool update = false, string url = "")
         {
-            if (Mode != PageMode.Slave)
+            try
             {
-                DObject rootObj = Global.DALContext.Repository.GetObjects(new[] { DObject.RootId }).First();
-
-                root = new PilotTreeItem(rootObj);
-            }
-
-            Guid? guid;
-            bool needGetRoot = false; // Признак необходимости получения головных объектов
-
-            // Получение головных объектов
-            if (url == null || url == "" || (guid = ParseURL(url)) == null)
-            {
-                needGetRoot = true;
-            }
-            // Получение объекта по ссылке
-            else
-            {
-                DObject dObject = Global.DALContext.Repository.GetObjects(new Guid[] { (Guid)guid }).FirstOrDefault();
-
-                if (dObject != null)
+                Exception exep = Global.Reconnect();
+                if (exep != null)
                 {
-                    PilotTreeItem item = new PilotTreeItem(dObject, true);
+                    var res = await Global.DisplayError(page, exep.Message);
 
-                    if (!item.DObject.InRootRecycleBin())
+                    if (res)
+                        await Global.SendErrorReport(exep);
+
+                    return;
+                }
+
+                if (Mode != PageMode.Slave)
+                {
+                    DObject rootObj = Global.DALContext.Repository.GetObjects(new[] { DObject.RootId }).First();
+
+                    root = new PilotTreeItem(rootObj);
+                }
+
+                Guid? guid;
+                bool needGetRoot = false; // Признак необходимости получения головных объектов
+
+                // Получение головных объектов
+                if (url == null || url == "" || (guid = ParseURL(url)) == null)
+                {
+                    needGetRoot = true;
+                }
+                // Получение объекта по ссылке
+                else
+                {
+                    DObject dObject = Global.DALContext.Repository.GetObjects(new Guid[] { (Guid)guid }).FirstOrDefault();
+
+                    if (dObject != null)
                     {
-                        Mode = PageMode.Url;
+                        PilotTreeItem item = new PilotTreeItem(dObject, true);
 
-                        // Получение структуры для объекта
-                        if (!item.Type.IsDocument && !item.Type.IsTask && !item.Type.IsSystem && item.VisibleName != "")
+                        if (!item.DObject.InRootRecycleBin())
                         {
-                            try
-                            {
-                                Parent = item;
-                                Items = Parent.Children;
+                            Mode = PageMode.Url;
 
-                                AsyncGetChildren(item);
-                            }
-                            catch (Exception ex)
+                            // Получение структуры для объекта
+                            if (!item.Type.IsDocument && !item.Type.IsTask && !item.Type.IsSystem && item.VisibleName != "")
                             {
-                                var res = page.DisplayMessage("Ошибка доступа к объекту", ex.Message, false);
-                            }
-                        }
-                        // Открытие документа
-                        else if (item.Type.IsDocument && item.Type.Name != TypeConstants.File)
-                        {
-                            try
-                            {
-                                urlItem = item.DObject;
-
-                                App.Current.ModalPopping += page.HandleModalPopping;
-
-                                page.Navigation.PushModalAsync(new DocumentCarrousel(item));
-                            }
-                            catch (Exception ex)
-                            {
-                                var res = page.DisplayMessage("Ошибка доступа к документу", ex.Message, false);
-                            }
-                        }
-                        // Открытие задания
-                        else if (item.Type.IsTask)
-                        {
-                            try
-                            {
-                                PilotTask task = new PilotTask(item.Guid);
-
                                 try
                                 {
-                                    page.carrouselPage.CurrentPage = page.carrouselPage.Children[1];
+                                    Parent = item;
+                                    Items = Parent.Children;
+
+                                    AsyncGetChildren(item);
                                 }
-                                catch { }
-
-                                App.Current.ModalPopping += page.HandleModalPopping;
-
-                                page.Navigation.PushModalAsync(new TaskCarrousel(task));
-                            }
-                            catch(Exception ex)
-                            {
-                                var res = page.DisplayMessage("Ошибка доступа к заданию", ex.Message, false);
-                            }
-                        }
-                        // Открытие файла TODO
-                        else if(item.Type.IsSystem && item.Type.Name == TypeConstants.File)
-                        {
-                            try
-                            {
-                                PilotTreeItem file = new PilotTreeItem(Global.DALContext.Repository.GetObjects(new Guid[] { item.DObject.ParentId }).First(), false);
-                                DObject _document = null;
-                                foreach (DRelation relation in file.DObject.Relations)
+                                catch (Exception ex)
                                 {
-                                    DObject _dObject = Global.DALContext.Repository.GetObjects(new Guid[] { relation.TargetId }).First();
-                                    PType _type = TypeFabrique.GetType(_dObject.TypeId);
-                                    if (_type.IsDocument && !_type.IsSystem)
-                                    {
-                                        _document = _dObject;
-                                        break;
-                                    }
+                                    var res = await Global.DisplayError(page, ex.Message, "Ошибка доступа к объекту");
+
+                                    if (res)
+                                        await Global.SendErrorReport(ex);
                                 }
-
-                                if (_document != null)
+                            }
+                            // Открытие документа
+                            else if (item.Type.IsDocument && item.Type.Name != TypeConstants.File)
+                            {
+                                try
                                 {
-                                    PilotTreeItem document = new PilotTreeItem(Global.DALContext.Repository.GetObjects(new Guid[] { _document.Id }).First(), true);
-
-                                    urlItem = document.DObject;
+                                    urlItem = item.DObject;
 
                                     App.Current.ModalPopping += page.HandleModalPopping;
 
-                                    page.Navigation.PushModalAsync(new DocumentCarrousel(document));
+                                    page.Navigation.PushModalAsync(new DocumentCarrousel(item));
                                 }
-                                else
+                                catch (Exception ex)
                                 {
-                                    var result = page.DisplayMessage("Внимание!", "Ошибка доступа к документу", false);
+                                    var res = await Global.DisplayError(page, ex.Message, "Ошибка доступа к документу");
 
-                                    needGetRoot = true;
+                                    if (res)
+                                        await Global.SendErrorReport(ex);
                                 }
                             }
-                            catch (Exception ex)
+                            // Открытие задания
+                            else if (item.Type.IsTask)
                             {
-                                var res = page.DisplayMessage("Ошибка доступа к файлу", ex.Message, false);
+                                try
+                                {
+                                    PilotTask task = new PilotTask(item.Guid);
+
+                                    try
+                                    {
+                                        page.carrouselPage.CurrentPage = page.carrouselPage.Children[1];
+                                    }
+                                    catch { }
+
+                                    App.Current.ModalPopping += page.HandleModalPopping;
+
+                                    page.Navigation.PushModalAsync(new TaskCarrousel(task));
+                                }
+                                catch (Exception ex)
+                                {
+                                    var res = await Global.DisplayError(page, ex.Message, "Ошибка доступа к заданию");
+
+                                    if (res)
+                                        await Global.SendErrorReport(ex);
+                                }
+                            }
+                            // Открытие файла TODO
+                            else if (item.Type.IsSystem && item.Type.Name == TypeConstants.File)
+                            {
+                                try
+                                {
+                                    PilotTreeItem file = new PilotTreeItem(Global.DALContext.Repository.GetObjects(new Guid[] { item.DObject.ParentId }).First(), false);
+                                    DObject _document = null;
+                                    foreach (DRelation relation in file.DObject.Relations)
+                                    {
+                                        DObject _dObject = Global.DALContext.Repository.GetObjects(new Guid[] { relation.TargetId }).First();
+                                        PType _type = TypeFabrique.GetType(_dObject.TypeId);
+                                        if (_type.IsDocument && !_type.IsSystem)
+                                        {
+                                            _document = _dObject;
+                                            break;
+                                        }
+                                    }
+
+                                    if (_document != null)
+                                    {
+                                        PilotTreeItem document = new PilotTreeItem(Global.DALContext.Repository.GetObjects(new Guid[] { _document.Id }).First(), true);
+
+                                        urlItem = document.DObject;
+
+                                        App.Current.ModalPopping += page.HandleModalPopping;
+
+                                        page.Navigation.PushModalAsync(new DocumentCarrousel(document));
+                                    }
+                                    else
+                                    {
+                                        var result = Global.DisplayMessage(page, "Внимание!", "Ошибка доступа к документу", false);
+
+                                        needGetRoot = true;
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    var res = await Global.DisplayError(page, ex.Message, "Ошибка доступа к файлу");
+
+                                    if (res)
+                                        await Global.SendErrorReport(ex);
+                                }
+                            }
+                            // 
+                            //else if(item.VisibleName == "" && !item.Type.IsSystem)
+                            //{
+                            //    var result = page.DisplayMessage("Внимание!", "У Вас нет доступа к объекту", false);
+
+                            //    needGetRoot = true;
+                            //}
+                            // Заглушка
+                            else
+                            {
+                                var result = Global.DisplayMessage(page, "Внимание!", "Ссылка на объекты данного типа не поддерживается в мобильной версии", false);
+
+                                needGetRoot = true;
                             }
                         }
-                        // 
-                        //else if(item.VisibleName == "" && !item.Type.IsSystem)
-                        //{
-                        //    var result = page.DisplayMessage("Внимание!", "У Вас нет доступа к объекту", false);
+                        else if (item.DObject.InRootRecycleBin() || item.DObject.IsForbidden())
+                        {
+                            var result = Global.DisplayMessage(page, "Внимание!", "Объект был удален", false);
 
-                        //    needGetRoot = true;
-                        //}
-                        // Заглушка
+                            needGetRoot = true;
+                        }
                         else
                         {
-                            var result = page.DisplayMessage("Внимание!", "Ссылка на объекты данного типа не поддерживается в мобильной версии", false);
+                            var result = Global.DisplayMessage(page, "Внимание!", "У Вас нет доступа к указанному объекту", false);
 
                             needGetRoot = true;
                         }
                     }
-                    else if(item.DObject.InRootRecycleBin() || item.DObject.IsForbidden())
-                    {
-                        var result = page.DisplayMessage("Внимание!", "Объект был удален", false);
-
-                        needGetRoot = true;
-                    }
                     else
                     {
-                        var result = page.DisplayMessage("Внимание!", "У Вас нет доступа к указанному объекту", false);
-
                         needGetRoot = true;
                     }
                 }
-                else
-                {
-                    needGetRoot = true;
-                }
-            }
 
-            // Получение головных объектов
-            if (needGetRoot)
+                // Получение головных объектов
+                if (needGetRoot)
+                {
+                    Parent = Root;
+
+                    Items = Parent.Children;
+
+                    if (update || Parent.Children.Count == 0)
+                    {
+                        Parent.Children.Clear();
+                        AsyncGetChildren(Parent);
+                    }
+                }
+
+                Up_CanExecute();
+            }
+            catch (Exception ex)
             {
-                Parent = Root;
+                var res = await Global.DisplayError(page, ex.Message);
 
-                Items = Parent.Children;
-
-                if (update || Parent.Children.Count == 0)
-                {
-                    Parent.Children.Clear();
-                    AsyncGetChildren(Parent);
-                }
+                if (res)
+                    await Global.SendErrorReport(ex);
             }
-
-            Up_CanExecute();
         }
 
 
         /// <summary>
         /// Получение объектов, вложенных в задание
         /// </summary>
-        private void GetTaskRootObjects()
+        private async void GetTaskRootObjects()
         {
-            Parent.Children.Clear();
-            Items = Parent.Children;
-
-            foreach (DRelation relation in Root.DObject.Relations)
+            try
             {
-                if (relation.TargetId == null)
-                    continue;
-
-                DObject childObj = Global.DALContext.Repository.GetObjects(new Guid[] { relation.TargetId }).FirstOrDefault();
-
-                if (childObj != null)
+                Exception ex = Global.Reconnect();
+                if (ex != null)
                 {
-                    PilotTreeItem child = new PilotTreeItem(childObj, true);
+                    var res = await Global.DisplayError(page, ex.Message);
 
-                    if (child.VisibleName != "")
+                    if (res)
+                        await Global.SendErrorReport(ex);
+
+                    return;
+                }
+
+                Parent.Children.Clear();
+                Items = Parent.Children;
+
+                foreach (DRelation relation in Root.DObject.Relations)
+                {
+                    if (relation.TargetId == null)
+                        continue;
+
+                    DObject childObj = Global.DALContext.Repository.GetObjects(new Guid[] { relation.TargetId }).FirstOrDefault();
+
+                    if (childObj != null)
                     {
-                        child.SetParent(Root);
-                        Root.Children.Add(child);
+                        PilotTreeItem child = new PilotTreeItem(childObj, true);
+
+                        if (child.VisibleName != "")
+                        {
+                            child.SetParent(Root);
+                            Root.Children.Add(child);
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
             }
         }
 
@@ -523,11 +589,22 @@ namespace Xamarin_HelloApp.ViewContexts
         /// Асинхронный метод получения вложенных объектов
         /// </summary>
         /// <param name="dObject">объект Pilot</param>
-        private void AsyncGetChildren(IPilotObject pilotItem, IPilotObject childItem = null)
+        private async void AsyncGetChildren(IPilotObject pilotItem, IPilotObject childItem = null)
         {
-            Thread thread = new Thread(new ParameterizedThreadStart(GetChildren));
-            thread.Start(new GetChildrenParam(pilotItem, childItem));
+            try
+            {
+                Thread thread = new Thread(new ParameterizedThreadStart(GetChildren));
+                thread.Start(new GetChildrenParam(pilotItem, childItem));
+            }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
+            }
         }
+
 
         /// <summary>
         /// Внутренний класс для передачи данных в асинхронный метод
@@ -556,31 +633,57 @@ namespace Xamarin_HelloApp.ViewContexts
             }
         }
 
+
         /// <summary>
         /// Метод получения вложенных объектов для параллельного потока
         /// </summary>
         /// <param name="pilotItem">объект Pilot</param>
-        private void GetChildren(object getChildrenParam)
+        private async void GetChildren(object getChildrenParam)
         {
-            GetChildrenParam param = (GetChildrenParam)getChildrenParam;
-            PilotTreeItem _item = (PilotTreeItem)param.PilotItem;
-            PilotTreeItem _child = (PilotTreeItem)param.ChildItem;
-
-            foreach (DChild dchild in _item.DObject.Children)
+            try
             {
-                PilotTreeItem item = new PilotTreeItem(dchild, _item);
-                // item.HasAccess
-                if (item.VisibleName.Trim() != "" && !item.Type.IsSystem)
+                Exception ex = Global.Reconnect();
+                if (ex != null)
                 {
-                    if (_child != null && _child.Guid == item.Guid)
+                    Device.BeginInvokeOnMainThread(async () =>
                     {
-                        _item.Children.Add(_child);
-                        _child.Parent = _item;
+                        var res = await Global.DisplayError(page, ex.Message);
+
+                        if (res)
+                            await Global.SendErrorReport(ex);
+                    });
+
+                    return;
+                }           
+
+                GetChildrenParam param = (GetChildrenParam)getChildrenParam;
+                PilotTreeItem _item = (PilotTreeItem)param.PilotItem;
+                PilotTreeItem _child = (PilotTreeItem)param.ChildItem;
+
+                foreach (DChild dchild in _item.DObject.Children)
+                {
+                    PilotTreeItem item = new PilotTreeItem(dchild, _item);
+                    if (item.VisibleName.Trim() != "" && !item.Type.IsSystem)
+                    {
+                        if (_child != null && _child.Guid == item.Guid)
+                        {
+                            _item.Children.Add(_child);
+                            _child.Parent = _item;
+                        }
+                        else
+                            _item.Children.Add(item);
                     }
-                    else
-                        _item.Children.Add(item);
                 }
-                    //Items.Add(item);
+            }
+            catch (Exception ex)
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    var res = await Global.DisplayError(page, ex.Message);
+
+                    if (res)
+                        await Global.SendErrorReport(ex);
+                });
             }
         }
 
@@ -631,138 +734,201 @@ namespace Xamarin_HelloApp.ViewContexts
         /// Выбор объекта из списка
         /// </summary>
         /// <param name="item">элемент Pilot</param>
-        public void ItemTapped(PilotTreeItem item)
+        public async void ItemTapped(PilotTreeItem item)
         {
-            Parent = item;
+            try
+            {
+                Exception ex = Global.Reconnect();
+                if (ex != null)
+                {
+                    var res = await Global.DisplayError(page, ex.Message);
 
-            Items = Parent.Children;
+                    if (res)
+                        await Global.SendErrorReport(ex);
 
-            if (Parent.Children.Count == 0)
-                AsyncGetChildren(Parent);
+                    return;
+                }
 
-            Up_CanExecute();
+                Parent = item;
+
+                Items = Parent.Children;
+
+                if (Parent.Children.Count == 0)
+                    AsyncGetChildren(Parent);
+
+                Up_CanExecute();
+            }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
+            }
         }
 
 
         /// <summary>
         /// Нажатие кнопки Вверх
         /// </summary>
-        public void Up_Execute()
+        public async void Up_Execute()
         {
-            if (Mode != PageMode.Url || Parent.Parent != null)
+            try
             {
-                Parent = Parent.Parent;
-
-                Items = Parent.Children;
-            }
-            else
-            {
-                Guid parentGuid = Parent.DObject.ParentId;
-                IPilotObject current = Parent;
-
-                if(parentGuid != Root.Guid)
+                Exception ex = Global.Reconnect();
+                if (ex != null)
                 {
-                    PilotTreeItem parent = new PilotTreeItem(Global.DALContext.Repository.GetObjects(new Guid[] { parentGuid }).FirstOrDefault(), true);
+                    var res = await Global.DisplayError(page, ex.Message);
 
-                    Parent = parent;
-                    Items = Parent.Children;
+                    if (res)
+                        await Global.SendErrorReport(ex);
 
-                    if (Items.Count == 0)
-                        AsyncGetChildren(parent, current);
-                    else
-                    {
-                        IPilotObject child = Parent.Children.FirstOrDefault(c => c.Guid == current.Guid);
-                        if (child != null)
-                        {
-                            child = current;
-                            current.Parent = Parent;
-                        }
-                    }
+                    return;
                 }
-                // Получение корневых объектов
+
+                if (Mode != PageMode.Url || Parent.Parent != null)
+                {
+                    Parent = Parent.Parent;
+
+                    Items = Parent.Children;
+                }
                 else
                 {
-                    Mode = PageMode.View;
+                    Guid parentGuid = Parent.DObject.ParentId;
+                    IPilotObject current = Parent;
 
-                    Parent = Root;
-
-                    Items = Parent.Children;
-
-                    if (Items.Count == 0)
+                    if (parentGuid != Root.Guid)
                     {
-                        AsyncGetChildren(Parent, current);
+                        PilotTreeItem parent = new PilotTreeItem(Global.DALContext.Repository.GetObjects(new Guid[] { parentGuid }).FirstOrDefault(), true);
+
+                        Parent = parent;
+                        Items = Parent.Children;
+
+                        if (Items.Count == 0)
+                            AsyncGetChildren(parent, current);
+                        else
+                        {
+                            IPilotObject child = Parent.Children.FirstOrDefault(c => c.Guid == current.Guid);
+                            if (child != null)
+                            {
+                                child = current;
+                                current.Parent = Parent;
+                            }
+                        }
                     }
+                    // Получение корневых объектов
                     else
                     {
-                        IPilotObject child = Parent.Children.FirstOrDefault(c => c.Guid == current.Guid);
-                        if (child != null)
+                        Mode = PageMode.View;
+
+                        Parent = Root;
+
+                        Items = Parent.Children;
+
+                        if (Items.Count == 0)
                         {
-                            child = current;
-                            current.Parent = Parent;
+                            AsyncGetChildren(Parent, current);
+                        }
+                        else
+                        {
+                            IPilotObject child = Parent.Children.FirstOrDefault(c => c.Guid == current.Guid);
+                            if (child != null)
+                            {
+                                child = current;
+                                current.Parent = Parent;
+                            }
                         }
                     }
                 }
-            }
 
-            Up_CanExecute();
+                Up_CanExecute();
+            }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
+            }
         }
 
 
         /// <summary>
         /// Нажатие кнопки Домой
         /// </summary>
-        public void Home_Execute()
+        public async void Home_Execute()
         {
-            Mode = PageMode.View;
-
-            Parent = Root;
-
-            Items = Parent.Children;
-
-            if(Items.Count == 0)
+            try
             {
-                AsyncGetChildren(Parent);
-            }
+                Exception ex = Global.Reconnect();
+                if (ex != null)
+                {
+                    var res = await Global.DisplayError(page, ex.Message);
 
-            Up_CanExecute();
+                    if (res)
+                        await Global.SendErrorReport(ex);
+
+                    return;
+                }
+
+                Mode = PageMode.View;
+
+                Parent = Root;
+
+                Items = Parent.Children;
+
+                if (Items.Count == 0)
+                {
+                    AsyncGetChildren(Parent);
+                }
+
+                Up_CanExecute();
+            }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
+            }
         }
 
 
         /// <summary>
         /// Нажатие кнопки Обновить
         /// </summary>
-        public void Update_Execute()
+        public async void Update_Execute()
         {
             try
             {
-                /*if (!IsConnected)
-                    if (Global.DALContext.Connect(Global.Credentials) != null)
-                        return;*/
-
                 Exception ex = Global.Reconnect();
-                if(ex != null)
+                if (ex != null)
                 {
-                    var res = page.DisplayMessage(StringConstants.Warning, ex.Message, false);
+                    var res = await Global.DisplayError(page, ex.Message);
+
+                    if (res)
+                        await Global.SendErrorReport(ex);
+
                     return;
                 }
 
-                if (IsConnected)
-                {
-                    Parent.Children.Clear();
+                Parent.Children.Clear();
 
-                    Parent.UpdateObjectData();
+                Parent.UpdateObjectData();
 
-                    if (Mode == PageMode.View || Parent != Root)
-                        AsyncGetChildren(Parent);
-                    else
-                        GetTaskRootObjects();
-                }
+                if (Mode == PageMode.View || Parent != Root)
+                    AsyncGetChildren(Parent);
+                else
+                    GetTaskRootObjects();
 
                 Up_CanExecute();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                var res = page.DisplayMessage("Ошибка", ex.Message, false);
+                var res = await Global.DisplayError(page, ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
             }
         }
 
@@ -811,6 +977,8 @@ namespace Xamarin_HelloApp.ViewContexts
 
             double size = 0;
 
+            Exception exep = null;
+
             foreach(string fileName in files)
             {
                 FileInfo fileInfo = new FileInfo(fileName);
@@ -825,18 +993,31 @@ namespace Xamarin_HelloApp.ViewContexts
                     }
                     catch(Exception ex)
                     {
-                        await page.DisplayMessage("Ошибка удаления файла", ex.Message, false);
+                        if (exep == null)
+                            exep = ex;
+                        
+                        
                     }
                 }
             }
 
-            string _size = String.Format("{0:#.#}", size / 1048576);
-            if (_size.Trim() == "")
-                _size = "0";
-            else if (_size[0] == '.' || _size[0] == ',')
-                _size = "0" + _size;
+            if (exep != null)
+            {
+                var res = await Global.DisplayError(page, exep.Message, "Ошибка удаления файла");
 
-            await page.DisplayMessage(StringConstants.CacheCleared, StringConstants.Free + _size + StringConstants.TotalSize, false);
+                if (res)
+                    await Global.SendErrorReport(exep);
+            }
+            else
+            {
+                string _size = String.Format("{0:#.#}", size / 1048576);
+                if (_size.Trim() == "")
+                    _size = "0";
+                else if (_size[0] == '.' || _size[0] == ',')
+                    _size = "0" + _size;
+
+                CrossToastPopUp.Current.ShowToastSuccess(StringConstants.Free + _size + StringConstants.TotalSize);
+            }
         }
 
 
@@ -844,16 +1025,37 @@ namespace Xamarin_HelloApp.ViewContexts
         /// Выполнить поиск данных
         /// </summary>
         /// <param name="query">строка поиска</param>
-        public void DoSearch(string query)
+        public async void DoSearch(string query)
         {
-            Mode = PageMode.Search;
+            try
+            {
+                Exception ex = Global.Reconnect();
+                if (ex != null)
+                {
+                    var res = await Global.DisplayError(page, ex.Message);
 
-            Parent = new PilotTreeItem();
+                    if (res)
+                        await Global.SendErrorReport(ex);
 
-            Items = Parent.Children;
+                    return;
+                }
 
-            Thread thread = new Thread(new ParameterizedThreadStart(GetSearchResults));
-            thread.Start(query);
+                Mode = PageMode.Search;
+
+                Parent = new PilotTreeItem();
+
+                Items = Parent.Children;
+
+                Thread thread = new Thread(new ParameterizedThreadStart(GetSearchResults));
+                thread.Start(query);
+            }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
+            }
         }
 
 
@@ -903,10 +1105,10 @@ namespace Xamarin_HelloApp.ViewContexts
             }
             catch(Exception ex)
             {
-                if(ex != null)
-                {
+                var res = await Global.DisplayError(page, ex.Message);
 
-                }
+                if (res)
+                    await Global.SendErrorReport(ex);
             }
 
             Up_CanExecute();
@@ -931,6 +1133,33 @@ namespace Xamarin_HelloApp.ViewContexts
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+
+        /// <summary>
+        /// Метод обработки тестовой команды
+        /// </summary>
+        private async void TestCommand_Execute()
+        {
+            // Проверка работоспособности отчета об ошибке
+            try
+            {
+                Exception exception0 = new Exception("Ошибка уровня 0");
+
+                Exception exception1 = new Exception("Ошибка уровня 1", exception0);
+
+                Exception exception2 = new Exception("Ошибка уровня 2", exception1);
+                exception2.Source = "Тестовый метод";
+
+                throw exception2;
+            }
+            catch(Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
+            }
         }
 
         #endregion

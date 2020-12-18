@@ -104,24 +104,6 @@
                             </ImageButton.Style>
                         </ImageButton>
 
-                        <!-- Кнопка Наверх -->
-                        <!--<ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End"  
-                                     Command="{Binding UpCommand}" IsEnabled="{Binding UpCanExecute}" Padding="1"
-                                     >
-                            <ImageButton.Style>
-                                <Style TargetType="ImageButton">
-                                    <Style.Triggers>
-                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="True">
-                                            <Setter Property="Source" Value="upArrow.png"/>
-                                        </Trigger>
-                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="False">
-                                            <Setter Property="Source" Value="upArrow_gray.png"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ImageButton.Style>
-                        </ImageButton>-->
-
                     </StackLayout>
                 </StackLayout>
             </Frame>
@@ -161,7 +143,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <Picker ItemsSource="{Binding Attributes}" SelectedItem="{Binding SelectedAttribute, Mode=TwoWay}" FontSize="Small" HorizontalOptions="FillAndExpand" Margin="10,0,5,0" />
+                <Picker ItemsSource="{Binding Attributes}" SelectedItem="{Binding SelectedAttribute, Mode=TwoWay}" FontSize="Small" HorizontalOptions="FillAndExpand" Margin="10,0,5,0" IsEnabled="{Binding SelectAttribute_CanExecute}" />
                 <!-- Кнопка Добавить -->
                 <ImageButton Grid.Column="1" Aspect="AspectFit" WidthRequest="20" Margin="0,0,10,0" BackgroundColor="White"
                                      Command="{Binding AddAttribute}" IsEnabled="{Binding AddAttribute_CanExecute}" >

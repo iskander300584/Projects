@@ -53,6 +53,24 @@
 
 
         /// <summary>
+        /// Отправить
+        /// </summary>
+        public const string Send = "Отправить";
+
+
+        /// <summary>
+        /// Не отправлять
+        /// </summary>
+        public const string DontSend = "Не отправлять";
+
+
+        /// <summary>
+        /// Отправить отчет об ошибке в АСКОН?
+        /// </summary>
+        public const string SendErrorMessage = "\n\nОтправить отчет об ошибке в АСКОН?";
+
+
+        /// <summary>
         /// Выберите действие:
         /// </summary>
         public const string ActionChoose = "Выберите действие:";

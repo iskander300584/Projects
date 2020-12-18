@@ -50,5 +50,8 @@ namespace Xamarin_HelloApp.Pages
             indicator.IsRunning = value;
             indicator.IsVisible = value;
         }
+
+
+
     }
 }

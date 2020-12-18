@@ -209,6 +209,24 @@ namespace PilotMobile.ViewContexts
         }
 
 
+        private bool selectAttribute_CanExecute = false;
+        /// <summary>
+        /// Признак доступности выбора атрибута
+        /// </summary>
+        public bool SelectAttribute_CanExecute
+        {
+            get => selectAttribute_CanExecute;
+            private set
+            {
+                if(selectAttribute_CanExecute != value)
+                {
+                    selectAttribute_CanExecute = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
         private bool addAttribute_CanExecute = false;
         /// <summary>
         /// Признак доступности команды добавления атрибута
@@ -385,6 +403,7 @@ namespace PilotMobile.ViewContexts
             }
 
             SelectedAttribute = (Attributes.Count > 0) ? Attributes[0] : null;
+            SelectAttribute_CanExecute = (Attributes.Count > 0);
         }
 
 

@@ -26,6 +26,7 @@
                     </StackLayout>
 
                     <StackLayout Orientation="Horizontal">
+                        
                         <!-- Кнопка Обновить -->
                         <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
                                      Command="{Binding UpdateCommand}" IsEnabled="{Binding UpdateCanExecute}">
@@ -43,12 +44,33 @@
                             </ImageButton.Style>
                         </ImageButton>
 
+                        
                         <!-- Кнопка Поиск -->
-                        <ImageButton Source="search.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
+                        <ImageButton Source="search.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" Padding="1"
                                      Clicked="Search_Click" IsVisible="{Binding SearchVisible}" Margin="20,0,0,0" />
 
+                        
+                        <!-- Кнопка Тестовая -->
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" IsVisible="true" Margin="20,0,0,0"
+                                     Command="{Binding TestCommand}">
+                            <ImageButton.Style>
+                                <Style TargetType="ImageButton">
+                                    <Style.Triggers>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="True">
+                                            <Setter Property="Source" Value="abort.png"/>
+                                        </Trigger>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="False">
+                                            <Setter Property="Source" Value="abort.png"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ImageButton.Style>
+                        </ImageButton>
+                        
+                        
                         <Label HorizontalOptions="EndAndExpand" />
 
+                        
                         <!-- Кнопка Наверх к головному окну -->
                         <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End"  
                                      Command="{Binding BackCommand}" Padding="1" IsVisible="{Binding BackVisible}"
@@ -67,6 +89,7 @@
                             </ImageButton.Style>
                         </ImageButton>
 
+                        
                         <!-- Кнопка Карточка -->
                         <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End" Margin="20,0,0,0"  
                                      IsEnabled="{Binding UpCanExecute}" Clicked="Card_Click" >
@@ -84,6 +107,7 @@
                             </ImageButton.Style>
                         </ImageButton>
 
+                        
                         <!-- Кнопка Домой -->
                         <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End" Margin="20,0,0,0" 
                                      Command="{Binding HomeCommand}" IsEnabled="{Binding HomeCanExecute}">
@@ -102,6 +126,7 @@
                         </ImageButton>
                     </StackLayout>
 
+                    
                     <!-- Наименование объекта -->
                     <Label Text="{Binding Parent.VisibleName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Small" LineBreakMode="WordWrap" MaxLines="2" /> 
                 </StackLayout>
