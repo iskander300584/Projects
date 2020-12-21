@@ -13,18 +13,18 @@
                         <Label Text="{Binding AppName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Medium" Margin="10,0,0,0"/>
                     </StackLayout>-->
 
-                    <StackLayout Orientation="Horizontal">
+                   <!-- <StackLayout Orientation="Horizontal"> -->
                         <!-- Кнопка Обновить -->
-                        <ImageButton Source="refresh.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
+                        <!--<ImageButton Source="refresh.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
                                      Command="{Binding UpdateCommand}"/>
-                    </StackLayout>
+                    </StackLayout> -->
 
                     <Label Text="{Binding PilotItem.VisibleName}" HorizontalTextAlignment="Start" TextColor="White" FontSize="Small" LineBreakMode="WordWrap" MaxLines="2" />
                 </StackLayout>
             </Frame>
             
             <!-- Список файлов -->
-            <ListView x:Name="listView" ItemTapped="File_Tapped" ItemsSource="{Binding Items}" HasUnevenRows="True" SelectionMode="Single">
+            <ListView x:Name="listView" ItemTapped="File_Tapped" ItemsSource="{Binding Items}" HasUnevenRows="True" SelectionMode="Single" IsPullToRefreshEnabled="True" RefreshCommand="{Binding UpdateCommand}" IsRefreshing="{Binding IsRefreshing}" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>

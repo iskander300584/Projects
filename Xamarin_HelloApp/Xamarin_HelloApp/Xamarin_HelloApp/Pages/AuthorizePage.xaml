@@ -13,10 +13,10 @@
             </Frame>
 
             <Label Text="Имя сервера" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
-            <Entry Text="{Binding Server, Mode=TwoWay}" IsReadOnly="True" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
+            <Entry Text="{Binding Server, Mode=TwoWay}" IsReadOnly="False" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
 
             <Label Text="Имя базы данных" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
-            <Entry Text="{Binding DB, Mode=TwoWay}" IsReadOnly="True" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
+            <Entry Text="{Binding DB, Mode=TwoWay}" IsReadOnly="False" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
 
             <Label Text="Имя пользователя" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
             <Entry Text="{Binding Login, Mode=TwoWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />

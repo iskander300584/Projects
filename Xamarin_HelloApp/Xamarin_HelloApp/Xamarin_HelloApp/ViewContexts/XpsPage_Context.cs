@@ -347,7 +347,7 @@ namespace PilotMobile.ViewContexts
                         {
                             regex = new Regex(@"pdf$");
 
-                            if(regex.IsMatch(file.Name.ToLower()))
+                            if (regex.IsMatch(file.Name.ToLower()))
                             {
                                 try
                                 {
@@ -366,6 +366,8 @@ namespace PilotMobile.ViewContexts
                     else
                         PdfFileName = "Failed";
                 }
+                else
+                    PdfFileName = "NoFile";
             }
             catch 
             {
@@ -435,6 +437,10 @@ namespace PilotMobile.ViewContexts
                 if(PdfFileName == "Failed")
                 {
                     Message = "Ошибка загрузки документа";
+                }
+                else if(PdfFileName == "NoFile")
+                {
+                    Message = "Не найден файл для отображения";
                 }
                 else
                 {

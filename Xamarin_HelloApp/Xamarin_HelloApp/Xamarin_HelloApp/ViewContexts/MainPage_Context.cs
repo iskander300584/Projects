@@ -280,6 +280,24 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
+        private bool isRefreshing = false;
+        /// <summary>
+        /// Выполняется обновление данных
+        /// </summary>
+        public bool IsRefreshing
+        {
+            get => isRefreshing;
+            set
+            {
+                if(isRefreshing != value)
+                {
+                    isRefreshing = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
         #endregion
 
 
@@ -540,6 +558,11 @@ namespace Xamarin_HelloApp.ViewContexts
         /// </summary>
         private async void GetTaskRootObjects()
         {
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                IsRefreshing = true;
+            });
+
             try
             {
                 Exception ex = Global.Reconnect();
@@ -582,6 +605,11 @@ namespace Xamarin_HelloApp.ViewContexts
                 if (res)
                     await Global.SendErrorReport(ex);
             }
+
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                IsRefreshing = false;
+            });
         }
 
 
@@ -640,6 +668,11 @@ namespace Xamarin_HelloApp.ViewContexts
         /// <param name="pilotItem">объект Pilot</param>
         private async void GetChildren(object getChildrenParam)
         {
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                IsRefreshing = true;
+            });
+
             try
             {
                 Exception ex = Global.Reconnect();
@@ -685,6 +718,11 @@ namespace Xamarin_HelloApp.ViewContexts
                         await Global.SendErrorReport(ex);
                 });
             }
+
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                IsRefreshing = false;
+            });
         }
 
 
@@ -1136,13 +1174,16 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
+        #endregion
+
+
         /// <summary>
         /// Метод обработки тестовой команды
         /// </summary>
         private async void TestCommand_Execute()
         {
-            // Проверка работоспособности отчета об ошибке
-            try
+            #region Проверка работоспособности отчета об ошибке
+            /*try
             {
                 Exception exception0 = new Exception("Ошибка уровня 0");
 
@@ -1153,15 +1194,37 @@ namespace Xamarin_HelloApp.ViewContexts
 
                 throw exception2;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 var res = await Global.DisplayError(page, ex.Message);
 
                 if (res)
                     await Global.SendErrorReport(ex);
-            }
-        }
+            }*/
+            #endregion
 
-        #endregion
+
+            #region Проверка получения уведомлений
+
+            var _notifies = Global.DALContext.Repository.GetNotifies();
+            if(_notifies != null)
+            {
+                foreach(var notify in _notifies)
+                {
+                    if(notify.Item2 != null)
+                    {
+                        foreach(var data in notify.Item2)
+                        {
+                            if(data != null)
+                            {
+
+                            }
+                        }
+                    }
+                }
+            }
+
+            #endregion
+        }
     }
 }

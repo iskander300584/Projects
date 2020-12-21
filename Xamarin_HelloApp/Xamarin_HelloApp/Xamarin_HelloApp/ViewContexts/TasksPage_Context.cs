@@ -1,5 +1,6 @@
 ﻿using Ascon.Pilot.DataClasses;
 using PilotMobile.AppContext;
+using PilotMobile.Pages;
 using PilotMobile.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,12 @@ namespace PilotMobile.ViewContexts
     class TasksPage_Context : INotifyPropertyChanged
     {
         #region Поля класса
+
+        /// <summary>
+        /// Страница списка заданий
+        /// </summary>
+        private TasksPage page;
+
 
         /// <summary>
         /// Наименование приложения
@@ -96,6 +103,24 @@ namespace PilotMobile.ViewContexts
         }
 
 
+        private bool isRefreshing = false;
+        /// <summary>
+        /// Выполняется обновление данных
+        /// </summary>
+        public bool IsRefreshing
+        {
+            get => isRefreshing;
+            set
+            {
+                if (isRefreshing != value)
+                {
+                    isRefreshing = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
         /// <summary>
         /// Актуальные задания получены
         /// </summary>
@@ -138,8 +163,10 @@ namespace PilotMobile.ViewContexts
         /// <summary>
         /// Контекст данных окна заданий
         /// </summary>
-        public TasksPage_Context()
+        public TasksPage_Context(TasksPage page)
         {
+            this.page = page;
+
             updateCommand = new Command(GetTaskList);
 
             FillTaskFilter();
@@ -170,16 +197,37 @@ namespace PilotMobile.ViewContexts
         /// <summary>
         /// Получение списка заданий
         /// </summary>
-        private void GetTaskList()
+        private async void GetTaskList()
         {
-            tasks.Clear();
-            _allTasks.Clear();
+            try
+            {
+                Exception ex = Global.Reconnect();
+                if (ex != null)
+                {
+                    var res = await Global.DisplayError(page, ex.Message);
 
-            Global.CurrentPerson = Global.DALContext.Repository.GetPerson(Global.CurrentPerson.Id);
+                    if (res)
+                        await Global.SendErrorReport(ex);
 
-            ClearMarkers();
+                    return;
+                }
 
-            SearchTasks();
+                tasks.Clear();
+                _allTasks.Clear();
+
+                Global.CurrentPerson = Global.DALContext.Repository.GetPerson(Global.CurrentPerson.Id);
+
+                ClearMarkers();
+
+                SearchTasks();
+            }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
+            }
         }
 
 
@@ -272,39 +320,76 @@ namespace PilotMobile.ViewContexts
         /// </summary>
         private async void AsyncGetTasks()
         {
-            List<Guid> _taskGuids = new List<Guid>();
-
-            // Проверка необходимости выполнения поиска в БД
-            if (CheckNeedSearch())
+            Device.BeginInvokeOnMainThread(async () =>
             {
-                // формирование условия поиска по типам заданий
-                string searchType = @"+DObject\.TypeId:(";
-                foreach (PType pType in TypeFabrique.GetAllTypes().Where(t => t.IsTask))
-                    searchType += @"&#32;" + pType.ID + " OR ";
+                IsRefreshing = true;
+            });
 
-                searchType = searchType.Remove(searchType.Length - 4).Trim();
-                searchType += ")";
-
-                // Поиск по должностям
-                List<int> units = Global.CurrentPerson.Positions;
-                foreach (int unit in units)
+            try
+            {
+                Exception ex = Global.Reconnect();
+                if (ex != null)
                 {
-                    IEnumerable<Guid> _guids = await GetTaskGuidList(searchType, unit);
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        var res = await Global.DisplayError(page, ex.Message);
 
-                    if (_guids != null)
-                        foreach (Guid guid in _guids)
-                            if (!_taskGuids.Contains(guid))
-                                _taskGuids.Add(guid);
+                        if (res)
+                            await Global.SendErrorReport(ex);
+                    });
+
+                    return;
                 }
 
-                foreach (Guid guid in _taskGuids)
-                    if (!_allTasks.Any(t => t.Guid == guid))
-                        _allTasks.Add(new PilotTask(guid));
+                List<Guid> _taskGuids = new List<Guid>();
 
-                SetMarkers();
+                // Проверка необходимости выполнения поиска в БД
+                if (CheckNeedSearch())
+                {
+                    // формирование условия поиска по типам заданий
+                    string searchType = @"+DObject\.TypeId:(";
+                    foreach (PType pType in TypeFabrique.GetAllTypes().Where(t => t.IsTask))
+                        searchType += @"&#32;" + pType.ID + " OR ";
+
+                    searchType = searchType.Remove(searchType.Length - 4).Trim();
+                    searchType += ")";
+
+                    // Поиск по должностям
+                    List<int> units = Global.CurrentPerson.Positions;
+                    foreach (int unit in units)
+                    {
+                        IEnumerable<Guid> _guids = await GetTaskGuidList(searchType, unit);
+
+                        if (_guids != null)
+                            foreach (Guid guid in _guids)
+                                if (!_taskGuids.Contains(guid))
+                                    _taskGuids.Add(guid);
+                    }
+
+                    foreach (Guid guid in _taskGuids)
+                        if (!_allTasks.Any(t => t.Guid == guid))
+                            _allTasks.Add(new PilotTask(guid));
+
+                    SetMarkers();
+                }
+
+                SelectVisibleTasks();
+            }
+            catch (Exception ex)
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    var res = await Global.DisplayError(page, ex.Message);
+
+                    if (res)
+                        await Global.SendErrorReport(ex);
+                });
             }
 
-            SelectVisibleTasks();
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                IsRefreshing = false;
+            });
         }
 
 

@@ -20,6 +20,7 @@ namespace Xamarin_HelloApp.Models
         IEnumerable<MType> GetTypes();
         byte[] GetFileChunk(Guid id, long pos, int count);
         List<MUserState> GetStates();
+        List<Tuple<Guid, DChangesetData[]>> GetNotifies();
     }
 
     class Repository : IRepository, IRemoteStorageListener
@@ -30,6 +31,8 @@ namespace Xamarin_HelloApp.Models
         private TaskCompletionSource<DSearchResult> _searchCompletionSource;
         private DPerson _person;
         private List<MType> _types;
+        private IEventsApi _eventsApi;
+        private IMessagesApi _messagesApi;
 
         public Repository(IServerApi serverApi, ServerCallback serverCallback)
         {
@@ -45,6 +48,7 @@ namespace Xamarin_HelloApp.Models
             _organisationUnits = _serverApi.LoadOrganisationUnits().ToDictionary(x => x.Id, y => y);
             _person = _persons.First(p => p.Value.Login.Equals(currentLogin, StringComparison.OrdinalIgnoreCase) && !p.Value.IsDeleted && !p.Value.IsInactive).Value;
             _types = _serverApi.GetMetadata(0).Types;
+            
         }
 
         public Task<DSearchResult> Search(DSearchDefinition searchDefinition)
@@ -131,6 +135,28 @@ namespace Xamarin_HelloApp.Models
             
 
             return metaData.UserStates;
+        }
+
+        public void SetEventsApi(IEventsApi eventsApi)
+        {
+            _eventsApi = eventsApi;
+        }
+
+
+        public List<Tuple<Guid, DChangesetData[]>> GetNotifies()
+        {
+            
+            return _eventsApi.GetMissedChanges();
+        }
+        
+        public void SetMessagesApi(IMessagesApi messagesApi)
+        {
+            _messagesApi = messagesApi;
+        }
+
+        public void GetMessages()
+        {
+            
         }
     }
 }

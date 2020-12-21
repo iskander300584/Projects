@@ -27,7 +27,7 @@ namespace PilotMobile.Pages
         {
             InitializeComponent();
 
-            context = new TasksPage_Context();
+            context = new TasksPage_Context(this);
 
             this.BindingContext = context;
         }
@@ -88,12 +88,15 @@ namespace PilotMobile.Pages
         /// </summary>
         private async void Copy_Link(object sender, System.EventArgs e)
         {
-            var menuitem = sender as MenuItem;
-            if (menuitem != null)
+            if (sender is MenuItem)
             {
-                IPilotObject pilotObject = menuitem.BindingContext as IPilotObject;
+                MenuItem menuitem = sender as MenuItem;
+                if (menuitem != null)
+                {
+                    IPilotObject pilotObject = menuitem.BindingContext as IPilotObject;
 
-                bool result = await Global.CreateLink(pilotObject.DObject);
+                    bool result = await Global.CreateLink(pilotObject.DObject);
+                }
             }
         }
     }

@@ -37,7 +37,7 @@ namespace Xamarin_HelloApp.AppContext
         /// <summary>
         /// Признак временной версии программы
         /// </summary>
-        public const bool IsTrial = true;
+        public const bool IsTrial = false;
 
 
         /// <summary>

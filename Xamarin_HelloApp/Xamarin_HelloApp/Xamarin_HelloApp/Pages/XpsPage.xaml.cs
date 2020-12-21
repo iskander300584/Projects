@@ -1,7 +1,9 @@
-﻿using PilotMobile.ViewContexts;
+﻿using PilotMobile.AppContext;
+using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin_HelloApp.AppContext;
@@ -39,33 +41,43 @@ namespace Xamarin_HelloApp.Pages
         /// <summary>
         /// Загрузка документа в просмотрщик
         /// </summary>
-        public void LoadDocument()
+        public async void LoadDocument()
         {
-            if (context == null || context.DocLoaded)
-                return;
-
-            if(context != null && context.PdfFileName != "Failed")
+            try
             {
-                if (context.PdfFileName != "" && File.Exists(context.PdfFileName))
-                {
-                    try
-                    {
-                        using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(context.PdfFileName)))
-                        {
-                            pdfViewer.LoadDocument(ms);
-                        }
-                    }
-                    catch 
-                    {
-                        context.PdfFileName = "Failed";
-                    }
+                if (context == null || context.DocLoaded)
+                    return;
 
+                if (context != null && context.PdfFileName != "Failed")
+                {
+                    if (context.PdfFileName != "" && File.Exists(context.PdfFileName))
+                    {
+                        try
+                        {
+                            using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(context.PdfFileName)))
+                            {
+                                pdfViewer.LoadDocument(ms);
+                            }
+                        }
+                        catch
+                        {
+                            context.PdfFileName = "Failed";
+                        }
+
+                        context.DocLoaded = true;
+                    }
+                }
+                else
+                {
                     context.DocLoaded = true;
                 }
             }
-            else
+            catch (Exception ex)
             {
-                context.DocLoaded = true;
+                var res = await DisplayError(ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
             }
         }
 
@@ -115,6 +127,18 @@ namespace Xamarin_HelloApp.Pages
         private async void CopyLink(object sender, EventArgs e)
         {
             bool result = await Global.CreateLink(context.PilotItem.DObject);
+        }
+
+
+        /// <summary>
+        /// Вывести сообщение об ошибке
+        /// </summary>
+        /// <param name="message">текст сообщения об ошибке</param>
+        /// <param name="caption">заголовок ошибки</param>
+        /// <returns>возвращает TRUE, если необходимо отправить отчет об ошибке</returns>
+        public async Task<bool> DisplayError(string message, string caption = "Ошибка")
+        {
+            return await DisplayAlert(caption, message + StringConstants.SendErrorMessage, StringConstants.Send, StringConstants.DontSend);
         }
     }
 }

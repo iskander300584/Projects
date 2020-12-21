@@ -88,6 +88,24 @@ namespace PilotMobile.ViewContexts
         private XpsPage xpsPage;
 
 
+        private bool isRefreshing = false;
+        /// <summary>
+        /// Выполняется обновление данных
+        /// </summary>
+        public bool IsRefreshing
+        {
+            get => isRefreshing;
+            set
+            {
+                if(isRefreshing != value)
+                {
+                    isRefreshing = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
         // костыль - исключение системных файлов
         private Regex regex1 = new Regex(@"pilotthumbnail$"); 
         private Regex regex2 = new Regex(@"^annotation");
@@ -139,16 +157,53 @@ namespace PilotMobile.ViewContexts
         /// </summary>
         private void AsyncGetFiles()
         {
-            // Получение списка файлов для документа
-            if (pilotItem is PilotTreeItem)
+            Device.BeginInvokeOnMainThread(async () =>
             {
-                GetFilesForItem();
-            }
-            // Получение списка файлов для задачи
-            else if (pilotItem is PilotTask)
+                IsRefreshing = true;
+            });
+
+            try
             {
-                GetFilesForTask();
+                Exception ex = Global.Reconnect();
+                if (ex != null)
+                {
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        var res = await Global.DisplayError(page, ex.Message);
+
+                        if (res)
+                            await Global.SendErrorReport(ex);
+                    });
+
+                    return;
+                }
+
+                // Получение списка файлов для документа
+                if (pilotItem is PilotTreeItem)
+                {
+                    GetFilesForItem();
+                }
+                // Получение списка файлов для задачи
+                else if (pilotItem is PilotTask)
+                {
+                    GetFilesForTask();
+                }
             }
+            catch (Exception ex)
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    var res = await Global.DisplayError(page, ex.Message);
+
+                    if (res)
+                        await Global.SendErrorReport(ex);
+                });
+            }
+
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                IsRefreshing = false;
+            });
         }
 
 
@@ -242,24 +297,45 @@ namespace PilotMobile.ViewContexts
         /// <param name="pilotFile">файл в Pilot</param>
         public async void ItemTapped(PilotFile pilotFile)
         {
-            // Проверка прав доступа
-            if (await (Global.GetFilesPermissions()) != true)
-                return;
-
-            // Получение файла
-            byte[] array = Global.DALContext.Repository.GetFileChunk(pilotFile.DFile.Body.Id, 0, (int)pilotFile.DFile.Body.Size);
-
-            string fileName = Path.Combine(@"/storage/emulated/0/Download", pilotFile.DFile.Name);
-
-            File.WriteAllBytes(fileName, array);
-
-            // Открытие файла средствами ОС
-            if (File.Exists(fileName))
+            try
             {
-                await Launcher.OpenAsync(new OpenFileRequest
+                Exception ex = Global.Reconnect();
+                if (ex != null)
                 {
-                    File = new ReadOnlyFile(fileName)
-                });
+                    var res = await Global.DisplayError(page, ex.Message);
+
+                    if (res)
+                        await Global.SendErrorReport(ex);
+
+                    return;
+                }
+
+                // Проверка прав доступа
+                if (await (Global.GetFilesPermissions()) != true)
+                    return;
+
+                // Получение файла
+                byte[] array = Global.DALContext.Repository.GetFileChunk(pilotFile.DFile.Body.Id, 0, (int)pilotFile.DFile.Body.Size);
+
+                string fileName = Path.Combine(@"/storage/emulated/0/Download", pilotFile.DFile.Name);
+
+                File.WriteAllBytes(fileName, array);
+
+                // Открытие файла средствами ОС
+                if (File.Exists(fileName))
+                {
+                    await Launcher.OpenAsync(new OpenFileRequest
+                    {
+                        File = new ReadOnlyFile(fileName)
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
             }
         }
 

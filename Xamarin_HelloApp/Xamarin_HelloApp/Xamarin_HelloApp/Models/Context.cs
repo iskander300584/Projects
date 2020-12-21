@@ -1,6 +1,8 @@
 ﻿using Ascon.Pilot.Common;
 using Ascon.Pilot.DataClasses;
 using Ascon.Pilot.Server.Api;
+using Ascon.Pilot.Server.Api.Contracts;
+using PilotMobile.Models;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -22,6 +24,8 @@ namespace Xamarin_HelloApp.Models
         private Repository _repository;
         private HttpPilotClient _client;
         private readonly ServerCallback _serverCallback;
+        private EventsCallBack _eventsCallback;
+        
 
         public IRepository Repository => _repository;
 
@@ -46,6 +50,7 @@ namespace Xamarin_HelloApp.Models
         public Context()
         {
             _serverCallback = new ServerCallback();
+            _eventsCallback = new EventsCallBack();
         }
 
         public DDatabaseInfo ConnectOld(Credentials credentials)
@@ -87,6 +92,10 @@ namespace Xamarin_HelloApp.Models
                 _repository = new Repository(serverApi, _serverCallback);
                 _repository.Initialize(credentials.Username);
                 IsInitialized = true;
+                _eventsCallback.SetCallbackListener(_repository);
+                _repository.SetEventsApi(_client.GetEventsApi(_eventsCallback));
+                var _messagesApi = _client.GetMessagesApi(new NullableMessagesCallback());
+                _repository.SetMessagesApi(_messagesApi);
             }
             catch(Exception exception)
             {

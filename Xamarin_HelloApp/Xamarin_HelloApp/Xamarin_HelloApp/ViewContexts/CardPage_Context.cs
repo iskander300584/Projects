@@ -21,6 +21,8 @@ namespace PilotMobile.ViewContexts
     /// </summary>
     class CardPage_Context : INotifyPropertyChanged
     {
+        #region Поля класса
+
         /// <summary>
         /// Наименование приложения
         /// </summary>
@@ -137,13 +139,7 @@ namespace PilotMobile.ViewContexts
         /// </summary>
         private XpsPage xpsPage;
 
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
-        }
+        #endregion      
 
 
         /// <summary>
@@ -168,203 +164,226 @@ namespace PilotMobile.ViewContexts
         }
 
 
+        #region Методы класса
+
         /// <summary>
         /// Получение данных
         /// </summary>
-        private void GetData()
+        private async void GetData()
         {
-            views.Clear();
-
-            foreach (PAttribute attribute in pilotObject.Type.Attributes.Where(a => !a.IsSystem))
+            try
             {
-                Label label = new Label
+                Exception ex = Global.Reconnect();
+                if (ex != null)
                 {
-                    Text = attribute.VisibleName,
-                    Margin = new Thickness
-                    {
-                        Left = 10,
-                        Right = 10
-                    },
-                    FontSize = Device.GetNamedSize(NamedSize.Body, typeof(Label)),
-                };
+                    var res = await Global.DisplayError(page, ex.Message);
 
-                views.Add(label);
+                    if (res)
+                        await Global.SendErrorReport(ex);
 
-                KeyValuePair<string, DValue> attr = new KeyValuePair<string, DValue>();
-
-                switch (attribute.AttributeType)
-                {
-                    // Строка
-                    case MAttrType.String:
-                        attr = pilotObject.DObject.Attributes.FirstOrDefault(a => a.Key == attribute.Name);
-                        string valueStr = (attr.Value != null && attr.Value.StrValue != null) ? attr.Value.StrValue : "";
-
-                        Entry entry = new Entry
-                        {
-                            Text = valueStr,
-                            FontSize = Device.GetNamedSize(NamedSize.Body, typeof(Label)),
-                            Margin = new Thickness
-                            {
-                                Left = 10,
-                                Bottom = 10,
-                                Right = 10
-                            }
-                        };
-                        // привязка к свойству ReadOnly
-                        Binding bindingEntry = new Binding
-                        {
-                            Source = this,
-                            Path = "IsReadOnly"
-                        };
-                        entry.SetBinding(Entry.IsReadOnlyProperty, bindingEntry);
-
-                        views.Add(entry);
-                        break;
-
-                    // Дата
-                    case MAttrType.DateTime:
-                        attr = pilotObject.DObject.Attributes.FirstOrDefault(a => a.Key == attribute.Name);
-                        DateTime? valueDT = (attr.Value != null && attr.Value.DateValue != null && attr.Value.DateValue != null) ? attr.Value.DateValue : null;
-
-                        DatePicker datePicker = new DatePicker
-                        {
-                            FontSize = Device.GetNamedSize(NamedSize.Body, typeof(Label)),
-                            Margin = new Thickness
-                            {
-                                Left = 10,
-                                Bottom = 5,
-                                Right = 10
-                            }
-                        };
-                        if (valueDT != null)
-                            datePicker.Date = valueDT.Value;
-                        // привязка к свойству IsEnabled
-                        Binding bindingDate = new Binding
-                        {
-                            Source = this,
-                            Path = "IsEnabled"
-                        };
-                        datePicker.SetBinding(DatePicker.IsEnabledProperty, bindingDate);
-
-                        views.Add(datePicker);
-                        break;
-
-                    // Организацинная единица
-                    case MAttrType.OrgUnit:
-                        attr = pilotObject.DObject.Attributes.FirstOrDefault(a => a.Key == attribute.Name);
-                        int[] valueOU = (attr.Value != null && attr.Value.IsArray && attr.Value.ArrayIntValue != null) ? attr.Value.ArrayIntValue : null;
-
-                        Editor editor = new Editor
-                        {
-                            FontSize = Device.GetNamedSize(NamedSize.Body, typeof(Label)),
-                            Margin = new Thickness
-                            {
-                                Left = 10,
-                                Bottom = 5,
-                                Right = 10
-                            }
-                        };
-                        // привязка к свойству ReadOnly
-                        Binding bindingEditor = new Binding
-                        {
-                            Source = this,
-                            Path = "IsReadOnly"
-                        };
-                        editor.SetBinding(Editor.IsReadOnlyProperty, bindingEditor);
-
-                        // Получение пользователей
-                        if (valueOU != null)
-                            foreach (int id in valueOU)
-                                editor.Text += Global.DALContext.Repository.GetPersonOnOrganisationUnit(id).DisplayName + "\n";
-
-                        views.Add(editor);
-                        break;
-
-                    // Число
-                    case MAttrType.Integer:
-                    case MAttrType.Numerator:
-                        attr = pilotObject.DObject.Attributes.FirstOrDefault(a => a.Key == attribute.Name);
-                        long? valueInt = (attr.Value != null && attr.Value.IntValue != null) ? attr.Value.IntValue : null;
-
-                        Entry entryInt = new Entry
-                        {
-                            FontSize = Device.GetNamedSize(NamedSize.Body, typeof(Label)),
-                            Margin = new Thickness
-                            {
-                                Left = 10,
-                                Bottom = 10,
-                                Right = 10
-                            }
-                        };
-                        if (valueInt != null)
-                            entryInt.Text = ((long)valueInt).ToString();
-                        // привязка к свойству ReadOnly
-                        Binding bindingInt = new Binding
-                        {
-                            Source = this,
-                            Path = "IsReadOnly"
-                        };
-                        entryInt.SetBinding(Entry.IsReadOnlyProperty, bindingInt);
-
-                        views.Add(entryInt);
-                        break;
-
-                    // Decimal
-                    case MAttrType.Decimal:
-                        attr = pilotObject.DObject.Attributes.FirstOrDefault(a => a.Key == attribute.Name);
-                        decimal? valueDec = (attr.Value != null && attr.Value.DecimalValue != null) ? attr.Value.DecimalValue : null;
-
-                        Entry entryDec = new Entry
-                        {
-                            FontSize = Device.GetNamedSize(NamedSize.Body, typeof(Label)),
-                            Margin = new Thickness
-                            {
-                                Left = 10,
-                                Bottom = 10,
-                                Right = 10
-                            }
-                        };
-                        if (valueDec != null)
-                            entryDec.Text = ((decimal)valueDec).ToString();
-                        // привязка к свойству ReadOnly
-                        Binding bindingDec = new Binding
-                        {
-                            Source = this,
-                            Path = "IsReadOnly"
-                        };
-                        entryDec.SetBinding(Entry.IsReadOnlyProperty, bindingDec);
-
-                        views.Add(entryDec);
-                        break;
-
-                    // Вещественное число
-                    case MAttrType.Double:
-                        attr = pilotObject.DObject.Attributes.FirstOrDefault(a => a.Key == attribute.Name);
-                        double? valueDou = (attr.Value != null && attr.Value.DoubleValue != null) ? attr.Value.DoubleValue : null;
-
-                        Entry entryDou = new Entry
-                        {
-                            FontSize = Device.GetNamedSize(NamedSize.Body, typeof(Label)),
-                            Margin = new Thickness
-                            {
-                                Left = 10,
-                                Bottom = 10,
-                                Right = 10
-                            }
-                        };
-                        if (valueDou != null)
-                            entryDou.Text = ((decimal)valueDou).ToString().Replace(',', '.');
-                        // привязка к свойству ReadOnly
-                        Binding bindingDou = new Binding
-                        {
-                            Source = this,
-                            Path = "IsReadOnly"
-                        };
-                        entryDou.SetBinding(Entry.IsReadOnlyProperty, bindingDou);
-
-                        views.Add(entryDou);
-                        break;
+                    return;
                 }
+
+                views.Clear();
+
+                foreach (PAttribute attribute in pilotObject.Type.Attributes.Where(a => !a.IsSystem))
+                {
+                    Label label = new Label
+                    {
+                        Text = attribute.VisibleName,
+                        Margin = new Thickness
+                        {
+                            Left = 10,
+                            Right = 10
+                        },
+                        FontSize = Device.GetNamedSize(NamedSize.Body, typeof(Label)),
+                    };
+
+                    views.Add(label);
+
+                    KeyValuePair<string, DValue> attr = new KeyValuePair<string, DValue>();
+
+                    switch (attribute.AttributeType)
+                    {
+                        // Строка
+                        case MAttrType.String:
+                            attr = pilotObject.DObject.Attributes.FirstOrDefault(a => a.Key == attribute.Name);
+                            string valueStr = (attr.Value != null && attr.Value.StrValue != null) ? attr.Value.StrValue : "";
+
+                            Entry entry = new Entry
+                            {
+                                Text = valueStr,
+                                FontSize = Device.GetNamedSize(NamedSize.Body, typeof(Label)),
+                                Margin = new Thickness
+                                {
+                                    Left = 10,
+                                    Bottom = 10,
+                                    Right = 10
+                                }
+                            };
+                            // привязка к свойству ReadOnly
+                            Binding bindingEntry = new Binding
+                            {
+                                Source = this,
+                                Path = "IsReadOnly"
+                            };
+                            entry.SetBinding(Entry.IsReadOnlyProperty, bindingEntry);
+
+                            views.Add(entry);
+                            break;
+
+                        // Дата
+                        case MAttrType.DateTime:
+                            attr = pilotObject.DObject.Attributes.FirstOrDefault(a => a.Key == attribute.Name);
+                            DateTime? valueDT = (attr.Value != null && attr.Value.DateValue != null && attr.Value.DateValue != null) ? attr.Value.DateValue : null;
+
+                            DatePicker datePicker = new DatePicker
+                            {
+                                FontSize = Device.GetNamedSize(NamedSize.Body, typeof(Label)),
+                                Margin = new Thickness
+                                {
+                                    Left = 10,
+                                    Bottom = 5,
+                                    Right = 10
+                                }
+                            };
+                            if (valueDT != null)
+                                datePicker.Date = valueDT.Value;
+                            // привязка к свойству IsEnabled
+                            Binding bindingDate = new Binding
+                            {
+                                Source = this,
+                                Path = "IsEnabled"
+                            };
+                            datePicker.SetBinding(DatePicker.IsEnabledProperty, bindingDate);
+
+                            views.Add(datePicker);
+                            break;
+
+                        // Организацинная единица
+                        case MAttrType.OrgUnit:
+                            attr = pilotObject.DObject.Attributes.FirstOrDefault(a => a.Key == attribute.Name);
+                            int[] valueOU = (attr.Value != null && attr.Value.IsArray && attr.Value.ArrayIntValue != null) ? attr.Value.ArrayIntValue : null;
+
+                            Editor editor = new Editor
+                            {
+                                FontSize = Device.GetNamedSize(NamedSize.Body, typeof(Label)),
+                                Margin = new Thickness
+                                {
+                                    Left = 10,
+                                    Bottom = 5,
+                                    Right = 10
+                                }
+                            };
+                            // привязка к свойству ReadOnly
+                            Binding bindingEditor = new Binding
+                            {
+                                Source = this,
+                                Path = "IsReadOnly"
+                            };
+                            editor.SetBinding(Editor.IsReadOnlyProperty, bindingEditor);
+
+                            // Получение пользователей
+                            if (valueOU != null)
+                                foreach (int id in valueOU)
+                                    editor.Text += Global.DALContext.Repository.GetPersonOnOrganisationUnit(id).DisplayName + "\n";
+
+                            views.Add(editor);
+                            break;
+
+                        // Число
+                        case MAttrType.Integer:
+                        case MAttrType.Numerator:
+                            attr = pilotObject.DObject.Attributes.FirstOrDefault(a => a.Key == attribute.Name);
+                            long? valueInt = (attr.Value != null && attr.Value.IntValue != null) ? attr.Value.IntValue : null;
+
+                            Entry entryInt = new Entry
+                            {
+                                FontSize = Device.GetNamedSize(NamedSize.Body, typeof(Label)),
+                                Margin = new Thickness
+                                {
+                                    Left = 10,
+                                    Bottom = 10,
+                                    Right = 10
+                                }
+                            };
+                            if (valueInt != null)
+                                entryInt.Text = ((long)valueInt).ToString();
+                            // привязка к свойству ReadOnly
+                            Binding bindingInt = new Binding
+                            {
+                                Source = this,
+                                Path = "IsReadOnly"
+                            };
+                            entryInt.SetBinding(Entry.IsReadOnlyProperty, bindingInt);
+
+                            views.Add(entryInt);
+                            break;
+
+                        // Decimal
+                        case MAttrType.Decimal:
+                            attr = pilotObject.DObject.Attributes.FirstOrDefault(a => a.Key == attribute.Name);
+                            decimal? valueDec = (attr.Value != null && attr.Value.DecimalValue != null) ? attr.Value.DecimalValue : null;
+
+                            Entry entryDec = new Entry
+                            {
+                                FontSize = Device.GetNamedSize(NamedSize.Body, typeof(Label)),
+                                Margin = new Thickness
+                                {
+                                    Left = 10,
+                                    Bottom = 10,
+                                    Right = 10
+                                }
+                            };
+                            if (valueDec != null)
+                                entryDec.Text = ((decimal)valueDec).ToString();
+                            // привязка к свойству ReadOnly
+                            Binding bindingDec = new Binding
+                            {
+                                Source = this,
+                                Path = "IsReadOnly"
+                            };
+                            entryDec.SetBinding(Entry.IsReadOnlyProperty, bindingDec);
+
+                            views.Add(entryDec);
+                            break;
+
+                        // Вещественное число
+                        case MAttrType.Double:
+                            attr = pilotObject.DObject.Attributes.FirstOrDefault(a => a.Key == attribute.Name);
+                            double? valueDou = (attr.Value != null && attr.Value.DoubleValue != null) ? attr.Value.DoubleValue : null;
+
+                            Entry entryDou = new Entry
+                            {
+                                FontSize = Device.GetNamedSize(NamedSize.Body, typeof(Label)),
+                                Margin = new Thickness
+                                {
+                                    Left = 10,
+                                    Bottom = 10,
+                                    Right = 10
+                                }
+                            };
+                            if (valueDou != null)
+                                entryDou.Text = ((decimal)valueDou).ToString().Replace(',', '.');
+                            // привязка к свойству ReadOnly
+                            Binding bindingDou = new Binding
+                            {
+                                Source = this,
+                                Path = "IsReadOnly"
+                            };
+                            entryDou.SetBinding(Entry.IsReadOnlyProperty, bindingDou);
+
+                            views.Add(entryDou);
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
             }
         }
 
@@ -389,5 +408,15 @@ namespace PilotMobile.ViewContexts
 
             page.NavigateToMainPage();
         }
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+        #endregion
     }
 }

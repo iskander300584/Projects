@@ -67,8 +67,8 @@
                 </StackLayout>
             </Frame>
 
-            <ScrollView >
-                <StackLayout Orientation="Vertical" Margin="0,10,0,0" BindableLayout.ItemsSource="{Binding Views}" BindableLayout.ItemTemplateSelector="{StaticResource dataTemplateSelector}" />
+            <ScrollView>
+                <StackLayout Orientation="Vertical" Margin="0,10,0,0" BindableLayout.ItemsSource="{Binding Views}"  BindableLayout.ItemTemplateSelector="{StaticResource dataTemplateSelector}" />
             </ScrollView>
 
         </StackLayout>

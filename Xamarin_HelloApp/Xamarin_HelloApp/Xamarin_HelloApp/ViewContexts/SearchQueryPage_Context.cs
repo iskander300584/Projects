@@ -313,6 +313,7 @@ namespace PilotMobile.ViewContexts
             this.page = page;
 
             GetTypes();
+
             addType = new Command(AddType_Execute);
             addAttribute = new Command(AddAttribute_Execute);
             deleteItem = new Command(DeleteItem_Execute);
@@ -348,19 +349,40 @@ namespace PilotMobile.ViewContexts
         /// <summary>
         /// Получение списка доступных типов
         /// </summary>
-        private void GetTypes()
+        private async void GetTypes()
         {
-            if (_allowedTypes == null)
-                GetAllowedTypes();
+            try
+            {
+                Exception ex = Global.Reconnect();
+                if (ex != null)
+                {
+                    var res = await Global.DisplayError(page, ex.Message);
 
-            Types.Clear();
+                    if (res)
+                        await Global.SendErrorReport(ex);
 
-            foreach (PType type in _allowedTypes)
-                if (!items.Any(i => i.IsType && i.Value == type.VisibleName) && !Types.Contains(type.VisibleName))
-                    Types.Add(type.VisibleName);
+                    return;
+                }
+
+                if (_allowedTypes == null)
+                    GetAllowedTypes();
+
+                Types.Clear();
+
+                foreach (PType type in _allowedTypes)
+                    if (!items.Any(i => i.IsType && i.Value == type.VisibleName) && !Types.Contains(type.VisibleName))
+                        Types.Add(type.VisibleName);
 
 
-            SelectedType = (Types.Count > 0) ? Types[0] : null;
+                SelectedType = (Types.Count > 0) ? Types[0] : null;
+            }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
+            }
         }
 
 
@@ -384,111 +406,162 @@ namespace PilotMobile.ViewContexts
         /// <summary>
         /// Получение списка доступных атрибутов
         /// </summary>
-        private void GetAttributes()
+        private async void GetAttributes()
         {
-            Attributes.Clear();
-
-            // Перебор всех добавленных типов
-            foreach(ISearchQueryItem typeQuery in Items.Where(i => i.IsType))
+            try
             {
-                // Перебор всех типов с таким наименованием
-                foreach(PType type in _allowedTypes.Where(t => t.VisibleName == typeQuery.Value))
+                Exception ex = Global.Reconnect();
+                if (ex != null)
                 {
-                    foreach(PAttribute attr in type.Attributes.Where(a => !a.IsSystem))
+                    var res = await Global.DisplayError(page, ex.Message);
+
+                    if (res)
+                        await Global.SendErrorReport(ex);
+
+                    return;
+                }
+
+                Attributes.Clear();
+
+                // Перебор всех добавленных типов
+                foreach (ISearchQueryItem typeQuery in Items.Where(i => i.IsType))
+                {
+                    // Перебор всех типов с таким наименованием
+                    foreach (PType type in _allowedTypes.Where(t => t.VisibleName == typeQuery.Value))
                     {
-                        if (!Attributes.Contains(attr.VisibleName) && !Items.Any(i => !i.IsType && i.Name == attr.VisibleName))
-                            Attributes.Add(attr.VisibleName);
+                        foreach (PAttribute attr in type.Attributes.Where(a => !a.IsSystem))
+                        {
+                            if (!Attributes.Contains(attr.VisibleName) && !Items.Any(i => !i.IsType && i.Name == attr.VisibleName))
+                                Attributes.Add(attr.VisibleName);
+                        }
                     }
                 }
-            }
 
-            SelectedAttribute = (Attributes.Count > 0) ? Attributes[0] : null;
-            SelectAttribute_CanExecute = (Attributes.Count > 0);
+                SelectedAttribute = (Attributes.Count > 0) ? Attributes[0] : null;
+                SelectAttribute_CanExecute = (Attributes.Count > 0);
+            }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
+            }
         }
 
 
         /// <summary>
         /// Выполнение команды добавления типа
         /// </summary>
-        private void AddType_Execute()
+        private async void AddType_Execute()
         {
-            PType type = _allowedTypes.FirstOrDefault(t => t.VisibleName == SelectedType);
-
-            if(type != null)
+            try
             {
-                items.Add(new TypeQueryItem(type, DeleteItem));
-                Items = SortItems();
+                PType type = _allowedTypes.FirstOrDefault(t => t.VisibleName == SelectedType);
 
-                Types.Remove(SelectedType);
+                if (type != null)
+                {
+                    items.Add(new TypeQueryItem(type, DeleteItem));
+                    Items = SortItems();
 
-                GetAttributes();
+                    Types.Remove(SelectedType);
+
+                    GetAttributes();
+                }
+
+                SelectedType = (Types.Count > 0) ? Types[0] : null;
+
+                Search_CanExecute = (Items.Count > 0);
+
+                Reset_CanExecute();
             }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
 
-            SelectedType = (Types.Count > 0) ? Types[0] : null;
-
-            Search_CanExecute = (Items.Count > 0);
-
-            Reset_CanExecute();
+                if (res)
+                    await Global.SendErrorReport(ex);
+            }
         }
 
 
         /// <summary>
         /// Выполнение команды добавления атрибута
         /// </summary>
-        private void AddAttribute_Execute()
+        private async void AddAttribute_Execute()
         {
-            PAttribute pAttribute = null;
-
-            foreach(PType type in _allowedTypes)
+            try
             {
-                pAttribute = type.Attributes.FirstOrDefault(a => a.VisibleName == SelectedAttribute);
+                PAttribute pAttribute = null;
 
-                if (pAttribute != null)
-                    break;
+                foreach (PType type in _allowedTypes)
+                {
+                    pAttribute = type.Attributes.FirstOrDefault(a => a.VisibleName == SelectedAttribute);
+
+                    if (pAttribute != null)
+                        break;
+                }
+
+                Items.Add(new AttributeQueryItem(pAttribute, DeleteItem));
+
+                Attributes.Remove(SelectedAttribute);
+
+                SelectedAttribute = (Attributes.Count > 0) ? Attributes[0] : null;
+
+                Search_CanExecute = (Items.Count > 0);
+
+                Reset_CanExecute();
             }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
 
-            Items.Add(new AttributeQueryItem(pAttribute, DeleteItem));
-
-            Attributes.Remove(SelectedAttribute);
-            
-            SelectedAttribute = (Attributes.Count > 0) ? Attributes[0] : null;
-
-            Search_CanExecute = (Items.Count > 0);
-
-            Reset_CanExecute();
+                if (res)
+                    await Global.SendErrorReport(ex);
+            }
         }
 
 
         /// <summary>
         /// Выполнение команды удаления элемента поиска
         /// </summary>
-        private void DeleteItem_Execute(object parameter)
+        private async void DeleteItem_Execute(object parameter)
         {
-            if(parameter != null)
+            try
             {
-                string param = (string)parameter;
-
-                int id = 0;
-                if (int.TryParse(param, out id))
+                if (parameter != null)
                 {
-                    DeleteType(id);
+                    string param = (string)parameter;
 
-                    GetTypes();
+                    int id = 0;
+                    if (int.TryParse(param, out id))
+                    {
+                        DeleteType(id);
+
+                        GetTypes();
+                    }
+                    else
+                    {
+                        ISearchQueryItem item = Items.FirstOrDefault(i => !i.IsType && i.SystemName == param);
+
+                        if (item != null)
+                            Items.Remove(item);
+                    }
+
+                    GetAttributes();
                 }
-                else
-                {
-                    ISearchQueryItem item = Items.FirstOrDefault(i => !i.IsType && i.SystemName == param);
 
-                    if (item != null)
-                        Items.Remove(item);
-                }
+                Search_CanExecute = (Items.Count > 0);
 
-                GetAttributes();
+                Reset_CanExecute();
             }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
 
-            Search_CanExecute = (Items.Count > 0);
-
-            Reset_CanExecute();
+                if (res)
+                    await Global.SendErrorReport(ex);
+            }
         }
 
 
@@ -496,51 +569,61 @@ namespace PilotMobile.ViewContexts
         /// Удаление типа из элементов поиска
         /// </summary>
         /// <param name="id">ID типа</param>
-        private void DeleteType(int id)
+        private async void DeleteType(int id)
         {
-            ISearchQueryItem item = Items.FirstOrDefault(i => i.IsType && i.SystemName == id.ToString());
-            if(item != null)
+            try
             {
-                Items.Remove(item);
-
-                TypeQueryItem typeQuery = item as TypeQueryItem;
-
-                // Удаление атрибутов, связанных только с этим типом
-                List<string> attrTitles = new List<string>();
-
-                foreach (PAttribute attr in typeQuery.Type.Attributes)
-                    attrTitles.Add(attr.VisibleName);
-
-                List<ISearchQueryItem> _typeQueries = Items.Where(i => i.IsType).ToList();
-
-                List<PType> _addedTypes = new List<PType>(); // список типов, для которых могли быть добавлены атрибуты
-                foreach(ISearchQueryItem _typeQuery in _typeQueries)
+                ISearchQueryItem item = Items.FirstOrDefault(i => i.IsType && i.SystemName == id.ToString());
+                if (item != null)
                 {
-                    foreach (PType type in _allowedTypes.Where(t => t.VisibleName == _typeQuery.Value))
-                        _addedTypes.Add(type);
-                }
+                    Items.Remove(item);
 
-                // Исключение лишних атрибутов
-                foreach (string attrTitle in attrTitles)
-                {
-                    ISearchQueryItem attrQuery = Items.FirstOrDefault(i => !i.IsType && i.Name == attrTitle);
-                    if (attrQuery != null)
+                    TypeQueryItem typeQuery = item as TypeQueryItem;
+
+                    // Удаление атрибутов, связанных только с этим типом
+                    List<string> attrTitles = new List<string>();
+
+                    foreach (PAttribute attr in typeQuery.Type.Attributes)
+                        attrTitles.Add(attr.VisibleName);
+
+                    List<ISearchQueryItem> _typeQueries = Items.Where(i => i.IsType).ToList();
+
+                    List<PType> _addedTypes = new List<PType>(); // список типов, для которых могли быть добавлены атрибуты
+                    foreach (ISearchQueryItem _typeQuery in _typeQueries)
                     {
-                        bool finded = false;
+                        foreach (PType type in _allowedTypes.Where(t => t.VisibleName == _typeQuery.Value))
+                            _addedTypes.Add(type);
+                    }
 
-                        foreach(PType _type in _addedTypes)
+                    // Исключение лишних атрибутов
+                    foreach (string attrTitle in attrTitles)
+                    {
+                        ISearchQueryItem attrQuery = Items.FirstOrDefault(i => !i.IsType && i.Name == attrTitle);
+                        if (attrQuery != null)
                         {
-                            if(_type.Attributes.Any(a => a.VisibleName == attrTitle && !a.IsSystem))
-                            {
-                                finded = true;
-                                break;
-                            }
-                        }
+                            bool finded = false;
 
-                        if (!finded)
-                            Items.Remove(attrQuery);
+                            foreach (PType _type in _addedTypes)
+                            {
+                                if (_type.Attributes.Any(a => a.VisibleName == attrTitle && !a.IsSystem))
+                                {
+                                    finded = true;
+                                    break;
+                                }
+                            }
+
+                            if (!finded)
+                                Items.Remove(attrQuery);
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
             }
         }
 
@@ -550,16 +633,26 @@ namespace PilotMobile.ViewContexts
         /// </summary>
         private async void Search_Execute()
         {
-            if (Items.Any(i => i.Value == ""))
+            try
             {
-                await page.DisplayMessage(StringConstants.Warning, StringConstants.NotFill, false);
+                if (Items.Any(i => i.Value == ""))
+                {
+                    await page.DisplayMessage(StringConstants.Warning, StringConstants.NotFill, false);
 
-                return;
+                    return;
+                }
+
+                ParseSearchQuery();
+
+                page.NavigationToMain();
             }
+            catch (Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
 
-            ParseSearchQuery();
-
-            page.NavigationToMain();
+                if (res)
+                    await Global.SendErrorReport(ex);
+            }
         }
 
 
