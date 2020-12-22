@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
@@ -12,7 +13,7 @@ using System.Threading;
 
 namespace Xamarin_HelloApp.Droid
 {
-    [Activity(Label = "Pilot-FLY", MainLauncher = true, Theme = "@style/SplashTheme", NoHistory =true)]
+    [Activity(Label = "Pilot-FLY", MainLauncher = true, Theme = "@style/SplashTheme", LaunchMode = LaunchMode.SingleTask, NoHistory = true )]
     [IntentFilter(new[] { Intent.ActionView },
         Categories = new[] {
         Intent.CategoryBrowsable, Intent.CategoryDefault},

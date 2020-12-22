@@ -48,8 +48,8 @@
             </Frame>
 
             <!-- Просмотрщик PDF -->
-            <sf:SfPdfViewer x:Name="pdfViewer" IsToolbarVisible="False" Margin="5" PageViewMode="Continuous" MaximumZoomPercentage="1000" />
-            
+            <sf:SfPdfViewer x:Name="pdfViewer" IsToolbarVisible="False" Margin="5" PageViewMode="Continuous" MaximumZoomPercentage="1000" IsVisible="False" />
+
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

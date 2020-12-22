@@ -12,7 +12,7 @@ using Android.Content;
 
 namespace Xamarin_HelloApp.Droid
 {
-    [Activity(Label = "Pilot-FLY", Icon = "@drawable/pilot_icon", Theme = "@style/MainTheme", ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
+    [Activity(Label = "Pilot-FLY", Icon = "@drawable/pilot_icon", Theme = "@style/MainTheme", LaunchMode = LaunchMode.SingleTask, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
     /*[IntentFilter (new[] { Intent.ActionView },
         Categories = new[] { 
         Intent.CategoryBrowsable, Intent.CategoryDefault},
