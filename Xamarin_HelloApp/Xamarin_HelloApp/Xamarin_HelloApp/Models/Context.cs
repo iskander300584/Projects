@@ -1,9 +1,9 @@
 ﻿using Ascon.Pilot.Common;
 using Ascon.Pilot.DataClasses;
 using Ascon.Pilot.Server.Api;
-using Ascon.Pilot.Server.Api.Contracts;
 using PilotMobile.Models;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -17,6 +17,7 @@ namespace Xamarin_HelloApp.Models
         DDatabaseInfo ConnectOld(Credentials credentials);
         Exception Connect(Credentials credentials);
         bool IsInitialized { get; }
+        List<DRule> Rules { get; }
     }
 
     class Context : IContext, INotifyPropertyChanged
@@ -28,6 +29,11 @@ namespace Xamarin_HelloApp.Models
         
 
         public IRepository Repository => _repository;
+        private List<DRule> _rules;
+        public List<DRule> Rules
+        {
+            get => _rules;
+        }
 
 
         private bool isInitialized = false;
@@ -50,7 +56,8 @@ namespace Xamarin_HelloApp.Models
         public Context()
         {
             _serverCallback = new ServerCallback();
-            _eventsCallback = new EventsCallBack();
+
+            
         }
 
         public DDatabaseInfo ConnectOld(Credentials credentials)
@@ -82,6 +89,7 @@ namespace Xamarin_HelloApp.Models
             {
                 _client = new HttpPilotClient(credentials.ServerUrl);
                 _client.Connect(false);
+                
                 var serverApi = _client.GetServerApi(_serverCallback);
                 var authApi = _client.GetAuthenticationApi();
 
@@ -92,8 +100,51 @@ namespace Xamarin_HelloApp.Models
                 _repository = new Repository(serverApi, _serverCallback);
                 _repository.Initialize(credentials.Username);
                 IsInitialized = true;
+
+
+                _rules = new List<DRule>();
+                _rules.Add(new DRule
+                {
+                    Id = new Guid("{853A5C30-5B36-4076-89F5-CA4764DEEB7F}"),
+                    FileExtension = ".pdf",
+                    ChangeType = ChangeType.Create
+                });
+
+                _rules.Add(new DRule
+                {
+                    Id = new Guid("{0B0FE415-6FB3-4C5B-9301-2420477CBBFE}"),
+                    FileExtension = ".xps",
+                    ChangeType = ChangeType.Create
+                });
+
+                _rules.Add(new DRule
+                {
+                    Id = new Guid("{C3E6454C-4901-44E9-BA67-8F861A06BB30}"),
+                    FileExtension = ".txt",
+                    ChangeType = ChangeType.Update
+                });
+
+                _rules.Add(new DRule
+                {
+                    Id = new Guid("{395CE896-AC8C-4037-B99E-D759426621CF}"),
+                    FileExtension = ".xps",
+                    ChangeType = ChangeType.Delete
+                });
+
+                _rules.Add(new DRule
+                {
+                    Id = new Guid(),
+                    FileExtension = ".xps",
+                    ChangeType = ChangeType.Update
+                });
+
+                _eventsCallback = new EventsCallBack(_rules, _repository.AcceptChanges, _repository.PrintChangeDetails);
+
                 _eventsCallback.SetCallbackListener(_repository);
-                _repository.SetEventsApi(_client.GetEventsApi(_eventsCallback));
+                var _eventsApi = _client.GetEventsApi(_eventsCallback);
+                _eventsApi.SubscribeChanges(_rules);
+                _repository.SetEventsApi(_eventsApi);
+
                 var _messagesApi = _client.GetMessagesApi(new NullableMessagesCallback());
                 _repository.SetMessagesApi(_messagesApi);
             }

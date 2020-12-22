@@ -1,5 +1,6 @@
 ﻿using Ascon.Pilot.DataClasses;
 using PilotMobile.AppContext;
+using PilotMobile.Models;
 using PilotMobile.Pages;
 using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
@@ -1211,16 +1212,27 @@ namespace Xamarin_HelloApp.ViewContexts
             {
                 foreach(var notify in _notifies)
                 {
-                    if(notify.Item2 != null)
+                    NotifyResult res = new NotifyResult();
+                    DRule rule = Global.DALContext.Rules.FirstOrDefault(r => r.Id == notify.Item1);
+                    if (rule != null)
+                    {
+                        Global.DALContext.Repository.PrintChangeDetails(notify.Item2, rule, res);
+                        if(res.Result.Count != 0)
+                        {
+
+                        }
+                    }
+
+                    /*if (notify.Item2 != null)
                     {
                         foreach(var data in notify.Item2)
                         {
                             if(data != null)
                             {
-
+                                
                             }
                         }
-                    }
+                    }*/
                 }
             }
 

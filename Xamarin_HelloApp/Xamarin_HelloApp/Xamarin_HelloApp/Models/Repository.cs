@@ -1,5 +1,6 @@
 ﻿using Ascon.Pilot.DataClasses;
 using Ascon.Pilot.Server.Api.Contracts;
+using PilotMobile.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,9 @@ namespace Xamarin_HelloApp.Models
         byte[] GetFileChunk(Guid id, long pos, int count);
         List<MUserState> GetStates();
         List<Tuple<Guid, DChangesetData[]>> GetNotifies();
+        public void AcceptChanges(Guid changesetId, Guid ruleId);
+        public void PrintChangeDetails(IEnumerable<DChangesetData> changes, DRule rule, NotifyResult result);
+
     }
 
     class Repository : IRepository, IRemoteStorageListener
@@ -145,7 +149,6 @@ namespace Xamarin_HelloApp.Models
 
         public List<Tuple<Guid, DChangesetData[]>> GetNotifies()
         {
-            
             return _eventsApi.GetMissedChanges();
         }
         
@@ -157,6 +160,74 @@ namespace Xamarin_HelloApp.Models
         public void GetMessages()
         {
             
+        }
+
+        public void AcceptChanges(Guid changesetId, Guid ruleId)
+        {
+            _eventsApi.AcceptChange(changesetId, ruleId);
+        }
+
+        public void PrintChangeDetails(IEnumerable<DChangesetData> changes, DRule rule, NotifyResult result)
+        {
+            result.Result = new List<string>();
+
+            foreach (var dChangesetData in changes)
+            {
+                foreach (var change in dChangesetData.Changes)
+                {
+
+                    var name = "";
+                    if (change.New.Attributes.ContainsKey(SystemAttributes.PROJECT_ITEM_NAME))
+                    {
+                        name = change.New.Attributes[SystemAttributes.PROJECT_ITEM_NAME];
+                        //Console.WriteLine(GetRuleText(rule) + " файл " + name);
+                        result.Result.Add(GetRuleText(rule) + " файл " + name);
+                    }
+                    else
+                    {
+                        if (!change.New.ActualFileSnapshot.Files.Any())
+                            continue;
+
+                        var type = _types.First(x => x.Id == change.New.TypeId);
+                        var attrs = type.Attributes.Where(x => x.ShowInTree).OrderBy(y => y.DisplaySortOrder);
+                        foreach (var mAttribute in attrs)
+                        {
+                            DValue value;
+                            change.New.Attributes.TryGetValue(mAttribute.Name, out value);
+                            if (value != null)
+                                name += " " + value.StrValue;
+                        }
+
+                        if (change.Old == null)
+                        {
+                            //Console.WriteLine(GetRuleText(rule) + " документ " + name);
+                            result.Result.Add(GetRuleText(rule) + " документ " + name);
+                        }
+                        else
+                        {
+                            //Console.WriteLine(GetRuleText(rule) + "а версия документа" + name);
+                            result.Result.Add(GetRuleText(rule) + " а версия документа " + name);
+                        }
+                    }
+                }
+            }
+
+            //return result;
+        }
+
+        private string GetRuleText(DRule rule)
+        {
+            switch (rule.ChangeType)
+            {
+                case ChangeType.Create:
+                    return "Создан";
+                case ChangeType.Delete:
+                    return "Удален";
+                case ChangeType.Update:
+                    return "Изменен";
+            }
+
+            return "";
         }
     }
 }
