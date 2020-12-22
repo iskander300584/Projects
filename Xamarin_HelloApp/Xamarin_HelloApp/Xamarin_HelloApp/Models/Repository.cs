@@ -1,4 +1,5 @@
 ﻿using Ascon.Pilot.DataClasses;
+using Ascon.Pilot.Server.Api;
 using Ascon.Pilot.Server.Api.Contracts;
 using PilotMobile.Models;
 using System;
@@ -24,6 +25,7 @@ namespace Xamarin_HelloApp.Models
         List<Tuple<Guid, DChangesetData[]>> GetNotifies();
         public void AcceptChanges(Guid changesetId, Guid ruleId);
         public void PrintChangeDetails(IEnumerable<DChangesetData> changes, DRule rule, NotifyResult result);
+        public void SetHttpClient(HttpPilotClient client);
 
     }
 
@@ -37,6 +39,7 @@ namespace Xamarin_HelloApp.Models
         private List<MType> _types;
         private IEventsApi _eventsApi;
         private IMessagesApi _messagesApi;
+        private HttpPilotClient _client;
 
         public Repository(IServerApi serverApi, ServerCallback serverCallback)
         {
@@ -52,7 +55,6 @@ namespace Xamarin_HelloApp.Models
             _organisationUnits = _serverApi.LoadOrganisationUnits().ToDictionary(x => x.Id, y => y);
             _person = _persons.First(p => p.Value.Login.Equals(currentLogin, StringComparison.OrdinalIgnoreCase) && !p.Value.IsDeleted && !p.Value.IsInactive).Value;
             _types = _serverApi.GetMetadata(0).Types;
-            
         }
 
         public Task<DSearchResult> Search(DSearchDefinition searchDefinition)
@@ -136,7 +138,6 @@ namespace Xamarin_HelloApp.Models
         {
             var info = _serverApi.GetDatabaseInfo();
             var metaData = _serverApi.GetMetadata(info.MetadataVersion);
-            
 
             return metaData.UserStates;
         }
@@ -180,7 +181,6 @@ namespace Xamarin_HelloApp.Models
                     if (change.New.Attributes.ContainsKey(SystemAttributes.PROJECT_ITEM_NAME))
                     {
                         name = change.New.Attributes[SystemAttributes.PROJECT_ITEM_NAME];
-                        //Console.WriteLine(GetRuleText(rule) + " файл " + name);
                         result.Result.Add(GetRuleText(rule) + " файл " + name);
                     }
                     else
@@ -200,19 +200,15 @@ namespace Xamarin_HelloApp.Models
 
                         if (change.Old == null)
                         {
-                            //Console.WriteLine(GetRuleText(rule) + " документ " + name);
                             result.Result.Add(GetRuleText(rule) + " документ " + name);
                         }
                         else
                         {
-                            //Console.WriteLine(GetRuleText(rule) + "а версия документа" + name);
                             result.Result.Add(GetRuleText(rule) + " а версия документа " + name);
                         }
                     }
                 }
             }
-
-            //return result;
         }
 
         private string GetRuleText(DRule rule)
@@ -228,6 +224,11 @@ namespace Xamarin_HelloApp.Models
             }
 
             return "";
+        }
+
+        public void SetHttpClient(HttpPilotClient client)
+        {
+            _client = client;
         }
     }
 }

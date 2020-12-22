@@ -55,9 +55,7 @@ namespace Xamarin_HelloApp.Models
 
         public Context()
         {
-            _serverCallback = new ServerCallback();
-
-            
+            _serverCallback = new ServerCallback(); 
         }
 
         public DDatabaseInfo ConnectOld(Credentials credentials)
@@ -100,7 +98,7 @@ namespace Xamarin_HelloApp.Models
                 _repository = new Repository(serverApi, _serverCallback);
                 _repository.Initialize(credentials.Username);
                 IsInitialized = true;
-
+                _repository.SetHttpClient(_client);
 
                 _rules = new List<DRule>();
                 _rules.Add(new DRule
@@ -144,7 +142,7 @@ namespace Xamarin_HelloApp.Models
                 var _eventsApi = _client.GetEventsApi(_eventsCallback);
                 _eventsApi.SubscribeChanges(_rules);
                 _repository.SetEventsApi(_eventsApi);
-
+                
                 var _messagesApi = _client.GetMessagesApi(new NullableMessagesCallback());
                 _repository.SetMessagesApi(_messagesApi);
             }

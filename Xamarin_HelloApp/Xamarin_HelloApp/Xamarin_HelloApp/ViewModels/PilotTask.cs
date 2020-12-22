@@ -124,6 +124,8 @@ namespace PilotMobile.ViewModels
             
             type = TypeFabrique.GetType(dObject.TypeId);
 
+            
+
             GetData();
         }
 
@@ -220,7 +222,6 @@ namespace PilotMobile.ViewModels
                 if (stateGuid != null)
                     state = StateFabrique.GetState(stateGuid);
             }
-
         }
 
 

@@ -112,7 +112,7 @@ namespace Xamarin_HelloApp.Models
             MType type = Global.DALContext.Repository.GetType(id);
 
             mType = type;
-
+            
             // Получение пиктограммы типа
             if (type.Icon != null)
             {

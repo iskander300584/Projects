@@ -57,7 +57,7 @@ namespace PilotMobile.Models
         public PState(MUserState state)
         {
             mUserState = state;
-
+            
             guid = state.Id;
 
             name = state.Name;
