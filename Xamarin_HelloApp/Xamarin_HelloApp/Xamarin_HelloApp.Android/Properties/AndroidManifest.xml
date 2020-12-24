@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="10512" android:versionName="1.5.12" package="com.ascon.pilot_fly" android:installLocation="preferExternal">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="10515" android:versionName="1.5.15" package="com.ascon.pilot_fly" android:installLocation="preferExternal">
 	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="28" />
 	<application android:label="Pilot-FLY" android:theme="@style/MainTheme" android:icon="@drawable/pilot_icon"></application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

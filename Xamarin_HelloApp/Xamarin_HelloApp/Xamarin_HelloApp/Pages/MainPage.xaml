@@ -137,7 +137,7 @@
             </Frame>
 
             <!-- Список объектов -->
-            <ListView x:Name="listView" ItemTapped="PilotItem_Tapped" ItemsSource="{Binding Items}" HasUnevenRows="True" SelectionMode="Single" IsPullToRefreshEnabled="True" RefreshCommand="{Binding UpdateCommand}" IsRefreshing="{Binding IsRefreshing}">
+            <ListView x:Name="listView" ItemTapped="PilotItem_Tapped" ItemsSource="{Binding Items}" HasUnevenRows="True" SelectionMode="Single" IsPullToRefreshEnabled="True" RefreshCommand="{Binding UpdateCommand}" IsRefreshing="{Binding IsRefreshing}" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>

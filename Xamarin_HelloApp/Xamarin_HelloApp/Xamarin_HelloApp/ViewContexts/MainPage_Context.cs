@@ -299,6 +299,21 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
+        private bool firstLaunch = true;
+        /// <summary>
+        /// Первый запуск приложения
+        /// </summary>
+        public bool FirstLaunch
+        {
+            get => firstLaunch;
+            set
+            {
+                if (firstLaunch != value)
+                    firstLaunch = value;
+            }
+        }
+
+
         #endregion
 
 
@@ -671,7 +686,8 @@ namespace Xamarin_HelloApp.ViewContexts
         {
             Device.BeginInvokeOnMainThread(async () =>
             {
-                IsRefreshing = true;
+                if (!FirstLaunch)
+                    IsRefreshing = true;
             });
 
             try

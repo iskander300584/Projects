@@ -275,6 +275,21 @@ namespace Xamarin_HelloApp
                 Thread thread = new Thread(TrialExit);
                 thread.Start();
             }
+
+            if (!context.FirstLaunch)
+            {
+                object url_temp = "";
+                if (App.Current.Properties.TryGetValue("url", out url_temp))
+                {
+                    string url = (string)url_temp;
+                    App.Current.Properties.Remove("url");
+
+                    if (url != null && url != "")
+                        context.GetRootObjects(false, url);
+                }
+            }
+            else
+                context.FirstLaunch = false;
         }
 
 
