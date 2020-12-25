@@ -35,6 +35,12 @@ namespace Xamarin_HelloApp.AppContext
 
 
         /// <summary>
+        /// Список машин состояний
+        /// </summary>
+        public static List<MUserStateMachine> StateMachines;
+
+
+        /// <summary>
         /// Признак временной версии программы
         /// </summary>
         public const bool IsTrial = false;
@@ -99,6 +105,9 @@ namespace Xamarin_HelloApp.AppContext
             TypeFabrique.ClearTypes();
             foreach (MType mType in types)
                 TypeFabrique.GetType(mType.Id);
+
+            // Получение машин состояний
+            StateMachines = DALContext.Repository.GetStateMachines();
         }
 
 

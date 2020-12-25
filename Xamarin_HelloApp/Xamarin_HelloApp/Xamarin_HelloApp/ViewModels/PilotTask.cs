@@ -2,6 +2,7 @@
 using PilotMobile.AppContext;
 using PilotMobile.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xamarin_HelloApp.AppContext;
 
@@ -12,6 +13,8 @@ namespace PilotMobile.ViewModels
     /// </summary>
     public class PilotTask : IPilotObject
     {
+        #region Поля класса
+
         private PState state;
         /// <summary>
         /// Состояние задания
@@ -19,6 +22,16 @@ namespace PilotMobile.ViewModels
         public PState State
         {
             get => state;
+            private set
+            {
+                if(state != value)
+                {
+                    state = value;
+                    OnPropertyChanged();
+
+                    GetStateMachineData();
+                }
+            }
         }
 
 
@@ -112,6 +125,45 @@ namespace PilotMobile.ViewModels
         }
 
 
+        private MUserStateMachine stateMachine = null;
+        /// <summary>
+        /// Соответствующая машина состояний
+        /// </summary>
+        public MUserStateMachine StateMachine
+        {
+            get => stateMachine;
+            private set
+            {
+                if(stateMachine != value)
+                {
+                    stateMachine = value;
+                    OnPropertyChanged();
+                }
+            }
+        }      
+
+
+        private PState nextState = null;
+        /// <summary>
+        /// Следующее состояние
+        /// </summary>
+        public PState NextState
+        {
+            get => nextState;
+            private set
+            {
+                if(nextState != value)
+                {
+                    nextState = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+        #endregion
+
+
         /// <summary>
         /// Задание Pilot
         /// </summary>
@@ -124,10 +176,11 @@ namespace PilotMobile.ViewModels
             
             type = TypeFabrique.GetType(dObject.TypeId);
 
-            
-
             GetData();
         }
+
+
+        #region Методы класса
 
 
         /// <summary>
@@ -214,14 +267,7 @@ namespace PilotMobile.ViewModels
                     }
 
             // Состояние
-            value = TryGetAttribute(TaskConstants.StateAttribute);
-                if(value != null && value.GuidValue != null)
-            {
-                Guid stateGuid = (Guid)value.GuidValue;
-
-                if (stateGuid != null)
-                    state = StateFabrique.GetState(stateGuid);
-            }
+            UpdateState();
         }
 
 
@@ -240,6 +286,22 @@ namespace PilotMobile.ViewModels
 
 
         /// <summary>
+        /// Получение состояния объекта
+        /// </summary>
+        public void UpdateState()
+        {
+            var value = TryGetAttribute(TaskConstants.StateAttribute);
+            if (value != null && value.GuidValue != null)
+            {
+                Guid stateGuid = (Guid)value.GuidValue;
+
+                if (stateGuid != null)
+                    State = StateFabrique.GetState(stateGuid);
+            }
+        }
+
+
+        /// <summary>
         /// Обновление данных объекта
         /// </summary>
         public override void UpdateObjectData()
@@ -248,5 +310,49 @@ namespace PilotMobile.ViewModels
 
             GetData();
         }
+
+
+        /// <summary>
+        /// Получить данные в соответствии с машиной состояний
+        /// </summary>
+        private void GetStateMachineData()
+        {
+            Guid _stateId = State.MUserState.Id;
+
+            // Получение машины состояний
+            if (StateMachine == null)
+            {
+                foreach(MUserStateMachine machine in Global.StateMachines)
+                {
+                    if (machine.StateTransitions.ContainsKey(_stateId))
+                    {
+                        StateMachine = machine;
+                        break;
+                    }
+                }
+            }
+
+            // Получение следующего состояния
+            if (StateMachine != null)
+            {
+                List<PState> _avaliableStates = new List<PState>();
+
+                foreach(var stateTransition in StateMachine.StateTransitions.Where(t => t.Key == _stateId))
+                {
+                    foreach(MTransition transition in stateTransition.Value)
+                    {
+                        if(transition.AvailableForPositionsSource != null)
+                        {
+
+                        }
+                    }
+                }
+            }
+            else
+                NextState = null;
+        }
+
+
+        #endregion
     }
 }

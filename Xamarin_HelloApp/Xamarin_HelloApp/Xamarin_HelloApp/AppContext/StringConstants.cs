@@ -123,5 +123,11 @@
         /// <para>&#32;</para>
         /// </summary>
         public const string DigitalSearch = @"&#32;";
+
+
+        /// <summary>
+        /// Константы наименования ролей
+        /// </summary>
+        public static RolesConstants RolesConstants = new RolesConstants();
     }
 }

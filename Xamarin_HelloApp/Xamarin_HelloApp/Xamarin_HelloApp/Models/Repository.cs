@@ -25,7 +25,17 @@ namespace Xamarin_HelloApp.Models
         List<Tuple<Guid, DChangesetData[]>> GetNotifies();
         public void AcceptChanges(Guid changesetId, Guid ruleId);
         public void PrintChangeDetails(IEnumerable<DChangesetData> changes, DRule rule, NotifyResult result);
+
+        /// <summary>
+        /// Задать класс удаленного подключения
+        /// </summary>
+        /// <param name="client">класс удаленного подключения</param>
         public void SetHttpClient(HttpPilotClient client);
+
+        /// <summary>
+        /// Получить список машин состояний
+        /// </summary>
+        public List<MUserStateMachine> GetStateMachines();
 
     }
 
@@ -229,6 +239,16 @@ namespace Xamarin_HelloApp.Models
         public void SetHttpClient(HttpPilotClient client)
         {
             _client = client;
+        }
+
+
+        /// <summary>
+        /// Получить список машин состояний
+        /// </summary>
+        public List<MUserStateMachine> GetStateMachines()
+        {
+            DMetadata metadata = _serverApi.GetMetadata(0);
+            return metadata.StateMachines;
         }
     }
 }
