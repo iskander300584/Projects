@@ -4,6 +4,7 @@ using PilotMobile.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xamarin.Forms;
 using Xamarin_HelloApp.AppContext;
 
 namespace PilotMobile.ViewModels
@@ -29,7 +30,7 @@ namespace PilotMobile.ViewModels
                     state = value;
                     OnPropertyChanged();
 
-                    GetStateMachineData();
+                    //GetStateMachineData();
                 }
             }
         }
@@ -140,21 +141,21 @@ namespace PilotMobile.ViewModels
                     OnPropertyChanged();
                 }
             }
-        }      
+        }
 
 
-        private PState nextState = null;
+        private List<PState> avaliableStates = new List<PState>();
         /// <summary>
-        /// Следующее состояние
+        /// Доступные состояния
         /// </summary>
-        public PState NextState
+        public List<PState> AvaliableStates
         {
-            get => nextState;
+            get => avaliableStates;
             private set
             {
-                if(nextState != value)
+                if(avaliableStates != value)
                 {
-                    nextState = value;
+                    avaliableStates = value;
                     OnPropertyChanged();
                 }
             }
@@ -315,43 +316,81 @@ namespace PilotMobile.ViewModels
         /// <summary>
         /// Получить данные в соответствии с машиной состояний
         /// </summary>
-        private void GetStateMachineData()
+        /// <param name="page">страница приложения</param>
+        public void GetStateMachineData(ContentPage page)
         {
+            Exception ex = Global.Reconnect();
+            if (ex != null)
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    var res = await Global.DisplayError(page, ex.Message);
+
+                    if (res)
+                        await Global.SendErrorReport(ex);
+                });
+
+                return;
+            }
+
             Guid _stateId = State.MUserState.Id;
 
             // Получение машины состояний
             if (StateMachine == null)
             {
-                foreach(MUserStateMachine machine in Global.StateMachines)
-                {
-                    if (machine.StateTransitions.ContainsKey(_stateId))
-                    {
-                        StateMachine = machine;
-                        break;
-                    }
-                }
+                var attribute = Type.MType.Attributes.Where(a => a.Type == MAttrType.UserState).FirstOrDefault();
+                if (attribute == null)
+                    return;
+
+                Guid _idStateMachine;
+                Guid.TryParse(attribute.Configuration, out _idStateMachine);
+
+                if (_idStateMachine == Guid.Empty)
+                    return;
+
+                StateMachine = Global.StateMachines.FirstOrDefault(sm => sm.Id == _idStateMachine);
             }
 
             // Получение следующего состояния
             if (StateMachine != null)
             {
-                List<PState> _avaliableStates = new List<PState>();
+                avaliableStates = new List<PState>();
 
-                foreach(var stateTransition in StateMachine.StateTransitions.Where(t => t.Key == _stateId))
+                if (StateMachine.StateTransitions != null && StateMachine.StateTransitions.Any(st => st.Key == _stateId))
                 {
-                    foreach(MTransition transition in stateTransition.Value)
+                    foreach (var stateTransition in StateMachine.StateTransitions.Where(t => t.Key == _stateId))
                     {
-                        if(transition.AvailableForPositionsSource != null)
+                        if (stateTransition.Value != null)
                         {
-
+                            foreach (MTransition transition in stateTransition.Value)
+                            {
+                                if (transition.AvailableForPositionsSource != null && !avaliableStates.Any(s => s.Guid.ToString() == transition.StateTo.ToString()))
+                                {
+                                    if ( transition.AvailableForPositionsSource.Length == 0 ||
+                                        (IsActual && transition.AvailableForPositionsSource.Contains("&" + RolesConstants.Actual)) ||
+                                        (IsExecutor && transition.AvailableForPositionsSource.Contains("&" + RolesConstants.Executor)) ||
+                                        (IsInitiator && transition.AvailableForPositionsSource.Contains("&" + RolesConstants.Initiator)) ||
+                                        (IsResponsible && transition.AvailableForPositionsSource.Contains("&" + RolesConstants.Responsible)) ||
+                                        (IsAuditor && transition.AvailableForPositionsSource.Contains("&" + RolesConstants.Auditors)))
+                                    {
+                                        avaliableStates.Add(StateFabrique.GetState(transition.StateTo));
+                                    }
+                                }
+                            }
                         }
                     }
+
+                    if (avaliableStates.Count > 0)
+                        avaliableStates = avaliableStates.OrderBy(s => s.MUserState.Title).ToList();
                 }
             }
-            else
-                NextState = null;
         }
 
+
+        public void SetState(PState state)
+        {
+            State = state;
+        }
 
         #endregion
     }

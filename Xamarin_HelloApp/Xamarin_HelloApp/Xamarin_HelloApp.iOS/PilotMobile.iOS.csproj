@@ -280,4 +280,13 @@
   <ItemGroup>
     <BundleResource Include="Resources\link.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\apply.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\apply_gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\pilot_fly_logo_NewYear.png" />
+  </ItemGroup>
 </Project>

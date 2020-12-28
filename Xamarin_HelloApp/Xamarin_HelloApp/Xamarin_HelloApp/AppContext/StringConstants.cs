@@ -77,6 +77,12 @@
 
 
         /// <summary>
+        /// Выберите состояние:
+        /// </summary>
+        public const string StateChoose = "Выберите состояние:";
+
+
+        /// <summary>
         /// .pdf
         /// </summary>
         public const string PDF = ".pdf";
@@ -123,11 +129,5 @@
         /// <para>&#32;</para>
         /// </summary>
         public const string DigitalSearch = @"&#32;";
-
-
-        /// <summary>
-        /// Константы наименования ролей
-        /// </summary>
-        public static RolesConstants RolesConstants = new RolesConstants();
     }
 }

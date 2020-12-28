@@ -29,7 +29,6 @@ namespace Xamarin_HelloApp.ViewContexts
     {
         #region Поля класса
 
-
         /// <summary>
         /// Наименование приложения
         /// </summary>

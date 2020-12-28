@@ -4,7 +4,7 @@ namespace PilotMobile.AppContext
     /// <summary>
     /// Константы ролей
     /// </summary>
-    public class RolesConstants
+    public static class RolesConstants
     {
         /// <summary>
         /// Актуально для

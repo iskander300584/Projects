@@ -1,6 +1,9 @@
 ﻿using Ascon.Pilot.Common;
 using Ascon.Pilot.DataClasses;
+using Ascon.Pilot.DataModifier;
 using Ascon.Pilot.Server.Api;
+using BackendImpl;
+using ModifierSample;
 using PilotMobile.Models;
 using System;
 using System.Collections.Generic;
@@ -145,6 +148,13 @@ namespace Xamarin_HelloApp.Models
                 
                 var _messagesApi = _client.GetMessagesApi(new NullableMessagesCallback());
                 _repository.SetMessagesApi(_messagesApi);
+
+                var fileApi = _client.GetFileArchiveApi();
+                var localArchiveRootFolder = DirectoryHelper.GetTempPath();
+                var _fileStorageProvider = new FileStorageProvider(localArchiveRootFolder);
+                var changesetUploader = new ChangesetUploader(fileApi, _fileStorageProvider, null);
+                Backend backend = new Backend(serverApi, dbInfo, _messagesApi, changesetUploader);
+                _repository.SetBackend(backend);
             }
             catch(Exception exception)
             {

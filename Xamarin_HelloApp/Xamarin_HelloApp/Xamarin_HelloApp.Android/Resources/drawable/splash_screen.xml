@@ -13,7 +13,7 @@
 		android:width="150dp"
 		android:height="225dp" >
 		<bitmap
-			android:src="@drawable/pilot_fly_logo"
+			android:src="@drawable/pilot_fly_logo_NewYear"
 			android:tileMode="disabled"
 			/>
 	</item>

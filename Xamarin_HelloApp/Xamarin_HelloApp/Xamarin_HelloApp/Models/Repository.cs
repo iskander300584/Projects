@@ -1,6 +1,8 @@
 ﻿using Ascon.Pilot.DataClasses;
+using Ascon.Pilot.DataModifier;
 using Ascon.Pilot.Server.Api;
 using Ascon.Pilot.Server.Api.Contracts;
+using BackendImpl;
 using PilotMobile.Models;
 using System;
 using System.Collections.Generic;
@@ -37,6 +39,19 @@ namespace Xamarin_HelloApp.Models
         /// </summary>
         public List<MUserStateMachine> GetStateMachines();
 
+        /// <summary>
+        /// Задать Backend
+        /// </summary>
+        /// <param name="backend"></param>
+        public void SetBackend(Backend backend);
+
+        /// <summary>
+        /// Получить интерфейс для изменения данных
+        /// </summary>
+        public IModifier GetModifier();
+
+        public void SaveChanges(DChangesetData dChangesetData);
+
     }
 
     class Repository : IRepository, IRemoteStorageListener
@@ -50,6 +65,7 @@ namespace Xamarin_HelloApp.Models
         private IEventsApi _eventsApi;
         private IMessagesApi _messagesApi;
         private HttpPilotClient _client;
+        private Backend _backend;
 
         public Repository(IServerApi serverApi, ServerCallback serverCallback)
         {
@@ -249,6 +265,26 @@ namespace Xamarin_HelloApp.Models
         {
             DMetadata metadata = _serverApi.GetMetadata(0);
             return metadata.StateMachines;
+        }
+
+        public void SetBackend(Backend backend)
+        {
+            _backend = backend;
+        }
+
+
+        /// <summary>
+        /// Получить интерфейс для изменения данных
+        /// </summary>
+        public IModifier GetModifier()
+        {
+            return new Modifier(_backend);
+        }
+
+
+        public void SaveChanges(DChangesetData dChangesetData)
+        {
+            _serverApi.Change(dChangesetData);
         }
     }
 }

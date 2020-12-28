@@ -1,7 +1,10 @@
 ﻿using Ascon.Pilot.DataClasses;
+using Ascon.Pilot.DataModifier;
 using PilotMobile.AppContext;
+using PilotMobile.Models;
 using PilotMobile.Pages;
 using PilotMobile.ViewModels;
+using Plugin.Toast;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -139,6 +142,53 @@ namespace PilotMobile.ViewContexts
         /// </summary>
         private XpsPage xpsPage;
 
+
+        private ICommand changeState;
+        /// <summary>
+        /// Команда Сменить состояние
+        /// </summary>
+        public ICommand ChangeState
+        {
+            get => changeState;
+        }
+
+
+        private bool changeStateVisible = false;
+        /// <summary>
+        /// Видимость кнопки смены состояния
+        /// </summary>
+        public bool ChangeStateVisible
+        {
+            get => changeStateVisible;
+            private set
+            {
+                if(changeStateVisible != value)
+                {
+                    changeStateVisible = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
+        private bool canChangeState = false;
+        /// <summary>
+        /// Доступность смены состояния
+        /// </summary>
+        public bool CanChangeState
+        {
+            get => canChangeState;
+            private set
+            {
+                if(canChangeState != value)
+                {
+                    canChangeState = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
         #endregion      
 
 
@@ -157,6 +207,7 @@ namespace PilotMobile.ViewContexts
 
             upCommand = new Command(Up_Execute);
             updateCommand = new Command(GetData);
+            changeState = new Command(ChangeState_Execute);
 
             GetData();
 
@@ -182,6 +233,14 @@ namespace PilotMobile.ViewContexts
                         await Global.SendErrorReport(ex);
 
                     return;
+                }
+
+                if(pilotObject is PilotTask)
+                {
+                    ChangeStateVisible = true;
+
+                    PilotTask task = pilotObject as PilotTask;
+                    CanChangeState = (task.AvaliableStates.Count > 0);
                 }
 
                 views.Clear();
@@ -407,6 +466,54 @@ namespace PilotMobile.ViewContexts
                 xpsPage.UnLoadDocument(true);
 
             page.NavigateToMainPage();
+        }
+
+
+        /// <summary>
+        /// Смена состояния
+        /// </summary>
+        private async void ChangeState_Execute()
+        {
+            try
+            {
+                List<string> _states = new List<string>();
+                PilotTask _task = PilotObject as PilotTask;
+                foreach (PState state in _task.AvaliableStates)
+                    _states.Add(state.MUserState.Title);
+
+                string newState = await page.GetStateAction(_states.ToArray());
+
+                if (newState == null || !_states.Contains(newState))
+                    return;
+
+                // TODO
+                bool confirm = await page.DisplayMessage("Внимание!", "Перевести задание в состояние: '" + newState + "'?", true);
+                if (!confirm)
+                    return;
+
+                PState _nextState = _task.AvaliableStates.FirstOrDefault(s => s.MUserState.Title == newState);
+                if (_nextState == null)
+                    throw new Exception("Ошибка выбора следующего состояния");
+
+                IModifier _modifier = Global.DALContext.Repository.GetModifier();
+                var _editBuilder = _modifier.EditObject(PilotObject.Guid);
+                var _cb = _editBuilder.SetAttribute(TaskConstants.StateAttribute, _nextState.Guid);
+                if (_modifier.AnyChanges())
+                    _modifier.Apply();               
+
+                _task.SetState(_nextState);
+                _task.GetStateMachineData(page);
+                CanChangeState = (_task.AvaliableStates.Count > 0);
+
+                CrossToastPopUp.Current.ShowToastSuccess("Состояние изменено");
+            }
+            catch(Exception ex)
+            {
+                var res = await Global.DisplayError(page, ex.Message);
+
+                if (res)
+                    await Global.SendErrorReport(ex);
+            }
         }
 
 

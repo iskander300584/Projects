@@ -40,6 +40,7 @@ namespace PilotMobile.Pages
         {
             // Получение выбранного задания
             PilotTask task = e.Item as PilotTask;
+            task.GetStateMachineData(this);
 
             Navigation.PushModalAsync(new TaskCarrousel(task));
         }

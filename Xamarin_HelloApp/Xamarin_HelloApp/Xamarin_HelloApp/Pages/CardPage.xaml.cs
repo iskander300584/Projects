@@ -1,6 +1,8 @@
-﻿using PilotMobile.ViewContexts;
+﻿using PilotMobile.AppContext;
+using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
 using System;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin_HelloApp.AppContext;
@@ -31,6 +33,37 @@ namespace PilotMobile.Pages
             context = new CardPage_Context(pilotItem, this, xpsPage);
 
             this.BindingContext = context;
+        }
+
+
+        /// <summary>
+        /// Вывести сообщение
+        /// </summary>
+        /// <param name="caption">заголовок</param>
+        /// <param name="message">текст сообщения</param>
+        /// <param name="isQuestion">сообщение является вопросом</param>
+        /// <returns>возвращает TRUE, если ответ "Да" или сообщение не является вопросом</returns>
+        public async Task<bool> DisplayMessage(string caption, string message, bool isQuestion)
+        {
+            if (!isQuestion)
+            {
+                await DisplayAlert(caption, message, StringConstants.Ok);
+
+                return true;
+            }
+            else
+            {
+                return await DisplayAlert(caption, message, StringConstants.Yes, StringConstants.No);
+            }
+        }
+
+
+        /// <summary>
+        /// Получение выбранного пользователем состояния
+        /// </summary>
+        public async Task<string> GetStateAction(string[] states)
+        {
+            return await DisplayActionSheet(StringConstants.StateChoose, StringConstants.Cancel, null, states);
         }
 
 
