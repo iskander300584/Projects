@@ -125,6 +125,12 @@
 
 
         /// <summary>
+        /// Справка
+        /// </summary>
+        public const string Help = "Справка";
+
+
+        /// <summary>
         /// Строка для поиска по числовому параметру
         /// <para>&#32;</para>
         /// </summary>

@@ -59,7 +59,24 @@
                                      />
 
                         <Label HorizontalOptions="EndAndExpand" />
-                        
+
+                        <!-- Кнопка Редактировать -->
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End" IsVisible="{Binding ChangeStateVisible}" 
+                                     Command="{Binding EditCommand}" >
+                            <ImageButton.Style>
+                                <Style TargetType="ImageButton">
+                                    <Style.Triggers>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="True">
+                                            <Setter Property="Source" Value="edit.png"/>
+                                        </Trigger>
+                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="False">
+                                            <Setter Property="Source" Value="edit_gray.png"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ImageButton.Style>
+                        </ImageButton>
+
                         <!-- Кнопка Сменить состояние -->
                         <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End" IsVisible="{Binding ChangeStateVisible}" IsEnabled="{Binding CanChangeState}"
                                      Command="{Binding ChangeState}">

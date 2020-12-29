@@ -289,4 +289,22 @@
   <ItemGroup>
     <BundleResource Include="Resources\pilot_fly_logo_NewYear.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Screen_01.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\tap.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\edit_gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\save_gray.png" />
+  </ItemGroup>
 </Project>

@@ -24,7 +24,8 @@ namespace Xamarin_HelloApp.Models
         IEnumerable<MType> GetTypes();
         byte[] GetFileChunk(Guid id, long pos, int count);
         List<MUserState> GetStates();
-        List<Tuple<Guid, DChangesetData[]>> GetNotifies();
+        //List<Tuple<Guid, DChangesetData[]>> GetNotifies();
+        DNotificationChangeset GetNotifies();
         public void AcceptChanges(Guid changesetId, Guid ruleId);
         public void PrintChangeDetails(IEnumerable<DChangesetData> changes, DRule rule, NotifyResult result);
 
@@ -54,25 +55,28 @@ namespace Xamarin_HelloApp.Models
 
     }
 
-    class Repository : IRepository, IRemoteStorageListener
+    class Repository : IRepository, IRemoteStorageListener, IRemoteServiceListener
     {
         private readonly IServerApi _serverApi;
         private Dictionary<int, DPerson> _persons = new Dictionary<int, DPerson>();
         private Dictionary<int, DOrganisationUnit> _organisationUnits = new Dictionary<int, DOrganisationUnit>();
         private TaskCompletionSource<DSearchResult> _searchCompletionSource;
+        private TaskCompletionSource<DNotificationChangeset> _notificationCompletionSource;
         private DPerson _person;
         private List<MType> _types;
         private IEventsApi _eventsApi;
         private IMessagesApi _messagesApi;
         private HttpPilotClient _client;
         private Backend _backend;
+        private ServerCallback _serverCallback;
 
         public Repository(IServerApi serverApi, ServerCallback serverCallback)
         {
             _serverApi = serverApi;
             var info = _serverApi.GetDatabaseInfo();
-            
-            serverCallback.SetCallbackListener(this);
+
+            _serverCallback = serverCallback;
+            serverCallback.SetCallbackListener(this, this);
         }
 
         public void Initialize(string currentLogin)
@@ -138,17 +142,7 @@ namespace Xamarin_HelloApp.Models
             return _person;
         }
 
-        public void Notify(DSearchResult result)
-        {
-            try
-            {
-                _searchCompletionSource.SetResult(result);
-            }
-            catch (Exception)
-            {
-                ;
-            }
-        }
+        
 
         public IEnumerable<MType> GetTypes()
         {
@@ -174,10 +168,7 @@ namespace Xamarin_HelloApp.Models
         }
 
 
-        public List<Tuple<Guid, DChangesetData[]>> GetNotifies()
-        {
-            return _eventsApi.GetMissedChanges();
-        }
+        
         
         public void SetMessagesApi(IMessagesApi messagesApi)
         {
@@ -202,11 +193,34 @@ namespace Xamarin_HelloApp.Models
             {
                 foreach (var change in dChangesetData.Changes)
                 {
-
                     var name = "";
-                    if (change.New.Attributes.ContainsKey(SystemAttributes.PROJECT_ITEM_NAME))
+                    if (!change.New.ActualFileSnapshot.Files.Any())
                     {
-                        name = change.New.Attributes[SystemAttributes.PROJECT_ITEM_NAME];
+                        var type = _types.First(x => x.Id == change.New.TypeId);
+                        if(type.IsTaskType())
+                        {
+                            var attrs = type.Attributes.Where(x => x.ShowInTree).OrderBy(y => y.DisplaySortOrder);
+                            foreach (var mAttribute in attrs)
+                            {
+                                DValue value;
+                                change.New.Attributes.TryGetValue(mAttribute.Name, out value);
+                                if (value != null)
+                                    name += " " + value.StrValue;
+                            }
+                        }
+                        
+
+                        //if (change.New.Attributes.ContainsKey(SystemAttributes.PROJECT_ITEM_NAME))
+                        //{
+                        //    name = change.New.Attributes[SystemAttributes.PROJECT_ITEM_NAME];
+                        //    result.Result.Add(name);
+                        //}
+
+
+                    }
+                    /*if (change.New.Attributes.ContainsKey(SystemAttributes.TASK_STATE))
+                    {
+                        name = change.New.Attributes[SystemAttributes.TASK_STATE];
                         result.Result.Add(GetRuleText(rule) + " файл " + name);
                     }
                     else
@@ -232,7 +246,7 @@ namespace Xamarin_HelloApp.Models
                         {
                             result.Result.Add(GetRuleText(rule) + " а версия документа " + name);
                         }
-                    }
+                    }*/
                 }
             }
         }
@@ -285,6 +299,62 @@ namespace Xamarin_HelloApp.Models
         public void SaveChanges(DChangesetData dChangesetData)
         {
             _serverApi.Change(dChangesetData);
+        }
+
+        /*public List<Tuple<Guid, DChangesetData[]>> GetNotifies()
+        {
+            //_serverCallback.NotifyDNotificationChangeset(new DNotificationChangeset());
+            return _eventsApi.GetMissedChanges();
+        }*/
+
+        public DNotificationChangeset GetNotifies()
+        {
+            _notificationCompletionSource = new TaskCompletionSource<DNotificationChangeset>();
+            _serverCallback.NotifyDNotificationChangeset(new DNotificationChangeset());
+            return _notificationCompletionSource.Task.Result;
+        }
+
+        public void Notify(DMetadataChangeset changeset)
+        {
+            
+        }
+
+        public void Notify(OrganisationUnitChangeset changeset)
+        {
+            
+        }
+
+        public void Notify(PersonChangeset changeset)
+        {
+            
+        }
+
+        public void Notify(DNotificationChangeset changeset)
+        {
+            try
+            {
+                //_serverCallback.NotifyDNotificationChangeset(changeset);
+                _notificationCompletionSource.SetResult(changeset);
+            }
+            catch (Exception ex)
+            {
+                if(ex != null)
+                {
+
+                }
+            }
+        }
+
+        public void Notify(DSearchResult result)
+        {
+            try
+            {
+                _searchCompletionSource.SetResult(result);
+            }
+            catch (Exception)
+            {
+                ;
+            }
         }
     }
 }

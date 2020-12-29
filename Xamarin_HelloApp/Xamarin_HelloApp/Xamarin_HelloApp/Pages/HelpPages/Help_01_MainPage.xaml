@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PilotMobile.Pages.HelpPages.Help_01_MainPage" Appearing="OnAppearing" Disappearing="OnDisappearing">
+    <ContentPage.Content>
+        <RelativeLayout x:Name="mainLayout">
+            <Image Source="Screen_01" Aspect="Fill" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1}" />
+            
+            <Image x:Name="handImage" Source="tap" Aspect="AspectFit" HeightRequest="45" RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToView, Property=Width, Factor=1}" RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToView, Property=Height, Factor=1}" />
+
+            <Label x:Name="textLabel" RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.8}" Opacity="0" TextColor="#F91C1C" FontSize="24" FontFamily="Tahoma" BackgroundColor="#F9EB1C" MaxLines="3" Padding="5" /> 
+        </RelativeLayout>
+    </ContentPage.Content>
+</ContentPage>

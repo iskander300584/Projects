@@ -189,6 +189,16 @@ namespace PilotMobile.ViewContexts
         }
 
 
+        private ICommand editCommand = null;
+        /// <summary>
+        /// Команда Редактировать
+        /// </summary>
+        public ICommand EditCommand
+        {
+            get => editCommand;
+        }
+
+
         #endregion      
 
 
@@ -208,6 +218,7 @@ namespace PilotMobile.ViewContexts
             upCommand = new Command(Up_Execute);
             updateCommand = new Command(GetData);
             changeState = new Command(ChangeState_Execute);
+            editCommand = new Command(EditExecute);
 
             GetData();
 
@@ -486,7 +497,6 @@ namespace PilotMobile.ViewContexts
                 if (newState == null || !_states.Contains(newState))
                     return;
 
-                // TODO
                 bool confirm = await page.DisplayMessage("Внимание!", "Перевести задание в состояние: '" + newState + "'?", true);
                 if (!confirm)
                     return;
@@ -514,6 +524,18 @@ namespace PilotMobile.ViewContexts
                 if (res)
                     await Global.SendErrorReport(ex);
             }
+        }
+
+
+        /// <summary>
+        /// Редактировать
+        /// </summary>
+        private void EditExecute()
+        {
+            if (Mode == PageMode.View)
+                Mode = PageMode.Edit;
+            else if (Mode == PageMode.Edit)
+                Mode = PageMode.View;
         }
 
 

@@ -1,6 +1,5 @@
 ﻿using Ascon.Pilot.Common;
 using Ascon.Pilot.DataClasses;
-using Ascon.Pilot.DataModifier;
 using Ascon.Pilot.Server.Api;
 using BackendImpl;
 using ModifierSample;
@@ -136,6 +135,12 @@ namespace Xamarin_HelloApp.Models
                 {
                     Id = new Guid(),
                     FileExtension = ".xps",
+                    ChangeType = ChangeType.Update
+                });
+
+                _rules.Add(new DRule
+                {
+                    Id = new Guid("{697B8750-588C-4D70-8BCB-0F0D2BFDDEF0}"),
                     ChangeType = ChangeType.Update
                 });
 

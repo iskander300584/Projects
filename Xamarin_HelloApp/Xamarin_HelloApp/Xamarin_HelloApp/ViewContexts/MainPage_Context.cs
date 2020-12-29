@@ -2,6 +2,7 @@
 using PilotMobile.AppContext;
 using PilotMobile.Models;
 using PilotMobile.Pages;
+using PilotMobile.Pages.HelpPages;
 using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
 using Plugin.Toast;
@@ -1013,6 +1014,10 @@ namespace Xamarin_HelloApp.ViewContexts
                     ClearCache();
                     break;
 
+                case StringConstants.Help:
+                    page.Navigation.PushModalAsync(new Help_01_MainPage());
+                    break;
+
                 case StringConstants.Exit:
                     System.Diagnostics.Process.GetCurrentProcess().CloseMainWindow();
                     break;
@@ -1222,34 +1227,43 @@ namespace Xamarin_HelloApp.ViewContexts
 
             #region Проверка получения уведомлений
 
-            var _notifies = Global.DALContext.Repository.GetNotifies();
-            if(_notifies != null)
+            var notifies = Global.DALContext.Repository.GetNotifies();
+            if(notifies != null && notifies.Changed != null)
             {
-                foreach(var notify in _notifies)
+                foreach(var notify in notifies.Changed)
                 {
-                    NotifyResult res = new NotifyResult();
-                    DRule rule = Global.DALContext.Rules.FirstOrDefault(r => r.Id == notify.Item1);
-                    if (rule != null)
-                    {
-                        Global.DALContext.Repository.PrintChangeDetails(notify.Item2, rule, res);
-                        if(res.Result.Count != 0)
-                        {
 
-                        }
-                    }
-
-                    /*if (notify.Item2 != null)
-                    {
-                        foreach(var data in notify.Item2)
-                        {
-                            if(data != null)
-                            {
-                                
-                            }
-                        }
-                    }*/
                 }
             }
+
+            //var _notifies = Global.DALContext.Repository.GetNotifies();
+            //if(_notifies != null)
+            //{
+            //    foreach(var notify in _notifies)
+            //    {
+            //        NotifyResult res = new NotifyResult();
+            //        DRule rule = Global.DALContext.Rules.FirstOrDefault(r => r.Id == notify.Item1);
+            //        if (rule != null)
+            //        {
+            //            Global.DALContext.Repository.PrintChangeDetails(notify.Item2, rule, res);
+            //            if(res.Result.Count != 0)
+            //            {
+
+            //            }
+            //        }
+
+            //        /*if (notify.Item2 != null)
+            //        {
+            //            foreach(var data in notify.Item2)
+            //            {
+            //                if(data != null)
+            //                {
+                                
+            //                }
+            //            }
+            //        }*/
+            //    }
+            //}
 
             #endregion
         }

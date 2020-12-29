@@ -102,7 +102,7 @@ namespace Xamarin_HelloApp
         /// </summary>
         public async Task<string> GetAction()
         {
-            return await DisplayActionSheet(StringConstants.ActionChoose, StringConstants.Cancel, null, StringConstants.Authentificate, StringConstants.ClearCache, StringConstants.Exit);
+            return await DisplayActionSheet(StringConstants.ActionChoose, StringConstants.Cancel, null, StringConstants.Authentificate, StringConstants.ClearCache, StringConstants.Help, StringConstants.Exit);
         }
 
         
