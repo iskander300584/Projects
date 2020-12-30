@@ -272,25 +272,25 @@ namespace PilotMobile.ViewContexts
 
                 // Выданные
                 case 1:
-                    foreach (PilotTask task in _allTasks.Where(t => t.IsInitiator))
+                    foreach (PilotTask task in _allTasks.Where(t => t.IsInitiator && t.IsActual))
                         Tasks.Add(task);
                     break;
 
                 // Полученные
                 case 2:
-                    foreach (PilotTask task in _allTasks.Where(t => t.IsExecutor))
+                    foreach (PilotTask task in _allTasks.Where(t => t.IsExecutor && t.IsActual))
                         Tasks.Add(task);
                     break;
 
                 // Просроченные
                 case 3:
-                    foreach (PilotTask task in _allTasks.Where(t => t.Deadline != null && t.Deadline > DateTime.Today && t.State.Name != "done"))
+                    foreach (PilotTask task in _allTasks.Where(t => t.IsActual && t.Deadline != null && t.Deadline < DateTime.Today && t.State.Name != "done"))
                         Tasks.Add(task);
                     break;
 
                 // Ответственный
                 case 4:
-                    foreach (PilotTask task in _allTasks.Where(t => t.IsResponsible))
+                    foreach (PilotTask task in _allTasks.Where(t => t.IsActual && t.IsResponsible))
                         Tasks.Add(task);
                     break;
 
@@ -437,11 +437,11 @@ namespace PilotMobile.ViewContexts
         {
             return (!_allTaken && (
                 (SelectedFilterIndex == 0 && !_actualTaken) ||
-                (SelectedFilterIndex == 1 && !_initiatorTaken) ||
-                (SelectedFilterIndex == 2 && !_executorTaken) ||
-                (SelectedFilterIndex == 4 && !_responsibleTaken) ||
+                (SelectedFilterIndex == 1 && !_initiatorTaken && !_actualTaken) ||
+                (SelectedFilterIndex == 2 && !_executorTaken && !_actualTaken) ||
+                (SelectedFilterIndex == 4 && !_responsibleTaken && !_actualTaken) ||
                 (SelectedFilterIndex == 5 && !_auditorTaken) ||
-                SelectedFilterIndex == 3 ||
+                (SelectedFilterIndex == 3 && !_actualTaken) ||
                 SelectedFilterIndex == 6 ||
                 SelectedFilterIndex == 7
                 ));

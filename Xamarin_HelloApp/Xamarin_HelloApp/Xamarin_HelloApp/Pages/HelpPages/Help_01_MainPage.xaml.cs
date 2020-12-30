@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PilotMobile.ViewContexts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ namespace PilotMobile.Pages.HelpPages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Help_01_MainPage : ContentPage
     {
+        #region Поля класса
         /// <summary>
         /// Поток анимации
         /// </summary>
@@ -49,15 +51,24 @@ namespace PilotMobile.Pages.HelpPages
         private int _slowSleep = 3200;
 
 
+        private HelpPage_Context context;
+
+        #endregion
+
         /// <summary>
         /// Справка для главного окна
         /// </summary>
-        public Help_01_MainPage()
+        /// <param name="showOnlyUpdates">отображать только информацию об изменениях</param>
+        public Help_01_MainPage(bool showOnlyUpdates = false)
         {
             InitializeComponent();
+
+            context = new HelpPage_Context(this, showOnlyUpdates);
+
+            this.BindingContext = context;
         }
 
-
+        /*
         /// <summary>
         /// Воспроизведение анимации
         /// </summary>
@@ -87,7 +98,7 @@ namespace PilotMobile.Pages.HelpPages
 
             }
             while (true);
-        }
+        }*/
 
 
         /// <summary>
@@ -95,11 +106,11 @@ namespace PilotMobile.Pages.HelpPages
         /// </summary>
         private void OnAppearing(object sender, EventArgs e)
         {
-            textLabel.MinimumWidthRequest = mainLayout.Width;
-            textLabel.WidthRequest = mainLayout.Width;
+            //textLabel.MinimumWidthRequest = mainLayout.Width;
+            //textLabel.WidthRequest = mainLayout.Width;
 
-            _animationThread = new Thread(AnimationStart);
-            _animationThread.Start();
+            //_animationThread = new Thread(AnimationStart);
+            //_animationThread.Start();
         }
 
 
@@ -108,10 +119,10 @@ namespace PilotMobile.Pages.HelpPages
         /// </summary>
         private void OnDisappearing(object sender, EventArgs e)
         {
-            _animationThread.Abort();
+            //_animationThread.Abort();
         }
 
-
+        /*
         /// <summary>
         /// Смещение руки в абсолютных координатах
         /// </summary>
@@ -200,6 +211,6 @@ namespace PilotMobile.Pages.HelpPages
             });
 
             Thread.Sleep(10);
-        }
+        }*/
     }
 }

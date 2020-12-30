@@ -57,6 +57,19 @@ namespace Xamarin_HelloApp.AppContext
         /// </summary>
         public static readonly DateTime TrialExitDate = new DateTime(2020, 12, 10);
 
+
+        /// <summary>
+        /// Минимальная версия, при которой не отображается подсказка
+        /// </summary>
+        public const int DoNotShowHelp_Version = 10518;
+
+
+        /// <summary>
+        /// Минимальная версия, при которой отображается подсказка об обновлениях
+        /// </summary>
+        public const int ShowUpdate_Version = 10518;
+             
+
         #endregion
 
 

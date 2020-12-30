@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using PilotMobile.AppContext;
 using PilotMobile.ViewModels;
 using System.Threading;
+using Plugin.Settings;
+using PilotMobile.Pages.HelpPages;
 
 namespace Xamarin_HelloApp
 {
@@ -270,13 +272,33 @@ namespace Xamarin_HelloApp
         /// </summary>
         private void OnAppearing(object sender, EventArgs e)
         {
-            if (Global.IsTrial && !Global.TrialMessageShown)
+            if (context.FirstLaunch)
             {
-                Thread thread = new Thread(TrialExit);
-                thread.Start();
-            }
+                int _savedVersion = GetVersionNumber(CrossSettings.Current.GetValueOrDefault("helpVersion", ""));
 
-            if (!context.FirstLaunch)
+                if (_savedVersion < Global.DoNotShowHelp_Version)
+                {
+                    if(_savedVersion < Global.ShowUpdate_Version)
+                    {
+                        Navigation.PushModalAsync(new Help_01_MainPage());
+                    }
+                    else
+                    {
+                        Navigation.PushModalAsync(new Help_01_MainPage(true));
+                    }
+                }
+                else
+                {
+                    if (Global.IsTrial && !Global.TrialMessageShown)
+                    {
+                        Thread thread = new Thread(TrialExit);
+                        thread.Start();
+                    }
+                }
+
+                context.FirstLaunch = false;
+            }
+            else
             {
                 object url_temp = "";
                 if (App.Current.Properties.TryGetValue("url", out url_temp))
@@ -288,8 +310,45 @@ namespace Xamarin_HelloApp
                         context.GetRootObjects(false, url);
                 }
             }
-            else
-                context.FirstLaunch = false;
+                            
+        }
+
+
+        /// <summary>
+        /// Получение номера версии
+        /// </summary>
+        /// <param name="version">строковое представление версии</param>
+        private int GetVersionNumber(string version)
+        {
+            if (version == "")
+                return 0;
+
+            try
+            {
+                int index = version.IndexOf('.');
+                string _version = version.Substring(0, index);
+
+                version = version.Substring(index + 1);
+
+                index = version.IndexOf('.');
+                string _major = version.Substring(0, index);
+                if (_major.Length == 1)
+                    _major = "0" + _major;
+
+                string _minor = version.Substring(index + 1);
+                if (_minor.Length == 1)
+                    _minor = "0" + _minor;
+
+                int _number = 0;
+                if (int.TryParse(_version + _major + _minor, out _number))
+                    return _number;
+                else
+                    return 0;
+            }
+            catch
+            {
+                return 0;
+            }
         }
 
 
