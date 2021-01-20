@@ -38,4 +38,21 @@ namespace PilotMobile.AppContext
         /// </summary>
         Url
     }
+
+
+    /// <summary>
+    /// Состояние страницы
+    /// </summary>
+    public enum PageStatus
+    {
+        /// <summary>
+        /// Свободна для выполнения операции
+        /// </summary>
+        Free,
+
+        /// <summary>
+        /// Страница занята
+        /// </summary>
+        Busy
+    }
 }

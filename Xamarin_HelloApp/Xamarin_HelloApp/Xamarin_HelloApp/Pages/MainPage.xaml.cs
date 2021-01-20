@@ -59,6 +59,11 @@ namespace Xamarin_HelloApp
 
                 context = new MainPage_Context(this, rootObject, url);
 
+                if(rootObject != null)
+                {
+                    context.FirstLaunch = false;
+                }
+
                 this.BindingContext = context;
             }
             catch (Exception ex)

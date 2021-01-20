@@ -172,6 +172,7 @@
                             Spacing="10" />
             </ScrollView>
 
+            <!-- Кнопка Поиск -->
             <Button Text="Поиск" FontSize="Title" Background="#7A87BF" FontFamily="Tahoma" TextColor="White" 
                     VerticalOptions="EndAndExpand" HorizontalOptions="Fill" Margin="10,0,10,10"
                     Command="{Binding Search}" IsEnabled="{Binding Search_CanExecute}"/>

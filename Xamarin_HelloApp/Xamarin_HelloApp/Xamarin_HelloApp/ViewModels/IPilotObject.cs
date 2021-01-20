@@ -56,6 +56,14 @@ namespace PilotMobile.ViewModels
         public ObservableCollection<IPilotObject> Children
         {
             get => children;
+            set
+            {
+                if(children != value)
+                {
+                    children = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
 

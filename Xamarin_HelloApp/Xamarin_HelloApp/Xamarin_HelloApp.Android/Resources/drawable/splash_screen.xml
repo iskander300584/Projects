@@ -8,12 +8,17 @@
 	<item>
 		<color android:color="@color/pilotColor" />
 	</item>
+	
+	<!--
+		для отандартного логотипа:
+		android:width="150dp"
+		android:height="225dp" -->
 	<item
 		android:gravity="center"
-		android:width="150dp"
+		android:width="200dp"
 		android:height="225dp" >
 		<bitmap
-			android:src="@drawable/pilot_fly_logo_NewYear"
+			android:src="@drawable/pilot_fly_logo_afterNY"
 			android:tileMode="disabled"
 			/>
 	</item>

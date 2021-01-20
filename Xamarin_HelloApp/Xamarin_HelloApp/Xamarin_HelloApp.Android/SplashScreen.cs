@@ -46,7 +46,6 @@ namespace Xamarin_HelloApp.Droid
             }
 
             StartActivity(intent);
-            //StartActivity(typeof(MainActivity));
         }
     }
 }

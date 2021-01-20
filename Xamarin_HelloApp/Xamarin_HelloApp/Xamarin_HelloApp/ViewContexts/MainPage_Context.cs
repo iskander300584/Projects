@@ -57,6 +57,24 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
+        private PageStatus status = PageStatus.Free;
+        /// <summary>
+        /// Состояние страницы
+        /// </summary>
+        public PageStatus Status
+        {
+            get => status;
+            private set
+            {
+                if(status != value)
+                {
+                    status = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
         /// <summary>
         /// Соответствующая страница
         /// </summary>
@@ -625,6 +643,7 @@ namespace Xamarin_HelloApp.ViewContexts
             Device.BeginInvokeOnMainThread(async () =>
             {
                 IsRefreshing = false;
+                Status = PageStatus.Free;
             });
         }
 
@@ -687,7 +706,10 @@ namespace Xamarin_HelloApp.ViewContexts
             Device.BeginInvokeOnMainThread(async () =>
             {
                 if (!FirstLaunch)
+                {
                     IsRefreshing = true;
+                    Status = PageStatus.Busy;
+                }
             });
 
             try
@@ -717,11 +739,25 @@ namespace Xamarin_HelloApp.ViewContexts
                     {
                         if (_child != null && _child.Guid == item.Guid)
                         {
-                            _item.Children.Add(_child);
+                            // Определение позиции для элемента
+                            int index = GetPositionIndex(_item, _child);
+                            
+                            if (index < _item.Children.Count)
+                                _item.Children.Insert(index, _child);
+                            else
+                                _item.Children.Add(_child);
+
                             _child.Parent = _item;
+
                         }
                         else
-                            _item.Children.Add(item);
+                        {
+                            int index = GetPositionIndex(_item, item);
+                            if (index < _item.Children.Count)
+                                _item.Children.Insert(index, item);
+                            else
+                                _item.Children.Add(item);
+                        }
                     }
                 }
             }
@@ -739,7 +775,27 @@ namespace Xamarin_HelloApp.ViewContexts
             Device.BeginInvokeOnMainThread(async () =>
             {
                 IsRefreshing = false;
+                Status = PageStatus.Free;
             });
+        }
+
+        /// <summary>
+        /// Получить сортировочный индекс вставляемого элемента
+        /// </summary>
+        /// <param name="parent">головной элемент</param>
+        /// <param name="child">вставляемый элемент</param>
+        private int GetPositionIndex(IPilotObject parent, IPilotObject child)
+        {
+            if (child.Type.IsTask)
+                return parent.Children.Count;
+
+            int index = 0;
+            while (index < parent.Children.Count && ((!parent.Children[index].Type.IsDocument && child.Type.IsDocument) || (!parent.Children[index].Type.IsDocument && !child.Type.IsDocument && parent.Children[index].VisibleName.CompareTo(child.VisibleName) <= 0) || (parent.Children[index].Type.IsDocument && child.Type.IsDocument && parent.Children[index].VisibleName.CompareTo(child.VisibleName) <= 0)))
+            {
+                index++;
+            }
+
+            return index;
         }
 
 
@@ -954,6 +1010,9 @@ namespace Xamarin_HelloApp.ViewContexts
         /// </summary>
         public async void Update_Execute()
         {
+            if (Status == PageStatus.Busy)
+                return;
+
             try
             {
                 Exception ex = Global.Reconnect();
@@ -968,6 +1027,8 @@ namespace Xamarin_HelloApp.ViewContexts
                 }
 
                 Parent.Children.Clear();
+
+                Status = PageStatus.Busy;
 
                 Parent.UpdateObjectData();
 
@@ -1124,6 +1185,12 @@ namespace Xamarin_HelloApp.ViewContexts
         /// <param name="queryString">запрос поиска</param>
         private async void GetSearchResults(object queryString)
         {
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                IsRefreshing = true;
+                Status = PageStatus.Busy;
+            });
+
             try
             {
                 string query = (string)queryString;
@@ -1150,6 +1217,13 @@ namespace Xamarin_HelloApp.ViewContexts
                 if (result.Found == null)
                 {
                     Up_CanExecute();
+
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        IsRefreshing = false;
+                        Status = PageStatus.Free;
+                    });
+
                     return;
                 }
 
@@ -1169,6 +1243,12 @@ namespace Xamarin_HelloApp.ViewContexts
                 if (res)
                     await Global.SendErrorReport(ex);
             }
+
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                IsRefreshing = false;
+                Status = PageStatus.Free;
+            });
 
             Up_CanExecute();
         }

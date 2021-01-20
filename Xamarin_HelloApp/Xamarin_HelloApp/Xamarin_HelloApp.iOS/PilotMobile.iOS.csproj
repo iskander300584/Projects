@@ -310,4 +310,7 @@
   <ItemGroup>
     <BundleResource Include="Resources\save_gray.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\pilot_fly_logo_afterNY.png" />
+  </ItemGroup>
 </Project>

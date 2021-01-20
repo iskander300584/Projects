@@ -27,6 +27,24 @@ namespace PilotMobile.ViewContexts
         #region Поля класса
 
 
+        private PageStatus status = PageStatus.Free;
+        /// <summary>
+        /// Состояние страницы
+        /// </summary>
+        public PageStatus Status
+        {
+            get => status;
+            private set
+            {
+                if (status != value)
+                {
+                    status = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
         /// <summary>
         /// Наименование приложения
         /// </summary>
@@ -145,6 +163,9 @@ namespace PilotMobile.ViewContexts
         /// </summary>
         private void GetFiles()
         {
+            if (Status == PageStatus.Busy)
+                return;
+
             Items.Clear();
 
             Thread thread = new Thread(AsyncGetFiles);
@@ -160,6 +181,7 @@ namespace PilotMobile.ViewContexts
             Device.BeginInvokeOnMainThread(async () =>
             {
                 IsRefreshing = true;
+                Status = PageStatus.Busy;
             });
 
             try
@@ -203,6 +225,7 @@ namespace PilotMobile.ViewContexts
             Device.BeginInvokeOnMainThread(async () =>
             {
                 IsRefreshing = false;
+                Status = PageStatus.Free;
             });
         }
 
@@ -275,7 +298,32 @@ namespace PilotMobile.ViewContexts
             string fName = file.Name.ToLower();
             // Проверка, что файл не является системным
             if (!regex1.IsMatch(fName) && !regex2.IsMatch(fName) && !regex3.IsMatch(fName) && !regex4.IsMatch(fName))
-                Items.Add(new PilotFile(file));
+            {
+                PilotFile _file = new PilotFile(file);
+
+                int index = GetPositionIndex(_file);
+
+                if (index < Items.Count)
+                    Items.Insert(index, _file);
+                else
+                    Items.Add(new PilotFile(file));
+            }
+        }
+
+
+        /// <summary>
+        /// Получить сортировочный индекс добавляемого файла
+        /// </summary>
+        /// <param name="child">добавляемый файл</param>
+        private int GetPositionIndex(PilotFile child)
+        {
+            int index = 0;
+            while (index < Items.Count && Items[index].FileName.CompareTo(child.FileName) <= 0)
+            {
+                index++;
+            }
+
+            return index;
         }
 
 

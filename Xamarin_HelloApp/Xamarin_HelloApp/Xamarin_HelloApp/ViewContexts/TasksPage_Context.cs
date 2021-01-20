@@ -30,6 +30,24 @@ namespace PilotMobile.ViewContexts
         private TasksPage page;
 
 
+        private PageStatus status = PageStatus.Free;
+        /// <summary>
+        /// Состояние страницы
+        /// </summary>
+        public PageStatus Status
+        {
+            get => status;
+            private set
+            {
+                if (status != value)
+                {
+                    status = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
         /// <summary>
         /// Наименование приложения
         /// </summary>
@@ -199,6 +217,9 @@ namespace PilotMobile.ViewContexts
         /// </summary>
         private async void GetTaskList()
         {
+            if (Status == PageStatus.Busy)
+                return;
+
             try
             {
                 Exception ex = Global.Reconnect();
@@ -211,6 +232,8 @@ namespace PilotMobile.ViewContexts
 
                     return;
                 }
+
+                Status = PageStatus.Busy;
 
                 tasks.Clear();
                 _allTasks.Clear();
@@ -323,6 +346,7 @@ namespace PilotMobile.ViewContexts
             Device.BeginInvokeOnMainThread(async () =>
             {
                 IsRefreshing = true;
+                Status = PageStatus.Busy;
             });
 
             try
@@ -389,6 +413,7 @@ namespace PilotMobile.ViewContexts
             Device.BeginInvokeOnMainThread(async () =>
             {
                 IsRefreshing = false;
+                Status = PageStatus.Free;
             });
         }
 
