@@ -712,12 +712,12 @@ namespace PilotMobile.ViewContexts
                             break;
 
                         case Ascon.Pilot.DataClasses.MAttrType.Decimal:
-                            query += @"i64\." + attribute.Name + @$":(&#64;{item.Value}) OR ";
+                            query += @"i64\." + attribute.Name + $":(&#64;" + item.Value +") OR ";
                             _attributeAdded = true;
                             break;
 
                         case Ascon.Pilot.DataClasses.MAttrType.Double:
-                            query += @"d\." + attribute.Name + @$":(&#d;{item.Value}) OR ";
+                            query += @"d\." + attribute.Name + $":(&#d;" + item.Value + ") OR ";
                             _attributeAdded = true;
                             break;
 

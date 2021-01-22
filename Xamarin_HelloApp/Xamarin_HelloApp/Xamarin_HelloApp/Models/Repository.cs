@@ -26,32 +26,32 @@ namespace Xamarin_HelloApp.Models
         List<MUserState> GetStates();
         //List<Tuple<Guid, DChangesetData[]>> GetNotifies();
         DNotificationChangeset GetNotifies();
-        public void AcceptChanges(Guid changesetId, Guid ruleId);
-        public void PrintChangeDetails(IEnumerable<DChangesetData> changes, DRule rule, NotifyResult result);
+        void AcceptChanges(Guid changesetId, Guid ruleId);
+        void PrintChangeDetails(IEnumerable<DChangesetData> changes, DRule rule, NotifyResult result);
 
         /// <summary>
         /// Задать класс удаленного подключения
         /// </summary>
         /// <param name="client">класс удаленного подключения</param>
-        public void SetHttpClient(HttpPilotClient client);
+        void SetHttpClient(HttpPilotClient client);
 
         /// <summary>
         /// Получить список машин состояний
         /// </summary>
-        public List<MUserStateMachine> GetStateMachines();
+        List<MUserStateMachine> GetStateMachines();
 
         /// <summary>
         /// Задать Backend
         /// </summary>
         /// <param name="backend"></param>
-        public void SetBackend(Backend backend);
+        void SetBackend(Backend backend);
 
         /// <summary>
         /// Получить интерфейс для изменения данных
         /// </summary>
-        public IModifier GetModifier();
+        IModifier GetModifier();
 
-        public void SaveChanges(DChangesetData dChangesetData);
+        void SaveChanges(DChangesetData dChangesetData);
 
     }
 

@@ -28,7 +28,7 @@ namespace Xamarin_HelloApp.iOS
             CachedImageRenderer.Init();
             var ignore = typeof(SvgCachedImage);
 
-            LoadApplication(new App());
+            LoadApplication(new App(""));
 
             return base.FinishedLaunching(app, options);
         }

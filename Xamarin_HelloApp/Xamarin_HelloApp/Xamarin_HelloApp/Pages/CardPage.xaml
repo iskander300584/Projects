@@ -60,8 +60,8 @@
 
                         <Label HorizontalOptions="EndAndExpand" />
 
-                        <!-- Кнопка Редактировать -->
-                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End" IsVisible="{Binding ChangeStateVisible}" 
+                        <!-- Кнопка Редактировать IsVisible="{Binding ChangeStateVisible}"  -->
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End" IsVisible="False" 
                                      Command="{Binding EditCommand}" >
                             <ImageButton.Style>
                                 <Style TargetType="ImageButton">

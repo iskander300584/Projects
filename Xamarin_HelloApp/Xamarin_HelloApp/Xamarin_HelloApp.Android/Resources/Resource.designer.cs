@@ -10446,109 +10446,115 @@ namespace Xamarin_HelloApp.Droid
 			public const int pilot_icon = 2131165377;
 			
 			// aapt resource value: 0x7F0700C2
-			public const int plus = 2131165378;
+			public const int pilot_icon_ascon = 2131165378;
 			
 			// aapt resource value: 0x7F0700C3
-			public const int plus_gray = 2131165379;
+			public const int pilot_icon_sz = 2131165379;
 			
 			// aapt resource value: 0x7F0700C4
-			public const int ppt = 2131165380;
+			public const int plus = 2131165380;
 			
 			// aapt resource value: 0x7F0700C5
-			public const int rar = 2131165381;
+			public const int plus_gray = 2131165381;
 			
 			// aapt resource value: 0x7F0700C6
-			public const int refresh = 2131165382;
+			public const int ppt = 2131165382;
 			
 			// aapt resource value: 0x7F0700C7
-			public const int refresh_gray = 2131165383;
+			public const int rar = 2131165383;
 			
 			// aapt resource value: 0x7F0700C8
-			public const int renga = 2131165384;
+			public const int refresh = 2131165384;
 			
 			// aapt resource value: 0x7F0700C9
-			public const int save = 2131165385;
+			public const int refresh_gray = 2131165385;
 			
 			// aapt resource value: 0x7F0700CA
-			public const int save_gray = 2131165386;
+			public const int renga = 2131165386;
 			
 			// aapt resource value: 0x7F0700CB
-			public const int Screen_01 = 2131165387;
+			public const int save = 2131165387;
 			
 			// aapt resource value: 0x7F0700CC
-			public const int search = 2131165388;
+			public const int save_gray = 2131165388;
 			
 			// aapt resource value: 0x7F0700CD
-			public const int sfprogressbar_determinate_linear = 2131165389;
+			public const int Screen_01 = 2131165389;
 			
 			// aapt resource value: 0x7F0700CE
-			public const int sfprogressbar_indeterminate_circular = 2131165390;
+			public const int search = 2131165390;
 			
 			// aapt resource value: 0x7F0700CF
-			public const int sfprogressbar_indeterminate_linear = 2131165391;
+			public const int sfprogressbar_determinate_linear = 2131165391;
 			
 			// aapt resource value: 0x7F0700D0
-			public const int SignaturePadBottomCorner = 2131165392;
+			public const int sfprogressbar_indeterminate_circular = 2131165392;
 			
 			// aapt resource value: 0x7F0700D1
-			public const int SignaturepadRoundedCorners = 2131165393;
+			public const int sfprogressbar_indeterminate_linear = 2131165393;
 			
 			// aapt resource value: 0x7F0700D2
-			public const int SignaturePadTopCorner = 2131165394;
+			public const int SignaturePadBottomCorner = 2131165394;
 			
 			// aapt resource value: 0x7F0700D3
-			public const int splash_screen = 2131165395;
+			public const int SignaturepadRoundedCorners = 2131165395;
 			
 			// aapt resource value: 0x7F0700D4
-			public const int sw = 2131165396;
+			public const int SignaturePadTopCorner = 2131165396;
 			
 			// aapt resource value: 0x7F0700D5
-			public const int sxc = 2131165397;
+			public const int splash_screen = 2131165397;
 			
 			// aapt resource value: 0x7F0700D6
-			public const int sxi = 2131165398;
+			public const int sw = 2131165398;
 			
 			// aapt resource value: 0x7F0700D7
-			public const int sxw = 2131165399;
+			public const int sxc = 2131165399;
 			
 			// aapt resource value: 0x7F0700D8
-			public const int tap = 2131165400;
+			public const int sxi = 2131165400;
 			
 			// aapt resource value: 0x7F0700D9
-			public const int tooltip_frame_dark = 2131165401;
+			public const int sxw = 2131165401;
 			
 			// aapt resource value: 0x7F0700DA
-			public const int tooltip_frame_light = 2131165402;
+			public const int tap = 2131165402;
 			
 			// aapt resource value: 0x7F0700DB
-			public const int txt = 2131165403;
+			public const int tooltip_frame_dark = 2131165403;
 			
 			// aapt resource value: 0x7F0700DC
-			public const int undo = 2131165404;
+			public const int tooltip_frame_light = 2131165404;
 			
 			// aapt resource value: 0x7F0700DD
-			public const int undo_gray = 2131165405;
+			public const int txt = 2131165405;
 			
 			// aapt resource value: 0x7F0700DE
-			public const int up = 2131165406;
-			
-			// aapt resource value: 0x7F0700E0
-			public const int upArrow = 2131165408;
-			
-			// aapt resource value: 0x7F0700E1
-			public const int upArrow_gray = 2131165409;
+			public const int undo = 2131165406;
 			
 			// aapt resource value: 0x7F0700DF
-			public const int up_gray = 2131165407;
+			public const int undo_gray = 2131165407;
+			
+			// aapt resource value: 0x7F0700E0
+			public const int up = 2131165408;
 			
 			// aapt resource value: 0x7F0700E2
-			public const int Viewmode = 2131165410;
+			public const int upArrow = 2131165410;
 			
 			// aapt resource value: 0x7F0700E3
-			public const int xls = 2131165411;
+			public const int upArrow_gray = 2131165411;
+			
+			// aapt resource value: 0x7F0700E1
+			public const int up_gray = 2131165409;
 			
 			// aapt resource value: 0x7F0700E4
-			public const int zip = 2131165412;
+			public const int Viewmode = 2131165412;
+			
+			// aapt resource value: 0x7F0700E5
+			public const int xls = 2131165413;
+			
+			// aapt resource value: 0x7F0700E6
+			public const int zip = 2131165414;
 			
 			static Drawable()
 			{

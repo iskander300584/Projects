@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <AssemblyName>Pilot Mobile</AssemblyName>
     <ApplicationIcon>pilot.ico</ApplicationIcon>
@@ -14,8 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ascon.Pilot.Common" Version="20.22.0" />
-    <PackageReference Include="Ascon.Pilot.DataClasses" Version="20.22.0" />
     <PackageReference Include="Ascon.Pilot.Server.Api" Version="20.59.0" />
     <PackageReference Include="Plugin.Toast" Version="2.2.0" />
     <PackageReference Include="Spire.PDF" Version="6.12.10" />
@@ -79,6 +77,45 @@
     <EmbeddedResource Update="Pages\XpsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Pages\AuthorizePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Pages\CardPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Pages\Carousels\DocumentCarrousel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Pages\Carousels\MainCarrouselPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Pages\Carousels\TaskCarrousel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Pages\DocsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Pages\HelpPages\Help_01_MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Pages\MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Pages\SearchQueryPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Pages\TasksPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Pages\XpsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
   </ItemGroup>
 
 

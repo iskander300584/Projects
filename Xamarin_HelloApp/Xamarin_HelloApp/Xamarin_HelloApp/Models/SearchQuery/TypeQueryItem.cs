@@ -39,7 +39,7 @@ namespace PilotMobile.Models.SearchQuery
         /// </summary>
         protected override void GetStringValue()
         {
-            stringValue = @$"&#32;{type.ID}";
+            stringValue = $"&#32;" + type.ID;
         }
     }
 }

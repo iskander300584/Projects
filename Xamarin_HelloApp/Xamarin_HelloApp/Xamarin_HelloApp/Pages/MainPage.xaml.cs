@@ -279,7 +279,7 @@ namespace Xamarin_HelloApp
         {
             if (context.FirstLaunch)
             {
-                int _savedVersion = GetVersionNumber(CrossSettings.Current.GetValueOrDefault("helpVersion", ""));
+                /*int _savedVersion = GetVersionNumber(CrossSettings.Current.GetValueOrDefault("helpVersion", ""));
 
                 if (_savedVersion < Global.DoNotShowHelp_Version)
                 {
@@ -299,7 +299,7 @@ namespace Xamarin_HelloApp
                         Thread thread = new Thread(TrialExit);
                         thread.Start();
                     }
-                }
+                }*/
 
                 context.FirstLaunch = false;
             }

@@ -43,6 +43,9 @@ namespace Xamarin_HelloApp.ViewContexts
         private bool reconnect;
 
 
+        // АСКОН: http://ecm.ascon.ru:5545
+        // Северо-запад: 
+        // Демо: 
         private string server = @"http://ecm.ascon.ru:5545";
         /// <summary>
         /// Имя сервера

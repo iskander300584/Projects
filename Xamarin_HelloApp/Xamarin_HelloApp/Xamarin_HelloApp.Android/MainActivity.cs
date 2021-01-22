@@ -12,7 +12,7 @@ using Android.Content;
 
 namespace Xamarin_HelloApp.Droid
 {
-    [Activity(Label = "Pilot-FLY", Icon = "@drawable/pilot_icon", Theme = "@style/MainTheme", LaunchMode = LaunchMode.SingleTask, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
+    [Activity(Label = "Pilot-FLY ASCON", Icon = "@drawable/pilot_icon_ascon", Theme = "@style/MainTheme", LaunchMode = LaunchMode.SingleTask, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
     /*[IntentFilter (new[] { Intent.ActionView },
         Categories = new[] { 
         Intent.CategoryBrowsable, Intent.CategoryDefault},
@@ -43,10 +43,6 @@ namespace Xamarin_HelloApp.Droid
 
             CachedImageRenderer.Init(true);
             var ignore = typeof(SvgCachedImage);
-
-            //string? url = null;
-            //if(this.Intent != null && this.Intent.Data != null)
-            //    url = this.Intent.Data.ToString();
 
             this.Window.AddFlags(WindowManagerFlags.Fullscreen);
 

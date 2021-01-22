@@ -13,7 +13,7 @@ using System.Threading;
 
 namespace Xamarin_HelloApp.Droid
 {
-    [Activity(Label = "Pilot-FLY", MainLauncher = true, Theme = "@style/SplashTheme", LaunchMode = LaunchMode.SingleInstance, NoHistory = true )]
+    [Activity(Label = "Pilot-FLY ASCON", MainLauncher = true, Theme = "@style/SplashTheme", LaunchMode = LaunchMode.SingleInstance, NoHistory = true )]
     [IntentFilter(new[] { Intent.ActionView },
         Categories = new[] {
         Intent.CategoryBrowsable, Intent.CategoryDefault},
@@ -45,6 +45,7 @@ namespace Xamarin_HelloApp.Droid
                     App.Current.Properties.Add("url", url);
             }
 
+            Thread.Sleep(1000);
             StartActivity(intent);
         }
     }
