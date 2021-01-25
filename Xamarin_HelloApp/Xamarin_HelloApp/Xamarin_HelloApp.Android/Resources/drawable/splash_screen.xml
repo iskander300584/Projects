@@ -15,10 +15,10 @@
 		android:height="225dp" -->
 	<item
 		android:gravity="center"
-		android:width="200dp"
+		android:width="150dp"
 		android:height="225dp" >
 		<bitmap
-			android:src="@drawable/pilot_fly_logo_afterNY"
+			android:src="@drawable/pilot_fly_logo"
 			android:tileMode="disabled"
 			/>
 	</item>

@@ -392,7 +392,20 @@ namespace PilotMobile.ViewContexts
 
                     foreach (Guid guid in _taskGuids)
                         if (!_allTasks.Any(t => t.Guid == guid))
-                            _allTasks.Add(new PilotTask(guid));
+                        {
+                            PilotTask task = new PilotTask(guid);
+
+                            int index = 0;
+                            while (index < _allTasks.Count && (task.DateOfAssignment < _allTasks[index].DateOfAssignment || (task.DateOfAssignment == _allTasks[index].DateOfAssignment && _allTasks[index].VisibleName.CompareTo(task.VisibleName) <= 0)))
+                            {
+                                index++;
+                            }
+
+                            if (_allTasks.Count == 0 || index >= _allTasks.Count)
+                                _allTasks.Add(new PilotTask(guid));
+                            else
+                                _allTasks.Insert(index, task);
+                        }
 
                     SetMarkers();
                 }

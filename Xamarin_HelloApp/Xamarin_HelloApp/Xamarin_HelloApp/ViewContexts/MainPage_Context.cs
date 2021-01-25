@@ -779,6 +779,7 @@ namespace Xamarin_HelloApp.ViewContexts
             });
         }
 
+
         /// <summary>
         /// Получить сортировочный индекс вставляемого элемента
         /// </summary>
@@ -789,8 +790,14 @@ namespace Xamarin_HelloApp.ViewContexts
             if (child.Type.IsTask)
                 return parent.Children.Count;
 
+            //int index = 0;
+            //while (index < parent.Children.Count && ((!parent.Children[index].Type.IsDocument && child.Type.IsDocument) || (!parent.Children[index].Type.IsDocument && !child.Type.IsDocument && parent.Children[index].VisibleName.CompareTo(child.VisibleName) <= 0) || (parent.Children[index].Type.IsDocument && child.Type.IsDocument && parent.Children[index].VisibleName.CompareTo(child.VisibleName) <= 0)))
+            //{
+            //    index++;
+            //}
+
             int index = 0;
-            while (index < parent.Children.Count && ((!parent.Children[index].Type.IsDocument && child.Type.IsDocument) || (!parent.Children[index].Type.IsDocument && !child.Type.IsDocument && parent.Children[index].VisibleName.CompareTo(child.VisibleName) <= 0) || (parent.Children[index].Type.IsDocument && child.Type.IsDocument && parent.Children[index].VisibleName.CompareTo(child.VisibleName) <= 0)))
+            while (index < parent.Children.Count && (parent.Children[index].Type.MType.Sort < child.Type.MType.Sort || (parent.Children[index].Type.MType.Sort == child.Type.MType.Sort && parent.Children[index].VisibleName.CompareTo(child.VisibleName) <= 0)))
             {
                 index++;
             }

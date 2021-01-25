@@ -46,6 +46,12 @@ namespace PilotMobile.AppContext
 
 
         /// <summary>
+        /// Имя атрибута "Дата выдачи"
+        /// </summary>
+        public const string DateOfAssignmentAttribute = "dateOfAssignment";
+
+
+        /// <summary>
         /// Имя атрибута "Аудиторы"
         /// </summary>
         public const string AuditorsAttribute = "auditors";

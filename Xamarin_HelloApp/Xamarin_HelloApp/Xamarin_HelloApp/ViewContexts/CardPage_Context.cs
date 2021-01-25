@@ -256,7 +256,7 @@ namespace PilotMobile.ViewContexts
 
                 views.Clear();
 
-                foreach (PAttribute attribute in pilotObject.Type.Attributes.Where(a => !a.IsSystem))
+                foreach (PAttribute attribute in pilotObject.Type.Attributes.Where(a => !a.IsSystem).OrderBy(at => at.MAttribute.DisplaySortOrder))
                 {
                     Label label = new Label
                     {

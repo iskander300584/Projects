@@ -10,7 +10,7 @@ namespace PilotMobile.AppContext
         /// <summary>
         /// Имя демонстрационного сервера http://vm-win10-1:5545
         /// </summary>
-        public const string DemoServer = @"http://volga.ascon.ru:5545";
+        public const string DemoServer = @"http://vm-win10-1:5545";
 
 
         /// <summary>
@@ -34,6 +34,6 @@ namespace PilotMobile.AppContext
         /// <summary>
         /// Код демонстрационной лицензии
         /// </summary>
-        public const int DemoLicence = 101;
+        public const int DemoLicence = 100;
     }
 }

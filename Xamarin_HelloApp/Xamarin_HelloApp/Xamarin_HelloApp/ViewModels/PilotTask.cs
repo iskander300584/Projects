@@ -126,6 +126,24 @@ namespace PilotMobile.ViewModels
         }
 
 
+        private DateTime dateOfAssignment;
+        /// <summary>
+        /// Дата выдачи
+        /// </summary>
+        public DateTime DateOfAssignment
+        {
+            get => dateOfAssignment;
+            set
+            {
+                if(dateOfAssignment != value)
+                {
+                    dateOfAssignment = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
         private MUserStateMachine stateMachine = null;
         /// <summary>
         /// Соответствующая машина состояний
@@ -209,6 +227,13 @@ namespace PilotMobile.ViewModels
             DValue value = TryGetAttribute(TaskConstants.TitleAttribute);
             if (value != null)
                 Title = value.StrValue;
+
+            // Дата выдачи
+            value = TryGetAttribute(TaskConstants.DateOfAssignmentAttribute);
+            if (value != null)
+                DateOfAssignment = (DateTime)value.DateValue;
+            else
+                DateOfAssignment = DateTime.MinValue;
 
             // Срок выполнения
             value = TryGetAttribute(TaskConstants.DeadlineAttribute);
