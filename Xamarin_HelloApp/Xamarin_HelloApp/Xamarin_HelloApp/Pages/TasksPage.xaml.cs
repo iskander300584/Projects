@@ -77,7 +77,10 @@ namespace PilotMobile.Pages
             {
                 bool result = await DisplayMessage("Внимание!", "Закрыть программу?", true);
                 if (result)
+                {
+                    Global.DALContext.Repository.Disconnect();
                     System.Diagnostics.Process.GetCurrentProcess().CloseMainWindow();
+                }
             });
 
             return true;

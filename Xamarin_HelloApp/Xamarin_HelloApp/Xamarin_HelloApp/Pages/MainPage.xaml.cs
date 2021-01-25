@@ -11,6 +11,7 @@ using System.Threading;
 using Plugin.Settings;
 using PilotMobile.Pages.HelpPages;
 
+
 namespace Xamarin_HelloApp
 {
     /// <summary>
@@ -180,7 +181,10 @@ namespace Xamarin_HelloApp
                 {
                     bool result = await DisplayMessage("Внимание!", "Закрыть программу?", true);
                     if (result)
+                    {
+                        Global.DALContext.Repository.Disconnect();
                         System.Diagnostics.Process.GetCurrentProcess().CloseMainWindow();
+                    }
                 });
             }
 

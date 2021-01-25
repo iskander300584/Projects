@@ -53,6 +53,8 @@ namespace Xamarin_HelloApp.Models
 
         void SaveChanges(DChangesetData dChangesetData);
 
+        void Disconnect();
+
     }
 
     class Repository : IRepository, IRemoteStorageListener, IRemoteServiceListener
@@ -355,6 +357,15 @@ namespace Xamarin_HelloApp.Models
             {
                 ;
             }
+        }
+
+        public void Disconnect()
+        {
+            try
+            {
+                _client.Disconnect();
+            }
+            catch { }
         }
     }
 }

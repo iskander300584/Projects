@@ -1080,6 +1080,7 @@ namespace Xamarin_HelloApp.ViewContexts
                     break;
 
                 case StringConstants.Exit:
+                    Global.DALContext.Repository.Disconnect();
                     System.Diagnostics.Process.GetCurrentProcess().CloseMainWindow();
                     break;
             }

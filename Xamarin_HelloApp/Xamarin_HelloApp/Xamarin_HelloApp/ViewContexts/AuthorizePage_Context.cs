@@ -66,6 +66,9 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
+        // АСКОН: pilot_ascon
+        // Северо-запад: 
+        // Демо:
         private string db = "pilot_ascon";
         /// <summary>
         /// Имя базы данных
@@ -86,7 +89,9 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        private string login = ""; // "ryapolov_an"
+        // Я: ryapolov_an
+        // Демо:
+        private string login = "";
         /// <summary>
         /// Имя пользователя
         /// </summary>
@@ -106,7 +111,9 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        private string password = ""; // "sSR4mzCQ"
+        // Я: sSR4mzCQ
+        // Демо:
+        private string password = "";
         /// <summary>
         /// Пароль
         /// </summary>
