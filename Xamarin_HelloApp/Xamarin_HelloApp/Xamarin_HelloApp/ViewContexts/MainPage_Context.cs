@@ -1068,7 +1068,8 @@ namespace Xamarin_HelloApp.ViewContexts
             switch(action)
             {
                 case StringConstants.Authentificate:
-                    App.Current.MainPage = new AuthorizePage(true);
+                    if (!Global.IsDemo)
+                        App.Current.MainPage = new AuthorizePage(true);
                     break;
 
                 case StringConstants.ClearCache:

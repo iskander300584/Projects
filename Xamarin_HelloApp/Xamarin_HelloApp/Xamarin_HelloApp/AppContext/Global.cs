@@ -59,6 +59,18 @@ namespace Xamarin_HelloApp.AppContext
 
 
         /// <summary>
+        /// Демо версия приложения для подключения к демонстрационной БД
+        /// </summary>
+        public static bool IsDemo = false;
+
+
+        /// <summary>
+        /// Признак локализованной версии
+        /// </summary>
+        public static LocalizedVersion Localized = LocalizedVersion.SeveroZapad;
+
+
+        /// <summary>
         /// Минимальная версия, при которой не отображается подсказка
         /// </summary>
         public const int DoNotShowHelp_Version = 10518;
@@ -298,7 +310,6 @@ namespace Xamarin_HelloApp.AppContext
         {
             return await page.DisplayAlert(caption, message + StringConstants.SendErrorMessage, StringConstants.Send, StringConstants.DontSend);
         }
-
 
         #endregion
     }

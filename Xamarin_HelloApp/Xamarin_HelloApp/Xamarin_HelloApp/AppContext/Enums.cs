@@ -55,4 +55,26 @@ namespace PilotMobile.AppContext
         /// </summary>
         Busy
     }
+
+
+    /// <summary>
+    /// Тип локализованной версии программы
+    /// </summary>
+    public enum LocalizedVersion
+    {
+        /// <summary>
+        /// Без локализации
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// АСКОН
+        /// </summary>
+        Ascon,
+
+        /// <summary>
+        /// АСКОН северо-запад
+        /// </summary>
+        SeveroZapad
+    }
 }

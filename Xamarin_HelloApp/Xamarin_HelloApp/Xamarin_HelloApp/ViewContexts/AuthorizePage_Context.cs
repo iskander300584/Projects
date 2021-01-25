@@ -12,6 +12,7 @@ using Xamarin_HelloApp.AppContext;
 using Xamarin_HelloApp.Models;
 using Xamarin_HelloApp.Pages;
 
+
 namespace Xamarin_HelloApp.ViewContexts
 {
     /// <summary>
@@ -45,8 +46,8 @@ namespace Xamarin_HelloApp.ViewContexts
 
         // АСКОН: http://ecm.ascon.ru:5545
         // Северо-запад: 
-        // Демо: 
-        private string server = @"http://ecm.ascon.ru:5545";
+        // Демо: http://vm-win10-1:5545   http://volga.ascon.ru:5545
+        private string server = "";
         /// <summary>
         /// Имя сервера
         /// </summary>
@@ -68,8 +69,8 @@ namespace Xamarin_HelloApp.ViewContexts
 
         // АСКОН: pilot_ascon
         // Северо-запад: 
-        // Демо:
-        private string db = "pilot_ascon";
+        // Демо: pilot-bim_ru
+        private string db = "";
         /// <summary>
         /// Имя базы данных
         /// </summary>
@@ -90,7 +91,7 @@ namespace Xamarin_HelloApp.ViewContexts
 
 
         // Я: ryapolov_an
-        // Демо:
+        // Демо: ascon
         private string login = "";
         /// <summary>
         /// Имя пользователя
@@ -112,7 +113,7 @@ namespace Xamarin_HelloApp.ViewContexts
 
 
         // Я: sSR4mzCQ
-        // Демо:
+        // Демо: zzr400
         private string password = "";
         /// <summary>
         /// Пароль
@@ -282,6 +283,36 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
+        private bool isServerEnabled = true;
+        /// <summary>
+        /// Доступность имени сервера для редактирования
+        /// </summary>
+        public bool IsServerEnabled
+        {
+            get => isServerEnabled;
+        }
+
+
+        private bool isDbEnabled = true;
+        /// <summary>
+        /// Доступность имени БД для редактирования
+        /// </summary>
+        public bool IsDbEnabled
+        {
+            get => isDbEnabled;
+        }
+
+
+        private bool isAccountEnabled = true;
+        /// <summary>
+        /// Доступность учетной записи для редактирования
+        /// </summary>
+        public bool IsAccountEnabled
+        {
+            get => isAccountEnabled;
+        }
+
+
         #endregion
        
 
@@ -293,6 +324,28 @@ namespace Xamarin_HelloApp.ViewContexts
             page = authorizePage;
             this.reconnect = reconnect;
             SetLicenses();
+
+            if(Global.Localized != LocalizedVersion.None)
+            {
+                isServerEnabled = false;
+                isDbEnabled = false;
+
+                string[] array = GetLocalizeData();
+                Server = array[0];
+                DB = array[1];
+            }
+            else if(Global.IsDemo)
+            {
+                isServerEnabled = false;
+                isDbEnabled = false;
+                isAccountEnabled = false;
+
+                Server = DemoConstants.DemoServer;
+                DB = DemoConstants.DemoDB;
+                Login = DemoConstants.DemoAccount;
+                Password = DemoConstants.DemoPassword;
+                SelectedLicenseIndex = 2;
+            }
 
             connectCommand = new Command(CheckConnection);
             CheckConnection_CanExecute();
@@ -437,6 +490,35 @@ namespace Xamarin_HelloApp.ViewContexts
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+
+        /// <summary>
+        /// Получить учетные данные локализованной версии
+        /// </summary>
+        public string[] GetLocalizeData()
+        {
+            string[] array = new string[2];
+
+            switch (Global.Localized)
+            {
+                case LocalizedVersion.Ascon:
+                    array[0] = @"http://ecm.ascon.ru:5545";
+                    array[1] = "pilot_ascon";
+                    break;
+
+                case LocalizedVersion.SeveroZapad:
+                    array[0] = @"http://213.33.246.218:6545";
+                    array[1] = "demo";
+                    break;
+
+                default:
+                    array[0] = "";
+                    array[1] = "";
+                    break;
+            }
+
+            return array;
         }
 
 

@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PilotMobile.Pages.SearchQueryPage"
              xmlns:conv="clr-namespace:PilotMobile.Converters"
-             xmlns:local="clr-namespace:PilotMobile.Models.SearchQuery" NavigationPage.HasNavigationBar="False">
+             xmlns:local="clr-namespace:PilotMobile.Models.SearchQuery" NavigationPage.HasNavigationBar="False"
+             Background="White">
 
     <ContentPage.Resources>
         <!-- Возвращает красный цвет, если переданная строка пустая -->

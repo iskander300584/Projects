@@ -183,6 +183,7 @@ namespace PilotMobile.ViewContexts
         {
             if (CanNext)
             {
+                //page.BackgroundImageSource = ImagesCollection[++CurrentImage];
                 ImageSourceName = ImagesCollection[++CurrentImage];
             }
             else

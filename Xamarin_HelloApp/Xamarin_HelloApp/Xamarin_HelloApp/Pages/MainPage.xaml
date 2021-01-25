@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin_HelloApp.MainPage"
              xmlns:ffimage="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms"
-             xmlns:conv="clr-namespace:Xamarin_HelloApp.Converters" NavigationPage.HasNavigationBar="False" Appearing="OnAppearing">
+             xmlns:conv="clr-namespace:Xamarin_HelloApp.Converters" NavigationPage.HasNavigationBar="False" Appearing="OnAppearing"
+             Background="White">
 
     <ContentPage.Resources>
         <!-- Преобразование состояния подключения в пиктограмму -->

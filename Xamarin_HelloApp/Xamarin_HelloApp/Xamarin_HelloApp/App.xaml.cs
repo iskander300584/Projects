@@ -1,4 +1,6 @@
-﻿using PilotMobile.Pages;
+﻿using PilotMobile.AppContext;
+using PilotMobile.Pages;
+using PilotMobile.Pages.HelpPages;
 using Plugin.Settings;
 using System;
 using System.IO;
@@ -20,6 +22,9 @@ namespace Xamarin_HelloApp
         public App(string url)
         {
             InitializeComponent();
+
+            //MainPage = new Help_01_MainPage();
+            //MainPage.Focus();
 
             Global.DALContext = new Context();
 
@@ -69,6 +74,11 @@ namespace Xamarin_HelloApp
         /// </summary>
         private Credentials TryGetCredentials()
         {
+            if(Global.IsDemo)
+            {
+                return Credentials.GetConnectionCredentials(DemoConstants.DemoServer, DemoConstants.DemoDB, DemoConstants.DemoAccount, DemoConstants.DemoPassword, DemoConstants.DemoLicence);
+            }
+
             object temp = "";
             string server = "", db = "", login = "", password = "";
             int license = 0;

@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="PilotMobile.Pages.TasksPage"
              xmlns:ffimage="clr-namespace:FFImageLoading.Svg.Forms;assembly=FFImageLoading.Svg.Forms"
-             NavigationPage.HasNavigationBar="False" >
+             NavigationPage.HasNavigationBar="False" 
+             Background="White">
     
     <ContentPage.Content>
         <StackLayout>

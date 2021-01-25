@@ -4,6 +4,7 @@
              x:Class="PilotMobile.Pages.HelpPages.Help_01_MainPage" Appearing="OnAppearing" Disappearing="OnDisappearing">
     <ContentPage.Content>
         <RelativeLayout x:Name="mainLayout">
+
             <Image x:Name="helpImage" Aspect="Fill" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1}" >
                 <Image.Source>
                     <FileImageSource File="{Binding ImageSourceName}" />

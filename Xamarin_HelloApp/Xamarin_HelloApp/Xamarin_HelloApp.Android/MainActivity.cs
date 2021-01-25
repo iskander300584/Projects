@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Android.App;
 using Android.Content.PM;
 using Android.Runtime;
@@ -10,24 +9,17 @@ using FFImageLoading.Forms.Platform;
 using FFImageLoading.Svg.Forms;
 using Android.Content;
 
+
 namespace Xamarin_HelloApp.Droid
 {
-    [Activity(Label = "Pilot-FLY ASCON", Icon = "@drawable/pilot_icon_ascon", Theme = "@style/MainTheme", LaunchMode = LaunchMode.SingleTask, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
-    /*[IntentFilter (new[] { Intent.ActionView },
-        Categories = new[] { 
+
+    [Activity(Label = "Pilot-FLY Main", MainLauncher = false, Icon = "@drawable/pilot_icon_ascon", Theme = "@style/MainTheme", LaunchMode = LaunchMode.SingleTask, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
+    /*[IntentFilter(new[] { Intent.ActionView },
+        Categories = new[] {
         Intent.CategoryBrowsable, Intent.CategoryDefault},
         DataSchemes = new[] { "http", "https" },
-        //DataHost = "ecm.ascon.ru",
-        //DataPort = "5545",
-
-        //DataScheme = ".*",
-        //DataHost = ".*",
-        //DataPort = ".*",
-        //DataPathPrefix = "/url"
-
         DataHost = "*",
         DataPathPrefix = "/url"
-       // DataPathPattern = ".*\\\\.*\\url.*"
         )]*/
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
@@ -54,6 +46,23 @@ namespace Xamarin_HelloApp.Droid
             }
             catch { }
 
+            /*string url = "";
+            if (this.Intent != null && this.Intent.Data != null)
+                url = this.Intent.Data.ToString();
+
+            if (App.Current != null)
+            {
+                //App.Current.Properties["url"] = url;
+
+                object url_temp = "";
+                if (App.Current.Properties.TryGetValue("url", out url_temp))
+                {
+                    App.Current.Properties["url"] = url;
+                }
+                else
+                    App.Current.Properties.Add("url", url);
+            }*/
+            
             LoadApplication(new App(url));
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -62,5 +71,7 @@ namespace Xamarin_HelloApp.Droid
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+
+        
     }
 }

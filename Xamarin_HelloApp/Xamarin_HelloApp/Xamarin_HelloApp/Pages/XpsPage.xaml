@@ -4,7 +4,8 @@
              x:Class="Xamarin_HelloApp.Pages.XpsPage"
              xmlns:sf="clr-namespace:Syncfusion.SfPdfViewer.XForms;assembly=Syncfusion.SfPdfViewer.XForms"
              Appearing="OnAppearing"
-             NavigationPage.HasNavigationBar="False" >
+             NavigationPage.HasNavigationBar="False" 
+             Background="White">
     
     <ContentPage.Content>
         <StackLayout>
