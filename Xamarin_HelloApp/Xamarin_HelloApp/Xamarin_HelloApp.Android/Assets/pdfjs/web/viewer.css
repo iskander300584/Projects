@@ -295,10 +295,11 @@ html {
 }
 
 body {
-  height: 100%;
-  width: 100%;
-  background-color: #404040;
-  background-image: url(images/texture.png);
+    height: 100%;
+    width: 100%;
+    /*background-color: #404040;*/
+    background-color: #FFFFFF;
+    background-image: url(images/texture.png);
 }
 
 body,
@@ -513,11 +514,12 @@ html[dir='rtl'] #viewerContainer {
 }
 
 #toolbarSidebar {
-  width: 200px;
-  height: 32px;
-  background-color: #424242; /* fallback */
-  background-image: url(images/texture.png),
-                    linear-gradient(hsla(0,0%,30%,.99), hsla(0,0%,25%,.95));
+    width: 200px;
+    height: 32px;
+    /*background-color: #424242; */ /* fallback */
+    background-color: #7A87BF;
+    /*background-color: #F2F2F2;
+    background-image: url(images/texture.png), linear-gradient(hsla(0,0%,30%,.99), hsla(0,0%,25%,.95));*/
 }
 html[dir='ltr'] #toolbarSidebar {
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.25),
@@ -533,11 +535,12 @@ html[dir='rtl'] #toolbarSidebar {
 }
 
 #toolbarContainer, .findbar, .secondaryToolbar {
-  position: relative;
-  height: 32px;
-  background-color: #474747; /* fallback */
-  background-image: url(images/texture.png),
-                    linear-gradient(hsla(0,0%,32%,.99), hsla(0,0%,27%,.95));
+    position: relative;
+    height: 32px;
+    /*background-color: #474747; */ /* fallback */
+    background-color: #7A87BF;
+    /*background-color: #F7F7F7;
+    background-image: url(images/texture.png), linear-gradient(hsla(0,0%,32%,.99), hsla(0,0%,27%,.95));*/
 }
 html[dir='ltr'] #toolbarContainer, .findbar, .secondaryToolbar {
   box-shadow: inset 1px 0 0 hsla(0,0%,100%,.08),
@@ -1605,25 +1608,22 @@ html[dir='rtl'] .outlineItemToggler::before {
   text-align: center;
 }
 
-#overlayContainer > .container > .dialog {
-  display: inline-block;
-  padding: 15px;
-  border-spacing: 4px;
-  color: hsl(0,0%,85%);
-  font-size: 12px;
-  line-height: 14px;
-  background-color: #474747; /* fallback */
-  background-image: url(images/texture.png),
-                    linear-gradient(hsla(0,0%,32%,.99), hsla(0,0%,27%,.95));
-  box-shadow: inset 1px 0 0 hsla(0,0%,100%,.08),
-              inset 0 1px 1px hsla(0,0%,0%,.15),
-              inset 0 -1px 0 hsla(0,0%,100%,.05),
-              0 1px 0 hsla(0,0%,0%,.15),
-              0 1px 1px hsla(0,0%,0%,.1);
-  border: 1px solid hsla(0,0%,0%,.5);
-  border-radius: 4px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-}
+    #overlayContainer > .container > .dialog {
+        display: inline-block;
+        padding: 15px;
+        border-spacing: 4px;
+        color: hsl(0,0%,85%);
+        font-size: 12px;
+        line-height: 14px;
+        background-color: #7A87BF;
+        /*background-color: #474747;*/ /* fallback */
+        /*background-image: url(images/texture.png),
+                    linear-gradient(hsla(0,0%,32%,.99), hsla(0,0%,27%,.95));*/
+        box-shadow: inset 1px 0 0 hsla(0,0%,100%,.08), inset 0 1px 1px hsla(0,0%,0%,.15), inset 0 -1px 0 hsla(0,0%,100%,.05), 0 1px 0 hsla(0,0%,0%,.15), 0 1px 1px hsla(0,0%,0%,.1);
+        border: 1px solid hsla(0,0%,0%,.5);
+        border-radius: 4px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    }
 
 .dialog > .row {
   display: table-row;

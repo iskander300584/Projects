@@ -306,7 +306,7 @@ namespace PilotMobile.ViewContexts
                         {
                             // Загрузка XPS
                             byte[] array = Global.DALContext.Repository.GetFileChunk(file.Body.Id, 0, (int)file.Body.Size);
-                            _xpsName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), new Guid().ToString() + StringConstants.XPS);
+                            _xpsName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Guid.NewGuid().ToString() + StringConstants.XPS);
 
                             File.WriteAllBytes(_xpsName, array);
 
@@ -314,9 +314,6 @@ namespace PilotMobile.ViewContexts
                             {
                                 try
                                 {
-                                    //Spire.License.LicenseProvider.SetLicenseKey("5TV2WACA75Q3");
-                                    //Spire.License.LicenseProvider.LoadLicense();
-
                                     Spire.Pdf.PdfDocument doc = new Spire.Pdf.PdfDocument();
                                     doc.LoadFromFile(_xpsName, Spire.Pdf.FileFormat.XPS);
                                     doc.SaveToFile(_pdfName, Spire.Pdf.FileFormat.PDF);
