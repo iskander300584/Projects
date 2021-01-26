@@ -9,6 +9,7 @@ using Xamarin_HelloApp.Models;
 using Plugin.Messaging;
 using Xamarin.Forms;
 using PilotMobile.AppContext;
+using Plugin.Share;
 
 namespace Xamarin_HelloApp.AppContext
 {
@@ -67,7 +68,7 @@ namespace Xamarin_HelloApp.AppContext
         /// <summary>
         /// Признак локализованной версии
         /// </summary>
-        public static LocalizedVersion Localized = LocalizedVersion.SeveroZapad;
+        public static LocalizedVersion Localized = LocalizedVersion.Ascon;
 
 
         /// <summary>
@@ -168,13 +169,11 @@ namespace Xamarin_HelloApp.AppContext
         /// </summary>
         /// <param name="dObject">объект Pilot</param>
         /// <returns>возвращает True, по окончании операции, False в случае ошибки</returns>
-        public static async Task<bool> CreateLink(DObject dObject)
+        public static async Task<bool> CopyLink(DObject dObject)
         {
             try
             {
-                string link = Credentials.ServerUrl + "/url?id=" + dObject.Id.ToString();
-
-                await Clipboard.SetTextAsync(link);
+                await Clipboard.SetTextAsync(GetLink(dObject));
 
                 CrossToastPopUp.Current.ShowToastSuccess("Ссылка скопирована");
 
@@ -186,6 +185,39 @@ namespace Xamarin_HelloApp.AppContext
 
                 return false;
             }
+        }
+
+
+        /// <summary>
+        /// Поделиться ссылкой
+        /// </summary>
+        /// <param name="dObject">объект Pilot</param>
+        /// <returns>возвращает True, по окончании операции, False в случае ошибки</returns>
+        public static async Task<bool> ShareLink(DObject dObject)
+        {
+            try
+            {
+                await CrossShare.Current.Share(new Plugin.Share.Abstractions.ShareMessage { Url = GetLink(dObject) });
+
+                return true;
+            }
+            catch
+            {
+                CrossToastPopUp.Current.ShowToastError("Ошибка формирования ссылки");
+
+                return false;
+            }
+        }
+
+
+        /// <summary>
+        /// Получить ссылку на объект
+        /// </summary>
+        /// <param name="dObject">объект Pilot</param>
+        /// <returns></returns>
+        private static string GetLink(DObject dObject)
+        {
+            return Credentials.ServerUrl + "/url?id=" + dObject.Id.ToString();
         }
 
 
@@ -247,7 +279,7 @@ namespace Xamarin_HelloApp.AppContext
                 var email = Builder.Build();
 
                 CrossMessaging.Current.EmailMessenger.SendEmail(email);
-
+                
                 return true;
             }
             catch

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin_HelloApp.Pages.XpsPage"
              xmlns:sf="clr-namespace:Syncfusion.SfPdfViewer.XForms;assembly=Syncfusion.SfPdfViewer.XForms"
+             xmlns:pdf="clr-namespace:PilotMobile.PdfViewer"
              Appearing="OnAppearing"
              NavigationPage.HasNavigationBar="False" 
              Background="White">
@@ -39,8 +40,13 @@
                         <!-- Сообщение -->
                         <Label Text="{Binding Message}" IsVisible="{Binding IsMessageVisible}" FontSize="Medium" TextColor="White" VerticalOptions="StartAndExpand" />
 
+                        <Label HorizontalOptions="EndAndExpand" />
+                        
                         <!-- Кнопка Копировать ссылку -->
-                        <ImageButton Source="link.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="EndAndExpand" Clicked="CopyLink" Padding="1" />
+                        <ImageButton Source="link.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End" Clicked="CopyLink" Padding="1"  />
+
+                        <!-- Кнопка Поделиться -->
+                        <ImageButton Source="share.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="End" Clicked="ShareLink" Padding="0" Margin="10,0,0,0" />
 
                     </StackLayout>
 
@@ -49,7 +55,9 @@
             </Frame>
 
             <!-- Просмотрщик PDF -->
-            <sf:SfPdfViewer x:Name="pdfViewer" IsToolbarVisible="False" Margin="5" PageViewMode="Continuous" MaximumZoomPercentage="1000" />
+            <!--<sf:SfPdfViewer x:Name="pdfViewer" IsToolbarVisible="False" Margin="5" PageViewMode="Continuous" MaximumZoomPercentage="1000" />-->
+
+            <pdf:PdfView x:Name="pdfView" Margin="5" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" />
 
         </StackLayout>
     </ContentPage.Content>

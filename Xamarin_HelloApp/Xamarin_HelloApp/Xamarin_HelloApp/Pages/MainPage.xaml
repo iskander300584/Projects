@@ -29,24 +29,7 @@
                     </StackLayout>
 
                     <StackLayout Orientation="Horizontal">
-                        
-                        <!-- Кнопка Обновить -->
-                        <!--<ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" 
-                                     Command="{Binding UpdateCommand}" IsEnabled="{Binding UpdateCanExecute}">
-                            <ImageButton.Style>
-                                <Style TargetType="ImageButton">
-                                    <Style.Triggers>
-                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="True">
-                                            <Setter Property="Source" Value="refresh.png"/>
-                                        </Trigger>
-                                        <Trigger TargetType="ImageButton" Property="IsEnabled" Value="False">
-                                            <Setter Property="Source" Value="refresh_gray.png"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ImageButton.Style>
-                        </ImageButton> -->
-
+                                   
                         
                         <!-- Кнопка Поиск -->
                         <ImageButton Source="search.png" Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" Padding="1"
@@ -143,6 +126,7 @@
                     <DataTemplate>
                         <ViewCell>
                             <ViewCell.ContextActions>
+                                <MenuItem Text="Поделиться" Clicked="Share_Link" />
                                 <MenuItem Text="Копировать ссылку" Clicked="Copy_Link" />
                             </ViewCell.ContextActions>
                             <ViewCell.View>

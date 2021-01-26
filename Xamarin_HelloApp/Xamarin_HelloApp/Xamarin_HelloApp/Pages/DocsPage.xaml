@@ -30,6 +30,7 @@
                     <DataTemplate>
                         <ViewCell>
                             <ViewCell.ContextActions>
+                                <MenuItem Text="Поделиться" Clicked="Share_Link" />
                                 <MenuItem Text="Копировать ссылку" Clicked="Copy_Link" />
                             </ViewCell.ContextActions>
                             <ViewCell.View>

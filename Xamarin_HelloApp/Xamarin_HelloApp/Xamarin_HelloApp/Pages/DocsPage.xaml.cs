@@ -66,7 +66,25 @@ namespace Xamarin_HelloApp.Pages
                 {
                     IPilotObject pilotObject = menuitem.BindingContext as IPilotObject;
 
-                    bool result = await Global.CreateLink(pilotObject.DObject);
+                    bool result = await Global.CopyLink(pilotObject.DObject);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Поделиться ссылкой на объект
+        /// </summary>
+        private async void Share_Link(object sender, System.EventArgs e)
+        {
+            if (sender is MenuItem)
+            {
+                MenuItem menuitem = sender as MenuItem;
+                if (menuitem != null)
+                {
+                    IPilotObject pilotObject = menuitem.BindingContext as IPilotObject;
+
+                    bool result = await Global.ShareLink(pilotObject.DObject);
                 }
             }
         }

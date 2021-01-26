@@ -14,13 +14,6 @@ namespace Xamarin_HelloApp.Droid
 {
 
     [Activity(Label = "Pilot-FLY Main", MainLauncher = false, Icon = "@drawable/pilot_icon_ascon", Theme = "@style/MainTheme", LaunchMode = LaunchMode.SingleTask, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize )]
-    /*[IntentFilter(new[] { Intent.ActionView },
-        Categories = new[] {
-        Intent.CategoryBrowsable, Intent.CategoryDefault},
-        DataSchemes = new[] { "http", "https" },
-        DataHost = "*",
-        DataPathPrefix = "/url"
-        )]*/
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         protected override void OnCreate(Bundle savedInstanceState)
@@ -45,23 +38,6 @@ namespace Xamarin_HelloApp.Droid
                 url = this.Intent.GetStringExtra("url").ToString();
             }
             catch { }
-
-            /*string url = "";
-            if (this.Intent != null && this.Intent.Data != null)
-                url = this.Intent.Data.ToString();
-
-            if (App.Current != null)
-            {
-                //App.Current.Properties["url"] = url;
-
-                object url_temp = "";
-                if (App.Current.Properties.TryGetValue("url", out url_temp))
-                {
-                    App.Current.Properties["url"] = url;
-                }
-                else
-                    App.Current.Properties.Add("url", url);
-            }*/
             
             LoadApplication(new App(url));
         }

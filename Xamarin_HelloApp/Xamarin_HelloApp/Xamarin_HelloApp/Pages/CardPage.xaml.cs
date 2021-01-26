@@ -81,7 +81,16 @@ namespace PilotMobile.Pages
         /// </summary>
         private async void CopyLink(object sender, EventArgs e)
         {
-            bool result = await Global.CreateLink(context.PilotObject.DObject);
+            bool result = await Global.CopyLink(context.PilotObject.DObject);
+        }
+
+
+        /// <summary>
+        /// Поделиться ссылкой
+        /// </summary>
+        private async void ShareLink(object sender, EventArgs e)
+        {
+            bool result = await Global.ShareLink(context.PilotObject.DObject);
         }
     }
 }

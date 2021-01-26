@@ -10494,67 +10494,70 @@ namespace Xamarin_HelloApp.Droid
 			public const int sfprogressbar_indeterminate_linear = 2131165393;
 			
 			// aapt resource value: 0x7F0700D2
-			public const int SignaturePadBottomCorner = 2131165394;
+			public const int share = 2131165394;
 			
 			// aapt resource value: 0x7F0700D3
-			public const int SignaturepadRoundedCorners = 2131165395;
+			public const int SignaturePadBottomCorner = 2131165395;
 			
 			// aapt resource value: 0x7F0700D4
-			public const int SignaturePadTopCorner = 2131165396;
+			public const int SignaturepadRoundedCorners = 2131165396;
 			
 			// aapt resource value: 0x7F0700D5
-			public const int splash_screen = 2131165397;
+			public const int SignaturePadTopCorner = 2131165397;
 			
 			// aapt resource value: 0x7F0700D6
-			public const int sw = 2131165398;
+			public const int splash_screen = 2131165398;
 			
 			// aapt resource value: 0x7F0700D7
-			public const int sxc = 2131165399;
+			public const int sw = 2131165399;
 			
 			// aapt resource value: 0x7F0700D8
-			public const int sxi = 2131165400;
+			public const int sxc = 2131165400;
 			
 			// aapt resource value: 0x7F0700D9
-			public const int sxw = 2131165401;
+			public const int sxi = 2131165401;
 			
 			// aapt resource value: 0x7F0700DA
-			public const int tap = 2131165402;
+			public const int sxw = 2131165402;
 			
 			// aapt resource value: 0x7F0700DB
-			public const int tooltip_frame_dark = 2131165403;
+			public const int tap = 2131165403;
 			
 			// aapt resource value: 0x7F0700DC
-			public const int tooltip_frame_light = 2131165404;
+			public const int tooltip_frame_dark = 2131165404;
 			
 			// aapt resource value: 0x7F0700DD
-			public const int txt = 2131165405;
+			public const int tooltip_frame_light = 2131165405;
 			
 			// aapt resource value: 0x7F0700DE
-			public const int undo = 2131165406;
+			public const int txt = 2131165406;
 			
 			// aapt resource value: 0x7F0700DF
-			public const int undo_gray = 2131165407;
+			public const int undo = 2131165407;
 			
 			// aapt resource value: 0x7F0700E0
-			public const int up = 2131165408;
-			
-			// aapt resource value: 0x7F0700E2
-			public const int upArrow = 2131165410;
-			
-			// aapt resource value: 0x7F0700E3
-			public const int upArrow_gray = 2131165411;
+			public const int undo_gray = 2131165408;
 			
 			// aapt resource value: 0x7F0700E1
-			public const int up_gray = 2131165409;
+			public const int up = 2131165409;
+			
+			// aapt resource value: 0x7F0700E3
+			public const int upArrow = 2131165411;
 			
 			// aapt resource value: 0x7F0700E4
-			public const int Viewmode = 2131165412;
+			public const int upArrow_gray = 2131165412;
+			
+			// aapt resource value: 0x7F0700E2
+			public const int up_gray = 2131165410;
 			
 			// aapt resource value: 0x7F0700E5
-			public const int xls = 2131165413;
+			public const int Viewmode = 2131165413;
 			
 			// aapt resource value: 0x7F0700E6
-			public const int zip = 2131165414;
+			public const int xls = 2131165414;
+			
+			// aapt resource value: 0x7F0700E7
+			public const int zip = 2131165415;
 			
 			static Drawable()
 			{

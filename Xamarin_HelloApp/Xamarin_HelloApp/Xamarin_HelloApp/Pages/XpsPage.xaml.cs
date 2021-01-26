@@ -54,10 +54,11 @@ namespace Xamarin_HelloApp.Pages
                     {
                         try
                         {
-                            using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(context.PdfFileName)))
+                            pdfView.Uri = context.PdfFileName;
+                            /*using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(context.PdfFileName)))
                             {
                                 pdfViewer.LoadDocument(ms);
-                            }
+                            }*/
                         }
                         catch
                         {
@@ -90,7 +91,7 @@ namespace Xamarin_HelloApp.Pages
         {
             try
             {
-                pdfViewer.Unload();
+                //pdfViewer.Unload();
 
                 //if (unloadViever)
                 //    pdfViewer.TryDispose();
@@ -126,7 +127,16 @@ namespace Xamarin_HelloApp.Pages
         /// </summary>
         private async void CopyLink(object sender, EventArgs e)
         {
-            bool result = await Global.CreateLink(context.PilotItem.DObject);
+            bool result = await Global.CopyLink(context.PilotItem.DObject);
+        }
+
+
+        /// <summary>
+        /// Поделиться ссылкой на объект
+        /// </summary>
+        private async void ShareLink(object sender, EventArgs e)
+        {
+            bool result = await Global.ShareLink(context.PilotItem.DObject);
         }
 
 

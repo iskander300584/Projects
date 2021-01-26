@@ -1,6 +1,5 @@
 ﻿using Ascon.Pilot.DataClasses;
 using PilotMobile.AppContext;
-using PilotMobile.Models;
 using PilotMobile.Pages;
 using PilotMobile.Pages.HelpPages;
 using PilotMobile.ViewContexts;
@@ -20,6 +19,7 @@ using Xamarin_HelloApp.AppContext;
 using Xamarin_HelloApp.Models;
 using Xamarin_HelloApp.Pages;
 using Xamarin_HelloApp.ViewModels;
+
 
 namespace Xamarin_HelloApp.ViewContexts
 {
@@ -1292,6 +1292,20 @@ namespace Xamarin_HelloApp.ViewContexts
         /// </summary>
         private async void TestCommand_Execute()
         {
+            #region Проверка нажатия Поделиться
+
+            /*try
+            {
+                Plugin.Share.CrossShare.Current.Share(new Plugin.Share.Abstractions.ShareMessage { Url = "url" });
+            }
+            catch(Exception ex)
+            {
+                if(ex != null)
+                { }
+            }*/
+
+            #endregion
+
             #region Проверка работоспособности отчета об ошибке
             /*try
             {
@@ -1316,14 +1330,14 @@ namespace Xamarin_HelloApp.ViewContexts
 
             #region Проверка получения уведомлений
 
-            var notifies = Global.DALContext.Repository.GetNotifies();
+            /*var notifies = Global.DALContext.Repository.GetNotifies();
             if(notifies != null && notifies.Changed != null)
             {
                 foreach(var notify in notifies.Changed)
                 {
 
                 }
-            }
+            }*/
 
             //var _notifies = Global.DALContext.Repository.GetNotifies();
             //if(_notifies != null)
@@ -1347,7 +1361,7 @@ namespace Xamarin_HelloApp.ViewContexts
             //            {
             //                if(data != null)
             //                {
-                                
+
             //                }
             //            }
             //        }*/

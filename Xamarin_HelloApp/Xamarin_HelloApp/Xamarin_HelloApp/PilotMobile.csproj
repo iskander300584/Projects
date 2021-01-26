@@ -5,7 +5,7 @@
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <AssemblyName>Pilot Mobile</AssemblyName>
     <ApplicationIcon>pilot.ico</ApplicationIcon>
-    <Version>1.5.17</Version>
+    <Version>1.5.18</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Ascon.Pilot.Server.Api" Version="20.59.0" />
+    <PackageReference Include="Plugin.Share" Version="7.1.1" />
     <PackageReference Include="Plugin.Toast" Version="2.2.0" />
     <PackageReference Include="Spire.PDF" Version="6.12.10" />
     <PackageReference Include="Syncfusion.Licensing" Version="18.3.0.35" />
