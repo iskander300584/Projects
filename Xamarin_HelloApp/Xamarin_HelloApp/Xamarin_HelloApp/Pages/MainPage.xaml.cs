@@ -52,12 +52,6 @@ namespace Xamarin_HelloApp
                     Global.CurrentPerson = Global.DALContext.Repository.CurrentPerson();
                 }
 
-                //if (url != null && url != "")
-                //{
-                //    var res = DisplayMessage("URL", url, false);
-                //}
-
-
                 context = new MainPage_Context(this, rootObject, url);
 
                 if(rootObject != null)
@@ -323,7 +317,7 @@ namespace Xamarin_HelloApp
                 }
                 else
                 {
-                    if (Global.IsTrial && !Global.TrialMessageShown)
+                    if (Global.Localized == LocalizedVersion.Trial && !Global.TrialMessageShown)
                     {
                         Thread thread = new Thread(TrialExit);
                         thread.Start();
@@ -404,7 +398,9 @@ namespace Xamarin_HelloApp
 
                 Device.BeginInvokeOnMainThread(async () =>
                 {
-                    Environment.Exit(0);
+                    Global.DALContext.Repository.Disconnect();
+                    System.Diagnostics.Process.GetCurrentProcess().CloseMainWindow();
+                    //Environment.Exit(0);
                 });
             }
             else if (lastDays <= 14)

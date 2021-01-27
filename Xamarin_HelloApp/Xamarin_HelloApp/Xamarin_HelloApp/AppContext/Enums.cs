@@ -68,6 +68,16 @@ namespace PilotMobile.AppContext
         None,
 
         /// <summary>
+        /// Демонстрационная БД
+        /// </summary>
+        Demo,
+
+        /// <summary>
+        /// Пробный режим
+        /// </summary>
+        Trial,
+
+        /// <summary>
         /// АСКОН
         /// </summary>
         Ascon,
@@ -75,6 +85,11 @@ namespace PilotMobile.AppContext
         /// <summary>
         /// АСКОН северо-запад
         /// </summary>
-        SeveroZapad
+        SeveroZapad,
+
+        /// <summary>
+        /// Я
+        /// </summary>
+        TestMe
     }
 }

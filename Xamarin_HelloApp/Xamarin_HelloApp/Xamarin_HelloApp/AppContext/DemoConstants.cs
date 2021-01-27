@@ -8,9 +8,9 @@ namespace PilotMobile.AppContext
     public static class DemoConstants
     {
         /// <summary>
-        /// Имя демонстрационного сервера http://vm-win10-1:5545
+        /// Имя демонстрационного сервера
         /// </summary>
-        public const string DemoServer = @"http://vm-win10-1:5545";
+        public const string DemoServer = @"http://volga.ascon.ru:5547";
 
 
         /// <summary>
@@ -34,6 +34,6 @@ namespace PilotMobile.AppContext
         /// <summary>
         /// Код демонстрационной лицензии
         /// </summary>
-        public const int DemoLicence = 100;
+        public const int DemoLicence = 101;
     }
 }

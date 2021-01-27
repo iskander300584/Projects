@@ -44,9 +44,6 @@ namespace Xamarin_HelloApp.ViewContexts
         private bool reconnect;
 
 
-        // АСКОН: http://ecm.ascon.ru:5545
-        // Северо-запад: 
-        // Демо: http://vm-win10-1:5545   http://volga.ascon.ru:5545
         private string server = "";
         /// <summary>
         /// Имя сервера
@@ -67,9 +64,6 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        // АСКОН: pilot_ascon
-        // Северо-запад: 
-        // Демо: pilot-bim_ru
         private string db = "";
         /// <summary>
         /// Имя базы данных
@@ -90,8 +84,6 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        // Я: ryapolov_an
-        // Демо: ascon
         private string login = "";
         /// <summary>
         /// Имя пользователя
@@ -112,8 +104,6 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        // Я: sSR4mzCQ
-        // Демо: zzr400
         private string password = "";
         /// <summary>
         /// Пароль
@@ -283,33 +273,57 @@ namespace Xamarin_HelloApp.ViewContexts
         }
 
 
-        private bool isServerEnabled = true;
+        private bool isServerReadOnly = false;
         /// <summary>
         /// Доступность имени сервера для редактирования
         /// </summary>
-        public bool IsServerEnabled
+        public bool IsServerReadOnly
         {
-            get => isServerEnabled;
+            get => isServerReadOnly;
+            private set
+            {
+                if(isServerReadOnly != value)
+                {
+                    isServerReadOnly = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
 
-        private bool isDbEnabled = true;
+        private bool isDbReadOnly = false;
         /// <summary>
         /// Доступность имени БД для редактирования
         /// </summary>
-        public bool IsDbEnabled
+        public bool IsDbReadOnly
         {
-            get => isDbEnabled;
+            get => isDbReadOnly;
+            private set
+            {
+                if(isDbReadOnly != value)
+                {
+                    isDbReadOnly = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
 
-        private bool isAccountEnabled = true;
+        private bool isAccountReadOnly = false;
         /// <summary>
         /// Доступность учетной записи для редактирования
         /// </summary>
-        public bool IsAccountEnabled
+        public bool IsAccountReadOnly
         {
-            get => isAccountEnabled;
+            get => isAccountReadOnly;
+            private set
+            {
+                if(isAccountReadOnly != value)
+                {
+                    isAccountReadOnly = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
 
@@ -325,26 +339,52 @@ namespace Xamarin_HelloApp.ViewContexts
             this.reconnect = reconnect;
             SetLicenses();
 
-            if(Global.Localized != LocalizedVersion.None)
+            if (Global.Localized == LocalizedVersion.Demo)
             {
-                isServerEnabled = false;
-                isDbEnabled = false;
-
-                string[] array = GetLocalizeData();
-                Server = array[0];
-                DB = array[1];
-            }
-            else if(Global.IsDemo)
-            {
-                isServerEnabled = false;
-                isDbEnabled = false;
-                isAccountEnabled = false;
+                IsServerReadOnly = true;
+                IsDbReadOnly = true;
+                IsAccountReadOnly = true;
 
                 Server = DemoConstants.DemoServer;
                 DB = DemoConstants.DemoDB;
                 Login = DemoConstants.DemoAccount;
                 Password = DemoConstants.DemoPassword;
                 SelectedLicenseIndex = 2;
+            }
+            else if (Global.Localized != LocalizedVersion.None && Global.Localized != LocalizedVersion.Trial)
+            {
+                IsServerReadOnly = true;
+                IsDbReadOnly = true;
+
+                string[] array = GetLocalizeData();
+                Server = array[0];
+                DB = array[1];
+                Login = array[2];
+                Password = array[3];
+            }
+            else if(Global.Localized == LocalizedVersion.Trial)
+            {
+                IsServerReadOnly = true;
+
+                string[] array = GetLocalizeData();
+                Server = array[0];
+                DB = array[1];
+                Login = array[2];
+
+                if (Global.Credentials == null || Global.Credentials.ProtectedPassword == "")
+                    Password = array[3];
+
+                if (Global.Credentials != null && Global.Credentials.Username != "")
+                {
+                    DB = Global.Credentials.DatabaseName;
+                    Login = Global.Credentials.Username;
+                }
+            }
+            else
+            {
+                Server = Global.Credentials.ServerUrl;
+                DB = Global.Credentials.DatabaseName;
+                Login = Global.Credentials.Username;
             }
 
             connectCommand = new Command(CheckConnection);
@@ -498,23 +538,43 @@ namespace Xamarin_HelloApp.ViewContexts
         /// </summary>
         public string[] GetLocalizeData()
         {
-            string[] array = new string[2];
+            string[] array = new string[4];
 
             switch (Global.Localized)
             {
                 case LocalizedVersion.Ascon:
                     array[0] = @"http://ecm.ascon.ru:5545";
                     array[1] = "pilot_ascon";
+                    array[2] = "";
+                    array[3] = "";
                     break;
 
                 case LocalizedVersion.SeveroZapad:
                     array[0] = @"http://213.33.246.218:6545";
                     array[1] = "demo";
+                    array[2] = "";
+                    array[3] = "";
+                    break;
+
+                case LocalizedVersion.TestMe:
+                    array[0] = @"http://ecm.ascon.ru:5545";
+                    array[1] = "pilot_ascon";
+                    array[2] = "ryapolov_an";
+                    array[3] = "sSR4mzCQ";
+                    break;
+
+                case LocalizedVersion.Trial:
+                    array[0] = DemoConstants.DemoServer;
+                    array[1] = DemoConstants.DemoDB;
+                    array[2] = DemoConstants.DemoAccount;
+                    array[3] = DemoConstants.DemoPassword;
                     break;
 
                 default:
                     array[0] = "";
                     array[1] = "";
+                    array[2] = "";
+                    array[3] = "";
                     break;
             }
 

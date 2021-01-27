@@ -11,6 +11,7 @@ using Xamarin.Forms;
 using PilotMobile.AppContext;
 using Plugin.Share;
 
+
 namespace Xamarin_HelloApp.AppContext
 {
     static class Global
@@ -42,12 +43,6 @@ namespace Xamarin_HelloApp.AppContext
 
 
         /// <summary>
-        /// Признак временной версии программы
-        /// </summary>
-        public const bool IsTrial = false;
-
-
-        /// <summary>
         /// Признак отображенного сообщения пробной версии
         /// </summary>
         public static bool TrialMessageShown = false;
@@ -56,19 +51,13 @@ namespace Xamarin_HelloApp.AppContext
         /// <summary>
         /// Дата окончания пробного периода
         /// </summary>
-        public static readonly DateTime TrialExitDate = new DateTime(2020, 12, 10);
-
-
-        /// <summary>
-        /// Демо версия приложения для подключения к демонстрационной БД
-        /// </summary>
-        public static bool IsDemo = false;
+        public static readonly DateTime TrialExitDate = new DateTime(2021, 5, 31);
 
 
         /// <summary>
         /// Признак локализованной версии
         /// </summary>
-        public static LocalizedVersion Localized = LocalizedVersion.Ascon;
+        public static LocalizedVersion Localized = LocalizedVersion.Demo;
 
 
         /// <summary>
@@ -230,23 +219,6 @@ namespace Xamarin_HelloApp.AppContext
             try
             {
                 string message = "";
-
-                #region Данные сервера
-                /*message = "Данные сервера:\n";
-                message += "Сервер: " + Credentials.ServerUrl + "\nБаза данных: " + Credentials.DatabaseName + "\n\n";
-
-                // Данные пользователя
-                message += "Данные пользователя:\n";
-
-                if(CurrentPerson != null)
-                {
-                    message += CurrentPerson.DisplayName + "\nE-mail: " + CurrentPerson.Email + "\nТелефон: " + CurrentPerson.Phone + "\n\n\n";
-                }
-                else
-                {
-                    message += "Не доступно\n\n\n";
-                }*/
-                #endregion
 
                 // Информация об ошибке
                 message += "Информация об ошибке:\n\n";

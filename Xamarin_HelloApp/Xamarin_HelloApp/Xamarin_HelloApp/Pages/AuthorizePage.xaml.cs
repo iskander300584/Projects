@@ -3,6 +3,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Xamarin_HelloApp.ViewContexts;
 
+
 namespace Xamarin_HelloApp.Pages
 {
     /// <summary>
@@ -50,8 +51,5 @@ namespace Xamarin_HelloApp.Pages
             indicator.IsRunning = value;
             indicator.IsVisible = value;
         }
-
-
-
     }
 }

@@ -1075,7 +1075,7 @@ namespace Xamarin_HelloApp.ViewContexts
             switch(action)
             {
                 case StringConstants.Authentificate:
-                    if (!Global.IsDemo)
+                    if (Global.Localized != LocalizedVersion.Demo)
                         App.Current.MainPage = new AuthorizePage(true);
                     break;
 

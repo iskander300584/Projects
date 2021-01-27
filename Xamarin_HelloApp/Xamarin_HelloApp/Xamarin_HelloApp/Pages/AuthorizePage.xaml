@@ -6,6 +6,7 @@
     
     <ContentPage.Content>
         <StackLayout>
+            <!-- Шапка -->
             <Frame BackgroundColor="#7A87BF" Padding="10" CornerRadius="0">
                 <StackLayout Orientation="Horizontal" >
                     <Image Source="pilot.png" HeightRequest="20" />
@@ -13,34 +14,34 @@
                 </StackLayout>
             </Frame>
 
+            <!-- Сервер -->
             <Label Text="Имя сервера" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
-            <Entry Text="{Binding Server, Mode=TwoWay}" IsReadOnly="True" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
+            <Entry Text="{Binding Server, Mode=TwoWay}" IsReadOnly="{Binding IsServerReadOnly}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
 
+            <!-- БД -->
             <Label Text="Имя базы данных" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
-            <Entry Text="{Binding DB, Mode=TwoWay}" IsReadOnly="True" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
+            <Entry Text="{Binding DB, Mode=TwoWay}" IsReadOnly="{Binding IsDbReadOnly}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
 
+            <!-- Логин -->
             <Label Text="Имя пользователя" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
-            <Entry Text="{Binding Login, Mode=TwoWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
+            <Entry Text="{Binding Login, Mode=TwoWay}" IsReadOnly="{Binding IsAccountReadOnly}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill" Margin="10,0,10,10" />
 
+            <!-- Пароль -->
             <Label Text="Пароль" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
-            <Entry IsPassword="True" Text="{Binding Password, Mode=TwoWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill"
+            <Entry IsPassword="True" Text="{Binding Password, Mode=TwoWay}" IsReadOnly="{Binding IsAccountReadOnly}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="Fill"
                    Margin="10,0,10,10" />
 
+            <!-- Лицензия -->
             <Label Text="Тип лицецнзии" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0" />
-            <Picker HorizontalOptions="StartAndExpand" ItemsSource="{Binding Licenses}" SelectedIndex="{Binding SelectedLicenseIndex, Mode=TwoWay}" Margin="10,0,10,0" 
-                                 WidthRequest="300"/>
+            <Picker HorizontalOptions="StartAndExpand" ItemsSource="{Binding Licenses}" SelectedIndex="{Binding SelectedLicenseIndex, Mode=TwoWay}" Margin="10,0,10,0" WidthRequest="300"/>
 
-            <Label Text="Ошибка подключения к БД Pilot" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,10,10,0"
-                   TextColor="Red" IsVisible="{Binding IsErrorVisible, Mode=OneWay}" />
-            <!--<Label Text="{Binding Error, Mode=OneWay}" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,0,10,0"
-                   TextColor="Red" IsVisible="{Binding IsErrorVisible, Mode=OneWay}"/>-->
+            <!-- Ошибка -->
+            <Label Text="Ошибка подключения к БД Pilot" FontSize="Medium" FontFamily="Tahoma" HorizontalOptions="StartAndExpand" Margin="10,10,10,0" TextColor="Red" IsVisible="{Binding IsErrorVisible, Mode=OneWay}" />
 
-            <!-- IsRunning="{Binding IsIndicatorActive, Mode=OneWay}"
-                               IsVisible="{Binding IsIndicatorActive, Mode=OneWay}"
-                               IsEnabled="{Binding IsIndicatorActive, Mode=OneWay}" -->
-            <ActivityIndicator x:Name="indicator" Color="#7A87BF" HorizontalOptions="CenterAndExpand" Margin="0,10,0,10" WidthRequest="30" HeightRequest="30" 
-                                />
+            <!-- Индикатор активности -->
+            <ActivityIndicator x:Name="indicator" Color="#7A87BF" HorizontalOptions="CenterAndExpand" Margin="0,10,0,10" WidthRequest="30" HeightRequest="30" />
 
+            <!-- Кнопка Подключиться -->
             <Button Text="Подключиться" FontSize="Title" Background="#7A87BF" FontFamily="Tahoma" TextColor="White" 
                     VerticalOptions="EndAndExpand" HorizontalOptions="Fill" Margin="10,0,10,10"
                     Command="{Binding ConnectCommand}"

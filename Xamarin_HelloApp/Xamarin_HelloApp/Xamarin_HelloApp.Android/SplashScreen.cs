@@ -13,7 +13,7 @@ using System.Threading;
 
 namespace Xamarin_HelloApp.Droid
 {
-    [Activity(Label = "Pilot-FLY ASCON SZ", MainLauncher = true, Theme = "@style/SplashTheme", LaunchMode = LaunchMode.SingleInstance, NoHistory = true )]
+    [Activity(Label = "Pilot-FLY Demo", MainLauncher = true, Theme = "@style/SplashTheme", LaunchMode = LaunchMode.SingleInstance, NoHistory = true )]
     [IntentFilter(new[] { Intent.ActionView },
         Categories = new[] {
         Intent.CategoryBrowsable, Intent.CategoryDefault},
