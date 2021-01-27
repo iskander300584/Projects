@@ -10524,40 +10524,46 @@ namespace Xamarin_HelloApp.Droid
 			public const int tap = 2131165403;
 			
 			// aapt resource value: 0x7F0700DC
-			public const int tooltip_frame_dark = 2131165404;
+			public const int tap_data = 2131165404;
 			
 			// aapt resource value: 0x7F0700DD
-			public const int tooltip_frame_light = 2131165405;
+			public const int tooltip_frame_dark = 2131165405;
 			
 			// aapt resource value: 0x7F0700DE
-			public const int txt = 2131165406;
+			public const int tooltip_frame_light = 2131165406;
 			
 			// aapt resource value: 0x7F0700DF
-			public const int undo = 2131165407;
+			public const int txt = 2131165407;
 			
 			// aapt resource value: 0x7F0700E0
-			public const int undo_gray = 2131165408;
+			public const int undo = 2131165408;
 			
 			// aapt resource value: 0x7F0700E1
-			public const int up = 2131165409;
-			
-			// aapt resource value: 0x7F0700E3
-			public const int upArrow = 2131165411;
-			
-			// aapt resource value: 0x7F0700E4
-			public const int upArrow_gray = 2131165412;
+			public const int undo_gray = 2131165409;
 			
 			// aapt resource value: 0x7F0700E2
-			public const int up_gray = 2131165410;
+			public const int up = 2131165410;
+			
+			// aapt resource value: 0x7F0700E4
+			public const int upArrow = 2131165412;
 			
 			// aapt resource value: 0x7F0700E5
-			public const int Viewmode = 2131165413;
+			public const int upArrow_gray = 2131165413;
 			
 			// aapt resource value: 0x7F0700E6
-			public const int xls = 2131165414;
+			public const int update_data = 2131165414;
+			
+			// aapt resource value: 0x7F0700E3
+			public const int up_gray = 2131165411;
 			
 			// aapt resource value: 0x7F0700E7
-			public const int zip = 2131165415;
+			public const int Viewmode = 2131165415;
+			
+			// aapt resource value: 0x7F0700E8
+			public const int xls = 2131165416;
+			
+			// aapt resource value: 0x7F0700E9
+			public const int zip = 2131165417;
 			
 			static Drawable()
 			{

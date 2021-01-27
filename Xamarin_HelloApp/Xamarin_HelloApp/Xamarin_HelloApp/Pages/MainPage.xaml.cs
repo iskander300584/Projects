@@ -10,7 +10,7 @@ using PilotMobile.ViewModels;
 using System.Threading;
 using Plugin.Settings;
 using PilotMobile.Pages.HelpPages;
-
+using Xamarin_HelloApp.Pages;
 
 namespace Xamarin_HelloApp
 {
@@ -85,7 +85,8 @@ namespace Xamarin_HelloApp
             // Отображение окон документа
             else
             {
-                Navigation.PushModalAsync(new DocumentCarrousel(pilotItem));
+                Navigation.PushModalAsync(new XpsPage(pilotItem));
+                //Navigation.PushModalAsync(new DocumentCarrousel(pilotItem));
             }
         }
 
@@ -302,7 +303,7 @@ namespace Xamarin_HelloApp
         {
             if (context.FirstLaunch)
             {
-                /*int _savedVersion = GetVersionNumber(CrossSettings.Current.GetValueOrDefault("helpVersion", ""));
+                int _savedVersion = GetVersionNumber(CrossSettings.Current.GetValueOrDefault("helpVersion", ""));
 
                 if (_savedVersion < Global.DoNotShowHelp_Version)
                 {
@@ -322,7 +323,7 @@ namespace Xamarin_HelloApp
                         Thread thread = new Thread(TrialExit);
                         thread.Start();
                     }
-                }*/
+                }
 
                 context.FirstLaunch = false;
             }

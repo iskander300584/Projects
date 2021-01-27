@@ -7,6 +7,7 @@ using System.Linq;
 using Xamarin.Forms;
 using Xamarin_HelloApp.AppContext;
 
+
 namespace PilotMobile.ViewModels
 {
     /// <summary>
@@ -162,23 +163,22 @@ namespace PilotMobile.ViewModels
         }
 
 
-        private List<PState> avaliableStates = new List<PState>();
+        private List<MTransition> avaliableTransitions = null;
         /// <summary>
-        /// Доступные состояния
+        /// Доступные смены состояний
         /// </summary>
-        public List<PState> AvaliableStates
+        public List<MTransition> AvaliableTransitions
         {
-            get => avaliableStates;
+            get => avaliableTransitions;
             private set
             {
-                if(avaliableStates != value)
+                if(avaliableTransitions != value)
                 {
-                    avaliableStates = value;
+                    avaliableTransitions = value;
                     OnPropertyChanged();
                 }
             }
         }
-
 
         #endregion
 
@@ -379,7 +379,7 @@ namespace PilotMobile.ViewModels
             // Получение следующего состояния
             if (StateMachine != null)
             {
-                avaliableStates = new List<PState>();
+                AvaliableTransitions = new List<MTransition>();
 
                 if (StateMachine.StateTransitions != null && StateMachine.StateTransitions.Any(st => st.Key == _stateId))
                 {
@@ -389,7 +389,7 @@ namespace PilotMobile.ViewModels
                         {
                             foreach (MTransition transition in stateTransition.Value)
                             {
-                                if (transition.AvailableForPositionsSource != null && !avaliableStates.Any(s => s.Guid.ToString() == transition.StateTo.ToString()))
+                                if (transition.AvailableForPositionsSource != null)
                                 {
                                     if ( transition.AvailableForPositionsSource.Length == 0 ||
                                         (IsActual && transition.AvailableForPositionsSource.Contains("&" + RolesConstants.Actual)) ||
@@ -398,24 +398,26 @@ namespace PilotMobile.ViewModels
                                         (IsResponsible && transition.AvailableForPositionsSource.Contains("&" + RolesConstants.Responsible)) ||
                                         (IsAuditor && transition.AvailableForPositionsSource.Contains("&" + RolesConstants.Auditors)))
                                     {
-                                        avaliableStates.Add(StateFabrique.GetState(transition.StateTo));
+                                        AvaliableTransitions.Add(transition);
                                     }
                                 }
                             }
                         }
                     }
-
-                    if (avaliableStates.Count > 0)
-                        avaliableStates = avaliableStates.OrderBy(s => s.MUserState.Title).ToList();
                 }
             }
         }
 
 
+        /// <summary>
+        /// Установить состояние
+        /// </summary>
+        /// <param name="state">состояние</param>
         public void SetState(PState state)
         {
             State = state;
         }
+
 
         #endregion
     }

@@ -1,4 +1,5 @@
 ﻿using PilotMobile.AppContext;
+using PilotMobile.Pages;
 using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
 using System;
@@ -28,7 +29,7 @@ namespace Xamarin_HelloApp.Pages
         /// <param name="pilotItem">объект Pilot</param>
         public XpsPage(IPilotObject pilotItem)
         {
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzM5MjY2QDMxMzgyZTMzMmUzMEIwKzBENG9sRkl0WVlYcXg3QjdYbjlkU1B1cXUxNVpQb0FEVkJYTVIweEE9");
+            /*Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzM5MjY2QDMxMzgyZTMzMmUzMEIwKzBENG9sRkl0WVlYcXg3QjdYbjlkU1B1cXUxNVpQb0FEVkJYTVIweEE9");*/
 
             InitializeComponent();
 
@@ -149,6 +150,15 @@ namespace Xamarin_HelloApp.Pages
         public async Task<bool> DisplayError(string message, string caption = "Ошибка")
         {
             return await DisplayAlert(caption, message + StringConstants.SendErrorMessage, StringConstants.Send, StringConstants.DontSend);
+        }
+
+
+        /// <summary>
+        /// Нажатие на кнопку Карточка
+        /// </summary>
+        private void Card_Click(object sender, EventArgs e)
+        {
+            Navigation.PushModalAsync(new DocumentCarrousel(context.PilotItem));
         }
     }
 }

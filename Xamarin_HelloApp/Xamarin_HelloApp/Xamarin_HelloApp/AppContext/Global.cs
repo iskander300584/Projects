@@ -57,7 +57,7 @@ namespace Xamarin_HelloApp.AppContext
         /// <summary>
         /// Признак локализованной версии
         /// </summary>
-        public static LocalizedVersion Localized = LocalizedVersion.Demo;
+        public static LocalizedVersion Localized = LocalizedVersion.TestMe;
 
 
         /// <summary>

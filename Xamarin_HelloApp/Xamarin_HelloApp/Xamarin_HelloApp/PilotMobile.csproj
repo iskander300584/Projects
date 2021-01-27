@@ -3,12 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-    <AssemblyName>Pilot Mobile Demo</AssemblyName>
+    <AssemblyName>Pilot Mobile Test</AssemblyName>
     <ApplicationIcon>pilot.ico</ApplicationIcon>
     <Version>1.5.18</Version>
-    <PackageId>Pilot Mobile Demo</PackageId>
+    <PackageId>Pilot Mobile Test</PackageId>
     <Authors>Ryapolov Alexander</Authors>
     <Company>Ascon Volga</Company>
+    <Product>Pilot Mobile Test</Product>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

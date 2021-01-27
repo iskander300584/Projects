@@ -148,13 +148,13 @@ namespace PilotMobile.ViewContexts
             if (!showOnlyUpdates)
             {
                 // Отображать все подсказки
-                ImagesCollection.Add("Screen_01.png");
-                ImagesCollection.Add("tap.png");
+                ImagesCollection.Add(@"update_data.jpg");
+                ImagesCollection.Add(@"tap_data.jpg");
             }
             else
             {
                 // Отображать изменения
-                ImagesCollection.Add("Screen_01.png");
+                ImagesCollection.Add(@"tap_data.jpg");
             }
 
             ImageSourceName = ImagesCollection[CurrentImage];

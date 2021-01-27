@@ -449,7 +449,8 @@ namespace Xamarin_HelloApp.ViewContexts
 
                                     App.Current.ModalPopping += page.HandleModalPopping;
 
-                                    page.Navigation.PushModalAsync(new DocumentCarrousel(item));
+                                    page.Navigation.PushModalAsync(new XpsPage(item));
+                                    //page.Navigation.PushModalAsync(new DocumentCarrousel(item));
                                 }
                                 catch (Exception ex)
                                 {
@@ -510,7 +511,8 @@ namespace Xamarin_HelloApp.ViewContexts
 
                                         App.Current.ModalPopping += page.HandleModalPopping;
 
-                                        page.Navigation.PushModalAsync(new DocumentCarrousel(document));
+                                        page.Navigation.PushModalAsync(new XpsPage(document));
+                                        //page.Navigation.PushModalAsync(new DocumentCarrousel(document));
                                     }
                                     else
                                     {

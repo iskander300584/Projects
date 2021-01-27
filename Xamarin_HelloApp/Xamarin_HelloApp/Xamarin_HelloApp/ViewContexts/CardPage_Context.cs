@@ -17,6 +17,7 @@ using Xamarin_HelloApp.AppContext;
 using Xamarin_HelloApp.Models;
 using Xamarin_HelloApp.Pages;
 
+
 namespace PilotMobile.ViewContexts
 {
     /// <summary>
@@ -251,7 +252,8 @@ namespace PilotMobile.ViewContexts
                     ChangeStateVisible = true;
 
                     PilotTask task = pilotObject as PilotTask;
-                    CanChangeState = (task.AvaliableStates.Count > 0);
+                    CanChangeState = (task.AvaliableTransitions.Count > 0);
+                    //CanChangeState = (task.AvaliableStates.Count > 0);
                 }
 
                 views.Clear();
@@ -489,21 +491,49 @@ namespace PilotMobile.ViewContexts
             {
                 List<string> _states = new List<string>();
                 PilotTask _task = PilotObject as PilotTask;
-                foreach (PState state in _task.AvaliableStates)
-                    _states.Add(state.MUserState.Title);
+                foreach (MTransition transition in _task.AvaliableTransitions)
+                {
+                    if (transition.DisplayName.Trim() != "")
+                        _states.Add(transition.DisplayName.Trim());
+                    else
+                    {
+                        PState _state = StateFabrique.GetState(transition.StateTo);
+                        if (_state != null)
+                            _states.Add(_state.MUserState.Title);
+                    }
+                }
 
                 string newState = await page.GetStateAction(_states.ToArray());
 
                 if (newState == null || !_states.Contains(newState))
                     return;
 
+                PState _nextState = null;
+
+                MTransition _transition = _task.AvaliableTransitions.FirstOrDefault(t => t.DisplayName.Trim() == newState);
+                if(_transition == null)
+                {
+                    foreach(MTransition mTransition in _task.AvaliableTransitions.Where(t => t.DisplayName.Trim() == ""))
+                    {
+                        PState _tempState = StateFabrique.GetState(mTransition.StateTo);
+                        if(_tempState != null && _tempState.MUserState.Title == newState)
+                        {
+                            _nextState = _tempState;
+                            break;
+                        }
+                    }
+                }
+                else
+                    _nextState = StateFabrique.GetState(_transition.StateTo);
+
+                if (_nextState == null)
+                    throw new Exception("Ошибка выбора следующего состояния");
+
+                newState = _nextState.MUserState.Title;
+
                 bool confirm = await page.DisplayMessage("Внимание!", "Перевести задание в состояние: '" + newState + "'?", true);
                 if (!confirm)
                     return;
-
-                PState _nextState = _task.AvaliableStates.FirstOrDefault(s => s.MUserState.Title == newState);
-                if (_nextState == null)
-                    throw new Exception("Ошибка выбора следующего состояния");
 
                 IModifier _modifier = Global.DALContext.Repository.GetModifier();
                 var _editBuilder = _modifier.EditObject(PilotObject.Guid);
@@ -513,7 +543,7 @@ namespace PilotMobile.ViewContexts
 
                 _task.SetState(_nextState);
                 _task.GetStateMachineData(page);
-                CanChangeState = (_task.AvaliableStates.Count > 0);
+                CanChangeState = (_task.AvaliableTransitions.Count > 0);
 
                 CrossToastPopUp.Current.ShowToastSuccess("Состояние изменено");
             }
