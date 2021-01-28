@@ -1,15 +1,16 @@
 ﻿using Plugin.Settings;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
 
+
 namespace PilotMobile.ViewContexts
 {
+    /// <summary>
+    /// Контекст данных окна справки
+    /// </summary>
     public class HelpPage_Context : INotifyPropertyChanged
     {
         #region Поля класса
@@ -41,6 +42,8 @@ namespace PilotMobile.ViewContexts
                     OnPropertyChanged();
 
                     CheckNextAvaliable();
+
+                    SetHintText();
                 }
             }
         }
@@ -119,6 +122,25 @@ namespace PilotMobile.ViewContexts
             get => skipCommand;
         }
 
+
+        private string hintText = string.Empty;
+        /// <summary>
+        /// Текст счетчика подсказок
+        /// </summary>
+        public string HintText
+        {
+            get => hintText;
+            private set
+            {
+                if (hintText != value)
+                {
+                    hintText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+
         #endregion
 
 
@@ -135,6 +157,8 @@ namespace PilotMobile.ViewContexts
 
             nextCommand = new Command(Next_Execute);
             skipCommand = new Command(Skip_Execute);
+
+            SetHintText();
         }
 
 
@@ -148,18 +172,52 @@ namespace PilotMobile.ViewContexts
             if (!showOnlyUpdates)
             {
                 // Отображать все подсказки
-                ImagesCollection.Add(@"update_data.jpg");
-                ImagesCollection.Add(@"tap_data.jpg");
+                ImagesCollection.Add(@"help_00_thanks.jpg"); // экран приветствия
+                ImagesCollection.Add(@"help_01_update_data.jpg");
+                ImagesCollection.Add(@"help_02_structure.jpg");
+                ImagesCollection.Add(@"help_03_card_button.jpg");
+                ImagesCollection.Add(@"help_04_home_button.jpg");
+                ImagesCollection.Add(@"help_05_link.jpg");
+                ImagesCollection.Add(@"help_06_search_button.jpg");
+                ImagesCollection.Add(@"help_07_search.jpg");
+                ImagesCollection.Add(@"help_08_tasks.jpg");
+                ImagesCollection.Add(@"help_09_task_state.jpg");
+                ImagesCollection.Add(@"help_10_task_documents.jpg");
+                ImagesCollection.Add(@"help_11_document.jpg");
+                ImagesCollection.Add(@"help_12_main_menu.jpg");
+                ImagesCollection.Add(@"help_13_clear_cache.jpg");
             }
             else
             {
                 // Отображать изменения
-                ImagesCollection.Add(@"tap_data.jpg");
+                ImagesCollection.Add(@"help_00_update.jpg"); // экран приветствия при просмотре обновлений
+                ImagesCollection.Add(@"help_01_update_data.jpg");
+                ImagesCollection.Add(@"help_02_structure.jpg");
+                ImagesCollection.Add(@"help_03_card_button.jpg");
+                ImagesCollection.Add(@"help_04_home_button.jpg");
+                ImagesCollection.Add(@"help_05_link.jpg");
+                ImagesCollection.Add(@"help_06_search_button.jpg");
+                ImagesCollection.Add(@"help_07_search.jpg");
+                ImagesCollection.Add(@"help_08_tasks.jpg");
+                ImagesCollection.Add(@"help_09_task_state.jpg");
+                ImagesCollection.Add(@"help_10_task_documents.jpg");
+                ImagesCollection.Add(@"help_11_document.jpg");
+                ImagesCollection.Add(@"help_12_main_menu.jpg");
+                ImagesCollection.Add(@"help_13_clear_cache.jpg");
             }
 
             ImageSourceName = ImagesCollection[CurrentImage];
 
             CheckNextAvaliable();
+        }
+
+
+        /// <summary>
+        /// Установка значения счетчика подсказок
+        /// </summary>
+        private void SetHintText()
+        {
+            HintText = $"Подсказка\n{CurrentImage + 1} / {ImagesCollection.Count}";
         }
 
 
@@ -179,15 +237,24 @@ namespace PilotMobile.ViewContexts
         /// <summary>
         /// Выполнение команды Дальше
         /// </summary>
-        private void Next_Execute()
+        public void Next_Execute()
         {
             if (CanNext)
             {
-                //page.BackgroundImageSource = ImagesCollection[++CurrentImage];
                 ImageSourceName = ImagesCollection[++CurrentImage];
             }
             else
                 Skip_Execute();
+        }
+
+
+        /// <summary>
+        /// Возврат к предыдущей подсказке
+        /// </summary>
+        public void Previous_Execute()
+        {
+            if (CurrentImage > 0)
+                ImageSourceName = ImagesCollection[--CurrentImage];
         }
 
 

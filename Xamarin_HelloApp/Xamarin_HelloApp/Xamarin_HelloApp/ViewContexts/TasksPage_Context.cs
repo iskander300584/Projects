@@ -423,11 +423,15 @@ namespace PilotMobile.ViewContexts
                 });
             }
 
+            Thread.Sleep(100);
+
             Device.BeginInvokeOnMainThread(async () =>
             {
                 IsRefreshing = false;
                 Status = PageStatus.Free;
             });
+
+            Thread.Sleep(100);
         }
 
 

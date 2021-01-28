@@ -3,13 +3,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
-    <AssemblyName>Pilot Mobile Test</AssemblyName>
+    <AssemblyName>Pilot Mobile ASCON</AssemblyName>
     <ApplicationIcon>pilot.ico</ApplicationIcon>
-    <Version>1.5.18</Version>
-    <PackageId>Pilot Mobile Test</PackageId>
+    <Version>1.5.19</Version>
+    <PackageId>Pilot Mobile ASCON</PackageId>
     <Authors>Ryapolov Alexander</Authors>
     <Company>Ascon Volga</Company>
-    <Product>Pilot Mobile Test</Product>
+    <Product>Pilot Mobile ASCON</Product>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="Ascon.Pilot.Server.Api" Version="20.59.0" />
+    <PackageReference Include="Plugin.DeviceOrientation" Version="1.0.7" />
     <PackageReference Include="Plugin.Share" Version="7.1.1" />
     <PackageReference Include="Plugin.Toast" Version="2.2.0" />
     <PackageReference Include="Spire.PDF" Version="6.12.10" />
@@ -31,6 +32,7 @@
     <PackageReference Include="Syncfusion.Xamarin.SfProgressBar" Version="18.3.0.35" />
     <PackageReference Include="Toasts.Forms.Plugin" Version="3.3.2" />
     <PackageReference Include="Xam.Plugin.Version" Version="1.0.0" />
+    <PackageReference Include="Xam.Plugins.Forms.DeviceOrientation" Version="1.0.1" />
     <PackageReference Include="Xam.Plugins.Messaging" Version="5.2.0" />
     <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg" Version="2.4.11.982" />
@@ -48,6 +50,9 @@
   <ItemGroup>
     <Compile Update="Pages\Carousels\TaskCarrousel.xaml.cs">
       <DependentUpon>TaskCarrousel.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Pages\HelpPage.xaml.cs">
+      <DependentUpon>HelpPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -67,7 +72,7 @@
     <EmbeddedResource Update="Pages\Carousels\MainCarrouselPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Pages\HelpPages\Help_01_MainPage.xaml">
+    <EmbeddedResource Update="Pages\HelpPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Pages\SearchQueryPage.xaml">
@@ -104,9 +109,6 @@
       <Generator>MSBuild:Compile</Generator>
     </None>
     <None Update="Pages\DocsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="Pages\HelpPages\Help_01_MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
     <None Update="Pages\MainPage.xaml">

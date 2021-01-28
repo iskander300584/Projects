@@ -21,7 +21,11 @@ namespace Xamarin_HelloApp.Droid
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
+            Plugin.CurrentActivity.CrossCurrentActivity.Current.Activity = this;
+
             base.OnCreate(savedInstanceState);
+
+            RequestedOrientation = ScreenOrientation.Portrait;
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);

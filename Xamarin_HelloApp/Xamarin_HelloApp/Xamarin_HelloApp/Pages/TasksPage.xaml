@@ -30,7 +30,7 @@
             </Frame>
 
             <!-- Список объектов -->
-            <ListView x:Name="listView" HasUnevenRows="True" SelectionMode="Single" ItemsSource="{Binding Tasks}" ItemTapped="Task_Tapped" IsPullToRefreshEnabled="True" RefreshCommand="{Binding UpdateCommand}" IsRefreshing="{Binding IsRefreshing}" >
+            <ListView x:Name="listView" HasUnevenRows="True" SelectionMode="Single" ItemsSource="{Binding Tasks}" ItemTapped="Task_Tapped" IsPullToRefreshEnabled="True" RefreshCommand="{Binding UpdateCommand}" IsRefreshing="{Binding IsRefreshing, Mode=OneWay}" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>

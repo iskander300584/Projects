@@ -57,19 +57,19 @@ namespace Xamarin_HelloApp.AppContext
         /// <summary>
         /// Признак локализованной версии
         /// </summary>
-        public static LocalizedVersion Localized = LocalizedVersion.TestMe;
+        public static LocalizedVersion Localized = LocalizedVersion.Ascon;
 
 
         /// <summary>
         /// Минимальная версия, при которой не отображается подсказка
         /// </summary>
-        public const int DoNotShowHelp_Version = 10518;
+        public const int DoNotShowHelp_Version = 10519;
 
 
         /// <summary>
         /// Минимальная версия, при которой отображается подсказка об обновлениях
         /// </summary>
-        public const int ShowUpdate_Version = 10518;
+        public const int ShowUpdate_Version = 10519;
              
 
         #endregion

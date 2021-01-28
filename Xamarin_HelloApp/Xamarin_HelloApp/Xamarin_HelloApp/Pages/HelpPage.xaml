@@ -1,23 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="PilotMobile.Pages.HelpPages.Help_01_MainPage" Appearing="OnAppearing" Disappearing="OnDisappearing">
+             x:Class="PilotMobile.Pages.HelpPage" Appearing="OnAppearing" Disappearing="OnDisappearing" >
     <ContentPage.Content>
-        <RelativeLayout x:Name="mainLayout">
+        <RelativeLayout>
 
-            <Image x:Name="helpImage" Aspect="Fill" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1}" >
+            <!-- Изображение справки -->
+            <Image Aspect="Fill" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Y, Factor=1}" >
                 <Image.Source>
                     <FileImageSource File="{Binding ImageSourceName}" />
                 </Image.Source>
+                <Image.GestureRecognizers>
+                    <SwipeGestureRecognizer Direction="Left" Swiped="OnSwipe" />
+                    <SwipeGestureRecognizer Direction="Right" Swiped="OnSwipe" />
+                </Image.GestureRecognizers>
             </Image>
 
+            <!-- Кнопка Дальше -->
             <Button Text="{Binding NextButtonText}" Command="{Binding NextCommand}" BackgroundColor="#7A87BF" WidthRequest="150" HeightRequest="40" RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1, Constant=-160}" RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-50}" TextColor="White" />
 
+            <!-- Кнопка Пропустить -->
             <Button Text="Пропустить" Command="{Binding SkipCommand}" BackgroundColor="#7A87BF" WidthRequest="150" HeightRequest="40" RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1, Constant=-160}" RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-100}" TextColor="White" IsVisible="{Binding CanNext}" />
 
-            <!--<Image x:Name="handImage" Source="tap" Aspect="AspectFit" HeightRequest="45" RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToView, Property=Width, Factor=1}" RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToView, Property=Height, Factor=1}"  />-->
+            <!-- Счетчик подсказок -->
+            <Label BackgroundColor="#7A87BF" HeightRequest="40" TextColor="White" Margin="10,0,0,0" Padding="5,2,5,2" RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=-50}"  Text="{Binding HintText, Mode=OneWay}" />
 
-            <!--<Label x:Name="textLabel" RelativeLayout.YConstraint="{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=0.8}" Opacity="0" TextColor="#F91C1C" FontSize="24" FontFamily="Tahoma" BackgroundColor="#F9EB1C" MaxLines="3" Padding="5" /> -->
         </RelativeLayout>
     </ContentPage.Content>
 </ContentPage>

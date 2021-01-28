@@ -1,7 +1,6 @@
 ﻿using Ascon.Pilot.DataClasses;
 using PilotMobile.AppContext;
 using PilotMobile.Pages;
-using PilotMobile.Pages.HelpPages;
 using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
 using Plugin.Toast;
@@ -1086,7 +1085,7 @@ namespace Xamarin_HelloApp.ViewContexts
                     break;
 
                 case StringConstants.Help:
-                    page.Navigation.PushModalAsync(new Help_01_MainPage());
+                    page.Navigation.PushModalAsync(new HelpPage());
                     break;
 
                 case StringConstants.Exit:

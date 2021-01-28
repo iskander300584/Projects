@@ -9,7 +9,6 @@ using PilotMobile.AppContext;
 using PilotMobile.ViewModels;
 using System.Threading;
 using Plugin.Settings;
-using PilotMobile.Pages.HelpPages;
 using Xamarin_HelloApp.Pages;
 
 namespace Xamarin_HelloApp
@@ -309,11 +308,11 @@ namespace Xamarin_HelloApp
                 {
                     if(_savedVersion < Global.ShowUpdate_Version)
                     {
-                        Navigation.PushModalAsync(new Help_01_MainPage());
+                        Navigation.PushModalAsync(new HelpPage());
                     }
                     else
                     {
-                        Navigation.PushModalAsync(new Help_01_MainPage(true));
+                        Navigation.PushModalAsync(new HelpPage(true));
                     }
                 }
                 else

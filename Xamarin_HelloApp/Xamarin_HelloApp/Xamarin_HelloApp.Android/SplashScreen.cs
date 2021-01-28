@@ -13,7 +13,7 @@ using System.Threading;
 
 namespace Xamarin_HelloApp.Droid
 {
-    [Activity(Label = "Pilot-FLY Test", MainLauncher = true, Theme = "@style/SplashTheme", LaunchMode = LaunchMode.SingleInstance, NoHistory = true )]
+    [Activity(Label = "Pilot-FLY ASCON", MainLauncher = true, Theme = "@style/SplashTheme", LaunchMode = LaunchMode.SingleInstance, NoHistory = true )]
     [IntentFilter(new[] { Intent.ActionView },
         Categories = new[] {
         Intent.CategoryBrowsable, Intent.CategoryDefault},
@@ -26,6 +26,8 @@ namespace Xamarin_HelloApp.Droid
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            RequestedOrientation = ScreenOrientation.Portrait;
 
             string url = "";
             if (this.Intent != null && this.Intent.Data != null)
