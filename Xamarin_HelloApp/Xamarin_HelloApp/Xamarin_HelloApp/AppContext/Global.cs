@@ -14,6 +14,9 @@ using Plugin.Share;
 
 namespace Xamarin_HelloApp.AppContext
 {
+    /// <summary>
+    /// Общие данные приложения
+    /// </summary>
     static class Global
     {
         #region Поля класса
@@ -57,7 +60,7 @@ namespace Xamarin_HelloApp.AppContext
         /// <summary>
         /// Признак локализованной версии
         /// </summary>
-        public static LocalizedVersion Localized = LocalizedVersion.Ascon;
+        public static LocalizedVersion Localized = LocalizedVersion.Trial;
 
 
         /// <summary>
