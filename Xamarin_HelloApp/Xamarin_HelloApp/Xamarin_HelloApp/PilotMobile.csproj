@@ -5,7 +5,7 @@
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <AssemblyName>Pilot Mobile DEMO</AssemblyName>
     <ApplicationIcon>pilot.ico</ApplicationIcon>
-    <Version>1.5.19</Version>
+    <Version>1.5.20</Version>
     <PackageId>Pilot Mobile DEMO</PackageId>
     <Authors>Ryapolov Alexander</Authors>
     <Company>Ascon Volga</Company>
@@ -18,27 +18,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ascon.Pilot.Server.Api" Version="20.59.0" />
+    <PackageReference Include="Ascon.Pilot.Server.Api" Version="21.5.0" />
     <PackageReference Include="Plugin.DeviceOrientation" Version="1.0.7" />
     <PackageReference Include="Plugin.Share" Version="7.1.1" />
     <PackageReference Include="Plugin.Toast" Version="2.2.0" />
-    <PackageReference Include="Spire.PDF" Version="6.12.10" />
-    <PackageReference Include="Syncfusion.Licensing" Version="18.3.0.35" />
-    <PackageReference Include="Syncfusion.Xamarin.Compression" Version="18.3.0.35" />
-    <PackageReference Include="Syncfusion.Xamarin.Core" Version="18.3.0.35" />
-    <PackageReference Include="Syncfusion.Xamarin.Pdf" Version="18.3.0.35" />
-    <PackageReference Include="Syncfusion.Xamarin.SfBusyIndicator" Version="18.3.0.35" />
-    <PackageReference Include="Syncfusion.Xamarin.SfPdfViewer" Version="18.3.0.35" />
-    <PackageReference Include="Syncfusion.Xamarin.SfProgressBar" Version="18.3.0.35" />
-    <PackageReference Include="Toasts.Forms.Plugin" Version="3.3.2" />
+    <PackageReference Include="Spire.PDF" Version="7.2.5" />
     <PackageReference Include="Xam.Plugin.Version" Version="1.0.0" />
     <PackageReference Include="Xam.Plugins.Forms.DeviceOrientation" Version="1.0.1" />
     <PackageReference Include="Xam.Plugins.Messaging" Version="5.2.0" />
     <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg" Version="2.4.11.982" />
     <PackageReference Include="Xamarin.FFImageLoading.Svg.Forms" Version="2.4.11.982" />
-    <PackageReference Include="Xamarin.Forms" Version="4.8.0.1821" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.6.0" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
   </ItemGroup>
 
   <ItemGroup>

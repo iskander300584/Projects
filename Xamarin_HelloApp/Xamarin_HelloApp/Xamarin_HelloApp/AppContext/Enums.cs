@@ -78,6 +78,11 @@ namespace PilotMobile.AppContext
         Trial,
 
         /// <summary>
+        /// Пробный режим для тестирования через эмулятор
+        /// </summary>
+        TrialTestEmulator,
+
+        /// <summary>
         /// АСКОН
         /// </summary>
         Ascon,

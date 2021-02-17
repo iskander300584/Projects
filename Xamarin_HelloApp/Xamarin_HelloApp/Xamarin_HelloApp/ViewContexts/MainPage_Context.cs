@@ -3,7 +3,6 @@ using PilotMobile.AppContext;
 using PilotMobile.Pages;
 using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
-using Plugin.Toast;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1146,7 +1145,7 @@ namespace Xamarin_HelloApp.ViewContexts
                 else if (_size[0] == '.' || _size[0] == ',')
                     _size = "0" + _size;
 
-                CrossToastPopUp.Current.ShowToastSuccess(StringConstants.Free + _size + StringConstants.TotalSize);
+                Global.ShowToast(StringConstants.Free + _size + StringConstants.TotalSize);
             }
         }
 

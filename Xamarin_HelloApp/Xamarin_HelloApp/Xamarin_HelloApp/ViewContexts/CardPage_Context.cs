@@ -4,7 +4,6 @@ using PilotMobile.AppContext;
 using PilotMobile.Models;
 using PilotMobile.Pages;
 using PilotMobile.ViewModels;
-using Plugin.Toast;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -475,9 +474,6 @@ namespace PilotMobile.ViewContexts
         /// </summary>
         private void Up_Execute()
         {
-            if (xpsPage != null)
-                xpsPage.UnLoadDocument(true);
-
             page.NavigateToMainPage();
         }
 
@@ -545,7 +541,7 @@ namespace PilotMobile.ViewContexts
                 _task.GetStateMachineData(page);
                 CanChangeState = (_task.AvaliableTransitions.Count > 0);
 
-                CrossToastPopUp.Current.ShowToastSuccess("Состояние изменено");
+                Global.ShowToast("Состояние изменено");
             }
             catch(Exception ex)
             {

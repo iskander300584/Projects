@@ -362,7 +362,7 @@ namespace Xamarin_HelloApp.ViewContexts
                 Login = array[2];
                 Password = array[3];
             }
-            else if(Global.Localized == LocalizedVersion.Trial)
+            else if(Global.Localized == LocalizedVersion.Trial || Global.Localized == LocalizedVersion.TrialTestEmulator)
             {
                 IsServerReadOnly = true;
 
@@ -566,6 +566,13 @@ namespace Xamarin_HelloApp.ViewContexts
                 case LocalizedVersion.Trial:
                     array[0] = DemoConstants.DemoServer;
                     array[1] = DemoConstants.DemoDB;
+                    array[2] = DemoConstants.DemoAccount;
+                    array[3] = DemoConstants.DemoPassword;
+                    break;
+
+                case LocalizedVersion.TrialTestEmulator:
+                    array[0] = @"http://vm-win10-1:5545";
+                    array[1] = "Pilot-bim";
                     array[2] = DemoConstants.DemoAccount;
                     array[3] = DemoConstants.DemoPassword;
                     break;

@@ -29,8 +29,6 @@ namespace Xamarin_HelloApp.Pages
         /// <param name="pilotItem">объект Pilot</param>
         public XpsPage(IPilotObject pilotItem)
         {
-            /*Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzM5MjY2QDMxMzgyZTMzMmUzMEIwKzBENG9sRkl0WVlYcXg3QjdYbjlkU1B1cXUxNVpQb0FEVkJYTVIweEE9");*/
-
             InitializeComponent();
 
             context = new XpsPage_Context(pilotItem, this);
@@ -55,11 +53,8 @@ namespace Xamarin_HelloApp.Pages
                     {
                         try
                         {
+                            // Загрузка документа в просмотрщик
                             pdfView.Uri = context.PdfFileName;
-                            /*using (MemoryStream ms = new MemoryStream(File.ReadAllBytes(context.PdfFileName)))
-                            {
-                                pdfViewer.LoadDocument(ms);
-                            }*/
                         }
                         catch
                         {
@@ -81,23 +76,6 @@ namespace Xamarin_HelloApp.Pages
                 if (res)
                     await Global.SendErrorReport(ex);
             }
-        }
-
-
-        /// <summary>
-        /// Выгрузить документ
-        /// </summary>
-        /// <param name="unloadViever">выгрузить просмотрщик документов</param>
-        public void UnLoadDocument(bool unloadViever = false)
-        {
-            try
-            {
-                //pdfViewer.Unload();
-
-                //if (unloadViever)
-                //    pdfViewer.TryDispose();
-            }
-            catch { }
         }
 
 

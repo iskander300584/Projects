@@ -21,20 +21,24 @@ namespace Xamarin_HelloApp.Droid
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
+            // Регистрация плагина для получения ориентации (кажется)
             Plugin.CurrentActivity.CrossCurrentActivity.Current.Activity = this;
 
             base.OnCreate(savedInstanceState);
 
+            // Установка портретной ориентации
             RequestedOrientation = ScreenOrientation.Portrait;
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
+            // Регистрация данных для отображения SVG
             CachedImageRenderer.Init(true);
             var ignore = typeof(SvgCachedImage);
 
             this.Window.AddFlags(WindowManagerFlags.Fullscreen);
 
+            // Получение ссылки на объект
             string url = "";
             
             try
@@ -51,7 +55,5 @@ namespace Xamarin_HelloApp.Droid
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-
-        
     }
 }

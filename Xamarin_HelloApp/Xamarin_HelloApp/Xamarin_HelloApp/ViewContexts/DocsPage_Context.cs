@@ -332,9 +332,6 @@ namespace PilotMobile.ViewContexts
         /// </summary>
         private void Up_Execute()
         {
-            if (xpsPage != null)
-                xpsPage.UnLoadDocument(true);
-
             page.NavigateToMainPage();
         }
 

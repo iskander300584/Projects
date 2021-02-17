@@ -167,13 +167,13 @@ namespace Xamarin_HelloApp.AppContext
             {
                 await Clipboard.SetTextAsync(GetLink(dObject));
 
-                CrossToastPopUp.Current.ShowToastSuccess("Ссылка скопирована");
+                ShowToast("Ссылка скопирована");
 
                 return true;
             }
             catch
             {
-                CrossToastPopUp.Current.ShowToastError("Ошибка копирования ссылки");
+                ShowToast("Ошибка копирования ссылки", true);
 
                 return false;
             }
@@ -195,9 +195,27 @@ namespace Xamarin_HelloApp.AppContext
             }
             catch
             {
-                CrossToastPopUp.Current.ShowToastError("Ошибка формирования ссылки");
+                ShowToast("Ошибка формирования ссылки", true);
 
                 return false;
+            }
+        }
+
+
+        /// <summary>
+        /// Отобразить всплывающее сообщение
+        /// </summary>
+        /// <param name="message">текст сообщения</param>
+        /// <param name="error">признак сообщения об ошибке</param>
+        public static void ShowToast(string message, bool error = false)
+        {
+            if(!error)
+            {
+                CrossToastPopUp.Current.ShowCustomToast(message, UIConstants.PilotInterpriceColor, UIConstants.WhiteColor, Plugin.Toast.Abstractions.ToastLength.Short);
+            }
+            else
+            {
+                CrossToastPopUp.Current.ShowToastError(message);
             }
         }
 
@@ -259,7 +277,7 @@ namespace Xamarin_HelloApp.AppContext
             }
             catch
             {
-                CrossToastPopUp.Current.ShowToastError("Ошибка отправки отчета");
+                ShowToast("Ошибка отправки отчета", true);
 
                 return false;
             }

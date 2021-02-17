@@ -27,8 +27,10 @@ namespace Xamarin_HelloApp.Droid
         {
             base.OnCreate(savedInstanceState);
 
+            // Задание портретной ориентации
             RequestedOrientation = ScreenOrientation.Portrait;
 
+            // Получение ссылки на объект
             string url = "";
             if (this.Intent != null && this.Intent.Data != null)
                 url = this.Intent.Data.ToString();
@@ -36,6 +38,7 @@ namespace Xamarin_HelloApp.Droid
             Intent intent = new Intent(this, typeof(MainActivity));
             intent.PutExtra("url", url);
 
+            // Сохранение ссылки в настройки, если приложение было запущено ранее
             if (App.Current != null)
             {
                 object url_temp = "";

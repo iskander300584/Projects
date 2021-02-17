@@ -25,5 +25,11 @@ namespace PilotMobile.AppContext
         /// Цвет Pilot ECM
         /// </summary>
         public const string PilotEcmColor = @"";
+
+
+        /// <summary>
+        /// Белый цвет
+        /// </summary>
+        public const string WhiteColor = @"#FFFFFF";
     }
 }

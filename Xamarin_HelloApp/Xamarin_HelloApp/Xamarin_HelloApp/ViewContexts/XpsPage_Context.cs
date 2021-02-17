@@ -406,7 +406,6 @@ namespace PilotMobile.ViewContexts
         /// </summary>
         private void Up_Execute()
         {
-            page.UnLoadDocument(true);
             page.NavigateToMainPage();
         }
 
