@@ -314,6 +314,7 @@ namespace PilotMobile.ViewContexts
                             {
                                 try
                                 {
+                                    // Конвертация XPS в PDF
                                     Spire.Pdf.PdfDocument doc = new Spire.Pdf.PdfDocument();
                                     doc.LoadFromFile(_xpsName, Spire.Pdf.FileFormat.XPS);
                                     doc.SaveToFile(_pdfName, Spire.Pdf.FileFormat.PDF);
