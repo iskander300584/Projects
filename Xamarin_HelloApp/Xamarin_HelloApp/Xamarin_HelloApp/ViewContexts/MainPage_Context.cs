@@ -3,6 +3,7 @@ using PilotMobile.AppContext;
 using PilotMobile.Pages;
 using PilotMobile.ViewContexts;
 using PilotMobile.ViewModels;
+using Plugin.LocalNotification;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1325,6 +1326,26 @@ namespace Xamarin_HelloApp.ViewContexts
                 if (res)
                     await Global.SendErrorReport(ex);
             }*/
+            #endregion
+
+
+            #region Проверка отправки локального уведомления
+
+            var notification = new NotificationRequest
+            {
+                NotificationId = 100,
+                Title = "Pilot-FLY",
+                Description = "Получен новый документ",
+                ReturningData = @"http://volga.ascon.ru:5547/url?id=e8b6e32e-9e70-40bd-9805-b521ece46515",
+                NotifyTime = DateTime.Now.AddSeconds(1),
+                Android =
+                {
+                    IconName = @"@drawable/pilot_icon"
+                },
+                Repeats = NotificationRepeat.No
+            };
+            NotificationCenter.Current.Show(notification);
+
             #endregion
 
 

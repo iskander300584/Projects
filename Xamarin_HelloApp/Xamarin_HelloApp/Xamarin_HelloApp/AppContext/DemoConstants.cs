@@ -16,7 +16,7 @@ namespace PilotMobile.AppContext
         /// <summary>
         /// Имя демонстрационной БД
         /// </summary>
-        public const string DemoDB = @"pilot-bim_ru";
+        public const string DemoDB = @"Test_FLY";
 
 
         /// <summary>

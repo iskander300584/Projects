@@ -37,7 +37,7 @@
 
                         
                         <!-- Кнопка Тестовая -->
-                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" IsVisible="False" Margin="20,0,0,0"
+                        <ImageButton Aspect="AspectFit" HeightRequest="20" BackgroundColor="#7A87BF" WidthRequest="20" HorizontalOptions="Start" IsVisible="True" Margin="20,0,0,0"
                                      Command="{Binding TestCommand}">
                             <ImageButton.Style>
                                 <Style TargetType="ImageButton">

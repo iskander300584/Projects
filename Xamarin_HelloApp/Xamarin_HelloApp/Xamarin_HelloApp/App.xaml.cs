@@ -1,5 +1,6 @@
 ﻿using PilotMobile.AppContext;
 using PilotMobile.Pages;
+using Plugin.LocalNotification;
 using Plugin.Settings;
 using System;
 using System.IO;
@@ -31,6 +32,10 @@ namespace Xamarin_HelloApp
                 if (Global.DALContext.Connect(credentials) == null)
                     Global.Credentials = credentials;
             }
+
+            // Подключение обработчика уведомлений
+            NotificationCenter.Current.NotificationReceived += OnLocalNotificationReceived;
+            NotificationCenter.Current.NotificationTapped += OnLocalNotificationTapped;
 
             if (Global.DALContext.IsInitialized)
             {
@@ -90,6 +95,43 @@ namespace Xamarin_HelloApp
                 return null;
 
             return Credentials.GetProtectedCredentials(server, db, login, password, license);
+        }
+
+
+        /// <summary>
+        /// Обработка отправки уведомления уведомления
+        /// </summary>
+        /// <param name="e">параметры уведомления</param>
+        private void OnLocalNotificationReceived(NotificationReceivedEventArgs e)
+        {
+            if(e != null)
+            {
+
+            }
+        }
+
+
+        /// <summary>
+        /// Обработка получения уведомления
+        /// </summary>
+        /// <param name="e">параметры уведомления</param>
+        private void OnLocalNotificationTapped(NotificationTappedEventArgs e)
+        {
+            if(e != null)
+            {
+                try
+                {
+                    string url = e.Data;
+                    object url_temp = "";
+                    if (Current.Properties.TryGetValue("url", out url_temp))
+                    {
+                        Current.Properties["url"] = url;
+                    }
+                    else
+                        Current.Properties.Add("url", url);
+                }
+                catch { }
+            }
         }
     }
 }

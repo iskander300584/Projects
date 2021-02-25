@@ -8,7 +8,7 @@ using Android.OS;
 using FFImageLoading.Forms.Platform;
 using FFImageLoading.Svg.Forms;
 using Android.Content;
-
+using Plugin.LocalNotification;
 
 namespace Xamarin_HelloApp.Droid
 {
@@ -43,17 +43,34 @@ namespace Xamarin_HelloApp.Droid
             
             try
             {
-                url = this.Intent.GetStringExtra("url").ToString();
+                if (this.Intent != null)
+                    url = this.Intent.GetStringExtra("url").ToString();
             }
             catch { }
-            
+
+            // Подключение службы уведомлений
+            NotificationCenter.CreateNotificationChannel();
+
             LoadApplication(new App(url));
+
+            NotificationCenter.NotifyNotificationTapped(Intent);
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+
+        /// <summary>
+        /// Обработка получения уведомления
+        /// </summary>
+        /// <param name="intent"></param>
+        protected override void OnNewIntent(Intent intent)
+        {
+            NotificationCenter.NotifyNotificationTapped(intent);
+            base.OnNewIntent(intent);
         }
     }
 }

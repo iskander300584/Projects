@@ -5,6 +5,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Plugin.LocalNotification;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,9 @@ namespace Xamarin_HelloApp.Droid
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            // Подключение службы уведомлений
+            NotificationCenter.CreateNotificationChannel();
 
             // Задание портретной ориентации
             RequestedOrientation = ScreenOrientation.Portrait;
@@ -52,6 +56,19 @@ namespace Xamarin_HelloApp.Droid
 
             Thread.Sleep(1000);
             StartActivity(intent);
+
+            NotificationCenter.NotifyNotificationTapped(Intent);
+        }
+
+
+        /// <summary>
+        /// Обработка получения уведомления
+        /// </summary>
+        /// <param name="intent">уведомление</param>
+        protected override void OnNewIntent(Intent intent)
+        {
+            NotificationCenter.NotifyNotificationTapped(intent);
+            base.OnNewIntent(intent);
         }
     }
 }
